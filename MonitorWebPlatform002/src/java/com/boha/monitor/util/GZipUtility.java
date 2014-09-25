@@ -8,18 +8,50 @@ package com.boha.monitor.util;
  *
  * @author aubreymalabie
  */
+import com.boha.monitor.dto.transfer.ResponseDTO;
+import com.google.gson.Gson;
+import com.sun.xml.wss.impl.misc.Base64;
 import java.io.*;
+import java.nio.ByteBuffer;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.*;
+import org.apache.commons.io.IOUtils;
 
 public class GZipUtility {
 
+    static final Gson gson = new Gson();
+    static final int ZIP_THRESHOLD = 512;
     private static final Logger logger = Logger.getLogger(GZipUtility.class.getName());
 
+    public static ByteBuffer getZippedResponse(ResponseDTO resp) throws IOException {
+        String json = gson.toJson(resp);
+        byte[] bytes = null;
+        if (json.length() < ZIP_THRESHOLD) {
+            bytes = json.getBytes();
+        } else {
+            bytes = getZippedBytes(json);
+        }
+        ByteBuffer buf = ByteBuffer.wrap(bytes);
+        return buf;
+    }
 
-    public static File getZipped(String data) {
+    private static byte[] getZippedBytes(String json)
+            throws IOException {
+
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        GZIPOutputStream zos = new GZIPOutputStream(byteArrayOutputStream);
+        zos.write(json.getBytes());
+        IOUtils.closeQuietly(zos);
+
+        byte[] bytes = byteArrayOutputStream.toByteArray();
+
+        return bytes;
+
+    }
+
+    private static File getZipped(String data) {
         String gzipFileName = null;
         File zip = null;
         try {
@@ -42,7 +74,7 @@ public class GZipUtility {
                             "Cannot create ZipOutputStream ", ex);
                 }
             } catch (Exception ex) {
-               logger.log(Level.SEVERE,
+                logger.log(Level.SEVERE,
                         "Cannot create ZipOutputStream, unknown exception", ex);
             }
             // Create the input file to be compressed
@@ -51,7 +83,7 @@ public class GZipUtility {
             try {
                 in = new FileInputStream(file);
             } catch (FileNotFoundException ex) {
-               logger.log(Level.SEVERE, "Where the fuck is the file?", ex);
+                logger.log(Level.SEVERE, "Where the fuck is the file?", ex);
             }
             ZipEntry ze = new ZipEntry(file.getName());
             try {

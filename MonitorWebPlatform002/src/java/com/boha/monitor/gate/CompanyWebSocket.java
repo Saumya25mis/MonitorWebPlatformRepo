@@ -7,12 +7,14 @@ package com.boha.monitor.gate;
 
 import com.boha.monitor.dto.transfer.RequestDTO;
 import com.boha.monitor.dto.transfer.ResponseDTO;
+import static com.boha.monitor.gate.ProjectWebSocket.log;
 import com.boha.monitor.util.DataException;
 import com.boha.monitor.util.DataUtil;
 import com.boha.monitor.util.GZipUtility;
 import com.boha.monitor.util.ListUtil;
 import com.boha.monitor.util.TrafficCop;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -52,19 +54,29 @@ public class CompanyWebSocket {
     public ByteBuffer onMessage(String message) {
         log.log(Level.WARNING, "onMessage: {0}", message);
         ResponseDTO resp = new ResponseDTO();
-        try {
-            RequestDTO dto = gson.fromJson(message, RequestDTO.class);
-            resp = TrafficCop.processRequest(dto, dataUtil, listUtil);
-        } catch (DataException e) {
-            resp.setStatusCode(101);
-            resp.setMessage("Data service failed to process your request");
-            log.log(Level.SEVERE, "Database related failure", e);
-        }
         ByteBuffer bb = null;
         try {
-            bb = getZippedResponse(resp);
-        } catch (Exception ex) {
-            log.log(Level.SEVERE, null, ex);
+
+            try {
+                RequestDTO dto = gson.fromJson(message, RequestDTO.class);
+                resp = TrafficCop.processRequest(dto, dataUtil, listUtil);
+
+            } catch (DataException e) {
+                resp.setStatusCode(101);
+                resp.setMessage("Data service failed to process your request");
+                log.log(Level.SEVERE, "Database related failure", e);
+                bb = GZipUtility.getZippedResponse(resp);
+            }
+            bb = GZipUtility.getZippedResponse(resp);
+        } catch (IOException ex) {
+            Logger.getLogger(ProjectWebSocket.class.getName()).log(Level.SEVERE, null, ex);
+            resp.setStatusCode(111);
+            resp.setMessage("Problem processing request on server");
+            try {
+                bb = GZipUtility.getZippedResponse(resp);
+            } catch (IOException ex1) {
+                Logger.getLogger(ProjectWebSocket.class.getName()).log(Level.SEVERE, null, ex1);
+            }
         }
         return bb;
     }
@@ -102,19 +114,6 @@ public class CompanyWebSocket {
 
     }
 
-    private ByteBuffer getZippedResponse(ResponseDTO resp)
-            throws Exception {
-        File file = GZipUtility.getZipped(gson.toJson(resp));
-        byte[] bFile = new byte[(int) file.length()];
-        FileInputStream fileInputStream = null;
-
-        //convert file into array of bytes
-        fileInputStream = new FileInputStream(file);
-        fileInputStream.read(bFile);
-        fileInputStream.close();
-        ByteBuffer buf = ByteBuffer.wrap(bFile);
-        return buf;
-    }
     Gson gson = new Gson();
     static final Logger log = Logger.getLogger(CompanyWebSocket.class.getSimpleName());
 }
