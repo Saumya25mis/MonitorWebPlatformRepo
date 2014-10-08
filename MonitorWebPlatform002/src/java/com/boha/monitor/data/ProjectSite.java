@@ -38,6 +38,12 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "ProjectSite.findByActiveFlag",
             query = "SELECT p FROM ProjectSite p WHERE p.activeFlag = :activeFlag")})
 public class ProjectSite implements Serializable {
+    @OneToMany(mappedBy = "projectSite")
+    private List<Beneficiary> beneficiaryList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "projectSite")
+    private List<InvoiceItem> invoiceItemList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "projectSite")
+    private List<SiteCheckPoint> siteCheckPointList;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "projectSite")
     private List<GcmDevice> gcmDeviceList;
@@ -166,6 +172,30 @@ public class ProjectSite implements Serializable {
 
     public void setGcmDeviceList(List<GcmDevice> gcmDeviceList) {
         this.gcmDeviceList = gcmDeviceList;
+    }
+
+    public List<Beneficiary> getBeneficiaryList() {
+        return beneficiaryList;
+    }
+
+    public void setBeneficiaryList(List<Beneficiary> beneficiaryList) {
+        this.beneficiaryList = beneficiaryList;
+    }
+
+    public List<InvoiceItem> getInvoiceItemList() {
+        return invoiceItemList;
+    }
+
+    public void setInvoiceItemList(List<InvoiceItem> invoiceItemList) {
+        this.invoiceItemList = invoiceItemList;
+    }
+
+    public List<SiteCheckPoint> getSiteCheckPointList() {
+        return siteCheckPointList;
+    }
+
+    public void setSiteCheckPointList(List<SiteCheckPoint> siteCheckPointList) {
+        this.siteCheckPointList = siteCheckPointList;
     }
 
 }

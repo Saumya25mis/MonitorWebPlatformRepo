@@ -52,6 +52,8 @@ import javax.validation.constraints.NotNull;
                     + "WHERE p.projectSite.project.projectID = :projectID "
                     + "order by p.companyStaff.lastName, p.companyStaff.firstName")})
 public class ProjectSiteStaff implements Serializable {
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "projectSiteStaff")
+    private List<SiteCheckPoint> siteCheckPointList;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -179,6 +181,14 @@ public class ProjectSiteStaff implements Serializable {
     @Override
     public String toString() {
         return "com.boha.monitor.data.ProjectSiteStaff[ projectSiteStaffID=" + projectSiteStaffID + " ]";
+    }
+
+    public List<SiteCheckPoint> getSiteCheckPointList() {
+        return siteCheckPointList;
+    }
+
+    public void setSiteCheckPointList(List<SiteCheckPoint> siteCheckPointList) {
+        this.siteCheckPointList = siteCheckPointList;
     }
     
 }

@@ -36,6 +36,14 @@ import javax.validation.constraints.Size;
             query = "SELECT c FROM Company c WHERE c.companyName = :companyName")})
 public class Company implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
+    private List<CompanyClient> companyClientList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
+    private List<Beneficiary> beneficiaryList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
+    private List<InvoiceCode> invoiceCodeList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
+    private List<CheckPoint> checkPointList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
     private List<Executive> executiveList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
     private List<GcmDevice> gcmDeviceList;
@@ -144,6 +152,38 @@ public class Company implements Serializable {
 
     public void setExecutiveList(List<Executive> executiveList) {
         this.executiveList = executiveList;
+    }
+
+    public List<CompanyClient> getCompanyClientList() {
+        return companyClientList;
+    }
+
+    public void setCompanyClientList(List<CompanyClient> companyClientList) {
+        this.companyClientList = companyClientList;
+    }
+
+    public List<Beneficiary> getBeneficiaryList() {
+        return beneficiaryList;
+    }
+
+    public void setBeneficiaryList(List<Beneficiary> beneficiaryList) {
+        this.beneficiaryList = beneficiaryList;
+    }
+
+    public List<InvoiceCode> getInvoiceCodeList() {
+        return invoiceCodeList;
+    }
+
+    public void setInvoiceCodeList(List<InvoiceCode> invoiceCodeList) {
+        this.invoiceCodeList = invoiceCodeList;
+    }
+
+    public List<CheckPoint> getCheckPointList() {
+        return checkPointList;
+    }
+
+    public void setCheckPointList(List<CheckPoint> checkPointList) {
+        this.checkPointList = checkPointList;
     }
     
 }

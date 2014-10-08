@@ -10,7 +10,6 @@ package com.boha.monitor.util;
  */
 import com.boha.monitor.dto.transfer.ResponseDTO;
 import com.google.gson.Gson;
-import com.sun.xml.wss.impl.misc.Base64;
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.util.Random;

@@ -42,6 +42,8 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "CompanyStaff.findByEmail", query = "SELECT c FROM CompanyStaff c WHERE c.email = :email"),
     @NamedQuery(name = "CompanyStaff.findByCellphone", query = "SELECT c FROM CompanyStaff c WHERE c.cellphone = :cellphone")})
 public class CompanyStaff implements Serializable {
+    @Column(name = "pin")
+    private String pin;
     @OneToMany(mappedBy = "companyStaff")
     private List<GcmDevice> gcmDeviceList;
     private static final long serialVersionUID = 1L;
@@ -62,8 +64,6 @@ public class CompanyStaff implements Serializable {
     private String lastName;
     @Column(name = "activeFlag")
     private Integer activeFlag;
-    @Column(name = "pin")
-    private String pin;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
@@ -95,13 +95,6 @@ public class CompanyStaff implements Serializable {
         this.email = email;
     }
 
-    public String getPin() {
-        return pin;
-    }
-
-    public void setPin(String pin) {
-        this.pin = pin;
-    }
 
     public Integer getCompanyStaffID() {
         return companyStaffID;
@@ -206,6 +199,14 @@ public class CompanyStaff implements Serializable {
 
     public void setGcmDeviceList(List<GcmDevice> gcmDeviceList) {
         this.gcmDeviceList = gcmDeviceList;
+    }
+
+    public String getPin() {
+        return pin;
+    }
+
+    public void setPin(String pin) {
+        this.pin = pin;
     }
     
 }
