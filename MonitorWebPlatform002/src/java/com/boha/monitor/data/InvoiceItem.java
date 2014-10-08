@@ -44,7 +44,8 @@ public class InvoiceItem implements Serializable {
     private String description;
     @Column(name = "quantity")
     private Integer quantity;
-    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
+    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields
+    //consider using these annotations to enforce field validation
     @Column(name = "amount")
     private Double amount;
     @JoinColumn(name = "invoiceID", referencedColumnName = "invoiceID")
@@ -70,6 +71,30 @@ public class InvoiceItem implements Serializable {
 
     public void setInvoiceItemID(Integer invoiceItemID) {
         this.invoiceItemID = invoiceItemID;
+    }
+
+    public Invoice getInvoice() {
+        return invoice;
+    }
+
+    public void setInvoice(Invoice invoice) {
+        this.invoice = invoice;
+    }
+
+    public InvoiceCode getInvoiceCode() {
+        return invoiceCode;
+    }
+
+    public void setInvoiceCode(InvoiceCode invoiceCode) {
+        this.invoiceCode = invoiceCode;
+    }
+
+    public ProjectSite getProjectSite() {
+        return projectSite;
+    }
+
+    public void setProjectSite(ProjectSite projectSite) {
+        this.projectSite = projectSite;
     }
 
     public String getDescription() {

@@ -8,7 +8,9 @@ package com.boha.monitor.data;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -18,6 +20,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -40,6 +43,8 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "Beneficiary.findByCellphone", query = "SELECT b FROM Beneficiary b WHERE b.cellphone = :cellphone"),
     @NamedQuery(name = "Beneficiary.findByDateRegistered", query = "SELECT b FROM Beneficiary b WHERE b.dateRegistered = :dateRegistered")})
 public class Beneficiary implements Serializable {
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "beneficiary")
+    private List<HappyLetter> happyLetterList;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -58,7 +63,6 @@ public class Beneficiary implements Serializable {
     @Size(max = 45)
     @Column(name = "IDNumber")
     private String iDNumber;
-    // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
     @Size(max = 150)
     @Column(name = "email")
     private String email;
@@ -194,6 +198,14 @@ public class Beneficiary implements Serializable {
     @Override
     public String toString() {
         return "com.boha.monitor.data.Beneficiary[ beneficiaryID=" + beneficiaryID + " ]";
+    }
+
+    public List<HappyLetter> getHappyLetterList() {
+        return happyLetterList;
+    }
+
+    public void setHappyLetterList(List<HappyLetter> happyLetterList) {
+        this.happyLetterList = happyLetterList;
     }
     
 }

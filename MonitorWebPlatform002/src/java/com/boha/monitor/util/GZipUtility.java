@@ -36,7 +36,7 @@ public class GZipUtility {
         return buf;
     }
 
-    private static byte[] getZippedBytes(String json)
+    public static byte[] getZippedBytes(String json)
             throws IOException {
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -50,7 +50,7 @@ public class GZipUtility {
 
     }
 
-    private static File getZipped(String data) {
+    public static File getZipped(String data) {
         String gzipFileName = null;
         File zip = null;
         try {
@@ -129,7 +129,7 @@ public class GZipUtility {
                 logger.log(Level.INFO, "\n### File de-compressed: {0}", imgFile.getAbsolutePath());
             }
             zis.close();
-        } catch (Exception e) {
+        } catch (IOException e) {
             logger.log(Level.SEVERE, "Unable to de-compress zipped file", e);
         }
 

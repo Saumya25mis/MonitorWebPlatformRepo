@@ -7,16 +7,12 @@ package com.boha.monitor.gate;
 
 import com.boha.monitor.dto.transfer.RequestDTO;
 import com.boha.monitor.dto.transfer.ResponseDTO;
-import static com.boha.monitor.gate.ProjectWebSocket.log;
 import com.boha.monitor.util.DataException;
 import com.boha.monitor.util.DataUtil;
 import com.boha.monitor.util.GZipUtility;
 import com.boha.monitor.util.ListUtil;
 import com.boha.monitor.util.TrafficCop;
 import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Collections;
@@ -56,11 +52,9 @@ public class CompanyWebSocket {
         ResponseDTO resp = new ResponseDTO();
         ByteBuffer bb = null;
         try {
-
             try {
                 RequestDTO dto = gson.fromJson(message, RequestDTO.class);
                 resp = TrafficCop.processRequest(dto, dataUtil, listUtil);
-
             } catch (DataException e) {
                 resp.setStatusCode(101);
                 resp.setMessage("Data service failed to process your request");
@@ -110,7 +104,7 @@ public class CompanyWebSocket {
 
     @OnError
     public void onError(Throwable t) {
-        log.log(Level.SEVERE, null, t);
+        log.log(Level.SEVERE, "@OnError, websocket failed", t);
 
     }
 
