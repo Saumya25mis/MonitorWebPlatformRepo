@@ -43,6 +43,9 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "Beneficiary.findByCellphone", query = "SELECT b FROM Beneficiary b WHERE b.cellphone = :cellphone"),
     @NamedQuery(name = "Beneficiary.findByDateRegistered", query = "SELECT b FROM Beneficiary b WHERE b.dateRegistered = :dateRegistered")})
 public class Beneficiary implements Serializable {
+    @JoinColumn(name = "townshipID", referencedColumnName = "townshipID")
+    @ManyToOne(optional = false)
+    private Township townshipID;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "beneficiary")
     private List<HappyLetter> happyLetterList;
     private static final long serialVersionUID = 1L;
@@ -206,6 +209,14 @@ public class Beneficiary implements Serializable {
 
     public void setHappyLetterList(List<HappyLetter> happyLetterList) {
         this.happyLetterList = happyLetterList;
+    }
+
+    public Township getTownshipID() {
+        return townshipID;
+    }
+
+    public void setTownshipID(Township townshipID) {
+        this.townshipID = townshipID;
     }
     
 }

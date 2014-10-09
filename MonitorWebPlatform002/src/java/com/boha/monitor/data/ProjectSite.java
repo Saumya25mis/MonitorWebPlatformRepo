@@ -20,6 +20,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
@@ -38,6 +39,11 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "ProjectSite.findByActiveFlag",
             query = "SELECT p FROM ProjectSite p WHERE p.activeFlag = :activeFlag")})
 public class ProjectSite implements Serializable {
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 100)
+    @Column(name = "standErfNumber")
+    private String standErfNumber;
     @OneToMany(mappedBy = "projectSite")
     private List<Beneficiary> beneficiaryList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "projectSite")
@@ -196,6 +202,14 @@ public class ProjectSite implements Serializable {
 
     public void setSiteCheckPointList(List<SiteCheckPoint> siteCheckPointList) {
         this.siteCheckPointList = siteCheckPointList;
+    }
+
+    public String getStandErfNumber() {
+        return standErfNumber;
+    }
+
+    public void setStandErfNumber(String standErfNumber) {
+        this.standErfNumber = standErfNumber;
     }
 
 }

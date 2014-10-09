@@ -25,6 +25,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  *
@@ -39,6 +40,11 @@ import javax.validation.constraints.NotNull;
     @NamedQuery(name = "Invoice.findByInvoiceDueDate", query = "SELECT i FROM Invoice i WHERE i.invoiceDueDate = :invoiceDueDate"),
     @NamedQuery(name = "Invoice.findByDateRegistered", query = "SELECT i FROM Invoice i WHERE i.dateRegistered = :dateRegistered")})
 public class Invoice implements Serializable {
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 255)
+    @Column(name = "reference")
+    private String reference;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -157,6 +163,14 @@ public class Invoice implements Serializable {
     @Override
     public String toString() {
         return "com.boha.monitor.data.Invoice[ invoiceID=" + invoiceID + " ]";
+    }
+
+    public String getReference() {
+        return reference;
+    }
+
+    public void setReference(String reference) {
+        this.reference = reference;
     }
     
 }
