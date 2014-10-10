@@ -6,6 +6,7 @@
 
 package com.boha.monitor.dto;
 
+import com.boha.monitor.data.SiteCheckPoint;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -16,7 +17,7 @@ import java.util.Date;
 public class SiteCheckPointDTO implements Serializable {
     private static final long serialVersionUID = 1L;
     private Integer siteCheckPointID;
-    private int checkPointID;
+    private CheckPointDTO checkPoint;
     private Date dateRegistered;
     private InvoiceDTO invoice;
     private ProjectSiteDTO projectSite;
@@ -29,10 +30,11 @@ public class SiteCheckPointDTO implements Serializable {
         this.siteCheckPointID = siteCheckPointID;
     }
 
-    public SiteCheckPointDTO(Integer siteCheckPointID, int checkPointID, Date dateRegistered) {
-        this.siteCheckPointID = siteCheckPointID;
-        this.checkPointID = checkPointID;
-        this.dateRegistered = dateRegistered;
+    public SiteCheckPointDTO(SiteCheckPoint a) {
+        this.siteCheckPointID = a.getSiteCheckPointID();
+        this.checkPoint = new CheckPointDTO(a.getCheckPoint());
+        this.invoice = new InvoiceDTO(a.getInvoice());
+        this.dateRegistered = a.getDateRegistered();
     }
 
     public Integer getSiteCheckPointID() {
@@ -43,13 +45,14 @@ public class SiteCheckPointDTO implements Serializable {
         this.siteCheckPointID = siteCheckPointID;
     }
 
-    public int getCheckPointID() {
-        return checkPointID;
+    public CheckPointDTO getCheckPoint() {
+        return checkPoint;
     }
 
-    public void setCheckPointID(int checkPointID) {
-        this.checkPointID = checkPointID;
+    public void setCheckPoint(CheckPointDTO checkPoint) {
+        this.checkPoint = checkPoint;
     }
+
 
     public Date getDateRegistered() {
         return dateRegistered;

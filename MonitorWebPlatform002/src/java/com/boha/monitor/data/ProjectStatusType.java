@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.boha.monitor.data;
 
 import java.io.Serializable;
@@ -31,11 +30,15 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(name = "projectStatusType")
 @NamedQueries({
-    @NamedQuery(name = "ProjectStatusType.findAll", 
+    @NamedQuery(name = "ProjectStatusType.findAll",
             query = "SELECT p FROM ProjectStatusType p order by p.projectStatusName"),
     @NamedQuery(name = "ProjectStatusType.findByProjectStatusTypeID", query = "SELECT p FROM ProjectStatusType p WHERE p.projectStatusTypeID = :projectStatusTypeID"),
     @NamedQuery(name = "ProjectStatusType.findByProjectStatusName", query = "SELECT p FROM ProjectStatusType p WHERE p.projectStatusName = :projectStatusName")})
 public class ProjectStatusType implements Serializable {
+
+    @JoinColumn(name = "companyID", referencedColumnName = "companyID")
+    @ManyToOne(optional = false)
+    private Company company;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,7 +52,7 @@ public class ProjectStatusType implements Serializable {
     private String projectStatusName;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "projectStatusType")
     private List<ProjectDiaryRecord> projectDiaryRecordList;
-    
+
     public ProjectStatusType() {
     }
 
@@ -86,7 +89,6 @@ public class ProjectStatusType implements Serializable {
         this.projectDiaryRecordList = projectDiaryRecordList;
     }
 
- 
     @Override
     public int hashCode() {
         int hash = 0;
@@ -111,5 +113,13 @@ public class ProjectStatusType implements Serializable {
     public String toString() {
         return "com.boha.monitor.data.ProjectStatusType[ projectStatusTypeID=" + projectStatusTypeID + " ]";
     }
-    
+
+    public Company getCompany() {
+        return company;
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
+    }
+
 }

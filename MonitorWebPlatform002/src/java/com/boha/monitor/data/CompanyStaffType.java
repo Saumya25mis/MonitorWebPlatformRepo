@@ -33,6 +33,10 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "CompanyStaffType.findByCompanyStaffTypeID", query = "SELECT c FROM CompanyStaffType c WHERE c.companyStaffTypeID = :companyStaffTypeID"),
     @NamedQuery(name = "CompanyStaffType.findByCompanyStaffTypeName", query = "SELECT c FROM CompanyStaffType c WHERE c.companyStaffTypeName = :companyStaffTypeName")})
 public class CompanyStaffType implements Serializable {
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "staffCode")
+    private int staffCode;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -106,6 +110,14 @@ public class CompanyStaffType implements Serializable {
     @Override
     public String toString() {
         return "com.boha.monitor.data.CompanyStaffType[ companyStaffTypeID=" + companyStaffTypeID + " ]";
+    }
+
+    public int getStaffCode() {
+        return staffCode;
+    }
+
+    public void setStaffCode(int staffCode) {
+        this.staffCode = staffCode;
     }
     
 }

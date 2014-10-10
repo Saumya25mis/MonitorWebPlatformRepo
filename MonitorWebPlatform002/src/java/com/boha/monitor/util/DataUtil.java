@@ -10,7 +10,6 @@ import com.boha.monitor.data.CompanyStaff;
 import com.boha.monitor.data.CompanyStaffType;
 import com.boha.monitor.data.ErrorStore;
 import com.boha.monitor.data.ErrorStoreAndroid;
-import com.boha.monitor.data.Executive;
 import com.boha.monitor.data.GcmDevice;
 import com.boha.monitor.data.Project;
 import com.boha.monitor.data.ProjectDiaryRecord;
@@ -19,6 +18,7 @@ import com.boha.monitor.data.ProjectSiteStaff;
 import com.boha.monitor.data.ProjectSiteTask;
 import com.boha.monitor.data.ProjectSiteTaskStatus;
 import com.boha.monitor.data.ProjectStatusType;
+import com.boha.monitor.data.Task;
 import com.boha.monitor.data.TaskStatus;
 import com.boha.monitor.dto.CompanyDTO;
 import com.boha.monitor.dto.CompanyStaffDTO;
@@ -30,7 +30,6 @@ import com.boha.monitor.dto.ProjectSiteDTO;
 import com.boha.monitor.dto.ProjectSiteStaffDTO;
 import com.boha.monitor.dto.ProjectSiteTaskDTO;
 import com.boha.monitor.dto.ProjectSiteTaskStatusDTO;
-import com.boha.monitor.dto.transfer.RequestDTO;
 import com.boha.monitor.dto.transfer.ResponseDTO;
 import java.util.ArrayList;
 import java.util.Date;
@@ -57,56 +56,46 @@ public class DataUtil {
 
     @PersistenceContext
     EntityManager em;
+
+    static final int ADMIN = 1, SITE_STAFF = 2, EXEC_STAFF = 3, PROJECT_MANAGER = 4, FINANCE_MANAGER = 5;
+
     public ResponseDTO login(GcmDeviceDTO device, String email,
             String pin, Integer loginType, ListUtil listUtil) throws DataException {
         ResponseDTO resp = new ResponseDTO();
         Query q = null;
         try {
-            switch (loginType) {
-                case RequestDTO.LOGIN_OFFICE_ADMIN:
-                    q = em.createNamedQuery("CompanyStaff.login", CompanyStaff.class);
-                    q.setParameter("email", email);
-                    q.setParameter("pin", pin);
-                    q.setMaxResults(1);
-                    CompanyStaff cs = (CompanyStaff) q.getSingleResult();
-                    resp.getCompanyStaffList().add(new CompanyStaffDTO(cs));
-                    resp.setProjectList(listUtil.getCompanyData(cs.getCompany()
-                            .getCompanyID()).getProjectList());
-                    device.setCompanyID(cs.getCompany().getCompanyID());
-                    device.setCompanyStaffID(cs.getCompanyStaffID());
+            q = em.createNamedQuery("CompanyStaff.login", CompanyStaff.class);
+            q.setParameter("email", email);
+            q.setParameter("pin", pin);
+            q.setMaxResults(1);
+            CompanyStaff cs = (CompanyStaff) q.getSingleResult();
+            resp.setCompanyStaff(new CompanyStaffDTO(cs));
+            
+            device.setCompanyID(cs.getCompany().getCompanyID());
+            device.setCompanyStaffID(cs.getCompanyStaffID());
+            addDevice(device);
 
-                    addDevice(device);
+            resp.setProjectList(listUtil.getCompanyData(cs.getCompany()
+                    .getCompanyID()).getProjectList());
+            resp.setCompanyStaffList(listUtil.getCompanyStaffList(cs.getCompany().getCompanyID()).getCompanyStaffList());
+            resp.setCheckPointList(listUtil.getCheckPointList(cs.getCompany().getCompanyID()).getCheckPointList());
+
+            int staffCode = cs.getCompanyStaffType().getStaffCode();
+            switch (staffCode) {
+                case ADMIN:
                     break;
-                case RequestDTO.LOGIN_PROJECT_STAFF:
-                    q = em.createNamedQuery("ProjectSiteStaff.login", ProjectSiteStaff.class);
-                    q.setParameter("email", email);
-                    q.setParameter("pin", pin);
-                    q.setMaxResults(1);
-                    ProjectSiteStaff pss = (ProjectSiteStaff) q.getSingleResult();
-                    resp.getProjectSiteStaffList().add(new ProjectSiteStaffDTO(pss));
-                    resp.getCompanyStaffList().add(new CompanyStaffDTO(pss.getCompanyStaff()));
-                    resp.setTaskStatusList(listUtil.getTaskStatusList().getTaskStatusList());
-                    resp.setProjectStatusTypeList(listUtil.getProjectStatusList().getProjectStatusTypeList());
-
-                    device.setCompanyID(pss.getCompanyStaff().getCompany().getCompanyID());
-                    device.setCompanyStaffID(pss.getCompanyStaff().getCompanyStaffID());
-
-                    addDevice(device);
+                case SITE_STAFF:
                     break;
-                case RequestDTO.LOGIN_EXECUTIVE:
-                    q = em.createNamedQuery("Executive.login", Executive.class);
-                    q.setParameter("email", email);
-                    q.setParameter("pin", pin);
-                    q.setMaxResults(1);
-                    Executive ex = (Executive) q.getSingleResult();
+                case EXEC_STAFF:
+                    break;
+                case PROJECT_MANAGER:
+                    break;
+                case FINANCE_MANAGER:
                     break;
             }
-            resp.setCompanyStaffTypeList(listUtil.getCompanyStaffTypeList()
-                    .getCompanyStaffTypeList());
-            resp.setTaskStatusList(listUtil
-                    .getTaskStatusList().getTaskStatusList());
 
         } catch (NoResultException e) {
+            log.log(Level.WARNING, "Invalid login attempt: " + email + " pin: " + pin, e);
             resp.setStatusCode(301);
             resp.setMessage("Email address or PIN are invalid. Please try again.");
         }
@@ -247,26 +236,27 @@ public class DataUtil {
     }
 
     public ResponseDTO addProjectSiteTask(
-            ProjectSiteTaskDTO task) throws DataException {
+            ProjectSiteTaskDTO siteTask) throws DataException {
         ResponseDTO resp = new ResponseDTO();
         try {
-            ProjectSite c = em.find(ProjectSite.class, task.getProjectSiteID());
+            ProjectSite c = em.find(ProjectSite.class, siteTask.getProjectSiteID());
+            Task task = em.find(Task.class, siteTask.getTask().getTaskID());
             ProjectSiteTask t = new ProjectSiteTask();
             t.setDateRegistered(new Date());
             t.setProjectSite(c);
-            t.setTaskName(task.getTaskName());
-            t.setTaskDescription(task.getTaskDescription());
+            t.setTask(task);
 
             em.persist(t);
-            Query q = em.createNamedQuery("ProjectSiteTask.findByTaskName",
+            Query q = em.createNamedQuery("ProjectSiteTask.findByProjectSite",
                     ProjectSiteTask.class);
-            q.setParameter("name", task.getTaskName());
-            q.setParameter("projectSiteID", task.getProjectSiteID());
-            q.setMaxResults(1);
-            t = (ProjectSiteTask) q.getSingleResult();
-            resp.getProjectSiteTaskList().add(new ProjectSiteTaskDTO(t));
+            q.setParameter("projectSiteID", siteTask.getProjectSiteID());
+            List<ProjectSiteTask> list = q.getResultList();
+            for (ProjectSiteTask pst : list) {
+               resp.getProjectSiteTaskList().add(new ProjectSiteTaskDTO(pst)); 
+            }
+            
 
-            log.log(Level.OFF, "Project site staff registered for: {0} ",
+            log.log(Level.OFF, "Project site task registered for: {0} ",
                     new Object[]{c.getProjectSiteName()});
 
         } catch (Exception e) {
@@ -441,7 +431,7 @@ public class DataUtil {
             cs.setEmail(staff.getEmail());
             cs.setLastName(staff.getLastName());
             cs.setPin(staff.getPin());
-            cs.setCompanyStaffType(em.find(CompanyStaffType.class, 1));
+            cs.setCompanyStaffType(getAdministratorType());
             em.persist(cs);
 
             q = em.createNamedQuery("CompanyStaff.findByEmail", CompanyStaff.class);
@@ -458,6 +448,16 @@ public class DataUtil {
         }
 
         return resp;
+
+    }
+
+    private CompanyStaffType getAdministratorType() {
+
+        Query q = em.createNamedQuery("CompanyStaffType.findByCompanyStaffTypeName", CompanyStaffType.class);
+        q.setParameter("companyStaffTypeName", "Administrator");
+        q.setMaxResults(1);
+        CompanyStaffType cst = (CompanyStaffType) q.getSingleResult();
+        return cst;
 
     }
 

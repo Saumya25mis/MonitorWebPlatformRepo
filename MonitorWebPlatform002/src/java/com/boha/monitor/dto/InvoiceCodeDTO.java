@@ -22,7 +22,10 @@ public class InvoiceCodeDTO implements Serializable {
     private List<InvoiceItemDTO> invoiceItemList;
     private CompanyDTO company;
 
-    public InvoiceCodeDTO() {
+    public InvoiceCodeDTO(InvoiceCode a) {
+        invoiceCodeID = a.getInvoiceCodeID();
+        invoiceCodeName = a.getInvoiceCodeName();
+        invoiceCodeNumber = a.getInvoiceCodeNumber();
     }
 
     public InvoiceCodeDTO(Integer invoiceCodeID) {

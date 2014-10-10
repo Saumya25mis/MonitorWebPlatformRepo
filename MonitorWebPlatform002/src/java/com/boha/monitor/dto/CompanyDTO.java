@@ -19,10 +19,19 @@ public class CompanyDTO implements Serializable {
     private static final long serialVersionUID = 1L;
     private Integer companyID;
     private String companyName;
+    
     private List<ProjectDTO> projectList = new ArrayList<>();
     private List<ProjectStatusTypeDTO> projectStatusTypeList = new ArrayList<>();
     private List<CompanyStaffDTO> companyStaffList = new ArrayList<>();
     private List<TaskStatusDTO> taskStatusList = new ArrayList<>();
+    private List<TaskDTO> taskList = new ArrayList<>();
+    private List<CompanyClientDTO> companyClientList = new ArrayList<>();
+    private List<CheckPointDTO> checkPointList = new ArrayList<>();
+    private List<InvoiceCodeDTO> invoiceCodeList = new ArrayList<>();
+    private List<InvoiceDTO> invoiceList = new ArrayList<>();
+    private List<BeneficiaryDTO> beneficiaryList = new ArrayList<>();
+    private List<GcmDeviceDTO> gcmDeviceList = new ArrayList<>();
+    
 
     public CompanyDTO() {
     }
@@ -32,6 +41,63 @@ public class CompanyDTO implements Serializable {
         this.companyName = a.getCompanyName();
     }
 
+    public List<TaskDTO> getTaskList() {
+        return taskList;
+    }
+
+    public void setTaskList(List<TaskDTO> taskList) {
+        this.taskList = taskList;
+    }
+
+    public List<CompanyClientDTO> getCompanyClientList() {
+        return companyClientList;
+    }
+
+    public void setCompanyClientList(List<CompanyClientDTO> companyClientList) {
+        this.companyClientList = companyClientList;
+    }
+
+    public List<CheckPointDTO> getCheckPointList() {
+        return checkPointList;
+    }
+
+    public void setCheckPointList(List<CheckPointDTO> checkPointList) {
+        this.checkPointList = checkPointList;
+    }
+
+    public List<InvoiceCodeDTO> getInvoiceCodeList() {
+        return invoiceCodeList;
+    }
+
+    public void setInvoiceCodeList(List<InvoiceCodeDTO> invoiceCodeList) {
+        this.invoiceCodeList = invoiceCodeList;
+    }
+
+    public List<InvoiceDTO> getInvoiceList() {
+        return invoiceList;
+    }
+
+    public void setInvoiceList(List<InvoiceDTO> invoiceList) {
+        this.invoiceList = invoiceList;
+    }
+
+    public List<BeneficiaryDTO> getBeneficiaryList() {
+        return beneficiaryList;
+    }
+
+    public void setBeneficiaryList(List<BeneficiaryDTO> beneficiaryList) {
+        this.beneficiaryList = beneficiaryList;
+    }
+
+    public List<GcmDeviceDTO> getGcmDeviceList() {
+        return gcmDeviceList;
+    }
+
+    public void setGcmDeviceList(List<GcmDeviceDTO> gcmDeviceList) {
+        this.gcmDeviceList = gcmDeviceList;
+    }
+
+    
     public List<TaskStatusDTO> getTaskStatusList() {
         return taskStatusList;
     }

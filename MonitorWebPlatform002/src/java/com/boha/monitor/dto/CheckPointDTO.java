@@ -16,14 +16,26 @@ import java.io.Serializable;
 public class CheckPointDTO implements Serializable {
     private static final long serialVersionUID = 1L;
     private Integer checkPointID;
-    private String checkPointName;
+    private String checkPointName, description;
     private CompanyDTO company;
 
-    public CheckPointDTO() {
+    public CheckPointDTO(CheckPoint a) {
+        checkPointID = a.getCheckPointID();
+        checkPointName = a.getCheckPointName();
+        description = a.getDescription();
+        company = new CompanyDTO(a.getCompany());
     }
 
     public CheckPointDTO(Integer checkPointID) {
         this.checkPointID = checkPointID;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Integer getCheckPointID() {

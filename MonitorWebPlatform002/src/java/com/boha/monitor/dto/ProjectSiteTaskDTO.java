@@ -22,8 +22,7 @@ public class ProjectSiteTaskDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private Integer projectSiteTaskID;
-    private String taskName;
-    private String taskDescription;
+    private TaskDTO task;
     private long dateRegistered;
     private Integer projectSiteID;
     private List<ProjectSiteTaskStatusDTO> projectSiteTaskStatusList = new ArrayList<>();
@@ -34,8 +33,7 @@ public class ProjectSiteTaskDTO implements Serializable {
 
     public ProjectSiteTaskDTO(ProjectSiteTask a) {
         this.projectSiteTaskID = a.getProjectSiteTaskID();
-        this.taskName = a.getTaskName();
-        this.taskDescription = a.getTaskDescription();
+        this.task = new TaskDTO(a.getTask());
         this.dateRegistered = a.getDateRegistered().getTime();
         this.projectSiteID = a.getProjectSite().getProjectSiteID();
         Project p = a.getProjectSite().getProject();
@@ -51,16 +49,16 @@ public class ProjectSiteTaskDTO implements Serializable {
         return projectSiteTaskID;
     }
 
+    public TaskDTO getTask() {
+        return task;
+    }
+
+    public void setTask(TaskDTO task) {
+        this.task = task;
+    }
+
     public void setProjectSiteTaskID(Integer projectSiteTaskID) {
         this.projectSiteTaskID = projectSiteTaskID;
-    }
-
-    public String getTaskName() {
-        return taskName;
-    }
-
-    public void setTaskName(String taskName) {
-        this.taskName = taskName;
     }
 
     public List<String> getImageFileNameList() {
@@ -69,14 +67,6 @@ public class ProjectSiteTaskDTO implements Serializable {
 
     public void setImageFileNameList(List<String> imageFileNameList) {
         this.imageFileNameList = imageFileNameList;
-    }
-
-    public String getTaskDescription() {
-        return taskDescription;
-    }
-
-    public void setTaskDescription(String taskDescription) {
-        this.taskDescription = taskDescription;
     }
 
     public long getDateRegistered() {

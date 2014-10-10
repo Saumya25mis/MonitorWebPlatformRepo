@@ -3,14 +3,18 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.boha.monitor.dto.transfer;
 
+import com.boha.monitor.dto.BeneficiaryDTO;
+import com.boha.monitor.dto.CheckPointDTO;
 import com.boha.monitor.dto.CompanyDTO;
 import com.boha.monitor.dto.CompanyStaffDTO;
 import com.boha.monitor.dto.CompanyStaffTypeDTO;
 import com.boha.monitor.dto.ErrorStoreAndroidDTO;
 import com.boha.monitor.dto.ErrorStoreDTO;
+import com.boha.monitor.dto.HappyLetterDTO;
+import com.boha.monitor.dto.InvoiceCodeDTO;
+import com.boha.monitor.dto.InvoiceDTO;
 import com.boha.monitor.dto.ProjectDTO;
 import com.boha.monitor.dto.ProjectDiaryRecordDTO;
 import com.boha.monitor.dto.ProjectSiteDTO;
@@ -18,6 +22,8 @@ import com.boha.monitor.dto.ProjectSiteStaffDTO;
 import com.boha.monitor.dto.ProjectSiteTaskDTO;
 import com.boha.monitor.dto.ProjectSiteTaskStatusDTO;
 import com.boha.monitor.dto.ProjectStatusTypeDTO;
+import com.boha.monitor.dto.ProvinceDTO;
+import com.boha.monitor.dto.SiteCheckPointDTO;
 import com.boha.monitor.dto.TaskStatusDTO;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,25 +33,97 @@ import java.util.List;
  * @author aubreyM
  */
 public class ResponseDTO {
-   
+
     private Integer statusCode;
     private String message, sessionID, GCMRegistrationID;
-    List<String> taskImageFileNameList;
-    List<String> siteImageFileNameList;
-    List<TaskStatusDTO> taskStatusList = new ArrayList<>();
-    List<ProjectStatusTypeDTO> projectStatusTypeList = new ArrayList<>();
-    List<ProjectSiteDTO> projectSiteList = new ArrayList<>();
-    List<ProjectDTO> projectList = new ArrayList<>();
-    List<CompanyStaffDTO> companyStaffList = new ArrayList<>();
-    List<ProjectSiteStaffDTO> projectSiteStaffList = new ArrayList<>();
-    List<CompanyStaffTypeDTO> companyStaffTypeList = new ArrayList<>();
-    List<ProjectDiaryRecordDTO> projectDiaryRecordList = new ArrayList<>();
-    List<ProjectSiteTaskDTO> projectSiteTaskList = new ArrayList<>();
-    List<ProjectSiteTaskStatusDTO> projectSiteTaskStatusList = new ArrayList<>();
-    List<ErrorStoreDTO> errorStoreList = new ArrayList<>();
-    List<ErrorStoreAndroidDTO> errorStoreAndroidList = new ArrayList<>();
+    private List<String> taskImageFileNameList;
+    private List<String> siteImageFileNameList;
+    private List<TaskStatusDTO> taskStatusList = new ArrayList<>();
+    private List<ProjectStatusTypeDTO> projectStatusTypeList = new ArrayList<>();
+    private List<ProjectSiteDTO> projectSiteList = new ArrayList<>();
+    private List<ProjectDTO> projectList = new ArrayList<>();
+    private List<CompanyStaffDTO> companyStaffList = new ArrayList<>();
+    private List<ProjectSiteStaffDTO> projectSiteStaffList = new ArrayList<>();
+    private List<CompanyStaffTypeDTO> companyStaffTypeList = new ArrayList<>();
+    private List<ProjectDiaryRecordDTO> projectDiaryRecordList = new ArrayList<>();
+    private List<ProjectSiteTaskDTO> projectSiteTaskList = new ArrayList<>();
+    private List<ProjectSiteTaskStatusDTO> projectSiteTaskStatusList = new ArrayList<>();
+    private List<ErrorStoreDTO> errorStoreList = new ArrayList<>();
+    private List<ErrorStoreAndroidDTO> errorStoreAndroidList = new ArrayList<>();
+    private List<CheckPointDTO> checkPointList = new ArrayList<>();
+    private List<InvoiceDTO> invoiceList = new ArrayList<>();
+    private List<BeneficiaryDTO> beneficiaryList = new ArrayList<>();
+    private List<ProvinceDTO> provinceList = new ArrayList<>();
+    private List<HappyLetterDTO> happyLetterList = new ArrayList<>();
+    private List<SiteCheckPointDTO> siteCheckPointList = new ArrayList<>();
+    private List<InvoiceCodeDTO> invoiceCodeList = new ArrayList<>();
     //
-    CompanyDTO company;
+    private CompanyDTO company;
+    private CompanyStaffDTO companyStaff;
+
+    public List<CheckPointDTO> getCheckPointList() {
+        return checkPointList;
+    }
+
+    public void setCheckPointList(List<CheckPointDTO> checkPointList) {
+        this.checkPointList = checkPointList;
+    }
+
+    public List<InvoiceDTO> getInvoiceList() {
+        return invoiceList;
+    }
+
+    public void setInvoiceList(List<InvoiceDTO> invoiceList) {
+        this.invoiceList = invoiceList;
+    }
+
+    public List<BeneficiaryDTO> getBeneficiaryList() {
+        return beneficiaryList;
+    }
+
+    public void setBeneficiaryList(List<BeneficiaryDTO> beneficiaryList) {
+        this.beneficiaryList = beneficiaryList;
+    }
+
+    public List<ProvinceDTO> getProvinceList() {
+        return provinceList;
+    }
+
+    public void setProvinceList(List<ProvinceDTO> provinceList) {
+        this.provinceList = provinceList;
+    }
+
+    public List<HappyLetterDTO> getHappyLetterList() {
+        return happyLetterList;
+    }
+
+    public void setHappyLetterList(List<HappyLetterDTO> happyLetterList) {
+        this.happyLetterList = happyLetterList;
+    }
+
+    public List<SiteCheckPointDTO> getSiteCheckPointList() {
+        return siteCheckPointList;
+    }
+
+    public void setSiteCheckPointList(List<SiteCheckPointDTO> siteCheckPointList) {
+        this.siteCheckPointList = siteCheckPointList;
+    }
+
+    public List<InvoiceCodeDTO> getInvoiceCodeList() {
+        return invoiceCodeList;
+    }
+
+    public void setInvoiceCodeList(List<InvoiceCodeDTO> invoiceCodeList) {
+        this.invoiceCodeList = invoiceCodeList;
+    }
+
+    public CompanyStaffDTO getCompanyStaff() {
+        return companyStaff;
+    }
+
+    public void setCompanyStaff(CompanyStaffDTO companyStaff) {
+        this.companyStaff = companyStaff;
+    }
 
     public String getGCMRegistrationID() {
         return GCMRegistrationID;
@@ -111,7 +189,6 @@ public class ResponseDTO {
         this.errorStoreAndroidList = errorStoreAndroidList;
     }
 
-    
     public List<TaskStatusDTO> getTaskStatusList() {
         return taskStatusList;
     }
@@ -199,6 +276,5 @@ public class ResponseDTO {
     public void setCompany(CompanyDTO company) {
         this.company = company;
     }
-    
-    
+
 }

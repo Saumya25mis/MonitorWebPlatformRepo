@@ -6,6 +6,7 @@
 
 package com.boha.monitor.dto;
 
+import com.boha.monitor.data.Client;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -32,10 +33,12 @@ public class ClientDTO implements Serializable {
         this.clientID = clientID;
     }
 
-    public ClientDTO(Integer clientID, String clientName, String email) {
-        this.clientID = clientID;
-        this.clientName = clientName;
-        this.email = email;
+    public ClientDTO(Client a) {
+        this.clientID = a.getClientID();
+        this.clientName = a.getClientName();
+        this.email = a.getEmail();
+        this.address = a.getAddress();
+        postCode = a.getPostCode();
     }
 
     public Integer getClientID() {

@@ -7,17 +7,22 @@
 package com.boha.monitor.data;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
@@ -31,6 +36,14 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "CheckPoint.findByCheckPointID", query = "SELECT c FROM CheckPoint c WHERE c.checkPointID = :checkPointID"),
     @NamedQuery(name = "CheckPoint.findByCheckPointName", query = "SELECT c FROM CheckPoint c WHERE c.checkPointName = :checkPointName")})
 public class CheckPoint implements Serializable {
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "checkPointID")
+    private List<SiteCheckPoint> siteCheckPointList;
+    @Basic(optional = false)
+    @NotNull
+    @Lob
+    @Size(min = 1, max = 65535)
+    @Column(name = "description")
+    private String description;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -99,6 +112,22 @@ public class CheckPoint implements Serializable {
     @Override
     public String toString() {
         return "com.boha.monitor.data.CheckPoint[ checkPointID=" + checkPointID + " ]";
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public List<SiteCheckPoint> getSiteCheckPointList() {
+        return siteCheckPointList;
+    }
+
+    public void setSiteCheckPointList(List<SiteCheckPoint> siteCheckPointList) {
+        this.siteCheckPointList = siteCheckPointList;
     }
     
 }

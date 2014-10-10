@@ -5,9 +5,11 @@
  */
 package com.boha.monitor.util;
 
+import com.boha.monitor.data.CheckPoint;
 import com.boha.monitor.data.Company;
 import com.boha.monitor.data.CompanyStaff;
 import com.boha.monitor.data.CompanyStaffType;
+import com.boha.monitor.data.InvoiceCode;
 import com.boha.monitor.data.Project;
 import com.boha.monitor.data.ProjectDiaryRecord;
 import com.boha.monitor.data.ProjectSite;
@@ -16,9 +18,11 @@ import com.boha.monitor.data.ProjectSiteTask;
 import com.boha.monitor.data.ProjectSiteTaskStatus;
 import com.boha.monitor.data.ProjectStatusType;
 import com.boha.monitor.data.TaskStatus;
+import com.boha.monitor.dto.CheckPointDTO;
 import com.boha.monitor.dto.CompanyDTO;
 import com.boha.monitor.dto.CompanyStaffDTO;
 import com.boha.monitor.dto.CompanyStaffTypeDTO;
+import com.boha.monitor.dto.InvoiceCodeDTO;
 import com.boha.monitor.dto.ProjectDTO;
 import com.boha.monitor.dto.ProjectDiaryRecordDTO;
 import com.boha.monitor.dto.ProjectSiteDTO;
@@ -51,7 +55,29 @@ public class ListUtil {
     @PersistenceContext
     EntityManager em;
 
-    public ResponseDTO getCompanyStaff(Integer companyID) throws DataException {
+    
+    
+    public ResponseDTO getCheckPointList(Integer companyID) {
+        ResponseDTO resp = new ResponseDTO();
+        Query q = em.createNamedQuery("CheckPoint.findAll", CheckPoint.class);
+        List<CheckPoint> list = q.getResultList();
+        for (CheckPoint cp : list) {
+            resp.getCheckPointList().add(new CheckPointDTO(cp));
+        }
+
+        return resp;
+    }
+    public ResponseDTO getInvoiceCodeList(Integer companyID) {
+        ResponseDTO resp = new ResponseDTO();
+        Query q = em.createNamedQuery("InvoiceCode.findByCompany", InvoiceCode.class);
+        List<InvoiceCode> list = q.getResultList();
+        for (InvoiceCode cp : list) {
+            resp.getInvoiceCodeList().add(new InvoiceCodeDTO(cp));
+        }
+        return resp;
+    }
+
+    public ResponseDTO getCompanyStaffList(Integer companyID) throws DataException {
         ResponseDTO resp = new ResponseDTO();
 
         try {
@@ -237,16 +263,16 @@ public class ListUtil {
         ResponseDTO resp = new ResponseDTO();
         CompanyDTO c = new CompanyDTO(em.find(Company.class, companyID));
         
-        c.setCompanyStaffList(getCompanyStaff(companyID).getCompanyStaffList());
+        c.setCompanyStaffList(getCompanyStaffList(companyID).getCompanyStaffList());
         c.setProjectStatusTypeList(getProjectStatusList().getProjectStatusTypeList());
         c.setTaskStatusList(getTaskStatusList().getTaskStatusList()); 
         c.setProjectList(getProjectsByCompany(companyID));
         resp.setCompany(c);
-        
+        resp.setCheckPointList(getCheckPointList(companyID).getCheckPointList());
         return resp;
     }
 
-    private List<ProjectDTO> getProjectsByCompany(Integer companyID) throws DataException {
+    public List<ProjectDTO> getProjectsByCompany(Integer companyID) throws DataException {
         List<ProjectDTO> resp = new ArrayList<>();
 
         try {
@@ -272,7 +298,7 @@ public class ListUtil {
         return resp;
     }
 
-    private List<ProjectSiteDTO> getSitesByCompany(Integer companyID) throws DataException {
+    public List<ProjectSiteDTO> getSitesByCompany(Integer companyID) throws DataException {
         List<ProjectSiteDTO> list = new ArrayList<>();
         try {
             Query q = em.createNamedQuery("ProjectSite.findByCompany", ProjectSite.class);
@@ -280,6 +306,7 @@ public class ListUtil {
             List<ProjectSite> pList = q.getResultList();
             List<ProjectSiteTaskDTO> pstList = getSiteTasksByCompany(companyID);
             List<ProjectSiteStaffDTO> staffList = getSiteStaffByCompany(companyID);
+            
             for (ProjectSite s : pList) {
                 ProjectSiteDTO dto = new ProjectSiteDTO(s);
                 for (ProjectSiteTaskDTO pst : pstList) {
@@ -287,6 +314,7 @@ public class ListUtil {
                         dto.getProjectSiteTaskList().add(pst);
                     }
                 }
+                
                 for (ProjectSiteStaffDTO st : staffList) {
                     if (Objects.equals(st.getProjectSiteID(), dto.getProjectSiteID())) {
                         for (ProjectSiteTaskDTO pst : pstList) {
@@ -299,8 +327,7 @@ public class ListUtil {
                                 }
                             }
                         }
-                        
-                        
+                                               
                         dto.getProjectSiteStaffList().add(st);
                     }
                 }
@@ -315,7 +342,7 @@ public class ListUtil {
         return list;
     }
 
-    private List<ProjectSiteTaskDTO> getSiteTasksByCompany(Integer companyID) throws DataException {
+    public List<ProjectSiteTaskDTO> getSiteTasksByCompany(Integer companyID) throws DataException {
         List<ProjectSiteTaskDTO> list = new ArrayList<>();
         try {
             Query q = em.createNamedQuery("ProjectSiteTask.findByCompany", ProjectSiteTask.class);

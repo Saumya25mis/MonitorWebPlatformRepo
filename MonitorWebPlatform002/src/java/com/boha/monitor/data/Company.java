@@ -36,6 +36,12 @@ import javax.validation.constraints.Size;
             query = "SELECT c FROM Company c WHERE c.companyName = :companyName")})
 public class Company implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
+    private List<Task> taskList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
+    private List<ProjectStatusType> projectStatusTypeList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
+    private List<TaskStatus> taskStatusList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
     private List<CompanyClient> companyClientList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
     private List<Beneficiary> beneficiaryList;
@@ -43,8 +49,7 @@ public class Company implements Serializable {
     private List<InvoiceCode> invoiceCodeList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
     private List<CheckPoint> checkPointList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
-    private List<Executive> executiveList;
+    
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
     private List<GcmDevice> gcmDeviceList;
     @OneToMany(mappedBy = "company")
@@ -146,13 +151,7 @@ public class Company implements Serializable {
         this.gcmDeviceList = gcmDeviceList;
     }
 
-    public List<Executive> getExecutiveList() {
-        return executiveList;
-    }
-
-    public void setExecutiveList(List<Executive> executiveList) {
-        this.executiveList = executiveList;
-    }
+   
 
     public List<CompanyClient> getCompanyClientList() {
         return companyClientList;
@@ -184,6 +183,30 @@ public class Company implements Serializable {
 
     public void setCheckPointList(List<CheckPoint> checkPointList) {
         this.checkPointList = checkPointList;
+    }
+
+    public List<Task> getTaskList() {
+        return taskList;
+    }
+
+    public void setTaskList(List<Task> taskList) {
+        this.taskList = taskList;
+    }
+
+    public List<ProjectStatusType> getProjectStatusTypeList() {
+        return projectStatusTypeList;
+    }
+
+    public void setProjectStatusTypeList(List<ProjectStatusType> projectStatusTypeList) {
+        this.projectStatusTypeList = projectStatusTypeList;
+    }
+
+    public List<TaskStatus> getTaskStatusList() {
+        return taskStatusList;
+    }
+
+    public void setTaskStatusList(List<TaskStatus> taskStatusList) {
+        this.taskStatusList = taskStatusList;
     }
     
 }

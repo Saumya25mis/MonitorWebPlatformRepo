@@ -17,7 +17,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -26,7 +25,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 /**
  *
@@ -42,26 +40,22 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "ProjectSiteTask.findByProject", 
             query = "SELECT p FROM ProjectSiteTask p where p.projectSite.project.projectID = :projectID order by p.projectSite.projectSiteName"),
     @NamedQuery(name = "ProjectSiteTask.findByProjectSite", 
-            query = "SELECT p FROM ProjectSiteTask p WHERE p.projectSite.projectSiteID = :projectSiteID order by p.dateRegistered desc"),
+            query = "SELECT p FROM ProjectSiteTask p "
+                    + "WHERE p.projectSite.projectSiteID = :projectSiteID order by p.dateRegistered desc"),
     @NamedQuery(name = "ProjectSiteTask.findByTaskName", 
             query = "SELECT p FROM ProjectSiteTask p WHERE p.taskName = :name and p.projectSite.projectSiteID = :projectSiteID"),
     @NamedQuery(name = "ProjectSiteTask.findByDateRegistered", query = "SELECT p FROM ProjectSiteTask p WHERE p.dateRegistered = :dateRegistered")})
 public class ProjectSiteTask implements Serializable {
+    @JoinColumn(name = "taskID", referencedColumnName = "taskID")
+    @ManyToOne(optional = false)
+    private Task task;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "projectSiteTaskID")
     private Integer projectSiteTaskID;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 45)
-    @Column(name = "taskName")
-    private String taskName;
-    @Lob
-    @Size(max = 65535)
-    @Column(name = "taskDescription")
-    private String taskDescription;
+   
     @Basic(optional = false)
     @NotNull
     @Column(name = "dateRegistered")
@@ -80,11 +74,7 @@ public class ProjectSiteTask implements Serializable {
         this.projectSiteTaskID = projectSiteTaskID;
     }
 
-    public ProjectSiteTask(Integer projectSiteTaskID, String taskName, Date dateRegistered) {
-        this.projectSiteTaskID = projectSiteTaskID;
-        this.taskName = taskName;
-        this.dateRegistered = dateRegistered;
-    }
+   
 
     public Integer getProjectSiteTaskID() {
         return projectSiteTaskID;
@@ -94,21 +84,7 @@ public class ProjectSiteTask implements Serializable {
         this.projectSiteTaskID = projectSiteTaskID;
     }
 
-    public String getTaskName() {
-        return taskName;
-    }
-
-    public void setTaskName(String taskName) {
-        this.taskName = taskName;
-    }
-
-    public String getTaskDescription() {
-        return taskDescription;
-    }
-
-    public void setTaskDescription(String taskDescription) {
-        this.taskDescription = taskDescription;
-    }
+   
 
     public Date getDateRegistered() {
         return dateRegistered;
@@ -124,6 +100,14 @@ public class ProjectSiteTask implements Serializable {
 
     public void setProjectSite(ProjectSite projectSite) {
         this.projectSite = projectSite;
+    }
+
+    public Task getTask() {
+        return task;
+    }
+
+    public void setTask(Task task) {
+        this.task = task;
     }
 
 
@@ -159,5 +143,7 @@ public class ProjectSiteTask implements Serializable {
     public String toString() {
         return "com.boha.monitor.data.ProjectSiteTask[ projectSiteTaskID=" + projectSiteTaskID + " ]";
     }
+
+   
     
 }

@@ -25,6 +25,7 @@ public class BeneficiaryDTO implements Serializable {
     private Date dateRegistered;
     private ProjectSiteDTO projectSite;
     private CompanyDTO company;
+    private TownshipDTO township;
 
     public BeneficiaryDTO() {
     }
@@ -119,6 +120,14 @@ public class BeneficiaryDTO implements Serializable {
 
     public void setiDNumber(String iDNumber) {
         this.iDNumber = iDNumber;
+    }
+
+    public TownshipDTO getTownship() {
+        return township;
+    }
+
+    public void setTownship(TownshipDTO township) {
+        this.township = township;
     }
 
    

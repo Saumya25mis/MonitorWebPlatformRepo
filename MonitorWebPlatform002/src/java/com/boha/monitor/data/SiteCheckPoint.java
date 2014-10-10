@@ -35,16 +35,16 @@ import javax.validation.constraints.NotNull;
     @NamedQuery(name = "SiteCheckPoint.findByCheckPointID", query = "SELECT s FROM SiteCheckPoint s WHERE s.checkPointID = :checkPointID"),
     @NamedQuery(name = "SiteCheckPoint.findByDateRegistered", query = "SELECT s FROM SiteCheckPoint s WHERE s.dateRegistered = :dateRegistered")})
 public class SiteCheckPoint implements Serializable {
+    @JoinColumn(name = "checkPointID", referencedColumnName = "checkPointID")
+    @ManyToOne(optional = false)
+    private CheckPoint checkPoint;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "siteCheckPointID")
     private Integer siteCheckPointID;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "checkPointID")
-    private int checkPointID;
+   
     @Basic(optional = false)
     @NotNull
     @Column(name = "dateRegistered")
@@ -67,11 +67,7 @@ public class SiteCheckPoint implements Serializable {
         this.siteCheckPointID = siteCheckPointID;
     }
 
-    public SiteCheckPoint(Integer siteCheckPointID, int checkPointID, Date dateRegistered) {
-        this.siteCheckPointID = siteCheckPointID;
-        this.checkPointID = checkPointID;
-        this.dateRegistered = dateRegistered;
-    }
+  
 
     public Integer getSiteCheckPointID() {
         return siteCheckPointID;
@@ -81,13 +77,15 @@ public class SiteCheckPoint implements Serializable {
         this.siteCheckPointID = siteCheckPointID;
     }
 
-    public int getCheckPointID() {
-        return checkPointID;
+    public CheckPoint getCheckPoint() {
+        return checkPoint;
     }
 
-    public void setCheckPointID(int checkPointID) {
-        this.checkPointID = checkPointID;
+    public void setCheckPoint(CheckPoint checkPoint) {
+        this.checkPoint = checkPoint;
     }
+
+ 
 
     public Date getDateRegistered() {
         return dateRegistered;
@@ -145,5 +143,6 @@ public class SiteCheckPoint implements Serializable {
     public String toString() {
         return "com.boha.monitor.data.SiteCheckPoint[ siteCheckPointID=" + siteCheckPointID + " ]";
     }
+
     
 }

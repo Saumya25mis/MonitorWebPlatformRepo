@@ -37,7 +37,6 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "Province.findByLatitude", query = "SELECT p FROM Province p WHERE p.latitude = :latitude"),
     @NamedQuery(name = "Province.findByLongitude", query = "SELECT p FROM Province p WHERE p.longitude = :longitude")})
 public class Province implements Serializable {
-    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "latitude")
     private Double latitude;
     @Column(name = "longitude")
@@ -57,7 +56,7 @@ public class Province implements Serializable {
     private List<City> cityList;
     @JoinColumn(name = "countryID", referencedColumnName = "countryID")
     @ManyToOne(optional = false)
-    private Country countryID;
+    private Country country;
 
     public Province() {
     }
@@ -98,13 +97,15 @@ public class Province implements Serializable {
         this.cityList = cityList;
     }
 
-    public Country getCountryID() {
-        return countryID;
+    public Country getCountry() {
+        return country;
     }
 
-    public void setCountryID(Country countryID) {
-        this.countryID = countryID;
+    public void setCountry(Country country) {
+        this.country = country;
     }
+
+  
 
     @Override
     public int hashCode() {

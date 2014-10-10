@@ -3,71 +3,33 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
-package com.boha.monitor.data;
+package com.boha.monitor.dto;
 
 import java.io.Serializable;
 import java.util.List;
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 /**
  *
  * @author aubreyM
  */
-@Entity
-@Table(name = "country")
-@NamedQueries({
-    @NamedQuery(name = "Country.findAll", query = "SELECT c FROM Country c"),
-    @NamedQuery(name = "Country.findByCountryID", query = "SELECT c FROM Country c WHERE c.countryID = :countryID"),
-    @NamedQuery(name = "Country.findByCountryName", query = "SELECT c FROM Country c WHERE c.countryName = :countryName"),
-    @NamedQuery(name = "Country.findByCountryCode", query = "SELECT c FROM Country c WHERE c.countryCode = :countryCode"),
-    @NamedQuery(name = "Country.findByLatitude", query = "SELECT c FROM Country c WHERE c.latitude = :latitude"),
-    @NamedQuery(name = "Country.findByLongitude", query = "SELECT c FROM Country c WHERE c.longitude = :longitude")})
-public class Country implements Serializable {
-    @Column(name = "latitude")
+public class CountryDTO implements Serializable {
+
     private Double latitude;
-    @Column(name = "longitude")
     private Double longitude;
     private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "countryID")
     private Integer countryID;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 255)
-    @Column(name = "countryName")
     private String countryName;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 10)
-    @Column(name = "countryCode")
     private String countryCode;
-    
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "country")
-    private List<Province> provinceList;
+    private List<ProvinceDTO> provinceList;
 
-    public Country() {
+    public CountryDTO() {
     }
 
-    public Country(Integer countryID) {
+    public CountryDTO(Integer countryID) {
         this.countryID = countryID;
     }
 
-    public Country(Integer countryID, String countryName, String countryCode, double latitude, double longitude) {
+    public CountryDTO(Integer countryID, String countryName, String countryCode, double latitude, double longitude) {
         this.countryID = countryID;
         this.countryName = countryName;
         this.countryCode = countryCode;
@@ -99,12 +61,11 @@ public class Country implements Serializable {
         this.countryCode = countryCode;
     }
 
-
-    public List<Province> getProvinceList() {
+    public List<ProvinceDTO> getProvinceList() {
         return provinceList;
     }
 
-    public void setProvinceList(List<Province> provinceList) {
+    public void setProvinceList(List<ProvinceDTO> provinceList) {
         this.provinceList = provinceList;
     }
 
@@ -118,10 +79,10 @@ public class Country implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Country)) {
+        if (!(object instanceof CountryDTO)) {
             return false;
         }
-        Country other = (Country) object;
+        CountryDTO other = (CountryDTO) object;
         if ((this.countryID == null && other.countryID != null) || (this.countryID != null && !this.countryID.equals(other.countryID))) {
             return false;
         }
@@ -148,5 +109,5 @@ public class Country implements Serializable {
     public void setLongitude(Double longitude) {
         this.longitude = longitude;
     }
-    
+
 }

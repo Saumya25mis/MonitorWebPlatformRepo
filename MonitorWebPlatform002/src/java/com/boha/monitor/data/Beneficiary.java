@@ -24,6 +24,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
@@ -43,9 +44,22 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "Beneficiary.findByCellphone", query = "SELECT b FROM Beneficiary b WHERE b.cellphone = :cellphone"),
     @NamedQuery(name = "Beneficiary.findByDateRegistered", query = "SELECT b FROM Beneficiary b WHERE b.dateRegistered = :dateRegistered")})
 public class Beneficiary implements Serializable {
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "amountAuthorized")
+    private double amountAuthorized;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "amountPaid")
+    private double amountPaid;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "phbDate")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date phbDate;
     @JoinColumn(name = "townshipID", referencedColumnName = "townshipID")
     @ManyToOne(optional = false)
-    private Township townshipID;
+    private Township township;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "beneficiary")
     private List<HappyLetter> happyLetterList;
     private static final long serialVersionUID = 1L;
@@ -211,12 +225,37 @@ public class Beneficiary implements Serializable {
         this.happyLetterList = happyLetterList;
     }
 
-    public Township getTownshipID() {
-        return townshipID;
+    public Township getTownship() {
+        return township;
     }
 
-    public void setTownshipID(Township townshipID) {
-        this.townshipID = townshipID;
+    public void setTownship(Township township) {
+        this.township = township;
     }
+
+    public double getAmountAuthorized() {
+        return amountAuthorized;
+    }
+
+    public void setAmountAuthorized(double amountAuthorized) {
+        this.amountAuthorized = amountAuthorized;
+    }
+
+    public double getAmountPaid() {
+        return amountPaid;
+    }
+
+    public void setAmountPaid(double amountPaid) {
+        this.amountPaid = amountPaid;
+    }
+
+    public Date getPhbDate() {
+        return phbDate;
+    }
+
+    public void setPhbDate(Date phbDate) {
+        this.phbDate = phbDate;
+    }
+
     
 }

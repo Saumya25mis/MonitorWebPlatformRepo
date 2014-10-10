@@ -15,6 +15,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -33,6 +35,9 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "TaskStatus.findByTaskStatusID", query = "SELECT t FROM TaskStatus t WHERE t.taskStatusID = :taskStatusID"),
     @NamedQuery(name = "TaskStatus.findByTaskStatusName", query = "SELECT t FROM TaskStatus t WHERE t.taskStatusName = :taskStatusName")})
 public class TaskStatus implements Serializable {
+    @JoinColumn(name = "companyID", referencedColumnName = "companyID")
+    @ManyToOne(optional = false)
+    private Company company;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -107,5 +112,14 @@ public class TaskStatus implements Serializable {
     public String toString() {
         return "com.boha.monitor.data.TaskStatus[ taskStatusID=" + taskStatusID + " ]";
     }
+
+    public Company getCompany() {
+        return company;
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
+    }
+
     
 }

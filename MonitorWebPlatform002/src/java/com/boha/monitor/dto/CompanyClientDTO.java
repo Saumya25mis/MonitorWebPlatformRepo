@@ -6,6 +6,7 @@
 
 package com.boha.monitor.dto;
 
+import com.boha.monitor.data.CompanyClient;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -25,8 +26,11 @@ public class CompanyClientDTO implements Serializable {
     public CompanyClientDTO() {
     }
 
-    public CompanyClientDTO(Integer companyClientID) {
-        this.companyClientID = companyClientID;
+    public CompanyClientDTO(CompanyClient a) {
+        this.companyClientID = a.getCompanyClientID();
+        dateRegistered = a.getDateRegistered();
+        client = new ClientDTO(a.getClient());
+        company = new CompanyDTO(a.getCompany());
     }
 
     public Integer getCompanyClientID() {

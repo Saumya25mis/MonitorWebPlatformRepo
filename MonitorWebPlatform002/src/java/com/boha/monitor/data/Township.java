@@ -7,7 +7,6 @@
 package com.boha.monitor.data;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -22,8 +21,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -40,7 +37,6 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "Township.findByLatitude", query = "SELECT t FROM Township t WHERE t.latitude = :latitude"),
     @NamedQuery(name = "Township.findByLongitude", query = "SELECT t FROM Township t WHERE t.longitude = :longitude")})
 public class Township implements Serializable {
-    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "latitude")
     private Double latitude;
     @Column(name = "longitude")
@@ -58,8 +54,8 @@ public class Township implements Serializable {
     private String townshipName;
     @JoinColumn(name = "cityID", referencedColumnName = "cityID")
     @ManyToOne(optional = false)
-    private City cityID;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "townshipID")
+    private City city;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "township")
     private List<Beneficiary> beneficiaryList;
 
     public Township() {
@@ -92,14 +88,14 @@ public class Township implements Serializable {
         this.townshipName = townshipName;
     }
 
-
-    public City getCityID() {
-        return cityID;
+    public City getCity() {
+        return city;
     }
 
-    public void setCityID(City cityID) {
-        this.cityID = cityID;
+    public void setCity(City city) {
+        this.city = city;
     }
+
 
     public List<Beneficiary> getBeneficiaryList() {
         return beneficiaryList;

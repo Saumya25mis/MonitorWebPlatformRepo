@@ -6,6 +6,7 @@
 
 package com.boha.monitor.dto;
 
+import com.boha.monitor.data.Invoice;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -28,8 +29,12 @@ public class InvoiceDTO implements Serializable {
     public InvoiceDTO() {
     }
 
-    public InvoiceDTO(Integer invoiceID) {
-        this.invoiceID = invoiceID;
+    public InvoiceDTO(Invoice a) {
+        this.invoiceID = a.getInvoiceID();
+        invoiceDate = a.getInvoiceDate();
+        invoiceDueDate = a.getInvoiceDueDate();
+        dateRegistered = a.getDateRegistered();
+        companyClient = new CompanyClientDTO(a.getCompanyClient());
     }
 
     public InvoiceDTO(Integer invoiceID, Date invoiceDate) {
