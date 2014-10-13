@@ -16,7 +16,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -33,14 +35,23 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(name = "client")
 @NamedQueries({
-    @NamedQuery(name = "Client.findAll", query = "SELECT c FROM Client c"),
+    @NamedQuery(name = "Client.findByCompany", 
+            query = "SELECT c FROM Client c where c.company.companyID = :companyID order by c.clientName"),
     @NamedQuery(name = "Client.findByClientID", query = "SELECT c FROM Client c WHERE c.clientID = :clientID"),
-    @NamedQuery(name = "Client.findByClientName", query = "SELECT c FROM Client c WHERE c.clientName = :clientName"),
+    @NamedQuery(name = "Client.findByClientNameInCompany", 
+            query = "SELECT c FROM Client c WHERE c.clientName = :clientName and c.company.companyID = :companyID"),
     @NamedQuery(name = "Client.findByEmail", query = "SELECT c FROM Client c WHERE c.email = :email"),
     @NamedQuery(name = "Client.findByCellphone", query = "SELECT c FROM Client c WHERE c.cellphone = :cellphone"),
     @NamedQuery(name = "Client.findByPostCode", query = "SELECT c FROM Client c WHERE c.postCode = :postCode"),
     @NamedQuery(name = "Client.findByDateRegistered", query = "SELECT c FROM Client c WHERE c.dateRegistered = :dateRegistered")})
 public class Client implements Serializable {
+    @JoinColumn(name = "companyID", referencedColumnName = "companyID")
+    @ManyToOne(optional = false)
+    private Company company;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "client")
+    private List<Invoice> invoiceList;
+    @OneToMany(mappedBy = "client")
+    private List<Project> projectList;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -70,9 +81,7 @@ public class Client implements Serializable {
     @Column(name = "dateRegistered")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateRegistered;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "client")
-    private List<CompanyClient> companyClientList;
-
+    
     public Client() {
     }
 
@@ -142,14 +151,6 @@ public class Client implements Serializable {
         this.dateRegistered = dateRegistered;
     }
 
-    public List<CompanyClient> getCompanyClientList() {
-        return companyClientList;
-    }
-
-    public void setCompanyClientList(List<CompanyClient> companyClientList) {
-        this.companyClientList = companyClientList;
-    }
-
     @Override
     public int hashCode() {
         int hash = 0;
@@ -173,6 +174,31 @@ public class Client implements Serializable {
     @Override
     public String toString() {
         return "com.boha.monitor.data.Client[ clientID=" + clientID + " ]";
+    }
+
+    public List<Project> getProjectList() {
+        return projectList;
+    }
+
+    public void setProjectList(List<Project> projectList) {
+        this.projectList = projectList;
+    }
+
+    public Company getCompany() {
+        return company;
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
+    }
+
+   
+    public List<Invoice> getInvoiceList() {
+        return invoiceList;
+    }
+
+    public void setInvoiceList(List<Invoice> invoiceList) {
+        this.invoiceList = invoiceList;
     }
     
 }

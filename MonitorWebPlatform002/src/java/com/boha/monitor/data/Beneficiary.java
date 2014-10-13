@@ -34,12 +34,16 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(name = "beneficiary")
 @NamedQueries({
-    @NamedQuery(name = "Beneficiary.findAll", query = "SELECT b FROM Beneficiary b"),
+    @NamedQuery(name = "Beneficiary.findByIDNumberInCompany", 
+            query = "SELECT b FROM Beneficiary b "
+                    + "WHERE b.iDNumber = :IDNumber and b.company.companyID = :companyID"),
     @NamedQuery(name = "Beneficiary.findByBeneficiaryID", query = "SELECT b FROM Beneficiary b WHERE b.beneficiaryID = :beneficiaryID"),
     @NamedQuery(name = "Beneficiary.findByFirstName", query = "SELECT b FROM Beneficiary b WHERE b.firstName = :firstName"),
     @NamedQuery(name = "Beneficiary.findByLastName", query = "SELECT b FROM Beneficiary b WHERE b.lastName = :lastName"),
     @NamedQuery(name = "Beneficiary.findByMiddleName", query = "SELECT b FROM Beneficiary b WHERE b.middleName = :middleName"),
-    @NamedQuery(name = "Beneficiary.findByIDNumber", query = "SELECT b FROM Beneficiary b WHERE b.iDNumber = :iDNumber"),
+    @NamedQuery(name = "Beneficiary.findByIDNumber", 
+            query = "SELECT b FROM Beneficiary b "
+                    + "WHERE b.iDNumber = :iDNumber"),
     @NamedQuery(name = "Beneficiary.findByEmail", query = "SELECT b FROM Beneficiary b WHERE b.email = :email"),
     @NamedQuery(name = "Beneficiary.findByCellphone", query = "SELECT b FROM Beneficiary b WHERE b.cellphone = :cellphone"),
     @NamedQuery(name = "Beneficiary.findByDateRegistered", query = "SELECT b FROM Beneficiary b WHERE b.dateRegistered = :dateRegistered")})

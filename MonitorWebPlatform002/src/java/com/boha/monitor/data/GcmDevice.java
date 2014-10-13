@@ -72,6 +72,11 @@ public class GcmDevice implements Serializable {
     @Size(max = 100)
     @Column(name = "model")
     private String model;
+    
+    @Size(max = 100)
+    @Column(name = "androidVersion")
+    private String androidVersion;
+    
     @Size(max = 100)
     @Column(name = "product")
     private String product;
@@ -144,6 +149,14 @@ public class GcmDevice implements Serializable {
 
     public Integer getMessageCount() {
         return messageCount;
+    }
+
+    public String getAndroidVersion() {
+        return androidVersion;
+    }
+
+    public void setAndroidVersion(String androidVersion) {
+        this.androidVersion = androidVersion;
     }
 
     public void setMessageCount(Integer messageCount) {

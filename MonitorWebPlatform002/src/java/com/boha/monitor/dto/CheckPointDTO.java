@@ -17,13 +17,13 @@ public class CheckPointDTO implements Serializable {
     private static final long serialVersionUID = 1L;
     private Integer checkPointID;
     private String checkPointName, description;
-    private CompanyDTO company;
+    private Integer companyID;
 
     public CheckPointDTO(CheckPoint a) {
         checkPointID = a.getCheckPointID();
         checkPointName = a.getCheckPointName();
         description = a.getDescription();
-        company = new CompanyDTO(a.getCompany());
+        companyID = a.getCompany().getCompanyID();
     }
 
     public CheckPointDTO(Integer checkPointID) {
@@ -54,12 +54,12 @@ public class CheckPointDTO implements Serializable {
         this.checkPointName = checkPointName;
     }
 
-    public CompanyDTO getCompany() {
-        return company;
+    public Integer getCompanyID() {
+        return companyID;
     }
 
-    public void setCompany(CompanyDTO company) {
-        this.company = company;
+    public void setCompanyID(Integer companyID) {
+        this.companyID = companyID;
     }
 
   

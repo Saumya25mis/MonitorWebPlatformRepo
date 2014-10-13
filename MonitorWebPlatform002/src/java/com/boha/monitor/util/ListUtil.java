@@ -6,9 +6,12 @@
 package com.boha.monitor.util;
 
 import com.boha.monitor.data.CheckPoint;
+import com.boha.monitor.data.City;
+import com.boha.monitor.data.Client;
 import com.boha.monitor.data.Company;
 import com.boha.monitor.data.CompanyStaff;
 import com.boha.monitor.data.CompanyStaffType;
+import com.boha.monitor.data.Country;
 import com.boha.monitor.data.InvoiceCode;
 import com.boha.monitor.data.Project;
 import com.boha.monitor.data.ProjectDiaryRecord;
@@ -17,11 +20,17 @@ import com.boha.monitor.data.ProjectSiteStaff;
 import com.boha.monitor.data.ProjectSiteTask;
 import com.boha.monitor.data.ProjectSiteTaskStatus;
 import com.boha.monitor.data.ProjectStatusType;
+import com.boha.monitor.data.Province;
+import com.boha.monitor.data.Task;
 import com.boha.monitor.data.TaskStatus;
+import com.boha.monitor.data.Township;
 import com.boha.monitor.dto.CheckPointDTO;
+import com.boha.monitor.dto.CityDTO;
+import com.boha.monitor.dto.ClientDTO;
 import com.boha.monitor.dto.CompanyDTO;
 import com.boha.monitor.dto.CompanyStaffDTO;
 import com.boha.monitor.dto.CompanyStaffTypeDTO;
+import com.boha.monitor.dto.CountryDTO;
 import com.boha.monitor.dto.InvoiceCodeDTO;
 import com.boha.monitor.dto.ProjectDTO;
 import com.boha.monitor.dto.ProjectDiaryRecordDTO;
@@ -30,7 +39,10 @@ import com.boha.monitor.dto.ProjectSiteStaffDTO;
 import com.boha.monitor.dto.ProjectSiteTaskDTO;
 import com.boha.monitor.dto.ProjectSiteTaskStatusDTO;
 import com.boha.monitor.dto.ProjectStatusTypeDTO;
+import com.boha.monitor.dto.ProvinceDTO;
+import com.boha.monitor.dto.TaskDTO;
 import com.boha.monitor.dto.TaskStatusDTO;
+import com.boha.monitor.dto.TownshipDTO;
 import com.boha.monitor.dto.transfer.ResponseDTO;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,11 +67,35 @@ public class ListUtil {
     @PersistenceContext
     EntityManager em;
 
-    
-    
+    public ResponseDTO getCountryList() {
+        ResponseDTO resp = new ResponseDTO();
+        
+        Query q = em.createNamedQuery("Country.findAll", Country.class);
+        List<Country> list = q.getResultList();
+        for (Country cp : list) {
+            CountryDTO cn = new CountryDTO(cp);
+            for (Province p : cp.getProvinceList()) {
+                ProvinceDTO province = new ProvinceDTO(p);
+                for (City city : p.getCityList()) {
+                    CityDTO cityDTO = new CityDTO(city);
+                    for (Township ts : city.getTownshipList()) {
+                        cityDTO.getTownshipList().add(new TownshipDTO(ts));
+                    }
+                    province.getCityList().add(cityDTO);
+                }
+                cn.getProvinceList().add(province);
+            }
+            resp.getCountryList().add(cn);
+        }
+        
+
+        return resp;
+    }
+
     public ResponseDTO getCheckPointList(Integer companyID) {
         ResponseDTO resp = new ResponseDTO();
-        Query q = em.createNamedQuery("CheckPoint.findAll", CheckPoint.class);
+        Query q = em.createNamedQuery("CheckPoint.findByCompany", CheckPoint.class);
+        q.setParameter("companyID", companyID);
         List<CheckPoint> list = q.getResultList();
         for (CheckPoint cp : list) {
             resp.getCheckPointList().add(new CheckPointDTO(cp));
@@ -67,6 +103,7 @@ public class ListUtil {
 
         return resp;
     }
+
     public ResponseDTO getInvoiceCodeList(Integer companyID) {
         ResponseDTO resp = new ResponseDTO();
         Query q = em.createNamedQuery("InvoiceCode.findByCompany", InvoiceCode.class);
@@ -114,11 +151,12 @@ public class ListUtil {
         return resp;
     }
 
-    public ResponseDTO getTaskStatusList() throws DataException {
+    public ResponseDTO getTaskStatusList(Integer companyID) throws DataException {
         ResponseDTO resp = new ResponseDTO();
 
         try {
-            Query q = em.createNamedQuery("TaskStatus.findAll", TaskStatus.class);
+            Query q = em.createNamedQuery("TaskStatus.findByCompany", TaskStatus.class);
+            q.setParameter("companyID", companyID);
             List<TaskStatus> sList = q.getResultList();
             for (TaskStatus cs : sList) {
                 resp.getTaskStatusList().add(new TaskStatusDTO(cs));
@@ -132,11 +170,12 @@ public class ListUtil {
         return resp;
     }
 
-    public ResponseDTO getProjectStatusList() throws DataException {
+    public ResponseDTO getProjectStatusList(Integer companyID) throws DataException {
         ResponseDTO resp = new ResponseDTO();
 
         try {
-            Query q = em.createNamedQuery("ProjectStatusType.findAll", ProjectStatusType.class);
+            Query q = em.createNamedQuery("ProjectStatusType.findByCompany", ProjectStatusType.class);
+            q.setParameter("companyID", companyID);
             List<ProjectStatusType> sList = q.getResultList();
             for (ProjectStatusType cs : sList) {
                 resp.getProjectStatusTypeList().add(new ProjectStatusTypeDTO(cs));
@@ -261,14 +300,57 @@ public class ListUtil {
 
     public ResponseDTO getCompanyData(Integer companyID) throws DataException {
         ResponseDTO resp = new ResponseDTO();
-        CompanyDTO c = new CompanyDTO(em.find(Company.class, companyID));
         
+        CompanyDTO c = new CompanyDTO(em.find(Company.class, companyID));
+
         c.setCompanyStaffList(getCompanyStaffList(companyID).getCompanyStaffList());
-        c.setProjectStatusTypeList(getProjectStatusList().getProjectStatusTypeList());
-        c.setTaskStatusList(getTaskStatusList().getTaskStatusList()); 
+        c.setProjectStatusTypeList(getProjectStatusList(companyID).getProjectStatusTypeList());
+        c.setTaskStatusList(getTaskStatusList(companyID).getTaskStatusList());
         c.setProjectList(getProjectsByCompany(companyID));
+        c.setClientList(getClientsByCompany(companyID));
+        c.setTaskList(getTasksByCompany(companyID));
+        c.setCheckPointList(getCheckPointList(companyID).getCheckPointList());
+
         resp.setCompany(c);
-        resp.setCheckPointList(getCheckPointList(companyID).getCheckPointList());
+        resp.setCountryList(getCountryList().getCountryList());
+        return resp;
+    }
+
+    public List<TaskDTO> getTasksByCompany(Integer companyID) throws DataException {
+        List<TaskDTO> resp = new ArrayList<>();
+
+        try {
+            Query q = em.createNamedQuery("Task.findByCompany", Task.class);
+            q.setParameter("companyID", companyID);
+            List<Task> pList = q.getResultList();
+            for (Task cc : pList) {
+                resp.add(new TaskDTO(cc));
+            }
+            log.log(Level.INFO, "company tasks found: {0}", resp.size());
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "Failed", e);
+            throw new DataException("Failed to get company taskss\n" + getErrorString(e));
+        }
+
+        return resp;
+    }
+
+    public List<ClientDTO> getClientsByCompany(Integer companyID) throws DataException {
+        List<ClientDTO> resp = new ArrayList<>();
+
+        try {
+            Query q = em.createNamedQuery("Client.findByCompany", Client.class);
+            q.setParameter("companyID", companyID);
+            List<Client> pList = q.getResultList();
+            for (Client cc : pList) {
+                resp.add(new ClientDTO(cc));
+            }
+            log.log(Level.INFO, "company clients found: {0}", resp.size());
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "Failed", e);
+            throw new DataException("Failed to get company clients\n" + getErrorString(e));
+        }
+
         return resp;
     }
 
@@ -306,7 +388,7 @@ public class ListUtil {
             List<ProjectSite> pList = q.getResultList();
             List<ProjectSiteTaskDTO> pstList = getSiteTasksByCompany(companyID);
             List<ProjectSiteStaffDTO> staffList = getSiteStaffByCompany(companyID);
-            
+
             for (ProjectSite s : pList) {
                 ProjectSiteDTO dto = new ProjectSiteDTO(s);
                 for (ProjectSiteTaskDTO pst : pstList) {
@@ -314,12 +396,12 @@ public class ListUtil {
                         dto.getProjectSiteTaskList().add(pst);
                     }
                 }
-                
+
                 for (ProjectSiteStaffDTO st : staffList) {
                     if (Objects.equals(st.getProjectSiteID(), dto.getProjectSiteID())) {
                         for (ProjectSiteTaskDTO pst : pstList) {
                             if (Objects.equals(pst.getProjectSiteID(), st.getProjectSiteID())) {
-                                for (ProjectSiteTaskStatusDTO x: pst.getProjectSiteTaskStatusList()) {
+                                for (ProjectSiteTaskStatusDTO x : pst.getProjectSiteTaskStatusList()) {
                                     if (Objects.equals(x.getProjectSiteStaffID(), st.getProjectSiteStaffID())) {
                                         st.getProjectSiteTaskStatusList().add(x);
                                         log.log(Level.INFO, "status loaded {0} {1}", new Object[]{x.getStaffName(), x.getTaskStatus().getTaskStatusName()});
@@ -327,7 +409,7 @@ public class ListUtil {
                                 }
                             }
                         }
-                                               
+
                         dto.getProjectSiteStaffList().add(st);
                     }
                 }

@@ -42,6 +42,19 @@ import javax.validation.constraints.Size;
 public class Invoice implements Serializable {
     @Basic(optional = false)
     @NotNull
+    @Column(name = "totalAmount")
+    private double totalAmount;
+    @JoinColumn(name = "clientID", referencedColumnName = "clientID")
+    @ManyToOne(optional = false)
+    private Client client;
+    @JoinColumn(name = "companyID", referencedColumnName = "companyID")
+    @ManyToOne(optional = false)
+    private Company company;
+    @JoinColumn(name = "projectID", referencedColumnName = "projectID")
+    @ManyToOne(optional = false)
+    private Project project;
+    @Basic(optional = false)
+    @NotNull
     @Size(min = 1, max = 255)
     @Column(name = "reference")
     private String reference;
@@ -62,9 +75,7 @@ public class Invoice implements Serializable {
     @Column(name = "dateRegistered")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateRegistered;
-    @JoinColumn(name = "companyClientID", referencedColumnName = "companyClientID")
-    @ManyToOne(optional = false)
-    private CompanyClient companyClient;
+   
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "invoice")
     private List<InvoiceItem> invoiceItemList;
     @OneToMany(mappedBy = "invoice")
@@ -73,6 +84,31 @@ public class Invoice implements Serializable {
     public Invoice() {
     }
 
+    public Client getClient() {
+        return client;
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
+    }
+
+    public Company getCompany() {
+        return company;
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
+    }
+
+    public Project getProject() {
+        return project;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
+    }
+
+    
     public Invoice(Integer invoiceID) {
         this.invoiceID = invoiceID;
     }
@@ -113,16 +149,6 @@ public class Invoice implements Serializable {
     public void setDateRegistered(Date dateRegistered) {
         this.dateRegistered = dateRegistered;
     }
-
-    public CompanyClient getCompanyClient() {
-        return companyClient;
-    }
-
-    public void setCompanyClient(CompanyClient companyClient) {
-        this.companyClient = companyClient;
-    }
-
- 
 
     public List<InvoiceItem> getInvoiceItemList() {
         return invoiceItemList;
@@ -172,5 +198,14 @@ public class Invoice implements Serializable {
     public void setReference(String reference) {
         this.reference = reference;
     }
+
+    public double getTotalAmount() {
+        return totalAmount;
+    }
+
+    public void setTotalAmount(double totalAmount) {
+        this.totalAmount = totalAmount;
+    }
+
     
 }

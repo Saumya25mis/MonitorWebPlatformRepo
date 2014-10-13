@@ -31,7 +31,8 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(name = "city")
 @NamedQueries({
-    @NamedQuery(name = "City.findAll", query = "SELECT c FROM City c"),
+    @NamedQuery(name = "City.findByProvince", 
+            query = "SELECT c FROM City c where c.province.provinceID = :provinceID order by c.cityName"),
     @NamedQuery(name = "City.findByCityID", query = "SELECT c FROM City c WHERE c.cityID = :cityID"),
     @NamedQuery(name = "City.findByCityName", query = "SELECT c FROM City c WHERE c.cityName = :cityName"),
     @NamedQuery(name = "City.findByLatitude", query = "SELECT c FROM City c WHERE c.latitude = :latitude"),

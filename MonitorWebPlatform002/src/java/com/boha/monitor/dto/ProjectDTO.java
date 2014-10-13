@@ -22,7 +22,7 @@ public class ProjectDTO implements Serializable {
     private String description;
     private long dateRegistered;
     private Integer completeFlag;
-    private Integer companyID;
+    private Integer companyID, clientID;
     private List<ProjectSiteDTO> projectSiteList = new ArrayList<>();
 
     public ProjectDTO() {
@@ -39,6 +39,17 @@ public class ProjectDTO implements Serializable {
         this.description = a.getDescription();
         this.completeFlag = a.getCompleteFlag();
         this.companyID = a.getCompany().getCompanyID();
+        if (a.getClient() != null) {
+            this.clientID = a.getClient().getClientID();
+        }
+    }
+
+    public Integer getClientID() {
+        return clientID;
+    }
+
+    public void setClientID(Integer clientID) {
+        this.clientID = clientID;
     }
 
     public Integer getProjectID() {

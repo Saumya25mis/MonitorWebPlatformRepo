@@ -52,7 +52,7 @@ public class Province implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "provinceName")
     private String provinceName;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "provinceID")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "province")
     private List<City> cityList;
     @JoinColumn(name = "countryID", referencedColumnName = "countryID")
     @ManyToOne(optional = false)

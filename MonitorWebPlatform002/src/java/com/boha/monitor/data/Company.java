@@ -36,13 +36,16 @@ import javax.validation.constraints.Size;
             query = "SELECT c FROM Company c WHERE c.companyName = :companyName")})
 public class Company implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
+    private List<Client> clientList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
+    private List<Invoice> invoiceList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
     private List<Task> taskList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
     private List<ProjectStatusType> projectStatusTypeList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
     private List<TaskStatus> taskStatusList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
-    private List<CompanyClient> companyClientList;
+   
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
     private List<Beneficiary> beneficiaryList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
@@ -151,16 +154,6 @@ public class Company implements Serializable {
         this.gcmDeviceList = gcmDeviceList;
     }
 
-   
-
-    public List<CompanyClient> getCompanyClientList() {
-        return companyClientList;
-    }
-
-    public void setCompanyClientList(List<CompanyClient> companyClientList) {
-        this.companyClientList = companyClientList;
-    }
-
     public List<Beneficiary> getBeneficiaryList() {
         return beneficiaryList;
     }
@@ -207,6 +200,22 @@ public class Company implements Serializable {
 
     public void setTaskStatusList(List<TaskStatus> taskStatusList) {
         this.taskStatusList = taskStatusList;
+    }
+
+    public List<Client> getClientList() {
+        return clientList;
+    }
+
+    public void setClientList(List<Client> clientList) {
+        this.clientList = clientList;
+    }
+
+    public List<Invoice> getInvoiceList() {
+        return invoiceList;
+    }
+
+    public void setInvoiceList(List<Invoice> invoiceList) {
+        this.invoiceList = invoiceList;
     }
     
 }

@@ -21,7 +21,7 @@ import org.apache.commons.io.IOUtils;
 public class GZipUtility {
 
     static final Gson gson = new Gson();
-    static final int ZIP_THRESHOLD = 512;
+    static final int ZIP_THRESHOLD = 2048;
     private static final Logger logger = Logger.getLogger(GZipUtility.class.getName());
 
     public static ByteBuffer getZippedResponse(ResponseDTO resp) throws IOException {
@@ -29,8 +29,10 @@ public class GZipUtility {
         byte[] bytes = null;
         if (json.length() < ZIP_THRESHOLD) {
             bytes = json.getBytes();
+            logger.log(Level.INFO, "Creating byteBuffer, No need to zip this, size: {0}", json.length());
         } else {
             bytes = getZippedBytes(json);
+            logger.log(Level.INFO, "Creating byteBuffer, unzipped size: {0} packed size: {1}", new Object[]{json.length(), bytes.length});
         }
         ByteBuffer buf = ByteBuffer.wrap(bytes);
         return buf;
@@ -45,7 +47,6 @@ public class GZipUtility {
         IOUtils.closeQuietly(zos);
 
         byte[] bytes = byteArrayOutputStream.toByteArray();
-
         return bytes;
 
     }

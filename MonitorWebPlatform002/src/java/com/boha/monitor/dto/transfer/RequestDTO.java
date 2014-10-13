@@ -6,6 +6,8 @@
 
 package com.boha.monitor.dto.transfer;
 
+import com.boha.monitor.dto.CheckPointDTO;
+import com.boha.monitor.dto.CityDTO;
 import com.boha.monitor.dto.CompanyDTO;
 import com.boha.monitor.dto.CompanyStaffDTO;
 import com.boha.monitor.dto.GcmDeviceDTO;
@@ -16,6 +18,9 @@ import com.boha.monitor.dto.ProjectSiteStaffDTO;
 import com.boha.monitor.dto.ProjectSiteTaskDTO;
 import com.boha.monitor.dto.ProjectSiteTaskStatusDTO;
 import com.boha.monitor.dto.ProjectStatusTypeDTO;
+import com.boha.monitor.dto.TaskDTO;
+import com.boha.monitor.dto.TaskStatusDTO;
+import com.boha.monitor.dto.TownshipDTO;
 import java.io.Serializable;
 
 /**
@@ -25,13 +30,19 @@ import java.io.Serializable;
 public class RequestDTO implements Serializable{
     private Integer requestType, companyID, companyStaffID, projectID, 
             projectSiteID, loginType;
-    private String email, pin;
+    private String email, pin, gcmRegistrationID;
     private CompanyDTO company;
     private CompanyStaffDTO companyStaff;
     private ProjectDTO project;
+    private CityDTO city;
+    private TownshipDTO township;
     private ProjectSiteDTO projectSite;
     private ProjectSiteStaffDTO projectSiteStaff;
     private GcmDeviceDTO gcmDevice;
+    
+    private TaskDTO task;
+    private CheckPointDTO checkPoint;
+    private TaskStatusDTO taskStatus;
     
     private ProjectSiteTaskDTO projectSiteTask;
     private ProjectDiaryRecordDTO projectDiaryRecord;
@@ -62,13 +73,20 @@ public class RequestDTO implements Serializable{
             GET_COMPANY_STAFF = 105,
             GET_TASK_STATUS_LIST = 106,
             GET_COMPANY_STAFF_TYPE_LIST = 107,
-            GET_COMPANY_DATA = 108;
+            GET_COMPANY_DATA = 108,
+            GET_COUNTRY_LIST = 109;
     //login's 
     public static final int 
             LOGIN = 200,
-            LOGIN_OFFICE_ADMIN = 201,
-            LOGIN_EXECUTIVE = 202,
-            LOGIN_PROJECT_STAFF = 203;
+            SEND_GCM_REGISTRATION = 204;
+     //lookups 
+    public static final int 
+            ADD_COMPANY_TASK = 301,
+            ADD_COMPANY_TASK_STATUS = 302,
+            ADD_COMPANY_PROJECT_STATUS_TYPE = 303,
+            ADD_COMPANY_CHECKPOINT = 304,
+            ADD_CITY = 305,
+            ADD_TOWNSHIP = 306;
 
     public static final String COMPANY_DIR = "company";
     public static final String PROJECT_DIR = "project";
@@ -76,6 +94,55 @@ public class RequestDTO implements Serializable{
     public static final String TASK_DIR = "task";
 
     //
+    
+    public TaskDTO getTask() {
+        return task;
+    }
+
+    public void setTask(TaskDTO task) {
+        this.task = task;
+    }
+
+    public CheckPointDTO getCheckPoint() {
+        return checkPoint;
+    }
+
+    public void setCheckPoint(CheckPointDTO checkPoint) {
+        this.checkPoint = checkPoint;
+    }
+
+    public TaskStatusDTO getTaskStatus() {
+        return taskStatus;
+    }
+
+    public void setTaskStatus(TaskStatusDTO taskStatus) {
+        this.taskStatus = taskStatus;
+    }
+
+    public CityDTO getCity() {
+        return city;
+    }
+
+    public void setCity(CityDTO city) {
+        this.city = city;
+    }
+
+    public TownshipDTO getTownship() {
+        return township;
+    }
+
+    public void setTownship(TownshipDTO township) {
+        this.township = township;
+    }
+
+    public String getGcmRegistrationID() {
+        return gcmRegistrationID;
+    }
+
+    public void setGcmRegistrationID(String gcmRegistrationID) {
+        this.gcmRegistrationID = gcmRegistrationID;
+    }
+
     public Integer getLoginType() {
         return loginType;
     }

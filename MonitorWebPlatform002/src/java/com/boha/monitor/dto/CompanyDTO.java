@@ -25,7 +25,7 @@ public class CompanyDTO implements Serializable {
     private List<CompanyStaffDTO> companyStaffList = new ArrayList<>();
     private List<TaskStatusDTO> taskStatusList = new ArrayList<>();
     private List<TaskDTO> taskList = new ArrayList<>();
-    private List<CompanyClientDTO> companyClientList = new ArrayList<>();
+    private List<ClientDTO> clientList = new ArrayList<>();
     private List<CheckPointDTO> checkPointList = new ArrayList<>();
     private List<InvoiceCodeDTO> invoiceCodeList = new ArrayList<>();
     private List<InvoiceDTO> invoiceList = new ArrayList<>();
@@ -49,13 +49,14 @@ public class CompanyDTO implements Serializable {
         this.taskList = taskList;
     }
 
-    public List<CompanyClientDTO> getCompanyClientList() {
-        return companyClientList;
+    public List<ClientDTO> getClientList() {
+        return clientList;
     }
 
-    public void setCompanyClientList(List<CompanyClientDTO> companyClientList) {
-        this.companyClientList = companyClientList;
+    public void setClientList(List<ClientDTO> clientList) {
+        this.clientList = clientList;
     }
+
 
     public List<CheckPointDTO> getCheckPointList() {
         return checkPointList;

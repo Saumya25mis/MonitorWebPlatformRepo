@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.boha.monitor.dto;
 
+import com.boha.monitor.data.Beneficiary;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -14,6 +14,7 @@ import java.util.Date;
  * @author aubreyM
  */
 public class BeneficiaryDTO implements Serializable {
+
     private static final long serialVersionUID = 1L;
     private Integer beneficiaryID;
     private String firstName;
@@ -22,12 +23,34 @@ public class BeneficiaryDTO implements Serializable {
     private String iDNumber;
     private String email;
     private String cellphone;
-    private Date dateRegistered;
+    private Double amountAuthorized, amountPaid;
+    private Date dateRegistered, phbDate;
     private ProjectSiteDTO projectSite;
     private CompanyDTO company;
     private TownshipDTO township;
 
-    public BeneficiaryDTO() {
+    public BeneficiaryDTO(Beneficiary a) {
+        beneficiaryID = a.getBeneficiaryID();
+        firstName = a.getFirstName();
+        middleName = a.getMiddleName();
+        iDNumber = a.getiDNumber();
+        lastName = a.getLastName();
+        email = a.getEmail();
+        cellphone = a.getCellphone();
+        dateRegistered = a.getDateRegistered();
+        phbDate = a.getPhbDate();
+        if (a.getProjectSite() != null) {
+            projectSite = new ProjectSiteDTO(a.getProjectSite());
+        }
+        if (a.getCompany() != null) {
+            company = new CompanyDTO(a.getCompany());
+        }
+        if (a.getTownship() != null) {
+            township = new TownshipDTO(a.getTownship());
+        }
+        amountAuthorized = a.getAmountAuthorized();
+        amountPaid = a.getAmountPaid();
+
     }
 
     public BeneficiaryDTO(Integer beneficiaryID) {
@@ -38,8 +61,32 @@ public class BeneficiaryDTO implements Serializable {
         return beneficiaryID;
     }
 
+    public Double getAmountAuthorized() {
+        return amountAuthorized;
+    }
+
+    public void setAmountAuthorized(Double amountAuthorized) {
+        this.amountAuthorized = amountAuthorized;
+    }
+
+    public Double getAmountPaid() {
+        return amountPaid;
+    }
+
+    public void setAmountPaid(Double amountPaid) {
+        this.amountPaid = amountPaid;
+    }
+
     public void setBeneficiaryID(Integer beneficiaryID) {
         this.beneficiaryID = beneficiaryID;
+    }
+
+    public Date getPhbDate() {
+        return phbDate;
+    }
+
+    public void setPhbDate(Date phbDate) {
+        this.phbDate = phbDate;
     }
 
     public ProjectSiteDTO getProjectSite() {
@@ -130,5 +177,4 @@ public class BeneficiaryDTO implements Serializable {
         this.township = township;
     }
 
-   
 }

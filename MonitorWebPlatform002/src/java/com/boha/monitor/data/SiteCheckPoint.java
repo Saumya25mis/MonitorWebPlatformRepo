@@ -31,9 +31,12 @@ import javax.validation.constraints.NotNull;
 @Table(name = "siteCheckPoint")
 @NamedQueries({
     @NamedQuery(name = "SiteCheckPoint.findAll", query = "SELECT s FROM SiteCheckPoint s"),
-    @NamedQuery(name = "SiteCheckPoint.findBySiteCheckPointID", query = "SELECT s FROM SiteCheckPoint s WHERE s.siteCheckPointID = :siteCheckPointID"),
-    @NamedQuery(name = "SiteCheckPoint.findByCheckPointID", query = "SELECT s FROM SiteCheckPoint s WHERE s.checkPointID = :checkPointID"),
-    @NamedQuery(name = "SiteCheckPoint.findByDateRegistered", query = "SELECT s FROM SiteCheckPoint s WHERE s.dateRegistered = :dateRegistered")})
+    @NamedQuery(name = "SiteCheckPoint.findByCheckPoint", 
+            query = "SELECT s FROM SiteCheckPoint s WHERE s.checkPoint.checkPointID = :checkPointID"),
+    @NamedQuery(name = "SiteCheckPoint.findByProjectSite", 
+            query = "SELECT s FROM SiteCheckPoint s WHERE s.projectSite.projectSiteID = :projectSiteID"),
+    @NamedQuery(name = "SiteCheckPoint.findByDateRegistered", 
+            query = "SELECT s FROM SiteCheckPoint s WHERE s.dateRegistered = :dateRegistered")})
 public class SiteCheckPoint implements Serializable {
     @JoinColumn(name = "checkPointID", referencedColumnName = "checkPointID")
     @ManyToOne(optional = false)

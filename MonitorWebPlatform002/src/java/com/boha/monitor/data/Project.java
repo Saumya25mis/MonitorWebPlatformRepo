@@ -43,6 +43,11 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "Project.findByDateRegistered", query = "SELECT p FROM Project p WHERE p.dateRegistered = :dateRegistered"),
     @NamedQuery(name = "Project.findByCompleteFlag", query = "SELECT p FROM Project p WHERE p.completeFlag = :completeFlag")})
 public class Project implements Serializable {
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "project")
+    private List<Invoice> invoiceList;
+    @JoinColumn(name = "clientID", referencedColumnName = "clientID")
+    @ManyToOne
+    private Client client;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -164,5 +169,22 @@ public class Project implements Serializable {
     public String toString() {
         return "com.boha.monitor.data.Project[ projectID=" + projectID + " ]";
     }
+
+    public Client getClient() {
+        return client;
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
+    }
+
+    public List<Invoice> getInvoiceList() {
+        return invoiceList;
+    }
+
+    public void setInvoiceList(List<Invoice> invoiceList) {
+        this.invoiceList = invoiceList;
+    }
+
     
 }

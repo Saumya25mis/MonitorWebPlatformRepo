@@ -6,6 +6,7 @@
 
 package com.boha.monitor.dto;
 
+import com.boha.monitor.data.InvoiceItem;
 import java.io.Serializable;
 
 /**
@@ -18,11 +19,18 @@ public class InvoiceItemDTO implements Serializable {
     private String description;
     private Integer quantity;
     private Double amount;
-    private InvoiceDTO invoice;
+    private Integer invoiceID;
     private InvoiceCodeDTO invoiceCode;
     private ProjectSiteDTO projectSite;
 
-    public InvoiceItemDTO() {
+    public InvoiceItemDTO(InvoiceItem a) {
+        invoiceItemID = a.getInvoiceItemID();
+        description = a.getDescription();
+        quantity = a.getQuantity();
+        amount = a.getAmount();
+        invoiceID = a.getInvoice().getInvoiceID();
+        invoiceCode = new InvoiceCodeDTO(a.getInvoiceCode());
+        projectSite = new ProjectSiteDTO(a.getProjectSite());
     }
 
     public InvoiceItemDTO(Integer invoiceItemID) {
@@ -37,13 +45,15 @@ public class InvoiceItemDTO implements Serializable {
         this.invoiceItemID = invoiceItemID;
     }
 
-    public InvoiceDTO getInvoice() {
-        return invoice;
+    public Integer getInvoiceID() {
+        return invoiceID;
     }
 
-    public void setInvoice(InvoiceDTO invoice) {
-        this.invoice = invoice;
+    public void setInvoiceID(Integer invoiceID) {
+        this.invoiceID = invoiceID;
     }
+
+   
 
     public InvoiceCodeDTO getInvoiceCode() {
         return invoiceCode;

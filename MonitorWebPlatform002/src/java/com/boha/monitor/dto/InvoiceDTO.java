@@ -22,7 +22,10 @@ public class InvoiceDTO implements Serializable {
     private Date invoiceDate;
     private Date invoiceDueDate;
     private Date dateRegistered;
-    private CompanyClientDTO companyClient;
+    private Double totalAmount;
+    private ClientDTO client;
+    private CompanyDTO company;
+    private ProjectDTO project;
     private List<InvoiceItemDTO> invoiceItemList;
     private List<SiteCheckPointDTO> siteCheckPointList;
 
@@ -34,7 +37,10 @@ public class InvoiceDTO implements Serializable {
         invoiceDate = a.getInvoiceDate();
         invoiceDueDate = a.getInvoiceDueDate();
         dateRegistered = a.getDateRegistered();
-        companyClient = new CompanyClientDTO(a.getCompanyClient());
+        client = new ClientDTO(a.getClient());
+        company = new CompanyDTO(a.getCompany());
+        project = new ProjectDTO(a.getProject());
+        totalAmount = a.getTotalAmount();
     }
 
     public InvoiceDTO(Integer invoiceID, Date invoiceDate) {
@@ -48,6 +54,38 @@ public class InvoiceDTO implements Serializable {
 
     public void setInvoiceID(Integer invoiceID) {
         this.invoiceID = invoiceID;
+    }
+
+    public Double getTotalAmount() {
+        return totalAmount;
+    }
+
+    public void setTotalAmount(Double totalAmount) {
+        this.totalAmount = totalAmount;
+    }
+
+    public ClientDTO getClient() {
+        return client;
+    }
+
+    public void setClient(ClientDTO client) {
+        this.client = client;
+    }
+
+    public CompanyDTO getCompany() {
+        return company;
+    }
+
+    public void setCompany(CompanyDTO company) {
+        this.company = company;
+    }
+
+    public ProjectDTO getProject() {
+        return project;
+    }
+
+    public void setProject(ProjectDTO project) {
+        this.project = project;
     }
 
     public Date getInvoiceDate() {
@@ -73,16 +111,6 @@ public class InvoiceDTO implements Serializable {
     public void setDateRegistered(Date dateRegistered) {
         this.dateRegistered = dateRegistered;
     }
-
-    public CompanyClientDTO getCompanyClient() {
-        return companyClient;
-    }
-
-    public void setCompanyClient(CompanyClientDTO companyClient) {
-        this.companyClient = companyClient;
-    }
-
-  
 
     public List<InvoiceItemDTO> getInvoiceItemList() {
         return invoiceItemList;

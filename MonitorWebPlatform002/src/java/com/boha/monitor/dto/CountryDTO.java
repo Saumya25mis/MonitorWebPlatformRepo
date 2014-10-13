@@ -5,7 +5,9 @@
  */
 package com.boha.monitor.dto;
 
+import com.boha.monitor.data.Country;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,7 +22,7 @@ public class CountryDTO implements Serializable {
     private Integer countryID;
     private String countryName;
     private String countryCode;
-    private List<ProvinceDTO> provinceList;
+    private List<ProvinceDTO> provinceList = new ArrayList<>();
 
     public CountryDTO() {
     }
@@ -29,12 +31,12 @@ public class CountryDTO implements Serializable {
         this.countryID = countryID;
     }
 
-    public CountryDTO(Integer countryID, String countryName, String countryCode, double latitude, double longitude) {
-        this.countryID = countryID;
-        this.countryName = countryName;
-        this.countryCode = countryCode;
-        this.latitude = latitude;
-        this.longitude = longitude;
+    public CountryDTO(Country a) {
+        this.countryID = a.getCountryID();
+        this.countryName = a.getCountryName();
+        this.countryCode = a.getCountryCode();
+        this.latitude = a.getLatitude();
+        this.longitude = a.getLongitude();
     }
 
     public Integer getCountryID() {

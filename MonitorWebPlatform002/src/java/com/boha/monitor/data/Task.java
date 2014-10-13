@@ -32,10 +32,15 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(name = "task")
 @NamedQueries({
-    @NamedQuery(name = "Task.findAll", query = "SELECT t FROM Task t"),
+    @NamedQuery(name = "Task.findByCompany", 
+            query = "SELECT t FROM Task t where t.company.companyID = :companyID"),
     @NamedQuery(name = "Task.findByTaskID", query = "SELECT t FROM Task t WHERE t.taskID = :taskID"),
     @NamedQuery(name = "Task.findByTaskName", query = "SELECT t FROM Task t WHERE t.taskName = :taskName")})
 public class Task implements Serializable {
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "taskNumber")
+    private int taskNumber;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -56,7 +61,7 @@ public class Task implements Serializable {
     @JoinColumn(name = "companyID", referencedColumnName = "companyID")
     @ManyToOne(optional = false)
     private Company company;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "taskID")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "task")
     private List<ProjectSiteTask> projectSiteTaskList;
 
     public Task() {
@@ -87,6 +92,7 @@ public class Task implements Serializable {
     public void setTaskName(String taskName) {
         this.taskName = taskName;
     }
+
 
     public String getDescription() {
         return description;
@@ -136,6 +142,14 @@ public class Task implements Serializable {
     @Override
     public String toString() {
         return "com.boha.monitor.data.Task[ taskID=" + taskID + " ]";
+    }
+
+    public int getTaskNumber() {
+        return taskNumber;
+    }
+
+    public void setTaskNumber(int taskNumber) {
+        this.taskNumber = taskNumber;
     }
     
 }

@@ -20,7 +20,7 @@ public class GcmDeviceDTO {
     private String product;
     private Integer messageCount;
     private long dateRegistered;
-    private String serialNumber;
+    private String serialNumber, androidVersion;
     private Integer companyStaffID, companyID, projectSiteID;
    
     
@@ -42,11 +42,20 @@ public class GcmDeviceDTO {
         if (a.getProjectSite() != null) {
             projectSiteID = a.getProjectSite().getProjectSiteID();
         }
+        androidVersion = a.getAndroidVersion();
         
     }
 
     public Integer getCompanyID() {
         return companyID;
+    }
+
+    public String getAndroidVersion() {
+        return androidVersion;
+    }
+
+    public void setAndroidVersion(String androidVersion) {
+        this.androidVersion = androidVersion;
     }
 
     public void setCompanyID(Integer companyID) {

@@ -32,11 +32,12 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(name = "checkPoint")
 @NamedQueries({
-    @NamedQuery(name = "CheckPoint.findAll", query = "SELECT c FROM CheckPoint c"),
+    @NamedQuery(name = "CheckPoint.findByCompany", 
+            query = "SELECT c FROM CheckPoint c where c.company.companyID = :companyID order by c.checkPointName"),
     @NamedQuery(name = "CheckPoint.findByCheckPointID", query = "SELECT c FROM CheckPoint c WHERE c.checkPointID = :checkPointID"),
     @NamedQuery(name = "CheckPoint.findByCheckPointName", query = "SELECT c FROM CheckPoint c WHERE c.checkPointName = :checkPointName")})
 public class CheckPoint implements Serializable {
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "checkPointID")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "checkPoint")
     private List<SiteCheckPoint> siteCheckPointList;
     @Basic(optional = false)
     @NotNull

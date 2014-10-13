@@ -42,8 +42,6 @@ import javax.validation.constraints.NotNull;
     @NamedQuery(name = "ProjectSiteTask.findByProjectSite", 
             query = "SELECT p FROM ProjectSiteTask p "
                     + "WHERE p.projectSite.projectSiteID = :projectSiteID order by p.dateRegistered desc"),
-    @NamedQuery(name = "ProjectSiteTask.findByTaskName", 
-            query = "SELECT p FROM ProjectSiteTask p WHERE p.taskName = :name and p.projectSite.projectSiteID = :projectSiteID"),
     @NamedQuery(name = "ProjectSiteTask.findByDateRegistered", query = "SELECT p FROM ProjectSiteTask p WHERE p.dateRegistered = :dateRegistered")})
 public class ProjectSiteTask implements Serializable {
     @JoinColumn(name = "taskID", referencedColumnName = "taskID")

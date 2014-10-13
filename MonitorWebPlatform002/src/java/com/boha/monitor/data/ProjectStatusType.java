@@ -30,10 +30,11 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(name = "projectStatusType")
 @NamedQueries({
-    @NamedQuery(name = "ProjectStatusType.findAll",
-            query = "SELECT p FROM ProjectStatusType p order by p.projectStatusName"),
+    @NamedQuery(name = "ProjectStatusType.findByCompany",
+            query = "SELECT p FROM ProjectStatusType p where p.company.companyID = :companyID order by p.projectStatusName"),
     @NamedQuery(name = "ProjectStatusType.findByProjectStatusTypeID", query = "SELECT p FROM ProjectStatusType p WHERE p.projectStatusTypeID = :projectStatusTypeID"),
-    @NamedQuery(name = "ProjectStatusType.findByProjectStatusName", query = "SELECT p FROM ProjectStatusType p WHERE p.projectStatusName = :projectStatusName")})
+    @NamedQuery(name = "ProjectStatusType.findByProjectStatusNameInCompany", 
+            query = "SELECT p FROM ProjectStatusType p WHERE p.projectStatusName = :projectStatusName and p.company.companyID = :companyID")})
 public class ProjectStatusType implements Serializable {
 
     @JoinColumn(name = "companyID", referencedColumnName = "companyID")

@@ -3,23 +3,46 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.boha.monitor.util;
 
 import com.boha.monitor.dto.transfer.RequestDTO;
 import com.boha.monitor.dto.transfer.ResponseDTO;
+import java.util.logging.Logger;
 
 /**
  *
  * @author aubreyM
  */
 public class TrafficCop {
-    
-    public static ResponseDTO processRequest(RequestDTO req, DataUtil dataUtil, ListUtil listUtil)throws DataException {
+
+    public static ResponseDTO processRequest(RequestDTO req,
+            DataUtil dataUtil, ListUtil listUtil, PlatformUtil platformUtil) throws DataException {
         ResponseDTO r = new ResponseDTO();
-        switch(req.getRequestType()) {
+        switch (req.getRequestType()) {
+            //add lookups
+            case RequestDTO.ADD_CITY:
+                r = dataUtil.addCity(req.getCity());
+                break;
+            case RequestDTO.ADD_COMPANY_CHECKPOINT:
+                r = dataUtil.addCompanyCheckPoint(req.getCheckPoint());
+                break;
+            case RequestDTO.ADD_COMPANY_PROJECT_STATUS_TYPE:
+                r = dataUtil.addCompanyProjectStatus(req.getProjectStatusType());
+                break;
+            case RequestDTO.ADD_COMPANY_TASK:
+                r = dataUtil.addCompanyTask(req.getTask());
+                break;
+            case RequestDTO.ADD_COMPANY_TASK_STATUS:
+                r = dataUtil.addCompanyTaskStatus(req.getTaskStatus());
+                break;
+            case RequestDTO.ADD_TOWNSHIP:
+                r = dataUtil.addTownship(req.getTownship());
+                break;
+            
+
+            //register entities    
             case RequestDTO.REGISTER_COMPANY:
-                r = dataUtil.registerCompany(req.getCompany(), req.getCompanyStaff());
+                r = dataUtil.registerCompany(req.getCompany(), req.getCompanyStaff(),listUtil);
                 break;
             case RequestDTO.REGISTER_COMPANY_STAFF:
                 r = dataUtil.registerCompanyStaff(req.getCompanyStaff());
@@ -59,17 +82,18 @@ public class TrafficCop {
                 r = listUtil.getCompanyData(req.getCompanyID());
                 break;
             case RequestDTO.GET_TASK_STATUS_LIST:
-                r = listUtil.getTaskStatusList();
+                r = listUtil.getTaskStatusList(req.getCompanyID());
                 break;
             case RequestDTO.LOGIN:
-                r = dataUtil.login(req.getGcmDevice(), 
-                        req.getEmail(), req.getPin(), 
-                        req.getLoginType(), listUtil);
+                r = dataUtil.login(req.getGcmDevice(),
+                        req.getEmail(), req.getPin(),
+                        listUtil, platformUtil);
                 break;
-        }   
+        }
         if (r.getStatusCode() == null) {
             r.setStatusCode(0);
         }
         return r;
     }
+    static final Logger logger = Logger.getLogger(TrafficCop.class.getSimpleName());
 }

@@ -7,9 +7,12 @@ package com.boha.monitor.dto.transfer;
 
 import com.boha.monitor.dto.BeneficiaryDTO;
 import com.boha.monitor.dto.CheckPointDTO;
+import com.boha.monitor.dto.CityDTO;
+import com.boha.monitor.dto.ClientDTO;
 import com.boha.monitor.dto.CompanyDTO;
 import com.boha.monitor.dto.CompanyStaffDTO;
 import com.boha.monitor.dto.CompanyStaffTypeDTO;
+import com.boha.monitor.dto.CountryDTO;
 import com.boha.monitor.dto.ErrorStoreAndroidDTO;
 import com.boha.monitor.dto.ErrorStoreDTO;
 import com.boha.monitor.dto.HappyLetterDTO;
@@ -24,7 +27,9 @@ import com.boha.monitor.dto.ProjectSiteTaskStatusDTO;
 import com.boha.monitor.dto.ProjectStatusTypeDTO;
 import com.boha.monitor.dto.ProvinceDTO;
 import com.boha.monitor.dto.SiteCheckPointDTO;
+import com.boha.monitor.dto.TaskDTO;
 import com.boha.monitor.dto.TaskStatusDTO;
+import com.boha.monitor.dto.TownshipDTO;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,13 +62,62 @@ public class ResponseDTO {
     private List<HappyLetterDTO> happyLetterList = new ArrayList<>();
     private List<SiteCheckPointDTO> siteCheckPointList = new ArrayList<>();
     private List<InvoiceCodeDTO> invoiceCodeList = new ArrayList<>();
+    private List<ClientDTO> clientList = new ArrayList<>();
+    private List<TaskDTO> taskList = new ArrayList<>();
+    private List<CityDTO> cityList = new ArrayList<>();
+    private List<TownshipDTO> townshipList = new ArrayList<>();
+    private List<CountryDTO> countryList = new ArrayList<>();
     //
     private CompanyDTO company;
     private CompanyStaffDTO companyStaff;
 
+    public List<CountryDTO> getCountryList() {
+        return countryList;
+    }
+
+    public void setCountryList(List<CountryDTO> countryList) {
+        this.countryList = countryList;
+    }
+
+    
+    public List<CityDTO> getCityList() {
+        return cityList;
+    }
+
+    public void setCityList(List<CityDTO> cityList) {
+        this.cityList = cityList;
+    }
+
+    public List<TownshipDTO> getTownshipList() {
+        return townshipList;
+    }
+
+    public void setTownshipList(List<TownshipDTO> townshipList) {
+        this.townshipList = townshipList;
+    }
+
+    
+    public List<TaskDTO> getTaskList() {
+        return taskList;
+    }
+
+    public void setTaskList(List<TaskDTO> taskList) {
+        this.taskList = taskList;
+    }
+
+    
     public List<CheckPointDTO> getCheckPointList() {
         return checkPointList;
     }
+
+    public List<ClientDTO> getClientList() {
+        return clientList;
+    }
+
+    public void setClientList(List<ClientDTO> clientList) {
+        this.clientList = clientList;
+    }
+    
 
     public void setCheckPointList(List<CheckPointDTO> checkPointList) {
         this.checkPointList = checkPointList;
