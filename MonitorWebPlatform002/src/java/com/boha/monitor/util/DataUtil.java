@@ -189,6 +189,7 @@ public class DataUtil {
             g.setRegistrationID(d.getRegistrationID());
             g.setSerialNumber(d.getSerialNumber());
             g.setProduct(d.getProduct());
+            g.setAndroidVersion(d.getAndroidVersion());
 
             em.persist(g);
             log.log(Level.WARNING, "New device loaded");

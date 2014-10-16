@@ -30,7 +30,7 @@ public class CloudMessagingRegistrar {
         Sender sender = new Sender(API_KEY);
         Message message = new Message.Builder().addData(
                 "message",
-                "CourseMaker Mobile device registered to send and receive messages. Completed on "
+                "Project Monitor Mobile device registered to send and receive messages. Completed on "
                 + new Date().toString()).build();
 
         Result result = sender.send(message, regID, 5);
@@ -87,5 +87,5 @@ public class CloudMessagingRegistrar {
     private static final Logger logger = Logger.getLogger(CloudMessagingRegistrar.class
             .getCanonicalName());
     
-    private static final String API_KEY = "AIzaSyCJIUMPXsL-GVAfNAl1i-fDy6qf7g5TtCU";
+    private static final String API_KEY = "AIzaSyC773Vu6nwyqVSt3HWcDetwbgW23Vj2OT0";
 }

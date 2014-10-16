@@ -11,12 +11,33 @@ import java.util.List;
  *
  * @author aubreyM
  */
+
 public class PhotoUploadDTO {
 
-    public static final int SITE_IMAGE = 1, TASK_IMAGE = 2;
-    private int companyID, projectID, projectSiteID, projectSiteTaskID, pictureType;
+    public static final int SITE_IMAGE = 1, TASK_IMAGE = 2, PROJECT_IMAGE = 3, STAFF_IMAGE = 4;
+    private boolean isFullPicture;
+    private int companyID, projectID, projectSiteID, 
+            projectSiteTaskID, pictureType, companyStaffID;
     private List<String> tags;
 
+    public boolean isIsFullPicture() {
+        return isFullPicture;
+    }
+
+    public void setIsFullPicture(boolean isFullPicture) {
+        this.isFullPicture = isFullPicture;
+    }
+
+    
+    public int getCompanyStaffID() {
+        return companyStaffID;
+    }
+
+    public void setCompanyStaffID(int companyStaffID) {
+        this.companyStaffID = companyStaffID;
+    }
+
+    
     public int getPictureType() {
         return pictureType;
     }

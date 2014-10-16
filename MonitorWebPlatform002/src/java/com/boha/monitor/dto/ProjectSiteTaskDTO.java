@@ -24,7 +24,7 @@ public class ProjectSiteTaskDTO implements Serializable {
     private Integer projectSiteTaskID;
     private TaskDTO task;
     private long dateRegistered;
-    private Integer projectSiteID;
+    private Integer projectSiteID, projectID;
     private List<ProjectSiteTaskStatusDTO> projectSiteTaskStatusList = new ArrayList<>();
     private List<String> imageFileNameList;
 
@@ -32,6 +32,7 @@ public class ProjectSiteTaskDTO implements Serializable {
     }
 
     public ProjectSiteTaskDTO(ProjectSiteTask a) {
+        this.projectID = a.getProjectSite().getProject().getProjectID();
         this.projectSiteTaskID = a.getProjectSiteTaskID();
         this.task = new TaskDTO(a.getTask());
         this.dateRegistered = a.getDateRegistered().getTime();
@@ -43,6 +44,14 @@ public class ProjectSiteTaskDTO implements Serializable {
         } catch (Exception ex) {
             Logger.getLogger(ProjectSiteTaskDTO.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    public Integer getProjectID() {
+        return projectID;
+    }
+
+    public void setProjectID(Integer projectID) {
+        this.projectID = projectID;
     }
 
     public Integer getProjectSiteTaskID() {
