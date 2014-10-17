@@ -89,6 +89,15 @@ public class RequestDTO implements Serializable{
             ADD_COMPANY_CHECKPOINT = 304,
             ADD_CITY = 305,
             ADD_TOWNSHIP = 306;
+    //updates 
+    public static final int 
+            UPDATE_COMPANY_TASK = 401,
+            UPDATE_COMPANY_TASK_STATUS = 402,
+            UPDATE_COMPANY_PROJECT_STATUS_TYPE = 403,
+            UPDATE_COMPANY_CHECKPOINT = 404,
+            UPDATE_PROJECT = 405,
+            UPDATE_PROJECT_SITE = 406;
+    
 
     public static final String COMPANY_DIR = "company";
     public static final String COMPANY_STAFF_DIR = "companyStaff";

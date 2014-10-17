@@ -36,6 +36,8 @@ import javax.validation.constraints.Size;
             query = "SELECT c FROM Company c WHERE c.companyName = :companyName")})
 public class Company implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
+    private List<PhotoUpload> photoUploadList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
     private List<Client> clientList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
     private List<Invoice> invoiceList;
@@ -216,6 +218,14 @@ public class Company implements Serializable {
 
     public void setInvoiceList(List<Invoice> invoiceList) {
         this.invoiceList = invoiceList;
+    }
+
+    public List<PhotoUpload> getPhotoUploadList() {
+        return photoUploadList;
+    }
+
+    public void setPhotoUploadList(List<PhotoUpload> photoUploadList) {
+        this.photoUploadList = photoUploadList;
     }
     
 }

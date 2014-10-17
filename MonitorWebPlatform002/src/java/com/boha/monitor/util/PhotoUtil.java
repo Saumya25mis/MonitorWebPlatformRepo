@@ -17,6 +17,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
@@ -35,7 +36,7 @@ import org.joda.time.DateTime;
 @Stateless
 public class PhotoUtil {
     
-    public ResponseDTO downloadPhotos(HttpServletRequest request) throws FileUploadException {
+    public ResponseDTO downloadPhotos(HttpServletRequest request, DataUtil dataUtil) throws FileUploadException {
         logger.log(Level.INFO, "######### starting PHOTO DOWNLOAD process\n\n");
         ResponseDTO resp = new ResponseDTO();
         InputStream stream = null;
@@ -75,17 +76,17 @@ public class PhotoUtil {
                             dto = gson.fromJson(json, PhotoUploadDTO.class);
                             if (dto != null) {
                                 companyDir = createCompanyDirectory(rootDir, companyDir, dto.getCompanyID());
-                                if (dto.getProjectID()> 0) {
+                                if (dto.getProjectID() != null) {
                                     projectDir = createProjectDirectory(companyDir, projectDir, dto.getProjectID());
                                 }
-                                if (dto.getProjectSiteID()> 0) {
+                                if (dto.getProjectSiteID() != null) {
                                     projectSiteDir = createProjectSiteDirectory(projectDir, projectSiteDir, dto.getProjectSiteTaskID());
                                 }
-                                if (dto.getProjectSiteTaskID() > 0) {
+                                if (dto.getProjectSiteTaskID()  != null) {
                                     projectSiteTaskDir = createProjectSiteTaskDirectory(
                                             projectSiteDir, projectSiteTaskDir, dto.getProjectSiteTaskID());
                                 }
-                                if (dto.getCompanyStaffID()> 0) {
+                                if (dto.getCompanyStaffID() != null) {
                                     companyStaffDir = createStaffDirectory(
                                             companyDir, companyStaffDir);
                                 }
@@ -126,6 +127,22 @@ public class PhotoUtil {
                     writeFile(stream, imageFile);
                     resp.setStatusCode(0);
                     resp.setMessage("Photo downloaded from mobile app ");
+                    //add database
+                    System.out.println("filepath: " + imageFile.getAbsolutePath());
+                    //create uri
+                    int index = imageFile.getAbsolutePath().indexOf("monitor_images");
+                    if (index > -1) {
+                        String uri = imageFile.getAbsolutePath().substring(index);
+                        System.out.println("uri: " + uri);
+                        dto.setUri(uri);
+                    }
+                    dto.setDateUploaded(new Date());
+                    if (dto.isIsFullPicture()) {
+                        dto.setThumbFlag(null);
+                    } else {
+                        dto.setThumbFlag(1);
+                    }
+                    dataUtil.addPhotoUpload(dto);
 
                 }
             }

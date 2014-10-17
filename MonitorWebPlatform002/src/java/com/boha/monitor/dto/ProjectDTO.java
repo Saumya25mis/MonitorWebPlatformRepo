@@ -7,6 +7,7 @@
 package com.boha.monitor.dto;
 
 import com.boha.monitor.data.Project;
+import com.boha.monitor.dto.transfer.PhotoUploadDTO;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,7 @@ public class ProjectDTO implements Serializable {
     private Integer completeFlag;
     private Integer companyID, clientID;
     private List<ProjectSiteDTO> projectSiteList = new ArrayList<>();
+    private List<PhotoUploadDTO> photoUploadList;
 
     public ProjectDTO() {
     }
@@ -44,6 +46,15 @@ public class ProjectDTO implements Serializable {
         }
     }
 
+    public List<PhotoUploadDTO> getPhotoUploadList() {
+        return photoUploadList;
+    }
+
+    public void setPhotoUploadList(List<PhotoUploadDTO> photoUploadList) {
+        this.photoUploadList = photoUploadList;
+    }
+
+    
     public Integer getClientID() {
         return clientID;
     }

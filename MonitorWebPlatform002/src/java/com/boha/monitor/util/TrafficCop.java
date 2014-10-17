@@ -19,6 +19,13 @@ public class TrafficCop {
             DataUtil dataUtil, ListUtil listUtil, PlatformUtil platformUtil) throws DataException {
         ResponseDTO r = new ResponseDTO();
         switch (req.getRequestType()) {
+            //updates
+            case RequestDTO.UPDATE_PROJECT_SITE:
+                dataUtil.updateProjectSite(req.getProjectSite());
+                break;
+            case RequestDTO.UPDATE_PROJECT:
+                dataUtil.updateProject(req.getProject());
+                break;
             //add lookups
             case RequestDTO.ADD_CITY:
                 r = dataUtil.addCity(req.getCity());

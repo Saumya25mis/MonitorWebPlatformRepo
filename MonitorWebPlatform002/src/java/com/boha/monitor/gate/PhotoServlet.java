@@ -6,6 +6,7 @@ package com.boha.monitor.gate;
 
 import com.boha.monitor.dto.transfer.RequestDTO;
 import com.boha.monitor.dto.transfer.ResponseDTO;
+import com.boha.monitor.util.DataUtil;
 import com.boha.monitor.util.PhotoUtil;
 import com.google.gson.Gson;
 import java.io.IOException;
@@ -33,6 +34,8 @@ public class PhotoServlet extends HttpServlet {
 
     @EJB
     PhotoUtil photoUtil;
+    @EJB
+    DataUtil dataUtil;
     
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -55,7 +58,7 @@ public class PhotoServlet extends HttpServlet {
         try {
             boolean isMultipart = ServletFileUpload.isMultipartContent(request);
             if (isMultipart) {
-                ur = photoUtil.downloadPhotos(request);
+                ur = photoUtil.downloadPhotos(request, dataUtil);
             } else {
                 RequestDTO dto = getRequest(gson, request);
                 switch (dto.getRequestType()) {

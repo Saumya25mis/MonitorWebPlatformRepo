@@ -8,6 +8,7 @@ package com.boha.monitor.dto;
 
 import com.boha.monitor.data.Project;
 import com.boha.monitor.data.ProjectSite;
+import com.boha.monitor.dto.transfer.PhotoUploadDTO;
 import com.boha.monitor.util.FileUtility;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ import java.util.logging.Logger;
 public class ProjectSiteDTO implements Serializable {
     private static final long serialVersionUID = 1L;
     private Integer projectSiteID;
-    private String projectSiteName;
+    private String projectSiteName, standErfNumber;
     private Double latitude;
     private Double longitude;
     private Integer activeFlag;
@@ -30,6 +31,7 @@ public class ProjectSiteDTO implements Serializable {
     private Integer projectID;
     private List<ProjectSiteStaffDTO> projectSiteStaffList = new ArrayList<>();
     private List<String> imageFileNameList = new ArrayList<>();
+    private List<PhotoUploadDTO> photoUploadList;
 
     public ProjectSiteDTO() {
     }
@@ -41,7 +43,7 @@ public class ProjectSiteDTO implements Serializable {
         this.longitude = a.getLongitude();
         this.activeFlag = a.getActiveFlag();
         this.projectID = a.getProject().getProjectID();
-        
+        this.standErfNumber = a.getStandErfNumber();
         Project p = a.getProject();
         try {
             this.imageFileNameList = FileUtility.getImageFilesSite(p.getCompany().getCompanyID(),
@@ -51,6 +53,24 @@ public class ProjectSiteDTO implements Serializable {
         }
     }
 
+    public String getStandErfNumber() {
+        return standErfNumber;
+    }
+
+    public void setStandErfNumber(String standErfNumber) {
+        this.standErfNumber = standErfNumber;
+    }
+
+    
+    public List<PhotoUploadDTO> getPhotoUploadList() {
+        return photoUploadList;
+    }
+
+    public void setPhotoUploadList(List<PhotoUploadDTO> photoUploadList) {
+        this.photoUploadList = photoUploadList;
+    }
+
+    
     public Integer getProjectSiteID() {
         return projectSiteID;
     }

@@ -42,6 +42,8 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "CompanyStaff.findByEmail", query = "SELECT c FROM CompanyStaff c WHERE c.email = :email"),
     @NamedQuery(name = "CompanyStaff.findByCellphone", query = "SELECT c FROM CompanyStaff c WHERE c.cellphone = :cellphone")})
 public class CompanyStaff implements Serializable {
+    @OneToMany(mappedBy = "companyStaff")
+    private List<PhotoUpload> photoUploadList;
     @Column(name = "pin")
     private String pin;
     @OneToMany(mappedBy = "companyStaff")
@@ -207,6 +209,14 @@ public class CompanyStaff implements Serializable {
 
     public void setPin(String pin) {
         this.pin = pin;
+    }
+
+    public List<PhotoUpload> getPhotoUploadList() {
+        return photoUploadList;
+    }
+
+    public void setPhotoUploadList(List<PhotoUpload> photoUploadList) {
+        this.photoUploadList = photoUploadList;
     }
     
 }

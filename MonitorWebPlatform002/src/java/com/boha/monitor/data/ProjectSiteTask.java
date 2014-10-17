@@ -44,6 +44,8 @@ import javax.validation.constraints.NotNull;
                     + "WHERE p.projectSite.projectSiteID = :projectSiteID order by p.dateRegistered desc"),
     @NamedQuery(name = "ProjectSiteTask.findByDateRegistered", query = "SELECT p FROM ProjectSiteTask p WHERE p.dateRegistered = :dateRegistered")})
 public class ProjectSiteTask implements Serializable {
+    @OneToMany(mappedBy = "projectSiteTask")
+    private List<PhotoUpload> photoUploadList;
     @JoinColumn(name = "taskID", referencedColumnName = "taskID")
     @ManyToOne(optional = false)
     private Task task;
@@ -140,6 +142,14 @@ public class ProjectSiteTask implements Serializable {
     @Override
     public String toString() {
         return "com.boha.monitor.data.ProjectSiteTask[ projectSiteTaskID=" + projectSiteTaskID + " ]";
+    }
+
+    public List<PhotoUpload> getPhotoUploadList() {
+        return photoUploadList;
+    }
+
+    public void setPhotoUploadList(List<PhotoUpload> photoUploadList) {
+        this.photoUploadList = photoUploadList;
     }
 
    

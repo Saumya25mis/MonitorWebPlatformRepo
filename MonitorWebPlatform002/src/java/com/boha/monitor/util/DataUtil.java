@@ -16,6 +16,7 @@ import com.boha.monitor.data.ErrorStore;
 import com.boha.monitor.data.ErrorStoreAndroid;
 import com.boha.monitor.data.GcmDevice;
 import com.boha.monitor.data.InvoiceCode;
+import com.boha.monitor.data.PhotoUpload;
 import com.boha.monitor.data.Project;
 import com.boha.monitor.data.ProjectDiaryRecord;
 import com.boha.monitor.data.ProjectSite;
@@ -45,6 +46,7 @@ import com.boha.monitor.dto.ProjectStatusTypeDTO;
 import com.boha.monitor.dto.TaskDTO;
 import com.boha.monitor.dto.TaskStatusDTO;
 import com.boha.monitor.dto.TownshipDTO;
+import com.boha.monitor.dto.transfer.PhotoUploadDTO;
 import com.boha.monitor.dto.transfer.ResponseDTO;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -171,6 +173,37 @@ public class DataUtil {
 
     public Company getCompanyByID(Integer id) {
         return em.find(Company.class, id);
+    }
+
+    public void addPhotoUpload(PhotoUploadDTO pu) {
+        try {
+            PhotoUpload u = new PhotoUpload();
+            u.setCompany(em.find(Company.class, pu.getCompanyID()));
+            if (pu.getProjectID() != null) {
+                u.setProject(em.find(Project.class, pu.getProjectID()));
+            }
+            if (pu.getProjectSiteID() != null) {
+                u.setProjectSite(em.find(ProjectSite.class, pu.getProjectSiteID()));
+            }
+            if (pu.getProjectSiteTaskID() != null) {
+                u.setProjectSiteTask(em.find(ProjectSiteTask.class, pu.getProjectSiteTaskID()));
+            }
+            if (pu.getCompanyStaffID() != null) {
+                u.setCompanyStaff(em.find(CompanyStaff.class, pu.getCompanyStaffID()));
+            }
+            u.setPictureType(pu.getPictureType());
+            u.setLatitude(pu.getLatitude());
+            u.setLongitude(pu.getLongitude());
+            u.setUri(pu.getUri());
+            u.setDateTaken(pu.getDateTaken());
+            u.setDateUploaded(pu.getDateUploaded());
+            u.setThumbFlag(pu.getThumbFlag());
+            em.persist(u);
+            log.log(Level.OFF, "PhotoUpload added to table");
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "PhotoUpload failed", e);
+        }
+
     }
 
     public void addDevice(GcmDeviceDTO d) throws DataException {
@@ -819,7 +852,7 @@ public class DataUtil {
         q = em.createNamedQuery("ProjectSite.findByCompany", ProjectSite.class);
         q.setParameter("companyID", c.getCompanyID());
         List<ProjectSite> psList = q.getResultList();
-        
+
         for (ProjectSite projectSite : psList) {
             for (Task task : taskList) {
                 ProjectSiteTask projectSiteTask = new ProjectSiteTask();
@@ -848,7 +881,7 @@ public class DataUtil {
         code3.setInvoiceCodeNumber("30003");
         code3.setCompany(c);
         em.persist(code3);
-        
+
         log.log(Level.INFO, "Initial Invoice Codes added");
     }
 
@@ -1015,4 +1048,46 @@ public class DataUtil {
         return sb.toString();
     }
     static final Logger log = Logger.getLogger(DataUtil.class.getSimpleName());
+
+    public void updateProject(ProjectDTO dto) throws DataException {
+        try {
+            Project ps = em.find(Project.class, dto.getProjectID());
+            if (ps != null) {
+                if (dto.getProjectName() != null) {
+                    ps.setProjectName(dto.getProjectName());
+                }
+                if (dto.getDescription() != null) {
+                    ps.setDescription(dto.getDescription());
+                }
+                em.merge(ps);
+            }
+        } catch (Exception e) {
+            log.log(Level.OFF, null, e);
+            throw new DataException("Failed to update project\n" + getErrorString(e));
+        }
+    
+    }
+    public void updateProjectSite(ProjectSiteDTO dto) throws DataException {
+        try {
+            ProjectSite ps = em.find(ProjectSite.class, dto.getProjectSiteID());
+            if (ps != null) {
+                if (dto.getProjectSiteName() != null) {
+                    ps.setProjectSiteName(dto.getProjectSiteName());
+                }
+                if (dto.getStandErfNumber() != null) {
+                    ps.setStandErfNumber(dto.getStandErfNumber());
+                }
+                if (dto.getLatitude() != null) {
+                    ps.setLatitude(dto.getLatitude());
+                }
+                if (dto.getLongitude() != null) {
+                    ps.setLongitude(dto.getLongitude());
+                }
+                em.merge(ps);
+            }
+        } catch (Exception e) {
+            log.log(Level.OFF, null, e);
+            throw new DataException("Failed to update projectSite\n" + getErrorString(e));
+        }
+    }
 }

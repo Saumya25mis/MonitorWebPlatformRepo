@@ -5,6 +5,9 @@
  */
 package com.boha.monitor.dto.transfer;
 
+import com.boha.monitor.data.PhotoUpload;
+import com.boha.monitor.data.ProjectSiteTask;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -16,9 +19,102 @@ public class PhotoUploadDTO {
 
     public static final int SITE_IMAGE = 1, TASK_IMAGE = 2, PROJECT_IMAGE = 3, STAFF_IMAGE = 4;
     private boolean isFullPicture;
-    private int companyID, projectID, projectSiteID, 
-            projectSiteTaskID, pictureType, companyStaffID;
+    private Integer companyID, projectID, projectSiteID, 
+            projectSiteTaskID, pictureType, companyStaffID, photoUploadID, thumbFlag;
     private List<String> tags;
+    private Double latitude, longitude;
+    private String uri;
+    private Date dateTaken, dateUploaded;
+
+    public PhotoUploadDTO(PhotoUpload a) {
+        photoUploadID = a.getPhotoUploadID();
+        pictureType = a.getPictureType();
+        latitude = a.getLatitude();
+        longitude = a.getLongitude();
+        uri = a.getUri();
+        dateTaken = a.getDateTaken();
+        companyID = a.getCompany().getCompanyID();
+        dateUploaded = a.getDateUploaded();
+        thumbFlag = a.getThumbFlag();
+        switch (pictureType) {
+            case PROJECT_IMAGE:
+                projectID = a.getProject().getProjectID();
+                break;
+            case SITE_IMAGE:
+                projectID = a.getProjectSite().getProject().getProjectID();
+                projectSiteID = a.getProjectSite().getProjectSiteID();
+                break;
+            case TASK_IMAGE:
+                ProjectSiteTask t = a.getProjectSiteTask();
+                projectSiteTaskID = t.getProjectSiteTaskID();
+                projectSiteID = t.getProjectSite().getProjectSiteID();
+                projectID = t.getProjectSite().getProject().getProjectID();
+                break;
+            case STAFF_IMAGE:
+                companyStaffID = a.getCompanyStaff().getCompanyStaffID();
+                break;
+        }
+    }
+
+    public Date getDateTaken() {
+        return dateTaken;
+    }
+
+    public void setDateTaken(Date dateTaken) {
+        this.dateTaken = dateTaken;
+    }
+
+    
+    public Integer getPhotoUploadID() {
+        return photoUploadID;
+    }
+
+    public void setPhotoUploadID(Integer photoUploadID) {
+        this.photoUploadID = photoUploadID;
+    }
+    
+    
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+    public String getUri() {
+        return uri;
+    }
+
+    public void setUri(String uri) {
+        this.uri = uri;
+    }
+
+    public Integer getThumbFlag() {
+        return thumbFlag;
+    }
+
+    public void setThumbFlag(Integer thumbFlag) {
+        this.thumbFlag = thumbFlag;
+    }
+
+    public Date getDateUploaded() {
+        return dateUploaded;
+    }
+
+    public void setDateUploaded(Date dateUploaded) {
+        this.dateUploaded = dateUploaded;
+    }
+    
+    
 
     public boolean isIsFullPicture() {
         return isFullPicture;
@@ -29,52 +125,52 @@ public class PhotoUploadDTO {
     }
 
     
-    public int getCompanyStaffID() {
+    public Integer getCompanyStaffID() {
         return companyStaffID;
     }
 
-    public void setCompanyStaffID(int companyStaffID) {
+    public void setCompanyStaffID(Integer companyStaffID) {
         this.companyStaffID = companyStaffID;
     }
 
     
-    public int getPictureType() {
+    public Integer getPictureType() {
         return pictureType;
     }
 
-    public void setPictureType(int pictureType) {
+    public void setPictureType(Integer pictureType) {
         this.pictureType = pictureType;
     }
 
-    public int getCompanyID() {
+    public Integer getCompanyID() {
         return companyID;
     }
 
-    public void setCompanyID(int companyID) {
+    public void setCompanyID(Integer companyID) {
         this.companyID = companyID;
     }
 
-    public int getProjectID() {
+    public Integer getProjectID() {
         return projectID;
     }
 
-    public void setProjectID(int projectID) {
+    public void setProjectID(Integer projectID) {
         this.projectID = projectID;
     }
 
-    public int getProjectSiteID() {
+    public Integer getProjectSiteID() {
         return projectSiteID;
     }
 
-    public void setProjectSiteID(int projectSiteID) {
+    public void setProjectSiteID(Integer projectSiteID) {
         this.projectSiteID = projectSiteID;
     }
 
-    public int getProjectSiteTaskID() {
+    public Integer getProjectSiteTaskID() {
         return projectSiteTaskID;
     }
 
-    public void setProjectSiteTaskID(int projectSiteTaskID) {
+    public void setProjectSiteTaskID(Integer projectSiteTaskID) {
         this.projectSiteTaskID = projectSiteTaskID;
     }
 

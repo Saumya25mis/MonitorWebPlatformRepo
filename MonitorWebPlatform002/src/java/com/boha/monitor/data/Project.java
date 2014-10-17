@@ -43,6 +43,8 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "Project.findByDateRegistered", query = "SELECT p FROM Project p WHERE p.dateRegistered = :dateRegistered"),
     @NamedQuery(name = "Project.findByCompleteFlag", query = "SELECT p FROM Project p WHERE p.completeFlag = :completeFlag")})
 public class Project implements Serializable {
+    @OneToMany(mappedBy = "project")
+    private List<PhotoUpload> photoUploadList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "project")
     private List<Invoice> invoiceList;
     @JoinColumn(name = "clientID", referencedColumnName = "clientID")
@@ -184,6 +186,14 @@ public class Project implements Serializable {
 
     public void setInvoiceList(List<Invoice> invoiceList) {
         this.invoiceList = invoiceList;
+    }
+
+    public List<PhotoUpload> getPhotoUploadList() {
+        return photoUploadList;
+    }
+
+    public void setPhotoUploadList(List<PhotoUpload> photoUploadList) {
+        this.photoUploadList = photoUploadList;
     }
 
     

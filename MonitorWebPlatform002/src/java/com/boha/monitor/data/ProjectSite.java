@@ -39,6 +39,8 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "ProjectSite.findByActiveFlag",
             query = "SELECT p FROM ProjectSite p WHERE p.activeFlag = :activeFlag")})
 public class ProjectSite implements Serializable {
+    @OneToMany(mappedBy = "projectSite")
+    private List<PhotoUpload> photoUploadList;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 100)
@@ -210,6 +212,14 @@ public class ProjectSite implements Serializable {
 
     public void setStandErfNumber(String standErfNumber) {
         this.standErfNumber = standErfNumber;
+    }
+
+    public List<PhotoUpload> getPhotoUploadList() {
+        return photoUploadList;
+    }
+
+    public void setPhotoUploadList(List<PhotoUpload> photoUploadList) {
+        this.photoUploadList = photoUploadList;
     }
 
 }

@@ -7,12 +7,10 @@ package com.boha.monitor.dto;
 
 import com.boha.monitor.data.Project;
 import com.boha.monitor.data.ProjectSiteTask;
-import com.boha.monitor.util.FileUtility;
+import com.boha.monitor.dto.transfer.PhotoUploadDTO;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -26,7 +24,7 @@ public class ProjectSiteTaskDTO implements Serializable {
     private long dateRegistered;
     private Integer projectSiteID, projectID;
     private List<ProjectSiteTaskStatusDTO> projectSiteTaskStatusList = new ArrayList<>();
-    private List<String> imageFileNameList;
+    private List<PhotoUploadDTO> photoUploadList;
 
     public ProjectSiteTaskDTO() {
     }
@@ -38,12 +36,15 @@ public class ProjectSiteTaskDTO implements Serializable {
         this.dateRegistered = a.getDateRegistered().getTime();
         this.projectSiteID = a.getProjectSite().getProjectSiteID();
         Project p = a.getProjectSite().getProject();
-        try {
-            this.imageFileNameList = FileUtility.getImageFilesTask(p.getCompany().getCompanyID(),
-                    p.getProjectID(), a.getProjectSite().getProjectSiteID(), projectSiteTaskID);
-        } catch (Exception ex) {
-            Logger.getLogger(ProjectSiteTaskDTO.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        
+    }
+
+    public List<PhotoUploadDTO> getPhotoUploadList() {
+        return photoUploadList;
+    }
+
+    public void setPhotoUploadList(List<PhotoUploadDTO> photoUploadList) {
+        this.photoUploadList = photoUploadList;
     }
 
     public Integer getProjectID() {
@@ -68,14 +69,6 @@ public class ProjectSiteTaskDTO implements Serializable {
 
     public void setProjectSiteTaskID(Integer projectSiteTaskID) {
         this.projectSiteTaskID = projectSiteTaskID;
-    }
-
-    public List<String> getImageFileNameList() {
-        return imageFileNameList;
-    }
-
-    public void setImageFileNameList(List<String> imageFileNameList) {
-        this.imageFileNameList = imageFileNameList;
     }
 
     public long getDateRegistered() {
