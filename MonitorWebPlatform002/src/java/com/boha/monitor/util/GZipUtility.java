@@ -21,7 +21,7 @@ import org.apache.commons.io.IOUtils;
 public class GZipUtility {
 
     static final Gson gson = new Gson();
-    static final int ZIP_THRESHOLD = 2048;
+    static final int ZIP_THRESHOLD = 0;
     private static final Logger logger = Logger.getLogger(GZipUtility.class.getName());
 
     public static ByteBuffer getZippedResponse(ResponseDTO resp) throws IOException {

@@ -6,8 +6,10 @@
 
 package com.boha.monitor.dto.transfer;
 
+import com.boha.monitor.dto.BeneficiaryDTO;
 import com.boha.monitor.dto.CheckPointDTO;
 import com.boha.monitor.dto.CityDTO;
+import com.boha.monitor.dto.ClientDTO;
 import com.boha.monitor.dto.CompanyDTO;
 import com.boha.monitor.dto.CompanyStaffDTO;
 import com.boha.monitor.dto.GcmDeviceDTO;
@@ -43,26 +45,28 @@ public class RequestDTO implements Serializable{
     private TaskDTO task;
     private CheckPointDTO checkPoint;
     private TaskStatusDTO taskStatus;
+    private ClientDTO client;
     
     private ProjectSiteTaskDTO projectSiteTask;
     private ProjectDiaryRecordDTO projectDiaryRecord;
     private ProjectSiteTaskStatusDTO projectSiteTaskStatus;
     private ProjectStatusTypeDTO projectStatusType;
-    //register actors
+    private BeneficiaryDTO beneficiary;
+//register actors
     public static final int 
             REGISTER_COMPANY = 1,
             REGISTER_COMPANY_STAFF = 2,
             REGISTER_PROJECT = 3,
             REGISTER_PROJECT_SITE = 4,
-            REGISTER_PROJECT_SITE_STAFF = 5;
+            REGISTER_PROJECT_SITE_STAFF = 5,
+            REGISTER_CLIENT = 6,
+            REGISTER_BENEFICIARY = 7;
     //add stuff
     public static final int 
             ADD_PROJECT_SITE_TASK = 11,
             ADD_PROJECT_DIARY_RECORD = 12,
             ADD_PROJECT_SITE_TASK_STATUS = 13,
             ADD_PROJECT_STATUS_TYPE = 14,
-            ADD_SITE_IMAGE = 15,
-            ADD_TASK_IMAGE = 16,
             ADD_DEVICE = 17;
     //get stuff
     public static final int 
@@ -88,7 +92,8 @@ public class RequestDTO implements Serializable{
             ADD_COMPANY_PROJECT_STATUS_TYPE = 303,
             ADD_COMPANY_CHECKPOINT = 304,
             ADD_CITY = 305,
-            ADD_TOWNSHIP = 306;
+            ADD_TOWNSHIP = 306,
+            ADD_SITE_TASK = 307;
     //updates 
     public static final int 
             UPDATE_COMPANY_TASK = 401,
@@ -97,6 +102,20 @@ public class RequestDTO implements Serializable{
             UPDATE_COMPANY_CHECKPOINT = 404,
             UPDATE_PROJECT = 405,
             UPDATE_PROJECT_SITE = 406;
+    //invoice
+    public static final int
+            ADD_INVOICE = 501,
+            ADD_INVOICE_ITEM = 502,
+            REMOVE_INVOICE_ITEM = 503,
+            CREATE_INVOICE_PDF = 504,
+            REMOVE_INVOICE = 505,
+            GET_PROJECT_INVOICES = 506;
+    //reports
+    public static final int
+            REPORT_PROJECT = 601,
+            REPORT_SITE = 602,
+            GET_PROJECT_STATUS_LIST = 603,
+            GET_PROJECT_SITE_STATUS_LIST = 604;
     
 
     public static final String COMPANY_DIR = "company";
@@ -107,6 +126,22 @@ public class RequestDTO implements Serializable{
 
     //
     
+    public BeneficiaryDTO getBeneficiary() {
+        return beneficiary;
+    }
+
+    public void setBeneficiary(BeneficiaryDTO beneficiary) {
+        this.beneficiary = beneficiary;
+    }
+
+    public ClientDTO getClient() {
+        return client;
+    }
+
+    public void setClient(ClientDTO client) {
+        this.client = client;
+    }
+
     public TaskDTO getTask() {
         return task;
     }

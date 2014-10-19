@@ -35,7 +35,6 @@ public class ProjectSiteTaskDTO implements Serializable {
         this.task = new TaskDTO(a.getTask());
         this.dateRegistered = a.getDateRegistered().getTime();
         this.projectSiteID = a.getProjectSite().getProjectSiteID();
-        Project p = a.getProjectSite().getProject();
         
     }
 

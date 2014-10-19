@@ -19,7 +19,7 @@ import java.util.List;
 public class ProjectDTO implements Serializable {
     private static final long serialVersionUID = 1L;
     private Integer projectID;
-    private String projectName;
+    private String projectName, clientName;
     private String description;
     private long dateRegistered;
     private Integer completeFlag;
@@ -43,7 +43,16 @@ public class ProjectDTO implements Serializable {
         this.companyID = a.getCompany().getCompanyID();
         if (a.getClient() != null) {
             this.clientID = a.getClient().getClientID();
+            this.clientName = a.getClient().getClientName();
         }
+    }
+
+    public String getClientName() {
+        return clientName;
+    }
+
+    public void setClientName(String clientName) {
+        this.clientName = clientName;
     }
 
     public List<PhotoUploadDTO> getPhotoUploadList() {

@@ -36,7 +36,7 @@ import org.joda.time.DateTime;
 @Stateless
 public class PhotoUtil {
     
-    public ResponseDTO downloadPhotos(HttpServletRequest request, DataUtil dataUtil) throws FileUploadException {
+    public ResponseDTO downloadPhotos(HttpServletRequest request, DataUtil dataUtil, PlatformUtil platformUtil) throws FileUploadException {
         logger.log(Level.INFO, "######### starting PHOTO DOWNLOAD process\n\n");
         ResponseDTO resp = new ResponseDTO();
         InputStream stream = null;
@@ -107,6 +107,13 @@ public class PhotoUtil {
                         fileName = "f" + dt.getMillis() + ".jpg";
                     } else {
                         fileName = "t" + dt.getMillis() + ".jpg";
+                    }
+                    if (dto.getCompanyStaffID() != null) {
+                       if (dto.isIsFullPicture()) {
+                        fileName = "f" + dto.getCompanyStaffID() + ".jpg";
+                    } else {
+                        fileName = "t" + dto.getCompanyStaffID() + ".jpg";
+                    } 
                     }
                     //
                     switch (dto.getPictureType()) {

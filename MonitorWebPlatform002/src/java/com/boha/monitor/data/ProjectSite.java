@@ -41,8 +41,6 @@ import javax.validation.constraints.Size;
 public class ProjectSite implements Serializable {
     @OneToMany(mappedBy = "projectSite")
     private List<PhotoUpload> photoUploadList;
-    @Basic(optional = false)
-    @NotNull
     @Size(min = 1, max = 100)
     @Column(name = "standErfNumber")
     private String standErfNumber;

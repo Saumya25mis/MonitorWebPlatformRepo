@@ -12,6 +12,7 @@ import com.boha.monitor.data.Company;
 import com.boha.monitor.data.CompanyStaff;
 import com.boha.monitor.data.CompanyStaffType;
 import com.boha.monitor.data.Country;
+import com.boha.monitor.data.ErrorStore;
 import com.boha.monitor.data.InvoiceCode;
 import com.boha.monitor.data.Project;
 import com.boha.monitor.data.ProjectDiaryRecord;
@@ -45,6 +46,7 @@ import com.boha.monitor.dto.TaskStatusDTO;
 import com.boha.monitor.dto.TownshipDTO;
 import com.boha.monitor.dto.transfer.ResponseDTO;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -256,7 +258,7 @@ public class ListUtil {
                     }
                 }
                 for (ProjectSiteTaskStatusDTO s : sList) {
-                    if (Objects.equals(s.getProjectSiteStaffID(), dto.getProjectSiteStaffID())) {
+                    if (Objects.equals(s.getCompanyStaffID(), dto.getCompanyStaff().getCompanyStaffID())) {
                         dto.getProjectSiteTaskStatusList().add(s);
                     }
                 }
@@ -312,10 +314,21 @@ public class ListUtil {
         c.setCheckPointList(getCheckPointList(companyID).getCheckPointList());
 
         resp.setCompany(c);
+        resp.setCompanyStaffTypeList(getStaffTypeList());
         resp.setCountryList(getCountryList().getCountryList());
         return resp;
     }
 
+    public List<CompanyStaffTypeDTO> getStaffTypeList() {
+        List<CompanyStaffTypeDTO> list = new ArrayList<>();
+        Query q = em.createNamedQuery("CompanyStaffType.findAll", CompanyStaffType.class);
+        List<CompanyStaffType> sList = q.getResultList();
+        for (CompanyStaffType companyStaffType : sList) {
+            list.add(new CompanyStaffTypeDTO(companyStaffType));
+        }
+        
+        return list;
+    }
     public List<TaskDTO> getTasksByCompany(Integer companyID) throws DataException {
         List<TaskDTO> resp = new ArrayList<>();
 
@@ -402,7 +415,7 @@ public class ListUtil {
                         for (ProjectSiteTaskDTO pst : pstList) {
                             if (Objects.equals(pst.getProjectSiteID(), st.getProjectSiteID())) {
                                 for (ProjectSiteTaskStatusDTO x : pst.getProjectSiteTaskStatusList()) {
-                                    if (Objects.equals(x.getProjectSiteStaffID(), st.getProjectSiteStaffID())) {
+                                    if (Objects.equals(x.getCompanyStaffID(), st.getCompanyStaff().getCompanyStaffID())) {
                                         st.getProjectSiteTaskStatusList().add(x);
                                         log.log(Level.INFO, "status loaded {0} {1}", new Object[]{x.getStaffName(), x.getTaskStatus().getTaskStatusName()});
                                     }
@@ -508,6 +521,21 @@ public class ListUtil {
         }
 
         return sb.toString();
+    }
+    public void addErrorStore(int statusCode, String message, String origin) {
+        log.log(Level.OFF, "------ adding errorStore, message: {0} origin: {1}", new Object[]{message, origin});
+        try {
+            ErrorStore t = new ErrorStore();
+            t.setDateOccured(new Date());
+            t.setMessage(message);
+            t.setStatusCode(statusCode);
+            t.setOrigin(origin);
+            em.persist(t);
+            log.log(Level.INFO, "####### ErrorStore row added, origin {0} \nmessage: {1}",
+                    new Object[]{origin, message});
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "####### Failed to add errorStore from " + origin + "\n" + message, e);
+        }
     }
     static final Logger log = Logger.getLogger(ListUtil.class.getSimpleName());
 }

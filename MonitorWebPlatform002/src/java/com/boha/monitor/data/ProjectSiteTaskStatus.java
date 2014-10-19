@@ -43,6 +43,12 @@ import javax.validation.constraints.NotNull;
     @NamedQuery(name = "ProjectSiteTaskStatus.findByDateUpdated", 
             query = "SELECT p FROM ProjectSiteTaskStatus p WHERE p.dateUpdated = :dateUpdated")})
 public class ProjectSiteTaskStatus implements Serializable {
+    @Column(name = "statusDate")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date statusDate;
+    @JoinColumn(name = "companyStaffID", referencedColumnName = "companyStaffID")
+    @ManyToOne
+    private CompanyStaff companyStaff;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -60,10 +66,7 @@ public class ProjectSiteTaskStatus implements Serializable {
     @JoinColumn(name = "projectSiteTaskID", referencedColumnName = "projectSiteTaskID")
     @ManyToOne(optional = false)
     private ProjectSiteTask projectSiteTask;
-    @JoinColumn(name = "projectSiteStaffID", referencedColumnName = "projectSiteStaffID")
-    @ManyToOne(optional = false)
-    private ProjectSiteStaff projectSiteStaff;
-
+    
     public ProjectSiteTaskStatus() {
     }
 
@@ -108,12 +111,12 @@ public class ProjectSiteTaskStatus implements Serializable {
         this.projectSiteTask = projectSiteTask;
     }
 
-    public ProjectSiteStaff getProjectSiteStaff() {
-        return projectSiteStaff;
+    public CompanyStaff getCompanyStaff() {
+        return companyStaff;
     }
 
-    public void setProjectSiteStaff(ProjectSiteStaff projectSiteStaff) {
-        this.projectSiteStaff = projectSiteStaff;
+    public void setCompanyStaff(CompanyStaff companyStaff) {
+        this.companyStaff = companyStaff;
     }
 
     @Override
@@ -140,5 +143,14 @@ public class ProjectSiteTaskStatus implements Serializable {
     public String toString() {
         return "com.boha.monitor.data.ProjectSiteTaskStatus[ projectSiteTaskStatusID=" + projectSiteTaskStatusID + " ]";
     }
+
+    public Date getStatusDate() {
+        return statusDate;
+    }
+
+    public void setStatusDate(Date statusDate) {
+        this.statusDate = statusDate;
+    }
+
     
 }

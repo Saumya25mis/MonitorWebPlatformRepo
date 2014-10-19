@@ -29,7 +29,8 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(name = "companyStaffType")
 @NamedQueries({
-    @NamedQuery(name = "CompanyStaffType.findAll", query = "SELECT c FROM CompanyStaffType c"),
+    @NamedQuery(name = "CompanyStaffType.findAll", 
+            query = "SELECT c FROM CompanyStaffType c order by c.companyStaffTypeName"),
     @NamedQuery(name = "CompanyStaffType.findByCompanyStaffTypeID", query = "SELECT c FROM CompanyStaffType c WHERE c.companyStaffTypeID = :companyStaffTypeID"),
     @NamedQuery(name = "CompanyStaffType.findByCompanyStaffTypeName", query = "SELECT c FROM CompanyStaffType c WHERE c.companyStaffTypeName = :companyStaffTypeName")})
 public class CompanyStaffType implements Serializable {

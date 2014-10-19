@@ -64,7 +64,8 @@ public class ProjectSiteTask implements Serializable {
     @JoinColumn(name = "projectSiteID", referencedColumnName = "projectSiteID")
     @ManyToOne(optional = false)
     private ProjectSite projectSite;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "projectSiteTask")
+    @OneToMany(cascade = CascadeType.ALL, 
+            mappedBy = "projectSiteTask")
     private List<ProjectSiteTaskStatus> projectSiteTaskStatusList;
 
     public ProjectSiteTask() {

@@ -44,6 +44,9 @@ public class CompanyWebSocket {
     ListUtil listUtil;
     @EJB
     PlatformUtil platformUtil;
+    @EJB
+    TrafficCop trafficCop;
+
     static final String SOURCE = "CompanyWebSocket";
     //TODO - clean up expired sessions!!!!
     public static final Set<Session> peers
@@ -55,21 +58,15 @@ public class CompanyWebSocket {
         ResponseDTO resp = new ResponseDTO();
         ByteBuffer bb = null;
         try {
-            try {
-                RequestDTO dto = gson.fromJson(message, RequestDTO.class);
-                resp = TrafficCop.processRequest(dto, dataUtil, listUtil, platformUtil);
-            } catch (DataException e) {
-                resp.setStatusCode(101);
-                resp.setMessage("Data service failed to process your request");
-                log.log(Level.SEVERE, "Database related failure", e);
-                bb = GZipUtility.getZippedResponse(resp);
-            }
-            
+            RequestDTO dto = gson.fromJson(message, RequestDTO.class);
+            resp = trafficCop.processRequest(dto, dataUtil, listUtil);
             bb = GZipUtility.getZippedResponse(resp);
+
         } catch (IOException ex) {
             Logger.getLogger(ProjectWebSocket.class.getName()).log(Level.SEVERE, null, ex);
             resp.setStatusCode(111);
             resp.setMessage("Problem processing request on server");
+            dataUtil.addErrorStore(19, dataUtil.getErrorString(ex), SOURCE);
             try {
                 bb = GZipUtility.getZippedResponse(resp);
             } catch (IOException ex1) {
@@ -107,8 +104,10 @@ public class CompanyWebSocket {
 
     @OnError
     public void onError(Throwable t) {
-        log.log(Level.SEVERE, "@OnError, websocket failed", t);
-
+        log.log(Level.SEVERE, "#############################@OnError, websocket failed", t);
+        ResponseDTO r = new ResponseDTO();
+        r.setStatusCode(9);
+        //session.getBasicRemote().sendText(gson.toJson(r));
     }
 
     Gson gson = new Gson();

@@ -7,10 +7,10 @@
 package com.boha.monitor.dto;
 
 import com.boha.monitor.data.CompanyStaff;
-import com.boha.monitor.data.ProjectSiteStaff;
 import com.boha.monitor.data.ProjectSiteTask;
 import com.boha.monitor.data.ProjectSiteTaskStatus;
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  *
@@ -19,10 +19,12 @@ import java.io.Serializable;
 public class ProjectSiteTaskStatusDTO implements Serializable {
     private static final long serialVersionUID = 1L;
     private Integer projectSiteTaskStatusID;
-    private long dateUpdated;
+    private Date dateUpdated;
+    private Date statusDate;
     private TaskStatusDTO taskStatus;
+    private TaskDTO task;
     private Integer projectSiteTaskID;
-    private Integer projectSiteStaffID, companyStaffID;
+    private Integer companyStaffID;
     private String projectSiteName, projectName, staffName;
 
     public ProjectSiteTaskStatusDTO() {
@@ -31,23 +33,48 @@ public class ProjectSiteTaskStatusDTO implements Serializable {
     public ProjectSiteTaskStatusDTO(ProjectSiteTaskStatus a) {
         this.projectSiteTaskStatusID = a.getProjectSiteTaskStatusID();
         ProjectSiteTask pst = a.getProjectSiteTask();
+        this.task = new TaskDTO(pst.getTask());
         this.projectSiteName = pst.getProjectSite().getProjectSiteName();
         this.projectSiteTaskID = pst.getProjectSiteTaskID();
         this.taskStatus = new TaskStatusDTO(a.getTaskStatus());
-        this.dateUpdated = a.getDateUpdated().getTime();
-        ProjectSiteStaff s = a.getProjectSiteStaff();
-        CompanyStaff cs = s.getCompanyStaff();
+        this.dateUpdated = a.getDateUpdated();
+        this.statusDate = a.getStatusDate();
+        CompanyStaff cs = a.getCompanyStaff();
         this.companyStaffID = cs.getCompanyStaffID();
         this.staffName = cs.getFirstName() + " " + cs.getLastName();
-        this.projectSiteStaffID = s.getProjectSiteStaffID();
     }
 
+    public TaskDTO getTask() {
+        return task;
+    }
+
+    public void setTask(TaskDTO task) {
+        this.task = task;
+    }
+
+    
     public Integer getCompanyStaffID() {
         return companyStaffID;
     }
 
     public void setCompanyStaffID(Integer companyStaffID) {
         this.companyStaffID = companyStaffID;
+    }
+
+    public Date getDateUpdated() {
+        return dateUpdated;
+    }
+
+    public void setDateUpdated(Date dateUpdated) {
+        this.dateUpdated = dateUpdated;
+    }
+
+    public Date getStatusDate() {
+        return statusDate;
+    }
+
+    public void setStatusDate(Date statusDate) {
+        this.statusDate = statusDate;
     }
 
     public String getProjectSiteName() {
@@ -84,16 +111,6 @@ public class ProjectSiteTaskStatusDTO implements Serializable {
         this.projectSiteTaskStatusID = projectSiteTaskStatusID;
     }
 
-    public long getDateUpdated() {
-        return dateUpdated;
-    }
-
-    public void setDateUpdated(long dateUpdated) {
-        this.dateUpdated = dateUpdated;
-    }
-
-   
-
     public TaskStatusDTO getTaskStatus() {
         return taskStatus;
     }
@@ -110,36 +127,7 @@ public class ProjectSiteTaskStatusDTO implements Serializable {
         this.projectSiteTaskID = projectSiteTaskID;
     }
 
-    public Integer getProjectSiteStaffID() {
-        return projectSiteStaffID;
-    }
-
-    public void setProjectSiteStaffID(Integer projectSiteStaffID) {
-        this.projectSiteStaffID = projectSiteStaffID;
-    }
-
-   
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (projectSiteTaskStatusID != null ? projectSiteTaskStatusID.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof ProjectSiteTaskStatusDTO)) {
-            return false;
-        }
-        ProjectSiteTaskStatusDTO other = (ProjectSiteTaskStatusDTO) object;
-        if ((this.projectSiteTaskStatusID == null && other.projectSiteTaskStatusID != null) || (this.projectSiteTaskStatusID != null && !this.projectSiteTaskStatusID.equals(other.projectSiteTaskStatusID))) {
-            return false;
-        }
-        return true;
-    }
-
+ 
     @Override
     public String toString() {
         return "com.boha.monitor.data.ProjectSiteTaskStatus[ projectSiteTaskStatusID=" + projectSiteTaskStatusID + " ]";

@@ -21,7 +21,7 @@ import java.util.logging.Logger;
 public class CloudMessagingRegistrar {
 
     public static ResponseDTO sendRegistration(String regID, 
-            PlatformUtil platformUtil) throws IOException {
+            DataUtil platformUtil) throws IOException {
         logger.log(Level.INFO,
                 "#### RegisterGCM starting comms with Google servers...." 
                         + "sending registration of mobile device\n{0}", regID);

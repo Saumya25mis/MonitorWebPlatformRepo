@@ -72,17 +72,17 @@ import org.joda.time.DateTime;
 @Stateless
 @TransactionManagement(TransactionManagementType.CONTAINER)
 public class DataUtil {
-
+    
     @PersistenceContext
     EntityManager em;
-
+    
     static final int OPERATIONS_MANAGER = 1,
             SITE_SUPERVISOR = 2,
             EXECUTIVE_STAFF = 3,
             PROJECT_MANAGER = 4;
-
+    
     public ResponseDTO login(GcmDeviceDTO device, String email,
-            String pin, ListUtil listUtil, PlatformUtil platformUtil) throws DataException {
+            String pin, ListUtil listUtil) throws DataException {
         ResponseDTO resp = new ResponseDTO();
         Query q = null;
         try {
@@ -93,13 +93,13 @@ public class DataUtil {
             CompanyStaff cs = (CompanyStaff) q.getSingleResult();
             Company company = cs.getCompany();
             resp.setCompanyStaff(new CompanyStaffDTO(cs));
-
+            
             device.setCompanyID(company.getCompanyID());
             device.setCompanyStaffID(cs.getCompanyStaffID());
             addDevice(device);
-
+            
             try {
-                CloudMessagingRegistrar.sendRegistration(device.getRegistrationID(), platformUtil);
+                CloudMessagingRegistrar.sendRegistration(device.getRegistrationID(), this);
             } catch (IOException ex) {
                 Logger.getLogger(DataUtil.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -121,9 +121,9 @@ public class DataUtil {
                 case PROJECT_MANAGER:
                     resp.setCompanyStaff(new CompanyStaffDTO(cs));
                     break;
-
+                
             }
-
+            
         } catch (NoResultException e) {
             log.log(Level.WARNING, "Invalid login attempt: " + email + " pin: " + pin, e);
             resp.setStatusCode(301);
@@ -131,7 +131,7 @@ public class DataUtil {
         }
         return resp;
     }
-
+    
     public void addAndroidError(ErrorStoreAndroid err) throws DataException {
         try {
             em.persist(err);
@@ -142,7 +142,7 @@ public class DataUtil {
                     + getErrorString(e));
         }
     }
-
+    
     public ResponseDTO getServerErrors(
             long startDate, long endDate) throws DataException {
         ResponseDTO r = new ResponseDTO();
@@ -170,11 +170,11 @@ public class DataUtil {
         }
         return r;
     }
-
+    
     public Company getCompanyByID(Integer id) {
         return em.find(Company.class, id);
     }
-
+    
     public void addPhotoUpload(PhotoUploadDTO pu) {
         try {
             PhotoUpload u = new PhotoUpload();
@@ -202,10 +202,14 @@ public class DataUtil {
             log.log(Level.OFF, "PhotoUpload added to table");
         } catch (Exception e) {
             log.log(Level.SEVERE, "PhotoUpload failed", e);
+            addErrorStore(9,
+                    "PhotoUpload database add failed\n"
+                    + getErrorString(e), "DataUtil");
+            
         }
-
+        
     }
-
+    
     public void addDevice(GcmDeviceDTO d) throws DataException {
         try {
             GcmDevice g = new GcmDevice();
@@ -223,16 +227,16 @@ public class DataUtil {
             g.setSerialNumber(d.getSerialNumber());
             g.setProduct(d.getProduct());
             g.setAndroidVersion(d.getAndroidVersion());
-
+            
             em.persist(g);
             log.log(Level.WARNING, "New device loaded");
         } catch (Exception e) {
             log.log(Level.SEVERE, "Failed", e);
-            throw new DataException("Failed");
-
+            throw new DataException("Failed to add device\n" + getErrorString(e));
+            
         }
     }
-
+    
     public ResponseDTO addProjectSiteTaskStatus(
             ProjectSiteTaskStatusDTO status) throws DataException {
         ResponseDTO resp = new ResponseDTO();
@@ -242,31 +246,28 @@ public class DataUtil {
             ProjectSiteTaskStatus t = new ProjectSiteTaskStatus();
             t.setDateUpdated(new Date());
             t.setProjectSiteTask(c);
-            t.setProjectSiteStaff(em.find(ProjectSiteStaff.class, status.getProjectSiteStaffID()));
+            t.setCompanyStaff(em.find(CompanyStaff.class, status.getCompanyStaffID()));
             t.setTaskStatus(em.find(TaskStatus.class, status.getTaskStatus().getTaskStatusID()));
-
+            
             em.persist(t);
-            Query q = em.createNamedQuery("ProjectSiteTaskStatus.findbyTask",
-                    ProjectSiteTaskStatus.class);
-            q.setParameter("id", c.getProjectSiteTaskID());
-            List<ProjectSiteTaskStatus> list = q.getResultList();
-            for (ProjectSiteTaskStatus s : list) {
-                resp.getProjectSiteTaskStatusList().add(new ProjectSiteTaskStatusDTO(s));
-            }
-
+            em.flush();
+            resp.getProjectSiteTaskStatusList().add(
+                    new ProjectSiteTaskStatusDTO(t));
+            
+            
             log.log(Level.OFF, "ProjectSiteTaskStatus added");
-
+            
         } catch (Exception e) {
             log.log(Level.SEVERE, "Failed", e);
             throw new DataException("Failed");
         }
-
+        
         return resp;
-
+        
     }
-
+    
     public ResponseDTO addProjectDiaryRecord(
-            ProjectDiaryRecordDTO diary) throws DataException {
+            ProjectDiaryRecordDTO diary) throws DataException, DataException, DataException {
         ResponseDTO resp = new ResponseDTO();
         try {
             ProjectSiteStaff c = em.find(ProjectSiteStaff.class,
@@ -276,27 +277,22 @@ public class DataUtil {
             t.setProjectSiteStaff(c);
             t.setProjectStatusType(em.find(ProjectStatusType.class,
                     diary.getProjectStatusType().getProjectStatusTypeID()));
-
+            
             em.persist(t);
-            Query q = em.createNamedQuery("ProjectDiaryRecord.findByProjectSite",
-                    ProjectDiaryRecord.class);
-            q.setParameter("projectSiteID", c.getProjectSite().getProjectSiteID());
-            List<ProjectDiaryRecord> list = q.getResultList();
-            for (ProjectDiaryRecord projectDiaryRecord : list) {
-                resp.getProjectDiaryRecordList().add(new ProjectDiaryRecordDTO(projectDiaryRecord));
-            }
-
+            em.flush();
+            resp.getProjectDiaryRecordList().add(
+                    new ProjectDiaryRecordDTO(t));
             log.log(Level.OFF, "ProjectDiaryRecord added");
-
+            
         } catch (Exception e) {
             log.log(Level.SEVERE, "Failed", e);
             throw new DataException("Failed");
         }
-
+        
         return resp;
-
+        
     }
-
+    
     public ResponseDTO addCompanyCheckPoint(CheckPointDTO b) throws DataException {
         ResponseDTO resp = new ResponseDTO();
         try {
@@ -305,30 +301,24 @@ public class DataUtil {
             cli.setCheckPointName(b.getCheckPointName());
             cli.setDescription(b.getDescription());
             cli.setCompany(c);
-
+            
             em.persist(cli);
-
-            Query q = em.createNamedQuery("CheckPoint.findByCompany", CheckPoint.class);
-            q.setParameter("companyID", c.getCompanyID());
-            List<CheckPoint> list = q.getResultList();
-            for (CheckPoint t : list) {
-                resp.getCheckPointList().add(new CheckPointDTO(t));
-            }
-
+            em.flush();
+            resp.getCheckPointList().add(new CheckPointDTO(cli));
             log.log(Level.OFF, "######## CheckPoint added: {0}", b.getCheckPointName());
-
+            
         } catch (PersistenceException e) {
             log.log(Level.SEVERE, "Failed", e);
             resp.setStatusCode(301);
             resp.setMessage("Duplicate detected, request ignored./nPlease try again");
-
+            
         } catch (Exception e) {
             log.log(Level.SEVERE, "Failed", e);
             throw new DataException("Failed\n" + getErrorString(e));
         }
         return resp;
     }
-
+    
     public ResponseDTO addCompanyProjectStatus(ProjectStatusTypeDTO b) throws DataException {
         ResponseDTO resp = new ResponseDTO();
         try {
@@ -336,31 +326,24 @@ public class DataUtil {
             ProjectStatusType cli = new ProjectStatusType();
             cli.setProjectStatusName(b.getProjectStatusName());
             cli.setCompany(c);
-
+            
             em.persist(cli);
-
-            Query q = em.createNamedQuery("ProjectStatusType.findByProjectStatusNameInCompany", ProjectStatusType.class);
-            q.setParameter("companyID", c.getCompanyID());
-            q.setParameter("projectStatusName", b.getProjectStatusName());
-            List<ProjectStatusType> list = q.getResultList();
-            for (ProjectStatusType t : list) {
-                resp.getProjectStatusTypeList().add(new ProjectStatusTypeDTO(t));
-            }
-
+            em.flush();
+            resp.getProjectStatusTypeList().add(new ProjectStatusTypeDTO(cli));
             log.log(Level.OFF, "######## ProjectStatusType added: {0}", b.getProjectStatusName());
-
+            
         } catch (PersistenceException e) {
             log.log(Level.SEVERE, "Failed", e);
             resp.setStatusCode(301);
             resp.setMessage("Duplicate detected, request ignored./nPlease try again");
-
+            
         } catch (Exception e) {
             log.log(Level.SEVERE, "Failed", e);
             throw new DataException("Failed\n" + getErrorString(e));
         }
         return resp;
     }
-
+    
     public ResponseDTO addCompanyTaskStatus(TaskStatusDTO b) throws DataException {
         ResponseDTO resp = new ResponseDTO();
         try {
@@ -368,30 +351,24 @@ public class DataUtil {
             TaskStatus cli = new TaskStatus();
             cli.setTaskStatusName(b.getTaskStatusName());
             cli.setCompany(c);
-
+            
             em.persist(cli);
-
-            Query q = em.createNamedQuery("TaskStatus.findByCompany", TaskStatus.class);
-            q.setParameter("companyID", c.getCompanyID());
-            List<TaskStatus> list = q.getResultList();
-            for (TaskStatus task : list) {
-                resp.getTaskStatusList().add(new TaskStatusDTO(task));
-            }
-
+            em.flush();
+            resp.getTaskStatusList().add(new TaskStatusDTO(cli));
             log.log(Level.OFF, "######## TaskStatus added: {0}", b.getTaskStatusName());
-
+            
         } catch (PersistenceException e) {
             log.log(Level.SEVERE, "Failed", e);
             resp.setStatusCode(301);
             resp.setMessage("Duplicate detected, request ignored./nPlease try again");
-
+            
         } catch (Exception e) {
             log.log(Level.SEVERE, "Failed", e);
             throw new DataException("Failed\n" + getErrorString(e));
         }
         return resp;
     }
-
+    
     public ResponseDTO addCity(CityDTO b) throws DataException {
         ResponseDTO resp = new ResponseDTO();
         try {
@@ -401,30 +378,24 @@ public class DataUtil {
             cli.setProvince(c);
             cli.setLatitude(b.getLatitude());
             cli.setLongitude(b.getLongitude());
-
+            
             em.persist(cli);
-
-            Query q = em.createNamedQuery("City.findByProvince", City.class);
-            q.setParameter("provinceID", c.getProvinceID());
-            List<City> list = q.getResultList();
-            for (City ct : list) {
-                resp.getCityList().add(new CityDTO(ct));
-            }
-
+            em.flush();
+            resp.getCityList().add(new CityDTO(cli));
             log.log(Level.OFF, "######## City added: {0}", b.getCityName());
-
+            
         } catch (PersistenceException e) {
             log.log(Level.SEVERE, "Failed", e);
             resp.setStatusCode(301);
             resp.setMessage("Duplicate detected, request ignored./nPlease try again");
-
+            
         } catch (Exception e) {
             log.log(Level.SEVERE, "Failed", e);
             throw new DataException("Failed\n" + getErrorString(e));
         }
         return resp;
     }
-
+    
     public ResponseDTO addTownship(TownshipDTO b) throws DataException {
         ResponseDTO resp = new ResponseDTO();
         try {
@@ -434,30 +405,24 @@ public class DataUtil {
             cli.setCity(c);
             cli.setLatitude(b.getLatitude());
             cli.setLongitude(b.getLongitude());
-
+            
             em.persist(cli);
-
-            Query q = em.createNamedQuery("Township.findByCity", Township.class);
-            q.setParameter("cityID", b.getCityID());
-            List<Township> list = q.getResultList();
-            for (Township ct : list) {
-                resp.getTownshipList().add(new TownshipDTO(ct));
-            }
-
+            em.flush();
+            resp.getTownshipList().add(new TownshipDTO(cli));
             log.log(Level.OFF, "######## Township added: {0}", b.getTownshipName());
-
+            
         } catch (PersistenceException e) {
             log.log(Level.SEVERE, "Failed", e);
             resp.setStatusCode(301);
             resp.setMessage("Duplicate detected, request ignored./nPlease try again");
-
+            
         } catch (Exception e) {
             log.log(Level.SEVERE, "Failed", e);
             throw new DataException("Failed\n" + getErrorString(e));
         }
         return resp;
     }
-
+    
     public ResponseDTO addCompanyTask(TaskDTO b) throws DataException {
         ResponseDTO resp = new ResponseDTO();
         try {
@@ -467,30 +432,24 @@ public class DataUtil {
             cli.setDescription(b.getDescription());
             cli.setTaskNumber(b.getTaskNumber());
             cli.setCompany(c);
-
+            
             em.persist(cli);
-
-            Query q = em.createNamedQuery("Task.findByCompany", Task.class);
-            q.setParameter("companyID", c.getCompanyID());
-            List<Task> list = q.getResultList();
-            for (Task task : list) {
-                resp.getTaskList().add(new TaskDTO(task));
-            }
-
+            em.flush();
+            resp.getTaskList().add(new TaskDTO(cli));
             log.log(Level.OFF, "######## Task added: {0}", b.getTaskName());
-
+            
         } catch (PersistenceException e) {
             log.log(Level.SEVERE, "Failed", e);
             resp.setStatusCode(301);
             resp.setMessage("Duplicate detected, request ignored./nPlease try again");
-
+            
         } catch (Exception e) {
             log.log(Level.SEVERE, "Failed", e);
             throw new DataException("Failed\n" + getErrorString(e));
         }
         return resp;
     }
-
+    
     public ResponseDTO addProjectSiteTask(
             ProjectSiteTaskDTO siteTask) throws DataException {
         ResponseDTO resp = new ResponseDTO();
@@ -501,28 +460,25 @@ public class DataUtil {
             t.setDateRegistered(new Date());
             t.setProjectSite(c);
             t.setTask(task);
-
+            
             em.persist(t);
-            Query q = em.createNamedQuery("ProjectSiteTask.findByProjectSite",
-                    ProjectSiteTask.class);
-            q.setParameter("projectSiteID", siteTask.getProjectSiteID());
-            List<ProjectSiteTask> list = q.getResultList();
-            for (ProjectSiteTask pst : list) {
-                resp.getProjectSiteTaskList().add(new ProjectSiteTaskDTO(pst));
-            }
-
+            em.flush();
+            System.out.println("## after add, list of tasks: " + c.getProjectSiteTaskList().size());
+            resp.getProjectSiteTaskList().add(new ProjectSiteTaskDTO(t));
+            resp.setStatusCode(0);
+            resp.setMessage("ProjectSiteTask added successfully");
             log.log(Level.OFF, "Project site task registered for: {0} ",
                     new Object[]{c.getProjectSiteName()});
-
+            
         } catch (Exception e) {
             log.log(Level.SEVERE, "Failed", e);
-            throw new DataException("Failed");
+            throw new DataException("Failed\n" + getErrorString(e));
         }
-
+        
         return resp;
-
+        
     }
-
+    
     public ResponseDTO registerProjectSiteStaff(
             ProjectSiteStaffDTO staff) throws DataException {
         ResponseDTO resp = new ResponseDTO();
@@ -533,28 +489,22 @@ public class DataUtil {
             ps.setDateRegistered(new Date());
             ps.setProjectSite(c);
             ps.setPin(getRandomPin());
-
+            
             em.persist(ps);
-            Query q = em.createNamedQuery("ProjectSiteStaff.findBySiteAndStaff",
-                    ProjectSiteStaff.class);
-            q.setParameter("companyStaffID", staff.getCompanyStaff().getCompanyStaffID());
-            q.setParameter("projectSiteID", staff.getProjectSiteID());
-            q.setMaxResults(1);
-            ps = (ProjectSiteStaff) q.getSingleResult();
+            em.flush();
             resp.getProjectSiteStaffList().add(new ProjectSiteStaffDTO(ps));
-
             log.log(Level.OFF, "Project site staff registered for: {0} ",
                     new Object[]{c.getProjectSiteName()});
-
+            
         } catch (Exception e) {
             log.log(Level.SEVERE, "Failed", e);
-            throw new DataException("Failed");
+            throw new DataException("Failed\n" + getErrorString(e));
         }
-
+        
         return resp;
-
+        
     }
-
+    
     public ResponseDTO registerProjectSite(
             ProjectSiteDTO site) throws DataException {
         ResponseDTO resp = new ResponseDTO();
@@ -566,57 +516,58 @@ public class DataUtil {
             ps.setLatitude(site.getLatitude());
             ps.setLongitude(site.getLongitude());
             ps.setProjectSiteName(site.getProjectSiteName());
-
+            
             em.persist(ps);
-
-            Query q = em.createNamedQuery("ProjectSite.findByProjectAndSiteName", ProjectSite.class);
-            q.setParameter("name", site.getProjectSiteName());
-            q.setParameter("projectID", c.getProjectID());
-            q.setMaxResults(1);
-            ps = (ProjectSite) q.getSingleResult();
-            resp.getProjectSiteList().add(new ProjectSiteDTO(ps));
-
+            em.flush();
+            resp.getProjectSiteList().add(new ProjectSiteDTO(ps));            
             log.log(Level.OFF, "Project site registered for: {0} - {1} ",
                     new Object[]{c.getProjectName(), site.getProjectSiteName()});
-
+            
         } catch (Exception e) {
             log.log(Level.SEVERE, "Failed", e);
-            throw new DataException("Failed");
+            throw new DataException("Failed\n" + getErrorString(e));
         }
-
+        
         return resp;
-
+        
     }
-
+    
     public ResponseDTO registerProject(
-            ProjectDTO proj) throws DataException {
+            ProjectDTO proj) throws DataException, DataException, DataException, DataException {
         ResponseDTO resp = new ResponseDTO();
         try {
             Company c = em.find(Company.class, proj.getCompanyID());
+            Client cl = em.find(Client.class, proj.getClientID());
             Project project = new Project();
             project.setCompany(c);
+            project.setClient(cl);
             project.setProjectName(proj.getProjectName());
             project.setDescription(proj.getDescription());
             project.setDateRegistered(new Date());
             em.persist(project);
-            Query q = em.createNamedQuery("Project.findByCompanyProjectName", Project.class);
-            q.setParameter("projectName", proj.getProjectName());
-            q.setParameter("companyID", c.getCompanyID());
-            q.setMaxResults(1);
-            project = (Project) q.getSingleResult();
-            resp.getProjectList().add(new ProjectDTO(project));
+            em.flush();
+            //create first project site
+            ProjectSite ps = new ProjectSite();
+            ps.setProject(project);
+            ps.setProjectSiteName("Project Site #1");
+            em.persist(ps);
+            em.flush();
+            ProjectDTO dto = new ProjectDTO(project);
+            dto.setProjectSiteList(new ArrayList<ProjectSiteDTO>());
+            dto.getProjectSiteList().add(new ProjectSiteDTO(ps));
+            resp.getProjectList().add(dto);
             log.log(Level.OFF, "Project registered for: {0} - {1} ",
                     new Object[]{c.getCompanyName(), proj.getProjectName()});
-
+            
         } catch (Exception e) {
             log.log(Level.SEVERE, "Failed", e);
-            throw new DataException("Failed");
+            throw new DataException("Failed\n" + getErrorString(e));
         }
-
+        
         return resp;
-
+        
     }
-
+    
     public ResponseDTO registerCompanyStaff(
             CompanyStaffDTO staff) throws DataException {
         ResponseDTO resp = new ResponseDTO();
@@ -632,34 +583,33 @@ public class DataUtil {
             cs.setCompanyStaffType(em.find(CompanyStaffType.class,
                     staff.getCompanyStaffType().getCompanyStaffTypeID()));
             em.persist(cs);
-
-            Query q = em.createNamedQuery("CompanyStaff.findByEmail", CompanyStaff.class);
-            q.setParameter("email", cs.getEmail());
-            q.setMaxResults(1);
-            cs = (CompanyStaff) q.getSingleResult();
-            resp.getCompanyStaffList().add(new CompanyStaffDTO(cs));
-
+            em.flush();
+            log.log(Level.OFF, "ID just generated : {0}", cs.getCompanyStaffID());
+            resp.setCompany(new CompanyDTO(c));
+            resp.setCompanyStaff(new CompanyStaffDTO(cs));
             try {
                 if (staff.getGcmDevice() != null) {
                     addDevice(staff.getGcmDevice());
                 }
-
+                
             } catch (DataException e) {
                 log.log(Level.WARNING, "Unable to add device to GCMDevice table", e);
             }
-
+            
             log.log(Level.OFF, "Company staff registered for: {0} - {1} {2}",
                     new Object[]{c.getCompanyName(), staff.getFirstName(), staff.getLastName()});
-
+        } catch (PersistenceException e) {
+            resp.setStatusCode(9);
+            resp.setMessage("Duplicate email or name detected. Ignoring request");
         } catch (Exception e) {
             log.log(Level.SEVERE, "Failed", e);
-            throw new DataException("Failed");
+            throw new DataException("Failed to register staff\n" + getErrorString(e));
         }
-
+        
         return resp;
-
+        
     }
-
+    
     public ResponseDTO registerClient(ClientDTO client) throws DataException {
         ResponseDTO resp = new ResponseDTO();
         try {
@@ -671,30 +621,24 @@ public class DataUtil {
             cli.setEmail(client.getEmail());
             cli.setPostCode(client.getPostCode());
             cli.setCompany(c);
-
+            
             em.persist(cli);
-
-            Query q = em.createNamedQuery("Client.findByClientNameInCompany", Client.class);
-            q.setParameter("clientName", cli.getClientName());
-            q.setParameter("companyID", c.getCompanyID());
-            q.setMaxResults(1);
-            Client x = (Client) q.getSingleResult();
-            resp.getClientList().add(new ClientDTO(x));
-
-            log.log(Level.OFF, "######## Client registered: {0}", x.getClientName());
-
+            em.flush();           
+            resp.getClientList().add(new ClientDTO(cli));
+            log.log(Level.OFF, "######## Client registered: {0}", cli.getClientName());
+            
         } catch (PersistenceException e) {
             log.log(Level.SEVERE, "Failed", e);
             resp.setStatusCode(301);
             resp.setMessage("Duplicate detected, request ignored./nPlease try again");
-
+            
         } catch (Exception e) {
             log.log(Level.SEVERE, "Failed", e);
             throw new DataException("Failed\n" + getErrorString(e));
         }
         return resp;
     }
-
+    
     public ResponseDTO registerBeneficiary(BeneficiaryDTO b) throws DataException {
         ResponseDTO resp = new ResponseDTO();
         try {
@@ -712,29 +656,26 @@ public class DataUtil {
             cli.setAmountAuthorized(b.getAmountAuthorized());
             cli.setAmountPaid(b.getAmountPaid());
             cli.setCompany(c);
-
+            
             em.persist(cli);
-
-            Query q = em.createNamedQuery("Beneficiary.findByIDNumberInCompany", Beneficiary.class);
-            q.setParameter("IDNumber", b.getIDNumber());
-            q.setParameter("companyID", c.getCompanyID());
-            q.setMaxResults(1);
-            Beneficiary x = (Beneficiary) q.getSingleResult();
-            resp.getBeneficiaryList().add(new BeneficiaryDTO(x));
-
-            log.log(Level.OFF, "######## Beneficiary registered: {0} {1}", new Object[]{x.getFirstName(), x.getLastName()});
-
+            em.flush();
+            resp.getBeneficiaryList().add(new BeneficiaryDTO(cli));
+            log.log(Level.OFF, "######## Beneficiary registered: {0} {1}", 
+                    new Object[]{cli.getFirstName(), cli.getLastName()});
+            
         } catch (PersistenceException e) {
             log.log(Level.SEVERE, "Failed", e);
             resp.setStatusCode(301);
             resp.setMessage("Duplicate detected, request ignored./nPlease try again");
-
+            
         } catch (Exception e) {
             log.log(Level.SEVERE, "Failed", e);
-            throw new DataException("Failed\n" + getErrorString(e));
+            throw new DataException("Failed to register beneficiary\n" + getErrorString(e));
         }
         return resp;
     }
+    
+   
 
     public ResponseDTO registerCompany(CompanyDTO company,
             CompanyStaffDTO staff, ListUtil listUtil) throws DataException {
@@ -744,14 +685,11 @@ public class DataUtil {
             Company c = new Company();
             c.setCompanyName(company.getCompanyName());
             em.persist(c);
-            Query q = em.createNamedQuery("Company.findByCompanyName", Company.class);
-            q.setParameter("companyName", company.getCompanyName());
-            q.setMaxResults(1);
-            Company x = (Company) q.getSingleResult();
+            em.flush();
 
             //add operations staff
             CompanyStaff cs = new CompanyStaff();
-            cs.setCompany(x);
+            cs.setCompany(c);
             cs.setFirstName(staff.getFirstName());
             cs.setCellphone(staff.getCellphone());
             cs.setEmail(staff.getEmail());
@@ -759,6 +697,7 @@ public class DataUtil {
             cs.setPin(staff.getPin());
             cs.setCompanyStaffType(getOperationsManager());
             em.persist(cs);
+            em.flush();
 
             //add sample data - app not empty at startup
             addInitialTaskStatus(c);
@@ -767,33 +706,28 @@ public class DataUtil {
             addInitialTasks(c);
             addInitialInvoiceCodes(c);
             addInitialProject(c);
-
-            q = em.createNamedQuery("CompanyStaff.findByEmail", CompanyStaff.class);
-            q.setParameter("email", cs.getEmail());
-            q.setMaxResults(1);
-            cs = (CompanyStaff) q.getSingleResult();
-
-            resp = listUtil.getCompanyData(x.getCompanyID());
+            
+            resp = listUtil.getCompanyData(c.getCompanyID());
             resp.setCompanyStaff(new CompanyStaffDTO(cs));
-
-            log.log(Level.OFF, "######## Company registered: {0}", x.getCompanyName());
-
+            
+            log.log(Level.OFF, "######## Company registered: {0}", c.getCompanyName());
+            
         } catch (PersistenceException e) {
             log.log(Level.SEVERE, "Failed", e);
             resp.setStatusCode(301);
             resp.setMessage("Duplicate detected, request ignored./nPlease try again");
-
+            
         } catch (Exception e) {
             log.log(Level.SEVERE, "Failed", e);
-            throw new DataException("Failed\n" + getErrorString(e));
+            throw new DataException("Failed to register company\n" + getErrorString(e));
         }
-
+        
         return resp;
-
+        
     }
-
+    
     private void addInitialProject(Company c) {
-
+        //client
         Client client = new Client();
         client.setClientName("Sample Client #1");
         client.setAddress("999 Sample Boulevard, SomeTown");
@@ -802,57 +736,49 @@ public class DataUtil {
         client.setEmail("client@clientsite.com");
         client.setPostCode("99999");
         em.persist(client);
-
-        Query q = em.createNamedQuery("Client.findByClientNameInCompany");
-        q.setParameter("clientName", client.getClientName());
-        q.setParameter("companyID", c.getCompanyID());
-        q.setMaxResults(1);
-        Client dbClient = (Client) q.getSingleResult();
-
+        em.flush();
+        
         Project project = new Project();
         project.setCompany(c);
         project.setCompleteFlag(0);
-        project.setClient(dbClient);
-        project.setDescription("Detailed description of Sample Project #1");
-        project.setProjectName("Sample Project #1");
+        project.setClient(client);
+        project.setDescription("This is a sample project meant to help you practice the features of the Monitor app. "
+                + "This project can be removed when you are done");
+        project.setProjectName("Sample Construction Project");
         project.setDateRegistered(new Date());
-
+        
         em.persist(project);
-        q = em.createNamedQuery("Project.findByCompanyProjectName", Project.class);
-        q.setParameter("projectName", project.getProjectName());
-        q.setParameter("companyID", c.getCompanyID());
-        q.setMaxResults(1);
-        Project pp = (Project) q.getSingleResult();
-
+        em.flush();
+  //      
         ProjectSite pss1 = new ProjectSite();
         pss1.setActiveFlag(0);
-        pss1.setProject(pp);
-        pss1.setProjectSiteName("Sample Site #1");
+        pss1.setProject(project);
+        pss1.setProjectSiteName("Construction Site #1");
         pss1.setStandErfNumber("Stand #3331");
         em.persist(pss1);
-
+        
         ProjectSite pss2 = new ProjectSite();
         pss2.setActiveFlag(0);
-        pss2.setProject(pp);
-        pss2.setProjectSiteName("Sample Site #2");
+        pss2.setProject(project);
+        pss2.setProjectSiteName("Construction Site #2");
         pss2.setStandErfNumber("Stand #3332");
         em.persist(pss2);
-
+        
         ProjectSite pss3 = new ProjectSite();
         pss3.setActiveFlag(0);
-        pss3.setProject(pp);
-        pss3.setProjectSiteName("Sample Site #3");
+        pss3.setProject(project);
+        pss3.setProjectSiteName("Construction Site #3");
         pss3.setStandErfNumber("Stand #3333");
         em.persist(pss3);
-
-        q = em.createNamedQuery("Task.findByCompany", Task.class);
+        
+        Query q = em.createNamedQuery("Task.findByCompany", Task.class);
         q.setParameter("companyID", c.getCompanyID());
         List<Task> taskList = q.getResultList();
-
+        
         q = em.createNamedQuery("ProjectSite.findByCompany", ProjectSite.class);
         q.setParameter("companyID", c.getCompanyID());
         List<ProjectSite> psList = q.getResultList();
-
+        
         for (ProjectSite projectSite : psList) {
             for (Task task : taskList) {
                 ProjectSiteTask projectSiteTask = new ProjectSiteTask();
@@ -864,7 +790,7 @@ public class DataUtil {
         }
         log.log(Level.INFO, "#### Initial Project and Sites added");
     }
-
+    
     private void addInitialInvoiceCodes(Company c) {
         InvoiceCode code1 = new InvoiceCode();
         code1.setInvoiceCodeName("InvoiceCode #1");
@@ -881,10 +807,10 @@ public class DataUtil {
         code3.setInvoiceCodeNumber("30003");
         code3.setCompany(c);
         em.persist(code3);
-
+        
         log.log(Level.INFO, "Initial Invoice Codes added");
     }
-
+    
     private void addInitialTasks(Company c) {
         Task t1 = new Task();
         t1.setCompany(c);
@@ -918,7 +844,7 @@ public class DataUtil {
         em.persist(t5);
         log.log(Level.INFO, "Initial Tasks added");
     }
-
+    
     private void addInitialCheckpoints(Company c) {
         CheckPoint cp1 = new CheckPoint();
         cp1.setCompany(c);
@@ -947,7 +873,7 @@ public class DataUtil {
         em.persist(cp5);
         log.log(Level.INFO, "Initial CheckPoints added");
     }
-
+    
     private void addinitialProjectStatusType(Company c) {
         ProjectStatusType p1 = new ProjectStatusType();
         p1.setCompany(c);
@@ -975,7 +901,7 @@ public class DataUtil {
         em.persist(p6);
         log.log(Level.INFO, "Initial ProjectStatusTypes added");
     }
-
+    
     private void addInitialTaskStatus(Company c) {
         TaskStatus ts1 = new TaskStatus();
         ts1.setTaskStatusName("Completed");
@@ -999,17 +925,17 @@ public class DataUtil {
         em.persist(ts5);
         log.log(Level.INFO, "Initial TaskStatus added");
     }
-
+    
     private CompanyStaffType getOperationsManager() {
-
+        
         Query q = em.createNamedQuery("CompanyStaffType.findByCompanyStaffTypeName", CompanyStaffType.class);
         q.setParameter("companyStaffTypeName", "Operations Manager");
         q.setMaxResults(1);
         CompanyStaffType cst = (CompanyStaffType) q.getSingleResult();
         return cst;
-
+        
     }
-
+    
     public String getErrorString(Exception e) {
         StringBuilder sb = new StringBuilder();
         if (e.getMessage() != null) {
@@ -1028,10 +954,10 @@ public class DataUtil {
             sb.append("Method: ").append(method).append("\n");
             sb.append("Line Number: ").append(line).append("\n");
         }
-
+        
         return sb.toString();
     }
-
+    
     private String getRandomPin() {
         StringBuilder sb = new StringBuilder();
         Random rand = new Random(System.currentTimeMillis());
@@ -1048,6 +974,60 @@ public class DataUtil {
         return sb.toString();
     }
     static final Logger log = Logger.getLogger(DataUtil.class.getSimpleName());
+    
+    public void updateProjectStatusType(ProjectStatusTypeDTO dto) throws DataException {
+        try {
+            ProjectStatusType ps = em.find(ProjectStatusType.class, dto.getProjectStatusTypeID());
+            if (ps != null) {
+                if (dto.getProjectStatusName() != null) {
+                    ps.setProjectStatusName(dto.getProjectStatusName());
+                }
+                em.merge(ps);
+                log.log(Level.INFO, "Project Status Type updated");
+            }
+        } catch (Exception e) {
+            log.log(Level.OFF, null, e);
+            throw new DataException("Failed to update project status type\n" + getErrorString(e));
+        }
+        
+    }
+
+    public void updateTaskStatus(TaskStatusDTO dto) throws DataException {
+        try {
+            TaskStatus ps = em.find(TaskStatus.class, dto.getTaskStatusID());
+            if (ps != null) {
+                if (dto.getTaskStatusName() != null) {
+                    ps.setTaskStatusName(dto.getTaskStatusName());
+                }
+                em.merge(ps);
+                log.log(Level.INFO, "Task Status updated");
+            }
+        } catch (Exception e) {
+            log.log(Level.OFF, null, e);
+            throw new DataException("Failed to update project\n" + getErrorString(e));
+        }
+        
+    }
+    
+    public void updateTask(TaskDTO dto) throws DataException {
+        try {
+            Task ps = em.find(Task.class, dto.getTaskID());
+            if (ps != null) {
+                if (dto.getTaskName() != null) {
+                    ps.setTaskName(dto.getTaskName());
+                }
+                if (dto.getDescription() != null) {
+                    ps.setDescription(dto.getDescription());
+                }
+                em.merge(ps);
+                log.log(Level.INFO, "Task updated");
+            }
+        } catch (Exception e) {
+            log.log(Level.OFF, null, e);
+            throw new DataException("Failed to update project\n" + getErrorString(e));
+        }
+        
+    }
 
     public void updateProject(ProjectDTO dto) throws DataException {
         try {
@@ -1060,13 +1040,15 @@ public class DataUtil {
                     ps.setDescription(dto.getDescription());
                 }
                 em.merge(ps);
+                log.log(Level.INFO, "Project updated");
             }
         } catch (Exception e) {
             log.log(Level.OFF, null, e);
             throw new DataException("Failed to update project\n" + getErrorString(e));
         }
-    
+        
     }
+
     public void updateProjectSite(ProjectSiteDTO dto) throws DataException {
         try {
             ProjectSite ps = em.find(ProjectSite.class, dto.getProjectSiteID());
@@ -1084,10 +1066,27 @@ public class DataUtil {
                     ps.setLongitude(dto.getLongitude());
                 }
                 em.merge(ps);
+                log.log(Level.INFO, "Project Site updated");
             }
         } catch (Exception e) {
             log.log(Level.OFF, null, e);
             throw new DataException("Failed to update projectSite\n" + getErrorString(e));
+        }
+    }
+
+    public void addErrorStore(int statusCode, String message, String origin) {
+        log.log(Level.OFF, "------ adding errorStore, message: {0} origin: {1}", new Object[]{message, origin});
+        try {
+            ErrorStore t = new ErrorStore();
+            t.setDateOccured(new Date());
+            t.setMessage(message);
+            t.setStatusCode(statusCode);
+            t.setOrigin(origin);
+            em.persist(t);
+            log.log(Level.INFO, "####### ErrorStore row added, origin {0} \nmessage: {1}",
+                    new Object[]{origin, message});
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "####### Failed to add errorStore from " + origin + "\n" + message, e);
         }
     }
 }

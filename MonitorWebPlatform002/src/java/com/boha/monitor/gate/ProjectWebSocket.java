@@ -7,7 +7,6 @@ package com.boha.monitor.gate;
 
 import com.boha.monitor.dto.transfer.RequestDTO;
 import com.boha.monitor.dto.transfer.ResponseDTO;
-import com.boha.monitor.util.DataException;
 import com.boha.monitor.util.DataUtil;
 import com.boha.monitor.util.GZipUtility;
 import com.boha.monitor.util.ListUtil;
@@ -44,6 +43,8 @@ public class ProjectWebSocket {
     ListUtil listUtil;
     @EJB 
     PlatformUtil platformUtil;
+    @EJB
+    TrafficCop trafficCop;
     static final String SOURCE = "ProjectWebSocket";
     //TODO - clean up expired sessions!!!!
     public static final Set<Session> peers
@@ -56,16 +57,10 @@ public class ProjectWebSocket {
         ByteBuffer bb = null;
         try {
 
-            try {
                 RequestDTO dto = gson.fromJson(message, RequestDTO.class);
-                resp = TrafficCop.processRequest(dto, dataUtil, listUtil, platformUtil);
+                resp = trafficCop.processRequest(dto, dataUtil, listUtil);
 
-            } catch (DataException e) {
-                resp.setStatusCode(101);
-                resp.setMessage("Data service failed to process your request");
-                log.log(Level.SEVERE, "Database related failure", e);
-                bb = GZipUtility.getZippedResponse(resp);
-            }
+           
             bb = GZipUtility.getZippedResponse(resp);
         } catch (IOException ex) {
             Logger.getLogger(ProjectWebSocket.class.getName()).log(Level.SEVERE, null, ex);
