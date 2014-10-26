@@ -12,12 +12,14 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
@@ -30,6 +32,8 @@ import javax.validation.constraints.Size;
 @NamedQueries({
     @NamedQuery(name = "Company.findAll", 
             query = "SELECT c FROM Company c"),
+    @NamedQuery(name = "Company.findStaff", 
+            query = "SELECT c FROM Company c LEFT JOIN FETCH c.companyStaffList"),
     @NamedQuery(name = "Company.findByCompanyID", 
             query = "SELECT c FROM Company c WHERE c.companyID = :companyID"),
     @NamedQuery(name = "Company.findByCompanyName", 
@@ -38,24 +42,33 @@ public class Company implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
     private List<PhotoUpload> photoUploadList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
+    @OrderBy("clientName")
     private List<Client> clientList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
+    @OrderBy("invoiceDate DESC")
     private List<Invoice> invoiceList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
+    @OrderBy("taskName")
     private List<Task> taskList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
+    @OrderBy("projectStatusName")
     private List<ProjectStatusType> projectStatusTypeList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
+    @OrderBy("taskStatusName")
     private List<TaskStatus> taskStatusList;
    
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
+    @OrderBy("lastName, firstName")
     private List<Beneficiary> beneficiaryList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
+    @OrderBy("invoiceCodeName")
     private List<InvoiceCode> invoiceCodeList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
+    @OrderBy("checkPointName")
     private List<CheckPoint> checkPointList;
     
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
+    @OrderBy("dateRegistered desc")
     private List<GcmDevice> gcmDeviceList;
     @OneToMany(mappedBy = "company")
     private List<ErrorStoreAndroid> errorStoreAndroidList;
@@ -69,9 +82,12 @@ public class Company implements Serializable {
     @Column(name = "companyName")
     private String companyName;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
+    @OrderBy("dateRegistered")
     private List<Project> projectList;
     
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "company", 
+            fetch = FetchType.EAGER)
+    @OrderBy("lastName, firstName")
     private List<CompanyStaff> companyStaffList;
 
     public Company() {

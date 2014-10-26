@@ -3,35 +3,30 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.boha.monitor.dto;
 
 import com.boha.monitor.data.Project;
 import com.boha.monitor.data.ProjectSite;
 import com.boha.monitor.dto.transfer.PhotoUploadDTO;
-import com.boha.monitor.util.FileUtility;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
  * @author aubreyM
  */
 public class ProjectSiteDTO implements Serializable {
+
     private static final long serialVersionUID = 1L;
     private Integer projectSiteID;
-    private String projectSiteName, standErfNumber;
+    private String projectSiteName, standErfNumber, projectName;
     private Double latitude;
     private Double longitude;
     private Integer activeFlag;
     private List<ProjectSiteTaskDTO> projectSiteTaskList = new ArrayList<>();
     private Integer projectID;
-    private List<ProjectSiteStaffDTO> projectSiteStaffList = new ArrayList<>();
-    private List<String> imageFileNameList = new ArrayList<>();
-    private List<PhotoUploadDTO> photoUploadList;
+    private List<PhotoUploadDTO> photoUploadList = new ArrayList<>();
 
     public ProjectSiteDTO() {
     }
@@ -39,20 +34,26 @@ public class ProjectSiteDTO implements Serializable {
     public ProjectSiteDTO(ProjectSite a) {
         this.projectSiteID = a.getProjectSiteID();
         this.projectSiteName = a.getProjectSiteName();
+        
         this.latitude = a.getLatitude();
         this.longitude = a.getLongitude();
         this.activeFlag = a.getActiveFlag();
-        this.projectID = a.getProject().getProjectID();
-        this.standErfNumber = a.getStandErfNumber();
         Project p = a.getProject();
-        try {
-            this.imageFileNameList = FileUtility.getImageFilesSite(p.getCompany().getCompanyID(),
-                    p.getProjectID(), a.getProjectSiteID());
-        } catch (Exception ex) {
-            Logger.getLogger(ProjectSiteTaskDTO.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        this.projectID = p.getProjectID();
+        this.projectName = p.getProjectName();
+        this.standErfNumber = a.getStandErfNumber();
+        
     }
 
+    public String getProjectName() {
+        return projectName;
+    }
+
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
+    }
+
+    
     public String getStandErfNumber() {
         return standErfNumber;
     }
@@ -61,7 +62,6 @@ public class ProjectSiteDTO implements Serializable {
         this.standErfNumber = standErfNumber;
     }
 
-    
     public List<PhotoUploadDTO> getPhotoUploadList() {
         return photoUploadList;
     }
@@ -70,7 +70,6 @@ public class ProjectSiteDTO implements Serializable {
         this.photoUploadList = photoUploadList;
     }
 
-    
     public Integer getProjectSiteID() {
         return projectSiteID;
     }
@@ -87,14 +86,7 @@ public class ProjectSiteDTO implements Serializable {
         this.projectSiteName = projectSiteName;
     }
 
-    public List<String> getImageFileNameList() {
-        return imageFileNameList;
-    }
-
-    public void setImageFileNameList(List<String> imageFileNameList) {
-        this.imageFileNameList = imageFileNameList;
-    }
-
+  
     public Double getLatitude() {
         return latitude;
     }
@@ -135,38 +127,5 @@ public class ProjectSiteDTO implements Serializable {
         this.projectID = projectID;
     }
 
-  
-    public List<ProjectSiteStaffDTO> getProjectSiteStaffList() {
-        return projectSiteStaffList;
-    }
 
-    public void setProjectSiteStaffList(List<ProjectSiteStaffDTO> projectSiteStaffList) {
-        this.projectSiteStaffList = projectSiteStaffList;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (projectSiteID != null ? projectSiteID.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof ProjectSiteDTO)) {
-            return false;
-        }
-        ProjectSiteDTO other = (ProjectSiteDTO) object;
-        if ((this.projectSiteID == null && other.projectSiteID != null) || (this.projectSiteID != null && !this.projectSiteID.equals(other.projectSiteID))) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "com.boha.monitor.data.ProjectSite[ projectSiteID=" + projectSiteID + " ]";
-    }
-    
 }

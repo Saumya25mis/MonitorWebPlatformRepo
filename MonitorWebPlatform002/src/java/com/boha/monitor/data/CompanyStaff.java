@@ -12,6 +12,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -42,7 +43,7 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "CompanyStaff.findByEmail", query = "SELECT c FROM CompanyStaff c WHERE c.email = :email"),
     @NamedQuery(name = "CompanyStaff.findByCellphone", query = "SELECT c FROM CompanyStaff c WHERE c.cellphone = :cellphone")})
 public class CompanyStaff implements Serializable {
-    @OneToMany(mappedBy = "companyStaffID")
+    @OneToMany(mappedBy = "companyStaff")
     private List<ProjectSiteTaskStatus> projectSiteTaskStatusList;
     @OneToMany(mappedBy = "companyStaff")
     private List<PhotoUpload> photoUploadList;
@@ -79,9 +80,11 @@ public class CompanyStaff implements Serializable {
     @JoinColumn(name = "companyStaffTypeID", referencedColumnName = "companyStaffTypeID")
     @ManyToOne(optional = false)
     private CompanyStaffType companyStaffType;
+    
     @JoinColumn(name = "companyID", referencedColumnName = "companyID")
     @ManyToOne(optional = false)
     private Company company;
+    
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "companyStaff")
     private List<ProjectSiteStaff> projectSiteStaffList;
 

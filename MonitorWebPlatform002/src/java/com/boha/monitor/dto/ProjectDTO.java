@@ -3,10 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.boha.monitor.dto;
 
+import com.boha.monitor.data.PhotoUpload;
 import com.boha.monitor.data.Project;
+import com.boha.monitor.data.ProjectSite;
 import com.boha.monitor.dto.transfer.PhotoUploadDTO;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ import java.util.List;
  * @author aubreyM
  */
 public class ProjectDTO implements Serializable {
+
     private static final long serialVersionUID = 1L;
     private Integer projectID;
     private String projectName, clientName;
@@ -25,7 +27,7 @@ public class ProjectDTO implements Serializable {
     private Integer completeFlag;
     private Integer companyID, clientID;
     private List<ProjectSiteDTO> projectSiteList = new ArrayList<>();
-    private List<PhotoUploadDTO> photoUploadList;
+    private List<PhotoUploadDTO> photoUploadList = new ArrayList<>();
 
     public ProjectDTO() {
     }
@@ -45,6 +47,7 @@ public class ProjectDTO implements Serializable {
             this.clientID = a.getClient().getClientID();
             this.clientName = a.getClient().getClientName();
         }
+        
     }
 
     public String getClientName() {
@@ -63,7 +66,6 @@ public class ProjectDTO implements Serializable {
         this.photoUploadList = photoUploadList;
     }
 
-    
     public Integer getClientID() {
         return clientID;
     }
@@ -152,5 +154,5 @@ public class ProjectDTO implements Serializable {
     public String toString() {
         return "com.boha.monitor.data.Project[ projectID=" + projectID + " ]";
     }
-    
+
 }

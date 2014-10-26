@@ -75,6 +75,9 @@ public class Invoice implements Serializable {
     @Column(name = "dateRegistered")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateRegistered;
+    @Column(name = "invoicePaidDate")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date invoicePaidDate;
    
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "invoice")
     private List<InvoiceItem> invoiceItemList;
@@ -94,6 +97,14 @@ public class Invoice implements Serializable {
 
     public Company getCompany() {
         return company;
+    }
+
+    public Date getInvoicePaidDate() {
+        return invoicePaidDate;
+    }
+
+    public void setInvoicePaidDate(Date invoicePaidDate) {
+        this.invoicePaidDate = invoicePaidDate;
     }
 
     public void setCompany(Company company) {

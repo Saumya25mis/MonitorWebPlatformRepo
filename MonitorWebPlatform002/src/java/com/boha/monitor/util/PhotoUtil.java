@@ -80,11 +80,13 @@ public class PhotoUtil {
                                     projectDir = createProjectDirectory(companyDir, projectDir, dto.getProjectID());
                                 }
                                 if (dto.getProjectSiteID() != null) {
-                                    projectSiteDir = createProjectSiteDirectory(projectDir, projectSiteDir, dto.getProjectSiteTaskID());
+                                    projectSiteDir = createProjectSiteDirectory(
+                                            projectDir, projectSiteDir, dto.getProjectSiteID());
                                 }
                                 if (dto.getProjectSiteTaskID()  != null) {
                                     projectSiteTaskDir = createProjectSiteTaskDirectory(
-                                            projectSiteDir, projectSiteTaskDir, dto.getProjectSiteTaskID());
+                                            projectSiteDir, projectSiteTaskDir, 
+                                            dto.getProjectSiteTaskID());
                                 }
                                 if (dto.getCompanyStaffID() != null) {
                                     companyStaffDir = createStaffDirectory(

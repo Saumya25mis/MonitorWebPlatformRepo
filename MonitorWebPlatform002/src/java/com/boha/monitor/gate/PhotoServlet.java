@@ -65,19 +65,7 @@ public class PhotoServlet extends HttpServlet {
             } else {
                 RequestDTO dto = getRequest(gson, request);
                 switch (dto.getRequestType()) {
-                    case RequestDTO.GET_SITE_IMAGE_FILENAMES:
-                       
-                        break;
-                    case RequestDTO.GET_TASK_IMAGE_FILENAMES:
-                       
-                        break;
-                    case RequestDTO.GET_PROJECT_IMAGE_FILENAMES:
-                       
-                        break;
-                    case RequestDTO.GET_STAFF_IMAGE_FILENAMES:
-                       
-                        break;
-                   
+                    
 
                 }
 

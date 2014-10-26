@@ -7,7 +7,6 @@ package com.boha.monitor.gate;
 
 import com.boha.monitor.dto.transfer.RequestDTO;
 import com.boha.monitor.dto.transfer.ResponseDTO;
-import com.boha.monitor.util.DataException;
 import com.boha.monitor.util.DataUtil;
 import com.boha.monitor.util.GZipUtility;
 import com.boha.monitor.util.ListUtil;
@@ -61,7 +60,6 @@ public class CompanyWebSocket {
             RequestDTO dto = gson.fromJson(message, RequestDTO.class);
             resp = trafficCop.processRequest(dto, dataUtil, listUtil);
             bb = GZipUtility.getZippedResponse(resp);
-
         } catch (IOException ex) {
             Logger.getLogger(ProjectWebSocket.class.getName()).log(Level.SEVERE, null, ex);
             resp.setStatusCode(111);

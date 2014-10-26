@@ -10,7 +10,6 @@ import com.boha.monitor.data.Company;
 import com.boha.monitor.data.CompanyStaff;
 import com.boha.monitor.dto.transfer.PhotoUploadDTO;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,7 +25,6 @@ public class CompanyStaffDTO implements Serializable {
     private String cellphone, pin;
     private CompanyStaffTypeDTO companyStaffType;
     private Integer companyID;
-    private List<ProjectSiteStaffDTO> projectSiteStaffList = new ArrayList<>();
     private GcmDeviceDTO gcmDevice;
     private List<PhotoUploadDTO> photoUploadList;
 
@@ -143,16 +141,6 @@ public class CompanyStaffDTO implements Serializable {
     public void setCompanyID(Integer companyID) {
         this.companyID = companyID;
     }
-
-
-    public List<ProjectSiteStaffDTO> getProjectSiteStaffList() {
-        return projectSiteStaffList;
-    }
-
-    public void setProjectSiteStaffList(List<ProjectSiteStaffDTO> projectSiteStaffList) {
-        this.projectSiteStaffList = projectSiteStaffList;
-    }
-
     @Override
     public int hashCode() {
         int hash = 0;

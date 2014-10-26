@@ -5,8 +5,9 @@
  */
 package com.boha.monitor.dto;
 
-import com.boha.monitor.data.Project;
+import com.boha.monitor.data.PhotoUpload;
 import com.boha.monitor.data.ProjectSiteTask;
+import com.boha.monitor.data.ProjectSiteTaskStatus;
 import com.boha.monitor.dto.transfer.PhotoUploadDTO;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -24,7 +25,7 @@ public class ProjectSiteTaskDTO implements Serializable {
     private long dateRegistered;
     private Integer projectSiteID, projectID;
     private List<ProjectSiteTaskStatusDTO> projectSiteTaskStatusList = new ArrayList<>();
-    private List<PhotoUploadDTO> photoUploadList;
+    private List<PhotoUploadDTO> photoUploadList = new ArrayList<>();
 
     public ProjectSiteTaskDTO() {
     }
@@ -35,6 +36,8 @@ public class ProjectSiteTaskDTO implements Serializable {
         this.task = new TaskDTO(a.getTask());
         this.dateRegistered = a.getDateRegistered().getTime();
         this.projectSiteID = a.getProjectSite().getProjectSiteID();
+        
+       
         
     }
 

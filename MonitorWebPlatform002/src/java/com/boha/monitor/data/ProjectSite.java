@@ -19,8 +19,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
@@ -69,10 +69,12 @@ public class ProjectSite implements Serializable {
     @Column(name = "activeFlag")
     private Integer activeFlag;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "projectSite")
+    @OrderBy("dateRegistered DESC")
     private List<ProjectSiteTask> projectSiteTaskList;
     @JoinColumn(name = "projectID", referencedColumnName = "projectID")
     @ManyToOne(optional = false)
     private Project project;
+    
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "projectSite")
     private List<ProjectSiteStaff> projectSiteStaffList;
 

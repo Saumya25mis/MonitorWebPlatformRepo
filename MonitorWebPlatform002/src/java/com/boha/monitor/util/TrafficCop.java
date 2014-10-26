@@ -83,9 +83,7 @@ public class TrafficCop {
                     resp = dataUtil.registerProjectSiteStaff(req.getProjectSiteStaff());
                     break;
                 //
-                case RequestDTO.ADD_SITE_TASK:
-                    resp = dataUtil.addProjectSiteTask(req.getProjectSiteTask());
-                    break;
+
                 case RequestDTO.ADD_DEVICE:
                     dataUtil.addDevice(req.getGcmDevice());
                     break;
@@ -93,7 +91,7 @@ public class TrafficCop {
                     resp = dataUtil.addProjectDiaryRecord(req.getProjectDiaryRecord());
                     break;
                 case RequestDTO.ADD_PROJECT_SITE_TASK:
-                    resp = dataUtil.addProjectSiteTask(req.getProjectSiteTask());
+                    resp = dataUtil.addProjectSiteTask(req.getProjectSiteTask(), listUtil);
                     break;
                 case RequestDTO.ADD_PROJECT_SITE_TASK_STATUS:
                     resp = dataUtil.addProjectSiteTaskStatus(req.getProjectSiteTaskStatus());
@@ -113,6 +111,20 @@ public class TrafficCop {
                 case RequestDTO.GET_TASK_STATUS_LIST:
                     resp = listUtil.getTaskStatusList(req.getCompanyID());
                     break;
+                //photos
+                case RequestDTO.GET_PROJECT_IMAGES:
+                    resp = listUtil.getPhotosByProject(req.getProjectID());
+                    break;
+                case RequestDTO.GET_SITE_IMAGES:
+                    resp = listUtil.getPhotosByProjectSite(req.getProjectSiteID());
+                    break;
+                case RequestDTO.GET_TASK_IMAGES:
+                    resp = listUtil.getPhotosByTask(req.getProjectSiteTaskID());
+                    break;
+                case RequestDTO.GET_ALL_PROJECT_IMAGES:
+                    resp = listUtil.getAllPhotosByProject(req.getProjectID());
+                    break;
+                            
                 case RequestDTO.LOGIN:
                     resp = dataUtil.login(req.getGcmDevice(),
                             req.getEmail(), req.getPin(),
@@ -124,12 +136,18 @@ public class TrafficCop {
             resp.setMessage("Data service failed to process your request");
             logger.log(Level.SEVERE, "Database related failure", e);
             addErrorStore(19, e.getDescription(), "TrafficCop");
+        } catch (Exception e) {
+            resp.setStatusCode(102);
+            resp.setMessage("Server process failed to process your request");
+            logger.log(Level.SEVERE, "Generic server related failure", e);
+            addErrorStore(19, "Server Error \n" + dataUtil.getErrorString(e), "TrafficCop");
         }
         if (resp.getStatusCode() == null) {
             resp.setStatusCode(0);
         }
         return resp;
     }
+
     public void addErrorStore(int statusCode, String message, String origin) {
         logger.log(Level.OFF, "------ adding errorStore, message: {0} origin: {1}", new Object[]{message, origin});
         try {

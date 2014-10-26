@@ -5,6 +5,7 @@
  */
 package com.boha.monitor.util;
 
+import com.boha.monitor.data.Beneficiary;
 import com.boha.monitor.data.CheckPoint;
 import com.boha.monitor.data.City;
 import com.boha.monitor.data.Client;
@@ -14,6 +15,7 @@ import com.boha.monitor.data.CompanyStaffType;
 import com.boha.monitor.data.Country;
 import com.boha.monitor.data.ErrorStore;
 import com.boha.monitor.data.InvoiceCode;
+import com.boha.monitor.data.PhotoUpload;
 import com.boha.monitor.data.Project;
 import com.boha.monitor.data.ProjectDiaryRecord;
 import com.boha.monitor.data.ProjectSite;
@@ -25,6 +27,7 @@ import com.boha.monitor.data.Province;
 import com.boha.monitor.data.Task;
 import com.boha.monitor.data.TaskStatus;
 import com.boha.monitor.data.Township;
+import com.boha.monitor.dto.BeneficiaryDTO;
 import com.boha.monitor.dto.CheckPointDTO;
 import com.boha.monitor.dto.CityDTO;
 import com.boha.monitor.dto.ClientDTO;
@@ -44,6 +47,7 @@ import com.boha.monitor.dto.ProvinceDTO;
 import com.boha.monitor.dto.TaskDTO;
 import com.boha.monitor.dto.TaskStatusDTO;
 import com.boha.monitor.dto.TownshipDTO;
+import com.boha.monitor.dto.transfer.PhotoUploadDTO;
 import com.boha.monitor.dto.transfer.ResponseDTO;
 import java.util.ArrayList;
 import java.util.Date;
@@ -71,7 +75,7 @@ public class ListUtil {
 
     public ResponseDTO getCountryList() {
         ResponseDTO resp = new ResponseDTO();
-        
+
         Query q = em.createNamedQuery("Country.findAll", Country.class);
         List<Country> list = q.getResultList();
         for (Country cp : list) {
@@ -89,7 +93,58 @@ public class ListUtil {
             }
             resp.getCountryList().add(cn);
         }
+
+        return resp;
+    }
+
+    public ProjectSite getProjectSite(Integer id) {
+        ProjectSite ps = em.find(ProjectSite.class, id);
+        return ps;
+    }
+
+    public ResponseDTO getPhotosByProject(Integer projectID) {
+        ResponseDTO resp = new ResponseDTO();
+        Query q = em.createNamedQuery("PhotoUpload.findProjectPhotos", PhotoUpload.class);
+        q.setParameter("projectID", projectID);
+        List<PhotoUpload> list = q.getResultList();
+        for (PhotoUpload cp : list) {
+            resp.getPhotoUploadList().add(new PhotoUploadDTO(cp));
+        }
+
+        return resp;
+    }
+    public ResponseDTO getAllPhotosByProject(Integer projectID) {
+        ResponseDTO resp = new ResponseDTO();
+        Query q = em.createNamedQuery("PhotoUpload.findAllProjectPhotos", PhotoUpload.class);
+        q.setParameter("projectID", projectID);
+        List<PhotoUpload> list = q.getResultList();
+        for (PhotoUpload cp : list) {
+            resp.getPhotoUploadList().add(new PhotoUploadDTO(cp));
+        }
+        System.out.println("**** found project photos: " 
+                + resp.getPhotoUploadList().size());
         
+        return resp;
+    }
+    public ResponseDTO getPhotosByProjectSite(Integer projectSiteID) {
+        ResponseDTO resp = new ResponseDTO();
+        Query q = em.createNamedQuery("PhotoUpload.findProjectSitePhotos", PhotoUpload.class);
+        q.setParameter("projectSiteID", projectSiteID);
+        List<PhotoUpload> list = q.getResultList();
+        for (PhotoUpload cp : list) {
+            resp.getPhotoUploadList().add(new PhotoUploadDTO(cp));
+        }
+
+        return resp;
+    }
+    public ResponseDTO getPhotosByTask(Integer projectSiteTaskID) {
+        ResponseDTO resp = new ResponseDTO();
+        Query q = em.createNamedQuery("PhotoUpload.findTaskPhotos", PhotoUpload.class);
+        q.setParameter("projectSiteTaskID", projectSiteTaskID);
+        List<PhotoUpload> list = q.getResultList();
+        for (PhotoUpload cp : list) {
+            resp.getPhotoUploadList().add(new PhotoUploadDTO(cp));
+        }
 
         return resp;
     }
@@ -300,9 +355,22 @@ public class ListUtil {
         return resp;
     }
 
-    public ResponseDTO getCompanyData(Integer companyID) throws DataException {
+    public ResponseDTO getCompanyDataX(Integer companyID) throws DataException {
+        long s = System.currentTimeMillis();
         ResponseDTO resp = new ResponseDTO();
-        
+        CompanyDTO c = new CompanyDTO(em.find(Company.class, companyID));
+        resp.setCompany(c);
+        resp.setCompanyStaffTypeList(getStaffTypeList());
+        resp.setCountryList(getCountryList().getCountryList());
+
+        long e = System.currentTimeMillis();
+        System.out.println("getCompanyDataX - time elapsed: " + (e - s));
+        return resp;
+    }
+
+    public ResponseDTO getCompanyData(Integer companyID) throws DataException {
+        long s = System.currentTimeMillis();
+        ResponseDTO resp = new ResponseDTO();
         CompanyDTO c = new CompanyDTO(em.find(Company.class, companyID));
 
         c.setCompanyStaffList(getCompanyStaffList(companyID).getCompanyStaffList());
@@ -312,10 +380,51 @@ public class ListUtil {
         c.setClientList(getClientsByCompany(companyID));
         c.setTaskList(getTasksByCompany(companyID));
         c.setCheckPointList(getCheckPointList(companyID).getCheckPointList());
+        c.setBeneficiaryList(getBeneficiariesByCompany(companyID));
 
         resp.setCompany(c);
         resp.setCompanyStaffTypeList(getStaffTypeList());
         resp.setCountryList(getCountryList().getCountryList());
+        long e = System.currentTimeMillis();
+        System.out.println("getCompanyData - time elapsed: " + (e - s));
+        return resp;
+    }
+
+    public List<BeneficiaryDTO> getInvoicesByCompany(Integer companyID) throws DataException {
+        List<BeneficiaryDTO> resp = new ArrayList<>();
+
+        try {
+            Query q = em.createNamedQuery("Invoice.findByCompany", Beneficiary.class);
+            q.setParameter("companyID", companyID);
+            List<Beneficiary> pList = q.getResultList();
+            for (Beneficiary cc : pList) {
+                resp.add(new BeneficiaryDTO(cc));
+            }
+            log.log(Level.INFO, "company bennies found: {0}", resp.size());
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "Failed", e);
+            throw new DataException("Failed to get company beneficiaries\n" + getErrorString(e));
+        }
+
+        return resp;
+    }
+
+    public List<BeneficiaryDTO> getBeneficiariesByCompany(Integer companyID) throws DataException {
+        List<BeneficiaryDTO> resp = new ArrayList<>();
+
+        try {
+            Query q = em.createNamedQuery("Beneficiary.findByCompany", Beneficiary.class);
+            q.setParameter("companyID", companyID);
+            List<Beneficiary> pList = q.getResultList();
+            for (Beneficiary cc : pList) {
+                resp.add(new BeneficiaryDTO(cc));
+            }
+            log.log(Level.INFO, "company bennies found: {0}", resp.size());
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "Failed", e);
+            throw new DataException("Failed to get company beneficiaries\n" + getErrorString(e));
+        }
+
         return resp;
     }
 
@@ -326,9 +435,10 @@ public class ListUtil {
         for (CompanyStaffType companyStaffType : sList) {
             list.add(new CompanyStaffTypeDTO(companyStaffType));
         }
-        
+
         return list;
     }
+
     public List<TaskDTO> getTasksByCompany(Integer companyID) throws DataException {
         List<TaskDTO> resp = new ArrayList<>();
 
@@ -374,9 +484,17 @@ public class ListUtil {
             Query q = em.createNamedQuery("Project.findByCompany", Project.class);
             q.setParameter("companyID", companyID);
             List<Project> pList = q.getResultList();
+            q = em.createNamedQuery("PhotoUpload.findProjectPhotosByCompany", PhotoUpload.class);
+            q.setParameter("companyID", companyID);
+            List<PhotoUpload> photos = q.getResultList();
             List<ProjectSiteDTO> psList = getSitesByCompany(companyID);
             for (Project project : pList) {
                 ProjectDTO dto = new ProjectDTO(project);
+                for (PhotoUpload px : photos) {
+                    if (Objects.equals(px.getProject().getProjectID(), dto.getProjectID())) {
+                        dto.getPhotoUploadList().add(new PhotoUploadDTO(px));
+                    }
+                }
                 for (ProjectSiteDTO ps : psList) {
                     if (Objects.equals(ps.getProjectID(), dto.getProjectID())) {
                         dto.getProjectSiteList().add(ps);
@@ -399,6 +517,9 @@ public class ListUtil {
             Query q = em.createNamedQuery("ProjectSite.findByCompany", ProjectSite.class);
             q.setParameter("companyID", companyID);
             List<ProjectSite> pList = q.getResultList();
+            q = em.createNamedQuery("PhotoUpload.findProjectSitePhotosByCompany", PhotoUpload.class);
+            q.setParameter("companyID", companyID);
+            List<PhotoUpload> photos = q.getResultList();
             List<ProjectSiteTaskDTO> pstList = getSiteTasksByCompany(companyID);
             List<ProjectSiteStaffDTO> staffList = getSiteStaffByCompany(companyID);
 
@@ -409,23 +530,12 @@ public class ListUtil {
                         dto.getProjectSiteTaskList().add(pst);
                     }
                 }
-
-                for (ProjectSiteStaffDTO st : staffList) {
-                    if (Objects.equals(st.getProjectSiteID(), dto.getProjectSiteID())) {
-                        for (ProjectSiteTaskDTO pst : pstList) {
-                            if (Objects.equals(pst.getProjectSiteID(), st.getProjectSiteID())) {
-                                for (ProjectSiteTaskStatusDTO x : pst.getProjectSiteTaskStatusList()) {
-                                    if (Objects.equals(x.getCompanyStaffID(), st.getCompanyStaff().getCompanyStaffID())) {
-                                        st.getProjectSiteTaskStatusList().add(x);
-                                        log.log(Level.INFO, "status loaded {0} {1}", new Object[]{x.getStaffName(), x.getTaskStatus().getTaskStatusName()});
-                                    }
-                                }
-                            }
-                        }
-
-                        dto.getProjectSiteStaffList().add(st);
+                for (PhotoUpload ph : photos) {
+                    if (Objects.equals(ph.getProjectSite().getProjectSiteID(), dto.getProjectSiteID())) {
+                        dto.getPhotoUploadList().add(new PhotoUploadDTO(ph));
                     }
                 }
+
                 list.add(dto);
             }
 
@@ -443,12 +553,20 @@ public class ListUtil {
             Query q = em.createNamedQuery("ProjectSiteTask.findByCompany", ProjectSiteTask.class);
             q.setParameter("companyID", companyID);
             List<ProjectSiteTask> pList = q.getResultList();
+            q = em.createNamedQuery("PhotoUpload.findSiteTaskPhotosByCompany", PhotoUpload.class);
+            q.setParameter("companyID", companyID);
+            List<PhotoUpload> photos = q.getResultList();
             List<ProjectSiteTaskStatusDTO> pstList = getTaskStatusByCompany(companyID);
             for (ProjectSiteTask s : pList) {
                 ProjectSiteTaskDTO dto = new ProjectSiteTaskDTO(s);
                 for (ProjectSiteTaskStatusDTO pst : pstList) {
                     if (Objects.equals(pst.getProjectSiteTaskID(), dto.getProjectSiteTaskID())) {
                         dto.getProjectSiteTaskStatusList().add(pst);
+                    }
+                }
+                for (PhotoUpload px : photos) {
+                    if (Objects.equals(px.getProjectSiteTask().getProjectSiteTaskID(), dto.getProjectSiteTaskID())) {
+                        dto.getPhotoUploadList().add(new PhotoUploadDTO(px));
                     }
                 }
                 list.add(dto);
@@ -522,6 +640,7 @@ public class ListUtil {
 
         return sb.toString();
     }
+
     public void addErrorStore(int statusCode, String message, String origin) {
         log.log(Level.OFF, "------ adding errorStore, message: {0} origin: {1}", new Object[]{message, origin});
         try {

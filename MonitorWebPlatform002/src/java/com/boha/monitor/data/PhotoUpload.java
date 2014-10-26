@@ -31,13 +31,34 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(name = "photoUpload")
 @NamedQueries({
-    @NamedQuery(name = "PhotoUpload.findAll", query = "SELECT p FROM PhotoUpload p"),
-    @NamedQuery(name = "PhotoUpload.findByPhotoUploadID", query = "SELECT p FROM PhotoUpload p WHERE p.photoUploadID = :photoUploadID"),
-    @NamedQuery(name = "PhotoUpload.findByPictureType", query = "SELECT p FROM PhotoUpload p WHERE p.pictureType = :pictureType"),
-    @NamedQuery(name = "PhotoUpload.findByDateTaken", query = "SELECT p FROM PhotoUpload p WHERE p.dateTaken = :dateTaken"),
-    @NamedQuery(name = "PhotoUpload.findByLatitude", query = "SELECT p FROM PhotoUpload p WHERE p.latitude = :latitude"),
-    @NamedQuery(name = "PhotoUpload.findByLongitude", query = "SELECT p FROM PhotoUpload p WHERE p.longitude = :longitude"),
-    @NamedQuery(name = "PhotoUpload.findByUri", query = "SELECT p FROM PhotoUpload p WHERE p.uri = :uri")})
+    @NamedQuery(name = "PhotoUpload.findProjectPhotosByCompany", 
+            query = "SELECT p FROM PhotoUpload p "
+                    + "where p.project is not null and p.company.companyID = :companyID order by p.dateTaken desc"),
+    
+    @NamedQuery(name = "PhotoUpload.findProjectSitePhotosByCompany", 
+            query = "SELECT p FROM PhotoUpload p WHERE p.projectSite is not null "
+                    + "and p.company.companyID = :companyID "
+                    + "order by p.dateTaken desc"),
+    @NamedQuery(name = "PhotoUpload.findProjectSitePhotos", 
+            query = "SELECT p FROM PhotoUpload p WHERE p.projectSite.projectSiteID = :projectSiteID "
+                    + "order by p.dateTaken desc"),
+    @NamedQuery(name = "PhotoUpload.findProjectPhotos", 
+            query = "SELECT p FROM PhotoUpload p WHERE p.project.projectID = :projectID "
+                    + "order by p.dateTaken desc"),
+    @NamedQuery(name = "PhotoUpload.findAllProjectPhotos", 
+            query = "SELECT p FROM PhotoUpload p WHERE "
+                    + "p.projectSite.project.projectID = :projectID "
+                    + "order by p.dateTaken desc"),
+    @NamedQuery(name = "PhotoUpload.findTaskPhotos", 
+            query = "SELECT p FROM PhotoUpload p WHERE p.projectSiteTask = :projectSiteTaskID "
+                    + "order by p.dateTaken desc"),
+    
+    @NamedQuery(name = "PhotoUpload.findSiteTaskPhotosByCompany", 
+            query = "SELECT p FROM PhotoUpload p WHERE p.projectSiteTask is not null "
+                    + "and p.company.companyID = :companyID order by p.dateTaken desc"),
+    @NamedQuery(name = "PhotoUpload.findByDateTaken", 
+            query = "SELECT p FROM PhotoUpload p WHERE p.dateTaken = :dateTaken"),
+   })
 public class PhotoUpload implements Serializable {
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "latitude")

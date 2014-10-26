@@ -43,6 +43,7 @@ public class ResponseDTO {
     private String message, sessionID, GCMRegistrationID;
     private List<String> taskImageFileNameList;
     private List<String> siteImageFileNameList;
+    private List<PhotoUploadDTO> photoUploadList = new ArrayList<>();
     private List<TaskStatusDTO> taskStatusList = new ArrayList<>();
     private List<ProjectStatusTypeDTO> projectStatusTypeList = new ArrayList<>();
     private List<ProjectSiteDTO> projectSiteList = new ArrayList<>();
@@ -71,6 +72,15 @@ public class ResponseDTO {
     private CompanyDTO company;
     private CompanyStaffDTO companyStaff;
 
+    public List<PhotoUploadDTO> getPhotoUploadList() {
+        return photoUploadList;
+    }
+
+    public void setPhotoUploadList(List<PhotoUploadDTO> photoUploadList) {
+        this.photoUploadList = photoUploadList;
+    }
+
+    
     public List<CountryDTO> getCountryList() {
         return countryList;
     }

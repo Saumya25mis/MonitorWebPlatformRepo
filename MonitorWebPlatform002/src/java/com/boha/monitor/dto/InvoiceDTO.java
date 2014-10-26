@@ -7,7 +7,10 @@
 package com.boha.monitor.dto;
 
 import com.boha.monitor.data.Invoice;
+import com.boha.monitor.data.InvoiceItem;
+import com.boha.monitor.data.SiteCheckPoint;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -21,7 +24,9 @@ public class InvoiceDTO implements Serializable {
     private Integer invoiceID;
     private Date invoiceDate;
     private Date invoiceDueDate;
-    private Date dateRegistered;
+    private Date dateRegistered, invoicePaidDate;
+    private String reference;
+    
     private Double totalAmount;
     private ClientDTO client;
     private CompanyDTO company;
@@ -37,10 +42,13 @@ public class InvoiceDTO implements Serializable {
         invoiceDate = a.getInvoiceDate();
         invoiceDueDate = a.getInvoiceDueDate();
         dateRegistered = a.getDateRegistered();
+        reference = a.getReference();
+        invoicePaidDate = a.getInvoicePaidDate();
         client = new ClientDTO(a.getClient());
         company = new CompanyDTO(a.getCompany());
         project = new ProjectDTO(a.getProject());
         totalAmount = a.getTotalAmount();
+        
     }
 
     public InvoiceDTO(Integer invoiceID, Date invoiceDate) {
@@ -54,6 +62,22 @@ public class InvoiceDTO implements Serializable {
 
     public void setInvoiceID(Integer invoiceID) {
         this.invoiceID = invoiceID;
+    }
+
+    public Date getInvoicePaidDate() {
+        return invoicePaidDate;
+    }
+
+    public void setInvoicePaidDate(Date invoicePaidDate) {
+        this.invoicePaidDate = invoicePaidDate;
+    }
+
+    public String getReference() {
+        return reference;
+    }
+
+    public void setReference(String reference) {
+        this.reference = reference;
     }
 
     public Double getTotalAmount() {

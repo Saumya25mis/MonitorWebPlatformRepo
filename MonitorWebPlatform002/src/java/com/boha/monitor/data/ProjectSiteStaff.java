@@ -71,8 +71,6 @@ public class ProjectSiteStaff implements Serializable {
     private Date dateRegistered;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "projectSiteStaff")
     private List<ProjectDiaryRecord> projectDiaryRecordList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "projectSiteStaff")
-    private List<ProjectSiteTaskStatus> projectSiteTaskStatusList;
     @JoinColumn(name = "projectSiteID", referencedColumnName = "projectSiteID")
     @ManyToOne(optional = false)
     private ProjectSite projectSite;
@@ -130,14 +128,6 @@ public class ProjectSiteStaff implements Serializable {
 
     public void setProjectDiaryRecordList(List<ProjectDiaryRecord> projectDiaryRecordList) {
         this.projectDiaryRecordList = projectDiaryRecordList;
-    }
-
-    public List<ProjectSiteTaskStatus> getProjectSiteTaskStatusList() {
-        return projectSiteTaskStatusList;
-    }
-
-    public void setProjectSiteTaskStatusList(List<ProjectSiteTaskStatus> projectSiteTaskStatusList) {
-        this.projectSiteTaskStatusList = projectSiteTaskStatusList;
     }
 
     public ProjectSite getProjectSite() {

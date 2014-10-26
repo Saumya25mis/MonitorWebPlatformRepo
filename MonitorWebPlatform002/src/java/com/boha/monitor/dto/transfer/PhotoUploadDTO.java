@@ -6,6 +6,8 @@
 package com.boha.monitor.dto.transfer;
 
 import com.boha.monitor.data.PhotoUpload;
+import com.boha.monitor.data.Project;
+import com.boha.monitor.data.ProjectSite;
 import com.boha.monitor.data.ProjectSiteTask;
 import java.util.Date;
 import java.util.List;
@@ -20,8 +22,10 @@ public class PhotoUploadDTO {
     public static final int SITE_IMAGE = 1, TASK_IMAGE = 2, PROJECT_IMAGE = 3, STAFF_IMAGE = 4;
     private boolean isFullPicture;
     private Integer companyID, projectID, projectSiteID, 
-            projectSiteTaskID, pictureType, companyStaffID, photoUploadID, thumbFlag;
+            projectSiteTaskID, pictureType, companyStaffID, 
+            photoUploadID, thumbFlag;
     private List<String> tags;
+    String projectName, projectSiteName, projectSiteTask;
     private Double latitude, longitude;
     private String uri;
     private Date dateTaken, dateUploaded;
@@ -38,17 +42,25 @@ public class PhotoUploadDTO {
         thumbFlag = a.getThumbFlag();
         switch (pictureType) {
             case PROJECT_IMAGE:
-                projectID = a.getProject().getProjectID();
+                Project x = a.getProject();
+                projectID = x.getProjectID();
+                projectName = x.getProjectName();
                 break;
             case SITE_IMAGE:
-                projectID = a.getProjectSite().getProject().getProjectID();
-                projectSiteID = a.getProjectSite().getProjectSiteID();
+                ProjectSite p = a.getProjectSite();
+                projectID = p.getProject().getProjectID();
+                projectName = p.getProject().getProjectName();
+                projectSiteID = p.getProjectSiteID();
+                projectSiteName = p.getProjectSiteName();
                 break;
             case TASK_IMAGE:
                 ProjectSiteTask t = a.getProjectSiteTask();
+                projectName = t.getProjectSite().getProject().getProjectName();
                 projectSiteTaskID = t.getProjectSiteTaskID();
                 projectSiteID = t.getProjectSite().getProjectSiteID();
                 projectID = t.getProjectSite().getProject().getProjectID();
+                projectSiteName = t.getProjectSite().getProjectSiteName();
+                projectSiteTask = t.getTask().getTaskName();
                 break;
             case STAFF_IMAGE:
                 companyStaffID = a.getCompanyStaff().getCompanyStaffID();

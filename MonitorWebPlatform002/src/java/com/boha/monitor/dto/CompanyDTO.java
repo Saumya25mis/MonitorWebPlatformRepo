@@ -31,6 +31,7 @@ public class CompanyDTO implements Serializable {
     private List<InvoiceDTO> invoiceList = new ArrayList<>();
     private List<BeneficiaryDTO> beneficiaryList = new ArrayList<>();
     private List<GcmDeviceDTO> gcmDeviceList = new ArrayList<>();
+    private List<CompanyStaffTypeDTO> companyStaffTypeList = new ArrayList<>();
     
 
     public CompanyDTO() {
@@ -39,8 +40,27 @@ public class CompanyDTO implements Serializable {
     public CompanyDTO(Company a) {
         this.companyID = a.getCompanyID();
         this.companyName = a.getCompanyName();
+
+        
     }
 
+    private void log() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("###### Company Data #############").append("\n");
+        sb.append("Clients: ").append(clientList.size()).append("\n");
+        sb.append("Projects: ").append(projectList.size()).append("\n");
+        sb.append("Staff: ").append(companyStaffList.size()).append("\n");
+        sb.append("Invoices: ").append(invoiceList.size()).append("\n");
+        sb.append("InvoiceCodes: ").append(invoiceCodeList.size()).append("\n");
+        sb.append("Tasks: ").append(taskList.size()).append("\n");
+        sb.append("TaskStatus: ").append(taskStatusList.size()).append("\n");
+        sb.append("ProjectStatusTypes: ").append(projectStatusTypeList.size()).append("\n");
+        sb.append("Beneficiaries: ").append(beneficiaryList.size()).append("\n");
+        sb.append("Devices: ").append(gcmDeviceList.size()).append("\n");
+        sb.append("CheckPoints: ").append(checkPointList.size()).append("\n");
+        sb.append("#######################");
+        System.out.println(sb.toString());
+    }
     public List<TaskDTO> getTaskList() {
         return taskList;
     }
