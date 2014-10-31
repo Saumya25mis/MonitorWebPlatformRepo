@@ -201,6 +201,9 @@ public class DataUtil {
             u.setThumbFlag(pu.getThumbFlag());
             em.persist(u);
             em.flush();
+            if (pu.getProjectSiteID() != null) {
+                updateProjectSiteLocation(pu.getProjectSiteID(), u);
+            }
             log.log(Level.OFF, "PhotoUpload added to table");
         } catch (Exception e) {
             log.log(Level.SEVERE, "PhotoUpload failed", e);
@@ -247,6 +250,7 @@ public class DataUtil {
                     status.getProjectSiteTaskID());
             ProjectSiteTaskStatus t = new ProjectSiteTaskStatus();
             t.setDateUpdated(new Date());
+            t.setStatusDate(new Date());
             t.setProjectSiteTask(c);
             t.setCompanyStaff(em.find(CompanyStaff.class, status.getCompanyStaffID()));
             t.setTaskStatus(em.find(TaskStatus.class, status.getTaskStatus().getTaskStatusID()));
@@ -255,7 +259,6 @@ public class DataUtil {
             em.flush();
             resp.getProjectSiteTaskStatusList().add(
                     new ProjectSiteTaskStatusDTO(t));
-
             log.log(Level.OFF, "ProjectSiteTaskStatus added");
 
         } catch (Exception e) {
@@ -326,6 +329,7 @@ public class DataUtil {
             Company c = em.find(Company.class, b.getCompanyID());
             ProjectStatusType cli = new ProjectStatusType();
             cli.setProjectStatusName(b.getProjectStatusName());
+            cli.setStatusColor(b.getStatusColor());
             cli.setCompany(c);
 
             em.persist(cli);
@@ -351,6 +355,7 @@ public class DataUtil {
             Company c = em.find(Company.class, b.getCompanyID());
             TaskStatus cli = new TaskStatus();
             cli.setTaskStatusName(b.getTaskStatusName());
+            cli.setStatusColor(b.getStatusColor());
             cli.setCompany(c);
 
             em.persist(cli);
@@ -882,51 +887,64 @@ public class DataUtil {
         ProjectStatusType p1 = new ProjectStatusType();
         p1.setCompany(c);
         p1.setProjectStatusName("Project is ahead of schedule");
+        p1.setStatusColor((short)TaskStatusDTO.STATUS_COLOR_GREEN);
         em.persist(p1);
         ProjectStatusType p2 = new ProjectStatusType();
         p2.setCompany(c);
+        p2.setStatusColor((short)TaskStatusDTO.STATUS_COLOR_GREEN);
         p2.setProjectStatusName("Project is on schedule");
         em.persist(p2);
         ProjectStatusType p3 = new ProjectStatusType();
         p3.setCompany(c);
+        p3.setStatusColor((short)TaskStatusDTO.STATUS_COLOR_GREEN);
         p3.setProjectStatusName("Project is complete");
         em.persist(p3);
         ProjectStatusType p4 = new ProjectStatusType();
         p4.setCompany(c);
         p4.setProjectStatusName("Project is behind schedule");
+        p4.setStatusColor((short)TaskStatusDTO.STATUS_COLOR_RED);
         em.persist(p4);
         ProjectStatusType p5 = new ProjectStatusType();
+        p1.setStatusColor((short)TaskStatusDTO.STATUS_COLOR_GREEN);
         p5.setCompany(c);
         p5.setProjectStatusName("Project is on budget");
         em.persist(p5);
         ProjectStatusType p6 = new ProjectStatusType();
         p6.setCompany(c);
+        p1.setStatusColor((short)TaskStatusDTO.STATUS_COLOR_YELLOW);
         p6.setProjectStatusName("Project is over budget");
         em.persist(p6);
-        log.log(Level.INFO, "Initial ProjectStatusTypes added");
+        
+        log.log(Level.INFO, "*** Initial ProjectStatusTypes added");
     }
 
     private void addInitialTaskStatus(Company c) {
         TaskStatus ts1 = new TaskStatus();
         ts1.setTaskStatusName("Completed");
         ts1.setCompany(c);
+        ts1.setStatusColor((short)TaskStatusDTO.STATUS_COLOR_GREEN);
         em.persist(ts1);
         TaskStatus ts2 = new TaskStatus();
         ts2.setTaskStatusName("Delayed - Weather");
+        ts2.setStatusColor((short)TaskStatusDTO.STATUS_COLOR_RED);
         ts2.setCompany(c);
         em.persist(ts2);
         TaskStatus ts3 = new TaskStatus();
         ts3.setTaskStatusName("Delayed - Staff");
+        ts3.setStatusColor((short)TaskStatusDTO.STATUS_COLOR_RED);
         ts3.setCompany(c);
         em.persist(ts3);
         TaskStatus ts4 = new TaskStatus();
         ts4.setTaskStatusName("Delayed - Materials");
+        ts4.setStatusColor((short)TaskStatusDTO.STATUS_COLOR_RED);
         ts4.setCompany(c);
         em.persist(ts4);
         TaskStatus ts5 = new TaskStatus();
         ts5.setTaskStatusName("Not started yet");
+        ts5.setStatusColor((short)TaskStatusDTO.STATUS_COLOR_YELLOW);
         ts5.setCompany(c);
         em.persist(ts5);
+        
         log.log(Level.INFO, "Initial TaskStatus added");
     }
 
@@ -986,6 +1004,9 @@ public class DataUtil {
                 if (dto.getProjectStatusName() != null) {
                     ps.setProjectStatusName(dto.getProjectStatusName());
                 }
+                if (dto.getStatusColor() != null) {
+                    ps.setStatusColor(dto.getStatusColor());
+                }
                 em.merge(ps);
                 log.log(Level.INFO, "Project Status Type updated");
             }
@@ -1002,6 +1023,9 @@ public class DataUtil {
             if (ps != null) {
                 if (dto.getTaskStatusName() != null) {
                     ps.setTaskStatusName(dto.getTaskStatusName());
+                }
+                if (dto.getStatusColor() != null) {
+                    ps.setStatusColor(dto.getStatusColor());
                 }
                 em.merge(ps);
                 log.log(Level.INFO, "Task Status updated");
@@ -1051,6 +1075,32 @@ public class DataUtil {
             throw new DataException("Failed to update project\n" + getErrorString(e));
         }
 
+    }
+
+    public void updateProjectSiteLocation(Integer projectSiteID, PhotoUpload dto) throws DataException {
+        try {
+            ProjectSite ps = em.find(ProjectSite.class, projectSiteID);
+            if (ps != null) {
+                if (ps.getAccuracy() == null) {
+                    ps.setLatitude(dto.getLatitude());
+                    ps.setLongitude(dto.getLongitude());
+                    ps.setAccuracy(dto.getAccuracy());
+                    em.merge(ps);
+                    log.log(Level.INFO, "Project Site location updated, accuracy: {0}", dto.getAccuracy());
+                } else {
+                    if (ps.getAccuracy() > dto.getAccuracy()) {
+                        ps.setLatitude(dto.getLatitude());
+                        ps.setLongitude(dto.getLongitude());
+                        ps.setAccuracy(dto.getAccuracy());
+                        em.merge(ps);
+                        log.log(Level.INFO, "Project Site location, accuracy updated, accuracy: {0}", dto.getAccuracy());
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.log(Level.OFF, null, e);
+            throw new DataException("Failed to update projectSite\n" + getErrorString(e));
+        }
     }
 
     public void updateProjectSite(ProjectSiteDTO dto) throws DataException {

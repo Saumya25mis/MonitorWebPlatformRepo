@@ -19,6 +19,7 @@ public class ProjectStatusTypeDTO implements Serializable {
     private Integer projectStatusTypeID, companyID;
     private String projectStatusName;
     private List<ProjectDiaryRecordDTO> projectDiaryRecordList;
+    private Short statusColor;
 
     public ProjectStatusTypeDTO() {
     }
@@ -27,6 +28,7 @@ public class ProjectStatusTypeDTO implements Serializable {
         this.projectStatusTypeID = a.getProjectStatusTypeID();
         this.projectStatusName = a.getProjectStatusName();
         this.companyID = a.getCompany().getCompanyID();
+        this.statusColor = a.getStatusColor();
     }
 
     public Integer getProjectStatusTypeID() {
@@ -35,6 +37,14 @@ public class ProjectStatusTypeDTO implements Serializable {
 
     public void setProjectStatusTypeID(Integer projectStatusTypeID) {
         this.projectStatusTypeID = projectStatusTypeID;
+    }
+
+    public Short getStatusColor() {
+        return statusColor;
+    }
+
+    public void setStatusColor(Short statusColor) {
+        this.statusColor = statusColor;
     }
 
     public Integer getCompanyID() {

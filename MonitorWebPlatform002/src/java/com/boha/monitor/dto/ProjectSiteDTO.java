@@ -24,6 +24,7 @@ public class ProjectSiteDTO implements Serializable {
     private Double latitude;
     private Double longitude;
     private Integer activeFlag;
+    private Float accuracy;
     private List<ProjectSiteTaskDTO> projectSiteTaskList = new ArrayList<>();
     private Integer projectID;
     private List<PhotoUploadDTO> photoUploadList = new ArrayList<>();
@@ -34,7 +35,7 @@ public class ProjectSiteDTO implements Serializable {
     public ProjectSiteDTO(ProjectSite a) {
         this.projectSiteID = a.getProjectSiteID();
         this.projectSiteName = a.getProjectSiteName();
-        
+        this.accuracy = a.getAccuracy();
         this.latitude = a.getLatitude();
         this.longitude = a.getLongitude();
         this.activeFlag = a.getActiveFlag();
@@ -51,6 +52,14 @@ public class ProjectSiteDTO implements Serializable {
 
     public void setProjectName(String projectName) {
         this.projectName = projectName;
+    }
+
+    public Float getAccuracy() {
+        return accuracy;
+    }
+
+    public void setAccuracy(Float accuracy) {
+        this.accuracy = accuracy;
     }
 
     

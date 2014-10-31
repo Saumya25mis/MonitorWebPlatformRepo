@@ -21,6 +21,7 @@ public class PhotoUploadDTO {
 
     public static final int SITE_IMAGE = 1, TASK_IMAGE = 2, PROJECT_IMAGE = 3, STAFF_IMAGE = 4;
     private boolean isFullPicture;
+    private Float accuracy;
     private Integer companyID, projectID, projectSiteID, 
             projectSiteTaskID, pictureType, companyStaffID, 
             photoUploadID, thumbFlag;
@@ -35,6 +36,7 @@ public class PhotoUploadDTO {
         pictureType = a.getPictureType();
         latitude = a.getLatitude();
         longitude = a.getLongitude();
+        accuracy = a.getAccuracy();
         uri = a.getUri();
         dateTaken = a.getDateTaken();
         companyID = a.getCompany().getCompanyID();
@@ -66,6 +68,38 @@ public class PhotoUploadDTO {
                 companyStaffID = a.getCompanyStaff().getCompanyStaffID();
                 break;
         }
+    }
+
+    public Float getAccuracy() {
+        return accuracy;
+    }
+
+    public void setAccuracy(Float accuracy) {
+        this.accuracy = accuracy;
+    }
+
+    public String getProjectName() {
+        return projectName;
+    }
+
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
+    }
+
+    public String getProjectSiteName() {
+        return projectSiteName;
+    }
+
+    public void setProjectSiteName(String projectSiteName) {
+        this.projectSiteName = projectSiteName;
+    }
+
+    public String getProjectSiteTask() {
+        return projectSiteTask;
+    }
+
+    public void setProjectSiteTask(String projectSiteTask) {
+        this.projectSiteTask = projectSiteTask;
     }
 
     public Date getDateTaken() {

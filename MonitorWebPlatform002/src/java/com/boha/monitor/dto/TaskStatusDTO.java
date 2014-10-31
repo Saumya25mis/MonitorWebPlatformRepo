@@ -17,6 +17,12 @@ public class TaskStatusDTO implements Serializable {
     private static final long serialVersionUID = 1L;
     private Integer taskStatusID, companyID;
     private String taskStatusName;
+    private Short statusColor;
+    
+    public static final int 
+            STATUS_COLOR_RED = 3,
+            STATUS_COLOR_GREEN = 1,
+            STATUS_COLOR_YELLOW = 2;
 
     public TaskStatusDTO() {
     }
@@ -25,6 +31,7 @@ public class TaskStatusDTO implements Serializable {
         this.taskStatusID = a.getTaskStatusID();
         this.taskStatusName = a.getTaskStatusName();
         this.companyID = a.getCompany().getCompanyID();
+        this.statusColor = a.getStatusColor();
     }
 
     public Integer getCompanyID() {
@@ -33,6 +40,14 @@ public class TaskStatusDTO implements Serializable {
 
     public void setCompanyID(Integer companyID) {
         this.companyID = companyID;
+    }
+
+    public Short getStatusColor() {
+        return statusColor;
+    }
+
+    public void setStatusColor(Short statusColor) {
+        this.statusColor = statusColor;
     }
 
     public Integer getTaskStatusID() {

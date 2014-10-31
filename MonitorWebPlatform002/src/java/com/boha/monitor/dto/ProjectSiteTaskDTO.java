@@ -5,9 +5,7 @@
  */
 package com.boha.monitor.dto;
 
-import com.boha.monitor.data.PhotoUpload;
 import com.boha.monitor.data.ProjectSiteTask;
-import com.boha.monitor.data.ProjectSiteTaskStatus;
 import com.boha.monitor.dto.transfer.PhotoUploadDTO;
 import java.io.Serializable;
 import java.util.ArrayList;

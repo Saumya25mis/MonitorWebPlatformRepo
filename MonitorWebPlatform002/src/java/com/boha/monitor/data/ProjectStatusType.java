@@ -53,6 +53,8 @@ public class ProjectStatusType implements Serializable {
     private String projectStatusName;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "projectStatusType")
     private List<ProjectDiaryRecord> projectDiaryRecordList;
+    @Column(name = "statusColor")
+    private Short statusColor;
 
     public ProjectStatusType() {
     }
@@ -84,6 +86,14 @@ public class ProjectStatusType implements Serializable {
 
     public List<ProjectDiaryRecord> getProjectDiaryRecordList() {
         return projectDiaryRecordList;
+    }
+
+    public Short getStatusColor() {
+        return statusColor;
+    }
+
+    public void setStatusColor(Short statusColor) {
+        this.statusColor = statusColor;
     }
 
     public void setProjectDiaryRecordList(List<ProjectDiaryRecord> projectDiaryRecordList) {

@@ -60,7 +60,8 @@ import javax.validation.constraints.Size;
             query = "SELECT p FROM PhotoUpload p WHERE p.dateTaken = :dateTaken"),
    })
 public class PhotoUpload implements Serializable {
-    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
+    @Column(name = "accuracy")
+    private Float accuracy;
     @Column(name = "latitude")
     private Double latitude;
     @Column(name = "longitude")
@@ -249,6 +250,14 @@ public class PhotoUpload implements Serializable {
 
     public void setDateUploaded(Date dateUploaded) {
         this.dateUploaded = dateUploaded;
+    }
+
+    public Float getAccuracy() {
+        return accuracy;
+    }
+
+    public void setAccuracy(Float accuracy) {
+        this.accuracy = accuracy;
     }
     
 }

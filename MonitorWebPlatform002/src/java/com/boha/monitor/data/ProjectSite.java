@@ -41,6 +41,8 @@ import javax.validation.constraints.Size;
 public class ProjectSite implements Serializable {
     @OneToMany(mappedBy = "projectSite")
     private List<PhotoUpload> photoUploadList;
+     @Column(name = "accuracy")
+    private Float accuracy;
     @Size(min = 1, max = 100)
     @Column(name = "standErfNumber")
     private String standErfNumber;
@@ -99,6 +101,14 @@ public class ProjectSite implements Serializable {
 
     public void setProjectSiteName(String projectSiteName) {
         this.projectSiteName = projectSiteName;
+    }
+
+    public Float getAccuracy() {
+        return accuracy;
+    }
+
+    public void setAccuracy(Float accuracy) {
+        this.accuracy = accuracy;
     }
 
     public Double getLatitude() {
