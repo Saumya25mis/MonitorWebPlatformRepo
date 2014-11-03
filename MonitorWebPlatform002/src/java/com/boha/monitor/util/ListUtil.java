@@ -113,6 +113,7 @@ public class ListUtil {
 
         return resp;
     }
+
     public ResponseDTO getAllPhotosByProject(Integer projectID) {
         ResponseDTO resp = new ResponseDTO();
         Query q = em.createNamedQuery("PhotoUpload.findAllProjectPhotos", PhotoUpload.class);
@@ -121,11 +122,12 @@ public class ListUtil {
         for (PhotoUpload cp : list) {
             resp.getPhotoUploadList().add(new PhotoUploadDTO(cp));
         }
-        System.out.println("**** found project photos: " 
+        System.out.println("**** found project photos: "
                 + resp.getPhotoUploadList().size());
-        
+
         return resp;
     }
+
     public ResponseDTO getPhotosByProjectSite(Integer projectSiteID) {
         ResponseDTO resp = new ResponseDTO();
         Query q = em.createNamedQuery("PhotoUpload.findProjectSitePhotos", PhotoUpload.class);
@@ -137,6 +139,7 @@ public class ListUtil {
 
         return resp;
     }
+
     public ResponseDTO getPhotosByTask(Integer projectSiteTaskID) {
         ResponseDTO resp = new ResponseDTO();
         Query q = em.createNamedQuery("PhotoUpload.findTaskPhotos", PhotoUpload.class);
@@ -250,11 +253,15 @@ public class ListUtil {
         ResponseDTO resp = new ResponseDTO();
 
         try {
+            Project p = em.find(Project.class, projectID);
+            ProjectDTO pDTO = new ProjectDTO(p);
             Query q = em.createNamedQuery("ProjectSite.findByProject",
                     ProjectSite.class);
             q.setParameter("projectID", projectID);
             List<ProjectSite> pList = q.getResultList();
+            
             ResponseDTO resp1 = getTasksByProject(projectID);
+            
             resp.setProjectDiaryRecordList(getDiariesByProject(projectID).getProjectDiaryRecordList());
             resp.setProjectSiteStaffList(getStaffByProject(projectID,
                     resp.getProjectDiaryRecordList(),
@@ -346,6 +353,7 @@ public class ListUtil {
                         task.getProjectSiteTaskStatusList().add(new ProjectSiteTaskStatusDTO(s));
                     }
                 }
+                //
                 resp.getProjectSiteTaskList().add(task);
             }
         } catch (Exception e) {
