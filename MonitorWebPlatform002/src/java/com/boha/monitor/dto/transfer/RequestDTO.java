@@ -6,13 +6,19 @@
 
 package com.boha.monitor.dto.transfer;
 
+import com.boha.monitor.dto.BankDTO;
+import com.boha.monitor.dto.BankDetailDTO;
 import com.boha.monitor.dto.BeneficiaryDTO;
 import com.boha.monitor.dto.CheckPointDTO;
 import com.boha.monitor.dto.CityDTO;
 import com.boha.monitor.dto.ClientDTO;
 import com.boha.monitor.dto.CompanyDTO;
 import com.boha.monitor.dto.CompanyStaffDTO;
+import com.boha.monitor.dto.ContractorClaimDTO;
+import com.boha.monitor.dto.ContractorClaimSiteDTO;
 import com.boha.monitor.dto.GcmDeviceDTO;
+import com.boha.monitor.dto.InvoiceDTO;
+import com.boha.monitor.dto.InvoiceItemDTO;
 import com.boha.monitor.dto.ProjectDTO;
 import com.boha.monitor.dto.ProjectDiaryRecordDTO;
 import com.boha.monitor.dto.ProjectSiteDTO;
@@ -30,7 +36,7 @@ import java.io.Serializable;
  */
 public class RequestDTO implements Serializable{
     private Integer requestType, companyID, companyStaffID, projectID, 
-            projectSiteID, projectSiteTaskID,loginType;
+            projectSiteID, projectSiteTaskID,loginType, countryID;
     private String email, pin, gcmRegistrationID;
     private CompanyDTO company;
     private CompanyStaffDTO companyStaff;
@@ -39,6 +45,12 @@ public class RequestDTO implements Serializable{
     private TownshipDTO township;
     private ProjectSiteDTO projectSite;
     private GcmDeviceDTO gcmDevice;
+    private BankDTO bank;
+    private BankDetailDTO bankDetail;
+    private ContractorClaimDTO contractorClaim;
+    private ContractorClaimSiteDTO contractorClaimSite;
+    private InvoiceDTO invoice;
+    private InvoiceItemDTO invoiceItem;
     
     private TaskDTO task;
     private CheckPointDTO checkPoint;
@@ -93,7 +105,10 @@ public class RequestDTO implements Serializable{
             ADD_COMPANY_CHECKPOINT = 304,
             ADD_CITY = 305,
             ADD_TOWNSHIP = 306,
-            ADD_SITE_TASK = 307;
+            ADD_SITE_TASK = 307,
+            ADD_BANK_DETAILS = 308,
+            ADD_BANK = 309;
+            
     //updates 
     public static final int 
             UPDATE_COMPANY_TASK = 401,
@@ -102,14 +117,18 @@ public class RequestDTO implements Serializable{
             UPDATE_COMPANY_CHECKPOINT = 404,
             UPDATE_PROJECT = 405,
             UPDATE_PROJECT_SITE = 406;
-    //invoice
+    //invoice * claim
     public static final int
             ADD_INVOICE = 501,
             ADD_INVOICE_ITEM = 502,
             REMOVE_INVOICE_ITEM = 503,
             CREATE_INVOICE_PDF = 504,
             REMOVE_INVOICE = 505,
-            GET_PROJECT_INVOICES = 506;
+            REMOVE_CONTRACTOR_CLAIM = 507,
+            REMOVE_CONTRACTOR_CLAIM_SITE = 508,
+            GET_PROJECT_INVOICES = 506,
+            ADD_CONTRACTOR_CLAIM = 511,
+            ADD_CONTRACTOR_CLAIM_SITE = 512;
     //reports
     public static final int
             REPORT_PROJECT = 601,
@@ -126,6 +145,62 @@ public class RequestDTO implements Serializable{
 
     //
     
+    public BankDTO getBank() {
+        return bank;
+    }
+
+    public void setBank(BankDTO bank) {
+        this.bank = bank;
+    }
+
+    public BankDetailDTO getBankDetail() {
+        return bankDetail;
+    }
+
+    public void setBankDetail(BankDetailDTO bankDetail) {
+        this.bankDetail = bankDetail;
+    }
+
+    public ContractorClaimDTO getContractorClaim() {
+        return contractorClaim;
+    }
+
+    public void setContractorClaim(ContractorClaimDTO contractorClaim) {
+        this.contractorClaim = contractorClaim;
+    }
+
+    public ContractorClaimSiteDTO getContractorClaimSite() {
+        return contractorClaimSite;
+    }
+
+    public void setContractorClaimSite(ContractorClaimSiteDTO contractorClaimSite) {
+        this.contractorClaimSite = contractorClaimSite;
+    }
+
+    public InvoiceDTO getInvoice() {
+        return invoice;
+    }
+
+    public void setInvoice(InvoiceDTO invoice) {
+        this.invoice = invoice;
+    }
+
+    public InvoiceItemDTO getInvoiceItem() {
+        return invoiceItem;
+    }
+
+    public void setInvoiceItem(InvoiceItemDTO invoiceItem) {
+        this.invoiceItem = invoiceItem;
+    }
+
+    public Integer getCountryID() {
+        return countryID;
+    }
+
+    public void setCountryID(Integer countryID) {
+        this.countryID = countryID;
+    }
+
     public BeneficiaryDTO getBeneficiary() {
         return beneficiary;
     }

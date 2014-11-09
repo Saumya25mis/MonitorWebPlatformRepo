@@ -5,6 +5,8 @@
  */
 package com.boha.monitor.dto.transfer;
 
+import com.boha.monitor.dto.BankDTO;
+import com.boha.monitor.dto.BankDetailDTO;
 import com.boha.monitor.dto.BeneficiaryDTO;
 import com.boha.monitor.dto.CheckPointDTO;
 import com.boha.monitor.dto.CityDTO;
@@ -12,11 +14,14 @@ import com.boha.monitor.dto.ClientDTO;
 import com.boha.monitor.dto.CompanyDTO;
 import com.boha.monitor.dto.CompanyStaffDTO;
 import com.boha.monitor.dto.CompanyStaffTypeDTO;
+import com.boha.monitor.dto.ContractorClaimDTO;
+import com.boha.monitor.dto.ContractorClaimSiteDTO;
 import com.boha.monitor.dto.CountryDTO;
 import com.boha.monitor.dto.ErrorStoreAndroidDTO;
 import com.boha.monitor.dto.ErrorStoreDTO;
 import com.boha.monitor.dto.HappyLetterDTO;
 import com.boha.monitor.dto.InvoiceDTO;
+import com.boha.monitor.dto.InvoiceItemDTO;
 import com.boha.monitor.dto.ProjectDTO;
 import com.boha.monitor.dto.ProjectDiaryRecordDTO;
 import com.boha.monitor.dto.ProjectSiteDTO;
@@ -40,6 +45,7 @@ public class ResponseDTO {
     private Integer statusCode;
     private String message, sessionID, GCMRegistrationID;
     private List<String> taskImageFileNameList;
+    private List<BankDTO> bankList;
     private List<String> siteImageFileNameList;
     private List<PhotoUploadDTO> photoUploadList = new ArrayList<>();
     private List<TaskStatusDTO> taskStatusList = new ArrayList<>();
@@ -64,6 +70,10 @@ public class ResponseDTO {
     private List<CityDTO> cityList = new ArrayList<>();
     private List<TownshipDTO> townshipList = new ArrayList<>();
     private List<CountryDTO> countryList = new ArrayList<>();
+    private List<ContractorClaimDTO> contractorClaimList = new ArrayList<>();
+    private List<ContractorClaimSiteDTO> contractorClaimSiteList = new ArrayList<>();
+    private List<InvoiceItemDTO> invoiceItemList;
+    private List<BankDetailDTO> bankDetailList;
     //
     private CompanyDTO company;
     private CompanyStaffDTO companyStaff;
@@ -72,8 +82,48 @@ public class ResponseDTO {
         return photoUploadList;
     }
 
+    public List<BankDTO> getBankList() {
+        return bankList;
+    }
+
+    public void setBankList(List<BankDTO> bankList) {
+        this.bankList = bankList;
+    }
+
+    public List<BankDetailDTO> getBankDetailList() {
+        return bankDetailList;
+    }
+
+    public void setBankDetailList(List<BankDetailDTO> bankDetailList) {
+        this.bankDetailList = bankDetailList;
+    }
+
     public void setPhotoUploadList(List<PhotoUploadDTO> photoUploadList) {
         this.photoUploadList = photoUploadList;
+    }
+
+    public List<InvoiceItemDTO> getInvoiceItemList() {
+        return invoiceItemList;
+    }
+
+    public void setInvoiceItemList(List<InvoiceItemDTO> invoiceItemList) {
+        this.invoiceItemList = invoiceItemList;
+    }
+
+    public List<ContractorClaimDTO> getContractorClaimList() {
+        return contractorClaimList;
+    }
+
+    public void setContractorClaimList(List<ContractorClaimDTO> contractorClaimList) {
+        this.contractorClaimList = contractorClaimList;
+    }
+
+    public List<ContractorClaimSiteDTO> getContractorClaimSiteList() {
+        return contractorClaimSiteList;
+    }
+
+    public void setContractorClaimSiteList(List<ContractorClaimSiteDTO> contractorClaimSiteList) {
+        this.contractorClaimSiteList = contractorClaimSiteList;
     }
 
     

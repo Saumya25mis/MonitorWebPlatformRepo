@@ -17,7 +17,7 @@ import java.util.List;
  */
 public class CompanyDTO implements Serializable {
     private static final long serialVersionUID = 1L;
-    private Integer companyID;
+    private Integer companyID, countryID;
     private String companyName;
     private String address, vatNumber, taxNumber;
     
@@ -32,6 +32,7 @@ public class CompanyDTO implements Serializable {
     private List<BeneficiaryDTO> beneficiaryList = new ArrayList<>();
     private List<BankDetailDTO> bankDetailList = new ArrayList<>();
     private List<GcmDeviceDTO> gcmDeviceList = new ArrayList<>();
+    private List<ContractorClaimDTO> contractorClaimList = new ArrayList<>();
     private List<CompanyStaffTypeDTO> companyStaffTypeList = new ArrayList<>();
     
 
@@ -41,6 +42,10 @@ public class CompanyDTO implements Serializable {
     public CompanyDTO(Company a) {
         this.companyID = a.getCompanyID();
         this.companyName = a.getCompanyName();
+        address = a.getAddress();
+        vatNumber = a.getVatNumber();
+        taxNumber = a.getTaxNumber();
+        countryID = a.getCountry().getCountryID();
 
         
     }
@@ -60,6 +65,22 @@ public class CompanyDTO implements Serializable {
         sb.append("CheckPoints: ").append(checkPointList.size()).append("\n");
         sb.append("#######################");
         System.out.println(sb.toString());
+    }
+
+    public List<ContractorClaimDTO> getContractorClaimList() {
+        return contractorClaimList;
+    }
+
+    public void setContractorClaimList(List<ContractorClaimDTO> contractorClaimList) {
+        this.contractorClaimList = contractorClaimList;
+    }
+
+    public Integer getCountryID() {
+        return countryID;
+    }
+
+    public void setCountryID(Integer countryID) {
+        this.countryID = countryID;
     }
 
     public String getAddress() {

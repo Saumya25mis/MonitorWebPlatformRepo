@@ -38,6 +38,9 @@ import javax.validation.constraints.Size;
 
 })
 public class Invoice implements Serializable {
+    @Size(max = 255)
+    @Column(name = "documentURI")
+    private String documentURI;
 
     @Basic(optional = false)
     @NotNull
@@ -227,6 +230,14 @@ public class Invoice implements Serializable {
 
     public void setInvoiceNumber(String invoiceNumber) {
         this.invoiceNumber = invoiceNumber;
+    }
+
+    public String getDocumentURI() {
+        return documentURI;
+    }
+
+    public void setDocumentURI(String documentURI) {
+        this.documentURI = documentURI;
     }
 
 }

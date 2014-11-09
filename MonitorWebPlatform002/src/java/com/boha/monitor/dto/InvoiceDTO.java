@@ -7,10 +7,7 @@
 package com.boha.monitor.dto;
 
 import com.boha.monitor.data.Invoice;
-import com.boha.monitor.data.InvoiceItem;
-import com.boha.monitor.data.SiteCheckPoint;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -26,7 +23,7 @@ public class InvoiceDTO implements Serializable {
     private Date invoiceDueDate;
     private Date dateRegistered, invoicePaidDate;
     private String reference;
-    
+    private String documentURI;
     private Double totalAmount;
     private ClientDTO client;
     private CompanyDTO company;
@@ -54,6 +51,14 @@ public class InvoiceDTO implements Serializable {
     public InvoiceDTO(Integer invoiceID, Date invoiceDate) {
         this.invoiceID = invoiceID;
         this.invoiceDate = invoiceDate;
+    }
+
+    public String getDocumentURI() {
+        return documentURI;
+    }
+
+    public void setDocumentURI(String documentURI) {
+        this.documentURI = documentURI;
     }
 
     public Integer getInvoiceID() {

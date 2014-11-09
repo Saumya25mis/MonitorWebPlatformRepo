@@ -36,6 +36,10 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "Country.findByLatitude", query = "SELECT c FROM Country c WHERE c.latitude = :latitude"),
     @NamedQuery(name = "Country.findByLongitude", query = "SELECT c FROM Country c WHERE c.longitude = :longitude")})
 public class Country implements Serializable {
+    @OneToMany(mappedBy = "country")
+    private List<Company> companyList;
+    @OneToMany(mappedBy = "country")
+    private List<Bank> bankList;
     @Column(name = "latitude")
     private Double latitude;
     @Column(name = "longitude")
@@ -147,6 +151,22 @@ public class Country implements Serializable {
 
     public void setLongitude(Double longitude) {
         this.longitude = longitude;
+    }
+
+    public List<Bank> getBankList() {
+        return bankList;
+    }
+
+    public void setBankList(List<Bank> bankList) {
+        this.bankList = bankList;
+    }
+
+    public List<Company> getCompanyList() {
+        return companyList;
+    }
+
+    public void setCompanyList(List<Company> companyList) {
+        this.companyList = companyList;
     }
     
 }

@@ -5,6 +5,8 @@
  */
 package com.boha.monitor.util;
 
+import com.boha.monitor.data.Bank;
+import com.boha.monitor.data.BankDetail;
 import com.boha.monitor.data.Beneficiary;
 import com.boha.monitor.data.CheckPoint;
 import com.boha.monitor.data.City;
@@ -12,9 +14,15 @@ import com.boha.monitor.data.Client;
 import com.boha.monitor.data.Company;
 import com.boha.monitor.data.CompanyStaff;
 import com.boha.monitor.data.CompanyStaffType;
+import com.boha.monitor.data.ContractorClaim;
+import com.boha.monitor.data.ContractorClaimSite;
+import com.boha.monitor.data.Country;
+import com.boha.monitor.data.Engineer;
 import com.boha.monitor.data.ErrorStore;
 import com.boha.monitor.data.ErrorStoreAndroid;
 import com.boha.monitor.data.GcmDevice;
+import com.boha.monitor.data.Invoice;
+import com.boha.monitor.data.InvoiceItem;
 import com.boha.monitor.data.PhotoUpload;
 import com.boha.monitor.data.Project;
 import com.boha.monitor.data.ProjectDiaryRecord;
@@ -26,14 +34,20 @@ import com.boha.monitor.data.Province;
 import com.boha.monitor.data.Task;
 import com.boha.monitor.data.TaskStatus;
 import com.boha.monitor.data.Township;
+import com.boha.monitor.dto.BankDTO;
+import com.boha.monitor.dto.BankDetailDTO;
 import com.boha.monitor.dto.BeneficiaryDTO;
 import com.boha.monitor.dto.CheckPointDTO;
 import com.boha.monitor.dto.CityDTO;
 import com.boha.monitor.dto.ClientDTO;
 import com.boha.monitor.dto.CompanyDTO;
 import com.boha.monitor.dto.CompanyStaffDTO;
+import com.boha.monitor.dto.ContractorClaimDTO;
+import com.boha.monitor.dto.ContractorClaimSiteDTO;
 import com.boha.monitor.dto.ErrorStoreDTO;
 import com.boha.monitor.dto.GcmDeviceDTO;
+import com.boha.monitor.dto.InvoiceDTO;
+import com.boha.monitor.dto.InvoiceItemDTO;
 import com.boha.monitor.dto.ProjectDTO;
 import com.boha.monitor.dto.ProjectDiaryRecordDTO;
 import com.boha.monitor.dto.ProjectSiteDTO;
@@ -106,14 +120,14 @@ public class DataUtil {
             int staffCode = cs.getCompanyStaffType().getStaffCode();
             switch (staffCode) {
                 case OPERATIONS_MANAGER:
-                    resp = listUtil.getCompanyData(company.getCompanyID());
+                    resp = listUtil.getCompanyData(company.getCompanyID(), company.getCountry().getCountryID());
                     resp.setCompanyStaff(new CompanyStaffDTO(cs));
                     break;
                 case SITE_SUPERVISOR:
                     resp.setCompanyStaff(new CompanyStaffDTO(cs));
                     break;
                 case EXECUTIVE_STAFF:
-                    resp = listUtil.getCompanyData(company.getCompanyID());
+                    resp = listUtil.getCompanyData(company.getCompanyID(), company.getCountry().getCountryID());
                     resp.setCompanyStaff(new CompanyStaffDTO(cs));
                     break;
                 case PROJECT_MANAGER:
@@ -481,7 +495,179 @@ public class DataUtil {
 
     }
 
- 
+    public ResponseDTO addContractorClaim(ContractorClaimDTO cc) throws DataException {
+        ResponseDTO resp = new ResponseDTO();
+        try {
+            Project p = em.find(Project.class, cc.getProject().getProjectID());
+            Task task = em.find(Task.class, cc.getTask().getTaskID());
+            ContractorClaim t = new ContractorClaim();
+            t.setClaimDate(cc.getClaimDate());
+            t.setClaimNumber(getClaimNumber(cc));
+            t.setProject(p);
+            t.setTask(task);
+            t.setEngineer(em.find(Engineer.class, cc.getTask().getTaskID()));
+
+            em.persist(t);
+            em.flush();
+            ContractorClaimDTO dto = new ContractorClaimDTO(t);
+            if (cc.getContractorClaimSiteList() != null) {
+                for (ContractorClaimSiteDTO site : cc.getContractorClaimSiteList()) {
+                    dto.getContractorClaimSiteList().add(addContractorClaimSite(site).getContractorClaimSiteList().get(0));
+                }
+            }
+            resp.setStatusCode(0);
+            resp.setMessage("ContractorClaim added successfully");
+            log.log(Level.OFF, "ContractorClaim registered");
+
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "Failed", e);
+            throw new DataException("Failed\n" + getErrorString(e));
+        }
+
+        return resp;
+
+    }
+
+    public ResponseDTO addBank(BankDTO bank) throws DataException {
+        ResponseDTO resp = new ResponseDTO();
+        try {
+            Bank t = new Bank();
+            t.setBankName(bank.getBankName());
+
+            em.persist(t);
+            em.flush();
+            resp.getBankList().add(new BankDTO(t));
+            resp.setStatusCode(0);
+            resp.setMessage("Bank added successfully");
+            log.log(Level.OFF, "Bank added");
+
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "Failed", e);
+            throw new DataException("Failed\n" + getErrorString(e));
+        }
+
+        return resp;
+
+    }
+
+    public ResponseDTO addBankDetails(BankDetailDTO detail) throws DataException {
+        ResponseDTO resp = new ResponseDTO();
+        try {
+            BankDetail t = new BankDetail();
+            t.setBank(em.find(Bank.class, detail.getBank().getBankID()));
+            t.setCompany(em.find(Company.class, detail.getCompanyID()));
+            t.setAccountNumber(detail.getAccountNumber());
+            t.setBranchCode(detail.getBranchCode());
+
+            em.persist(t);
+            em.flush();
+            resp.getBankDetailList().add(new BankDetailDTO(t));
+            resp.setStatusCode(0);
+            resp.setMessage("BankDetail added successfully");
+            log.log(Level.OFF, "BankDetail added");
+
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "Failed", e);
+            throw new DataException("Failed\n" + getErrorString(e));
+        }
+
+        return resp;
+
+    }
+
+    public ResponseDTO addInvoice(InvoiceDTO invoice) throws DataException {
+        ResponseDTO resp = new ResponseDTO();
+        try {
+            Invoice t = new Invoice();
+            t.setClient(em.find(Client.class, invoice.getClient().getClientID()));
+            t.setCompany(em.find(Company.class, invoice.getCompany().getCompanyID()));
+            t.setDateRegistered(new Date());
+            t.setInvoiceDate(invoice.getInvoiceDate());
+            t.setInvoiceNumber(getInvoiceNumber(invoice));
+            t.setProject(em.find(Project.class, invoice.getProject().getProjectID()));
+            t.setReference(invoice.getReference());
+
+            em.persist(t);
+            em.flush();
+            InvoiceDTO dto = new InvoiceDTO(t);
+            if (invoice.getInvoiceItemList() != null) {
+                for (InvoiceItemDTO i : invoice.getInvoiceItemList()) {
+                    i.setInvoiceID(t.getInvoiceID());
+                    dto.getInvoiceItemList().add(addInvoiceItem(i).getInvoiceItemList().get(0));
+                }
+            }
+            resp.setStatusCode(0);
+            resp.setMessage("Invoice added successfully");
+            log.log(Level.OFF, "Invoice added");
+
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "Failed", e);
+            throw new DataException("Failed\n" + getErrorString(e));
+        }
+
+        return resp;
+
+    }
+
+    private String getInvoiceNumber(InvoiceDTO inv) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(inv.getCompany().getCompanyID()).append("-");
+        sb.append(inv.getClient().getClientID()).append("-");
+        sb.append(System.currentTimeMillis());
+        return sb.toString();
+    }
+
+    public ResponseDTO addInvoiceItem(InvoiceItemDTO invoiceItem) throws DataException {
+        ResponseDTO resp = new ResponseDTO();
+        try {
+            InvoiceItem c = new InvoiceItem();
+            c.setInvoice(em.find(Invoice.class, invoiceItem.getInvoiceID()));
+            c.setNettPrice(invoiceItem.getNettPrice());
+            c.setUnitPrice(invoiceItem.getUnitPrice());
+            c.setQuantity(invoiceItem.getQuantity());
+            c.setTax(invoiceItem.getTax());
+            c.setProjectSite(em.find(ProjectSite.class, invoiceItem.getProjectSite().getProjectSiteID()));
+            c.setProjectSiteTask(em.find(ProjectSiteTask.class, invoiceItem.getTask().getProjectSiteTaskID()));
+
+            em.persist(c);
+            em.flush();
+            resp.getInvoiceItemList().add(new InvoiceItemDTO(c));
+            log.log(Level.OFF, "Invoice item added");
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "Failed", e);
+            throw new DataException("Failed\n" + getErrorString(e));
+        }
+
+        return resp;
+
+    }
+
+    public ResponseDTO addContractorClaimSite(ContractorClaimSiteDTO site) throws DataException {
+        ResponseDTO resp = new ResponseDTO();
+        try {
+            ContractorClaimSite c = new ContractorClaimSite();
+            c.setContractorClaim(em.find(ContractorClaim.class, site.getContractorClaimID()));
+            c.setProjectSite(em.find(ProjectSite.class, site.getProjectSite().getProjectSiteID()));
+            em.persist(c);
+            em.flush();
+            resp.getContractorClaimSiteList().add(new ContractorClaimSiteDTO(c));
+
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "Failed", e);
+            throw new DataException("Failed\n" + getErrorString(e));
+        }
+
+        return resp;
+
+    }
+
+    private String getClaimNumber(ContractorClaimDTO cc) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(cc.getProject().getProjectID()).append("-");
+        sb.append(cc.getEngineer().getEngineerID()).append("-");
+        sb.append(System.currentTimeMillis());
+        return sb.toString();
+    }
 
     public ResponseDTO registerProjectSite(
             ProjectSiteDTO site) throws DataException {
@@ -664,10 +850,14 @@ public class DataUtil {
         try {
             Company c = new Company();
             c.setCompanyName(company.getCompanyName());
+            c.setAddress(company.getAddress());
+            c.setVatNumber(company.getVatNumber());
+            c.setTaxNumber(company.getTaxNumber());
+            c.setCountry(em.find(Country.class, company.getCountryID()));
             em.persist(c);
             em.flush();
 
-            //add operations staff
+            //add operations staff - employee #1
             CompanyStaff cs = new CompanyStaff();
             cs.setCompany(c);
             cs.setFirstName(staff.getFirstName());
@@ -686,7 +876,7 @@ public class DataUtil {
             addInitialTasks(c);
             addInitialProject(c);
 
-            resp = listUtil.getCompanyData(c.getCompanyID());
+            resp = listUtil.getCompanyData(c.getCompanyID(), company.getCountryID());
             resp.setCompanyStaff(new CompanyStaffDTO(cs));
 
             log.log(Level.OFF, "######## Company registered: {0}", c.getCompanyName());
@@ -770,8 +960,6 @@ public class DataUtil {
         log.log(Level.INFO, "#### Initial Project and Sites added");
     }
 
-    
-
     private void addInitialTasks(Company c) {
         Task t1 = new Task();
         t1.setCompany(c);
@@ -839,34 +1027,34 @@ public class DataUtil {
         ProjectStatusType p1 = new ProjectStatusType();
         p1.setCompany(c);
         p1.setProjectStatusName("Project is ahead of schedule");
-        p1.setStatusColor((short)TaskStatusDTO.STATUS_COLOR_GREEN);
+        p1.setStatusColor((short) TaskStatusDTO.STATUS_COLOR_GREEN);
         em.persist(p1);
         ProjectStatusType p2 = new ProjectStatusType();
         p2.setCompany(c);
-        p2.setStatusColor((short)TaskStatusDTO.STATUS_COLOR_GREEN);
+        p2.setStatusColor((short) TaskStatusDTO.STATUS_COLOR_GREEN);
         p2.setProjectStatusName("Project is on schedule");
         em.persist(p2);
         ProjectStatusType p3 = new ProjectStatusType();
         p3.setCompany(c);
-        p3.setStatusColor((short)TaskStatusDTO.STATUS_COLOR_GREEN);
+        p3.setStatusColor((short) TaskStatusDTO.STATUS_COLOR_GREEN);
         p3.setProjectStatusName("Project is complete");
         em.persist(p3);
         ProjectStatusType p4 = new ProjectStatusType();
         p4.setCompany(c);
         p4.setProjectStatusName("Project is behind schedule");
-        p4.setStatusColor((short)TaskStatusDTO.STATUS_COLOR_RED);
+        p4.setStatusColor((short) TaskStatusDTO.STATUS_COLOR_RED);
         em.persist(p4);
         ProjectStatusType p5 = new ProjectStatusType();
-        p1.setStatusColor((short)TaskStatusDTO.STATUS_COLOR_GREEN);
+        p1.setStatusColor((short) TaskStatusDTO.STATUS_COLOR_GREEN);
         p5.setCompany(c);
         p5.setProjectStatusName("Project is on budget");
         em.persist(p5);
         ProjectStatusType p6 = new ProjectStatusType();
         p6.setCompany(c);
-        p1.setStatusColor((short)TaskStatusDTO.STATUS_COLOR_YELLOW);
+        p1.setStatusColor((short) TaskStatusDTO.STATUS_COLOR_YELLOW);
         p6.setProjectStatusName("Project is over budget");
         em.persist(p6);
-        
+
         log.log(Level.INFO, "*** Initial ProjectStatusTypes added");
     }
 
@@ -874,29 +1062,29 @@ public class DataUtil {
         TaskStatus ts1 = new TaskStatus();
         ts1.setTaskStatusName("Completed");
         ts1.setCompany(c);
-        ts1.setStatusColor((short)TaskStatusDTO.STATUS_COLOR_GREEN);
+        ts1.setStatusColor((short) TaskStatusDTO.STATUS_COLOR_GREEN);
         em.persist(ts1);
         TaskStatus ts2 = new TaskStatus();
         ts2.setTaskStatusName("Delayed - Weather");
-        ts2.setStatusColor((short)TaskStatusDTO.STATUS_COLOR_RED);
+        ts2.setStatusColor((short) TaskStatusDTO.STATUS_COLOR_RED);
         ts2.setCompany(c);
         em.persist(ts2);
         TaskStatus ts3 = new TaskStatus();
         ts3.setTaskStatusName("Delayed - Staff");
-        ts3.setStatusColor((short)TaskStatusDTO.STATUS_COLOR_RED);
+        ts3.setStatusColor((short) TaskStatusDTO.STATUS_COLOR_RED);
         ts3.setCompany(c);
         em.persist(ts3);
         TaskStatus ts4 = new TaskStatus();
         ts4.setTaskStatusName("Delayed - Materials");
-        ts4.setStatusColor((short)TaskStatusDTO.STATUS_COLOR_RED);
+        ts4.setStatusColor((short) TaskStatusDTO.STATUS_COLOR_RED);
         ts4.setCompany(c);
         em.persist(ts4);
         TaskStatus ts5 = new TaskStatus();
         ts5.setTaskStatusName("Not started yet");
-        ts5.setStatusColor((short)TaskStatusDTO.STATUS_COLOR_YELLOW);
+        ts5.setStatusColor((short) TaskStatusDTO.STATUS_COLOR_YELLOW);
         ts5.setCompany(c);
         em.persist(ts5);
-        
+
         log.log(Level.INFO, "Initial TaskStatus added");
     }
 

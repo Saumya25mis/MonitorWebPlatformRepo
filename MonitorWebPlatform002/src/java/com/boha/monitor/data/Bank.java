@@ -15,6 +15,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -29,10 +31,14 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(name = "bank")
 @NamedQueries({
-    @NamedQuery(name = "Bank.findAll", query = "SELECT b FROM Bank b"),
+    @NamedQuery(name = "Bank.findByCountry", 
+            query = "SELECT b FROM Bank b where b.country.countryID = :countryID order by b.bankName"),
     @NamedQuery(name = "Bank.findByBankID", query = "SELECT b FROM Bank b WHERE b.bankID = :bankID"),
     @NamedQuery(name = "Bank.findByBankName", query = "SELECT b FROM Bank b WHERE b.bankName = :bankName")})
 public class Bank implements Serializable {
+    @JoinColumn(name = "countryID", referencedColumnName = "countryID")
+    @ManyToOne
+    private Country country;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -107,5 +113,14 @@ public class Bank implements Serializable {
     public String toString() {
         return "com.boha.monitor.data.Bank[ bankID=" + bankID + " ]";
     }
+
+    public Country getCountry() {
+        return country;
+    }
+
+    public void setCountry(Country country) {
+        this.country = country;
+    }
+
     
 }

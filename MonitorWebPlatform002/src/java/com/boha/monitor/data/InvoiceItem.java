@@ -31,9 +31,7 @@ import javax.validation.constraints.NotNull;
             query = "SELECT i FROM InvoiceItem i"),
        })
 public class InvoiceItem implements Serializable {
-    @Column(name = "invoiceCodeID")
-    private Integer invoiceCodeID;
-    
+   
     @Basic(optional = false)
     @NotNull
     @Column(name = "unitPrice")
@@ -167,13 +165,6 @@ public class InvoiceItem implements Serializable {
         this.projectSiteTask = projectSiteTask;
     }
 
-    public Integer getInvoiceCodeID() {
-        return invoiceCodeID;
-    }
-
-    public void setInvoiceCodeID(Integer invoiceCodeID) {
-        this.invoiceCodeID = invoiceCodeID;
-    }
 
     
 }

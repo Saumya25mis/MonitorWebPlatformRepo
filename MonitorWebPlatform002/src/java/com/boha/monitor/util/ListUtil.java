@@ -5,6 +5,7 @@
  */
 package com.boha.monitor.util;
 
+import com.boha.monitor.data.Bank;
 import com.boha.monitor.data.Beneficiary;
 import com.boha.monitor.data.CheckPoint;
 import com.boha.monitor.data.City;
@@ -25,6 +26,7 @@ import com.boha.monitor.data.Province;
 import com.boha.monitor.data.Task;
 import com.boha.monitor.data.TaskStatus;
 import com.boha.monitor.data.Township;
+import com.boha.monitor.dto.BankDTO;
 import com.boha.monitor.dto.BeneficiaryDTO;
 import com.boha.monitor.dto.CheckPointDTO;
 import com.boha.monitor.dto.CityDTO;
@@ -96,6 +98,18 @@ public class ListUtil {
     public ProjectSite getProjectSite(Integer id) {
         ProjectSite ps = em.find(ProjectSite.class, id);
         return ps;
+    }
+    
+    public ResponseDTO getBankList(Integer countryID) {
+        ResponseDTO resp = new ResponseDTO();
+        Query q = em.createNamedQuery("Bank.findByCountry", Bank.class);
+        q.setParameter("countryID", countryID);
+        List<Bank> list = q.getResultList();
+        for (Bank bank : list) {
+            resp.getBankList().add(new BankDTO(bank));
+        }
+
+        return resp;
     }
 
     public ResponseDTO getPhotosByProject(Integer projectID) {
@@ -331,7 +345,8 @@ public class ListUtil {
         return resp;
     }
 
-    public ResponseDTO getCompanyData(Integer companyID) throws DataException {
+    public ResponseDTO getCompanyData(Integer companyID,
+            Integer countryID) throws DataException {
         long s = System.currentTimeMillis();
         ResponseDTO resp = new ResponseDTO();
         CompanyDTO c = new CompanyDTO(em.find(Company.class, companyID));
@@ -348,6 +363,9 @@ public class ListUtil {
         resp.setCompany(c);
         resp.setCompanyStaffTypeList(getStaffTypeList());
         resp.setCountryList(getCountryList().getCountryList());
+        if (countryID != null) {
+        resp.setBankList(getBankList(countryID).getBankList());
+        }
         long e = System.currentTimeMillis();
         System.out.println("getCompanyData - time elapsed: " + (e - s));
         return resp;

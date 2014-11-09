@@ -27,6 +27,33 @@ public class TrafficCop {
         ResponseDTO resp = new ResponseDTO();
         try {
             switch (req.getRequestType()) {
+                //claim * invoice
+                case RequestDTO.ADD_BANK:
+                    resp = dataUtil.addBank(req.getBank());
+                    break;
+                case RequestDTO.ADD_BANK_DETAILS:
+                    resp = dataUtil.addBankDetails(req.getBankDetail());
+                    break;
+                case RequestDTO.ADD_CONTRACTOR_CLAIM:
+                    resp = dataUtil.addContractorClaim(req.getContractorClaim());
+                    break;
+                case RequestDTO.ADD_CONTRACTOR_CLAIM_SITE:
+                    resp = dataUtil.addContractorClaimSite(req.getContractorClaimSite());
+                    break;
+                case RequestDTO.ADD_INVOICE:
+                    resp = dataUtil.addInvoice(req.getInvoice());
+                    break;
+                case RequestDTO.ADD_INVOICE_ITEM:
+                    resp = dataUtil.addInvoiceItem(req.getInvoiceItem());
+                    break;
+                case RequestDTO.REMOVE_CONTRACTOR_CLAIM:
+                    break;
+                case RequestDTO.REMOVE_CONTRACTOR_CLAIM_SITE:
+                    break;
+                case RequestDTO.REMOVE_INVOICE:
+                    break;
+                case RequestDTO.REMOVE_INVOICE_ITEM:
+                    break;
                 //updates
                 case RequestDTO.UPDATE_PROJECT_SITE:
                     dataUtil.updateProjectSite(req.getProjectSite());
@@ -62,7 +89,8 @@ public class TrafficCop {
 
                 //register entities    
                 case RequestDTO.REGISTER_COMPANY:
-                    resp = dataUtil.registerCompany(req.getCompany(), req.getCompanyStaff(), listUtil);
+                    resp = dataUtil.registerCompany(req.getCompany(), 
+                            req.getCompanyStaff(), listUtil);
                     break;
                 case RequestDTO.REGISTER_COMPANY_STAFF:
                     resp = dataUtil.registerCompanyStaff(req.getCompanyStaff());
@@ -79,9 +107,8 @@ public class TrafficCop {
                 case RequestDTO.REGISTER_PROJECT_SITE:
                     resp = dataUtil.registerProjectSite(req.getProjectSite());
                     break;
-               
-                //
 
+                //
                 case RequestDTO.ADD_DEVICE:
                     dataUtil.addDevice(req.getGcmDevice());
                     break;
@@ -104,7 +131,8 @@ public class TrafficCop {
                     resp = listUtil.getCompanyStaffList(req.getCompanyID());
                     break;
                 case RequestDTO.GET_COMPANY_DATA:
-                    resp = listUtil.getCompanyData(req.getCompanyID());
+                    resp = listUtil.getCompanyData(req.getCompanyID(),
+                            req.getCountryID());
                     break;
                 case RequestDTO.GET_TASK_STATUS_LIST:
                     resp = listUtil.getTaskStatusList(req.getCompanyID());
@@ -122,7 +150,7 @@ public class TrafficCop {
                 case RequestDTO.GET_ALL_PROJECT_IMAGES:
                     resp = listUtil.getAllPhotosByProject(req.getProjectID());
                     break;
-                            
+
                 case RequestDTO.LOGIN:
                     resp = dataUtil.login(req.getGcmDevice(),
                             req.getEmail(), req.getPin(),

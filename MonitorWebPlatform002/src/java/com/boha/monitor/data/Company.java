@@ -16,13 +16,14 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
@@ -41,6 +42,9 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "Company.findByCompanyName", 
             query = "SELECT c FROM Company c WHERE c.companyName = :companyName")})
 public class Company implements Serializable {
+    @JoinColumn(name = "countryID", referencedColumnName = "countryID")
+    @ManyToOne
+    private Country country;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
     private List<Engineer> engineerList;
     
@@ -136,6 +140,14 @@ public class Company implements Serializable {
 
     public void setProjectList(List<Project> projectList) {
         this.projectList = projectList;
+    }
+
+    public Country getCountry() {
+        return country;
+    }
+
+    public void setCountry(Country country) {
+        this.country = country;
     }
 
    
@@ -294,5 +306,6 @@ public class Company implements Serializable {
     public void setEngineerList(List<Engineer> engineerList) {
         this.engineerList = engineerList;
     }
+
     
 }
