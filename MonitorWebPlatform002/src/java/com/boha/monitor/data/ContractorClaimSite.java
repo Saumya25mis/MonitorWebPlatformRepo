@@ -26,8 +26,11 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "contractorClaimSite")
 @NamedQueries({
-    @NamedQuery(name = "ContractorClaimSite.findAll", query = "SELECT c FROM ContractorClaimSite c"),
-    @NamedQuery(name = "ContractorClaimSite.findByContractorClaimSiteID", query = "SELECT c FROM ContractorClaimSite c WHERE c.contractorClaimSiteID = :contractorClaimSiteID")})
+    @NamedQuery(name = "ContractorClaimSite.findBySite", 
+            query = "SELECT c FROM ContractorClaimSite c where c.contractorClaim.contractorClaimID = :contractorClaimID order by c.projectSite.projectSiteName"),
+    @NamedQuery(name = "ContractorClaimSite.findByProject", 
+            query = "SELECT c FROM ContractorClaimSite c WHERE c.projectSite.project.projectID = :projectID")
+})
 public class ContractorClaimSite implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
