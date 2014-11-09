@@ -25,7 +25,6 @@ public class BeneficiaryDTO implements Serializable {
     private String cellphone;
     private Double amountAuthorized, amountPaid;
     private Date dateRegistered, phbDate;
-    private ProjectSiteDTO projectSite;
     private CompanyDTO company;
     private TownshipDTO township;
 
@@ -39,9 +38,7 @@ public class BeneficiaryDTO implements Serializable {
         cellphone = a.getCellphone();
         dateRegistered = a.getDateRegistered();
         phbDate = a.getPhbDate();
-        if (a.getProjectSite() != null) {
-            projectSite = new ProjectSiteDTO(a.getProjectSite());
-        }
+        
         if (a.getCompany() != null) {
             company = new CompanyDTO(a.getCompany());
         }
@@ -89,13 +86,6 @@ public class BeneficiaryDTO implements Serializable {
         this.phbDate = phbDate;
     }
 
-    public ProjectSiteDTO getProjectSite() {
-        return projectSite;
-    }
-
-    public void setProjectSite(ProjectSiteDTO projectSite) {
-        this.projectSite = projectSite;
-    }
 
     public CompanyDTO getCompany() {
         return company;

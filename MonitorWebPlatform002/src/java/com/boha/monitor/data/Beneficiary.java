@@ -24,7 +24,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
@@ -49,24 +48,21 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "Beneficiary.findByCellphone", query = "SELECT b FROM Beneficiary b WHERE b.cellphone = :cellphone"),
     @NamedQuery(name = "Beneficiary.findByDateRegistered", query = "SELECT b FROM Beneficiary b WHERE b.dateRegistered = :dateRegistered")})
 public class Beneficiary implements Serializable {
-    @Basic(optional = false)
-    @NotNull
+    
+    
     @Column(name = "amountAuthorized")
-    private double amountAuthorized;
-    @Basic(optional = false)
-    @NotNull
+    private Double amountAuthorized;
+    
     @Column(name = "amountPaid")
-    private double amountPaid;
-    @Basic(optional = false)
-    @NotNull
+    private Double amountPaid;
+   
     @Column(name = "phbDate")
     @Temporal(TemporalType.TIMESTAMP)
     private Date phbDate;
     @JoinColumn(name = "townshipID", referencedColumnName = "townshipID")
     @ManyToOne(optional = false)
     private Township township;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "beneficiary")
-    private List<HappyLetter> happyLetterList;
+   
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -94,9 +90,7 @@ public class Beneficiary implements Serializable {
     @Column(name = "dateRegistered")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateRegistered;
-    @JoinColumn(name = "projectSiteID", referencedColumnName = "projectSiteID")
-    @ManyToOne
-    private ProjectSite projectSite;
+    
     @JoinColumn(name = "companyID", referencedColumnName = "companyID")
     @ManyToOne(optional = false)
     private Company company;
@@ -180,14 +174,7 @@ public class Beneficiary implements Serializable {
         this.iDNumber = iDNumber;
     }
 
-    public ProjectSite getProjectSite() {
-        return projectSite;
-    }
-
-    public void setProjectSite(ProjectSite projectSite) {
-        this.projectSite = projectSite;
-    }
-
+  
     public Company getCompany() {
         return company;
     }
@@ -222,13 +209,7 @@ public class Beneficiary implements Serializable {
         return "com.boha.monitor.data.Beneficiary[ beneficiaryID=" + beneficiaryID + " ]";
     }
 
-    public List<HappyLetter> getHappyLetterList() {
-        return happyLetterList;
-    }
-
-    public void setHappyLetterList(List<HappyLetter> happyLetterList) {
-        this.happyLetterList = happyLetterList;
-    }
+  
 
     public Township getTownship() {
         return township;
@@ -238,21 +219,6 @@ public class Beneficiary implements Serializable {
         this.township = township;
     }
 
-    public double getAmountAuthorized() {
-        return amountAuthorized;
-    }
-
-    public void setAmountAuthorized(double amountAuthorized) {
-        this.amountAuthorized = amountAuthorized;
-    }
-
-    public double getAmountPaid() {
-        return amountPaid;
-    }
-
-    public void setAmountPaid(double amountPaid) {
-        this.amountPaid = amountPaid;
-    }
 
     public Date getPhbDate() {
         return phbDate;
@@ -260,6 +226,22 @@ public class Beneficiary implements Serializable {
 
     public void setPhbDate(Date phbDate) {
         this.phbDate = phbDate;
+    }
+
+    public Double getAmountAuthorized() {
+        return amountAuthorized;
+    }
+
+    public void setAmountAuthorized(Double amountAuthorized) {
+        this.amountAuthorized = amountAuthorized;
+    }
+
+    public Double getAmountPaid() {
+        return amountPaid;
+    }
+
+    public void setAmountPaid(Double amountPaid) {
+        this.amountPaid = amountPaid;
     }
 
     

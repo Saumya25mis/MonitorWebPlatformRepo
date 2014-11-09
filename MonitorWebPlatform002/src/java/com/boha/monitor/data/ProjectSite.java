@@ -38,6 +38,12 @@ import javax.validation.constraints.Size;
             query = "SELECT p FROM ProjectSite p WHERE p.project.company.companyID = :companyID order by p.project.projectName, p.projectSiteName"),
     })
 public class ProjectSite implements Serializable {
+    @JoinColumn(name = "happyLetterID", referencedColumnName = "happyLetterID")
+    @ManyToOne
+    private HappyLetter happyLetter;
+    @JoinColumn(name = "beneficiaryID", referencedColumnName = "beneficiaryID")
+    @ManyToOne
+    private Beneficiary beneficiary;
     @OneToMany(mappedBy = "projectSite")
     private List<ContractorClaimSite> contractorClaimSiteList;
     @OneToMany(mappedBy = "projectSite")
@@ -47,8 +53,7 @@ public class ProjectSite implements Serializable {
     @Size(min = 1, max = 100)
     @Column(name = "standErfNumber")
     private String standErfNumber;
-    @OneToMany(mappedBy = "projectSite")
-    private List<Beneficiary> beneficiaryList;
+    
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "projectSite")
     private List<InvoiceItem> invoiceItemList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "projectSite")
@@ -101,6 +106,14 @@ public class ProjectSite implements Serializable {
         this.projectSiteName = projectSiteName;
     }
 
+    public Beneficiary getBeneficiary() {
+        return beneficiary;
+    }
+
+    public void setBeneficiary(Beneficiary beneficiary) {
+        this.beneficiary = beneficiary;
+    }
+
     public Float getAccuracy() {
         return accuracy;
     }
@@ -131,6 +144,14 @@ public class ProjectSite implements Serializable {
 
     public void setActiveFlag(Integer activeFlag) {
         this.activeFlag = activeFlag;
+    }
+
+    public HappyLetter getHappyLetter() {
+        return happyLetter;
+    }
+
+    public void setHappyLetter(HappyLetter happyLetter) {
+        this.happyLetter = happyLetter;
     }
 
     public List<ProjectSiteTask> getProjectSiteTaskList() {
@@ -182,14 +203,6 @@ public class ProjectSite implements Serializable {
         this.gcmDeviceList = gcmDeviceList;
     }
 
-    public List<Beneficiary> getBeneficiaryList() {
-        return beneficiaryList;
-    }
-
-    public void setBeneficiaryList(List<Beneficiary> beneficiaryList) {
-        this.beneficiaryList = beneficiaryList;
-    }
-
     public List<InvoiceItem> getInvoiceItemList() {
         return invoiceItemList;
     }
@@ -229,5 +242,9 @@ public class ProjectSite implements Serializable {
     public void setContractorClaimSiteList(List<ContractorClaimSite> contractorClaimSiteList) {
         this.contractorClaimSiteList = contractorClaimSiteList;
     }
+
+  
+   
+   
 
 }

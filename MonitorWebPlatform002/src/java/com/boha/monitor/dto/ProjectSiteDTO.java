@@ -25,6 +25,8 @@ public class ProjectSiteDTO implements Serializable {
     private Double longitude;
     private Integer activeFlag;
     private Float accuracy;
+    private BeneficiaryDTO beneficiary;
+    private HappyLetterDTO happyLetter;
     private List<ProjectSiteTaskDTO> projectSiteTaskList = new ArrayList<>();
     private Integer projectID;
     private List<PhotoUploadDTO> photoUploadList = new ArrayList<>();
@@ -43,7 +45,25 @@ public class ProjectSiteDTO implements Serializable {
         this.projectID = p.getProjectID();
         this.projectName = p.getProjectName();
         this.standErfNumber = a.getStandErfNumber();
+        this.beneficiary = new BeneficiaryDTO(a.getBeneficiary());
+        this.happyLetter = new HappyLetterDTO(a.getHappyLetter());
         
+    }
+
+    public BeneficiaryDTO getBeneficiary() {
+        return beneficiary;
+    }
+
+    public void setBeneficiary(BeneficiaryDTO beneficiary) {
+        this.beneficiary = beneficiary;
+    }
+
+    public HappyLetterDTO getHappyLetter() {
+        return happyLetter;
+    }
+
+    public void setHappyLetter(HappyLetterDTO happyLetter) {
+        this.happyLetter = happyLetter;
     }
 
     public String getProjectName() {

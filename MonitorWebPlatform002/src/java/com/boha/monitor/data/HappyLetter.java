@@ -8,6 +8,7 @@ package com.boha.monitor.data;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,6 +19,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -34,6 +36,8 @@ import javax.validation.constraints.NotNull;
     @NamedQuery(name = "HappyLetter.findByHappyLetterID", query = "SELECT h FROM HappyLetter h WHERE h.happyLetterID = :happyLetterID"),
     @NamedQuery(name = "HappyLetter.findByLetterDate", query = "SELECT h FROM HappyLetter h WHERE h.letterDate = :letterDate")})
 public class HappyLetter implements Serializable {
+    @OneToMany(mappedBy = "happyLetter")
+    private List<ProjectSite> projectSiteList;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -109,6 +113,14 @@ public class HappyLetter implements Serializable {
     @Override
     public String toString() {
         return "com.boha.monitor.data.HappyLetter[ happyLetterID=" + happyLetterID + " ]";
+    }
+
+    public List<ProjectSite> getProjectSiteList() {
+        return projectSiteList;
+    }
+
+    public void setProjectSiteList(List<ProjectSite> projectSiteList) {
+        this.projectSiteList = projectSiteList;
     }
     
 }
