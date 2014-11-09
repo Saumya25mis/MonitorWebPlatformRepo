@@ -44,6 +44,8 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "Project.findByCompleteFlag", query = "SELECT p FROM Project p WHERE p.completeFlag = :completeFlag")})
 public class Project implements Serializable {
     @OneToMany(mappedBy = "project")
+    private List<ContractorClaim> contractorClaimList;
+    @OneToMany(mappedBy = "project")
     private List<PhotoUpload> photoUploadList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "project")
     private List<Invoice> invoiceList;
@@ -194,6 +196,14 @@ public class Project implements Serializable {
 
     public void setPhotoUploadList(List<PhotoUpload> photoUploadList) {
         this.photoUploadList = photoUploadList;
+    }
+
+    public List<ContractorClaim> getContractorClaimList() {
+        return contractorClaimList;
+    }
+
+    public void setContractorClaimList(List<ContractorClaim> contractorClaimList) {
+        this.contractorClaimList = contractorClaimList;
     }
 
     

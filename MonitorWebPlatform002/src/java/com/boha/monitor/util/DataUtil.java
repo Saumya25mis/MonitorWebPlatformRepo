@@ -15,12 +15,10 @@ import com.boha.monitor.data.CompanyStaffType;
 import com.boha.monitor.data.ErrorStore;
 import com.boha.monitor.data.ErrorStoreAndroid;
 import com.boha.monitor.data.GcmDevice;
-import com.boha.monitor.data.InvoiceCode;
 import com.boha.monitor.data.PhotoUpload;
 import com.boha.monitor.data.Project;
 import com.boha.monitor.data.ProjectDiaryRecord;
 import com.boha.monitor.data.ProjectSite;
-import com.boha.monitor.data.ProjectSiteStaff;
 import com.boha.monitor.data.ProjectSiteTask;
 import com.boha.monitor.data.ProjectSiteTaskStatus;
 import com.boha.monitor.data.ProjectStatusType;
@@ -39,7 +37,6 @@ import com.boha.monitor.dto.GcmDeviceDTO;
 import com.boha.monitor.dto.ProjectDTO;
 import com.boha.monitor.dto.ProjectDiaryRecordDTO;
 import com.boha.monitor.dto.ProjectSiteDTO;
-import com.boha.monitor.dto.ProjectSiteStaffDTO;
 import com.boha.monitor.dto.ProjectSiteTaskDTO;
 import com.boha.monitor.dto.ProjectSiteTaskStatusDTO;
 import com.boha.monitor.dto.ProjectStatusTypeDTO;
@@ -274,11 +271,9 @@ public class DataUtil {
             ProjectDiaryRecordDTO diary) throws DataException, DataException, DataException {
         ResponseDTO resp = new ResponseDTO();
         try {
-            ProjectSiteStaff c = em.find(ProjectSiteStaff.class,
-                    diary.getProjectSiteStaff().getProjectSiteStaffID());
             ProjectDiaryRecord t = new ProjectDiaryRecord();
             t.setDiaryDate(new Date());
-            t.setProjectSiteStaff(c);
+            //t.setProjectSiteStaff(c);
             t.setProjectStatusType(em.find(ProjectStatusType.class,
                     diary.getProjectStatusType().getProjectStatusTypeID()));
 
@@ -486,31 +481,7 @@ public class DataUtil {
 
     }
 
-    public ResponseDTO registerProjectSiteStaff(
-            ProjectSiteStaffDTO staff) throws DataException {
-        ResponseDTO resp = new ResponseDTO();
-        try {
-            ProjectSite c = em.find(ProjectSite.class, staff.getProjectSiteID());
-            ProjectSiteStaff ps = new ProjectSiteStaff();
-            ps.setCompanyStaff(em.find(CompanyStaff.class, staff.getCompanyStaff().getCompanyStaffID()));
-            ps.setDateRegistered(new Date());
-            ps.setProjectSite(c);
-            ps.setPin(getRandomPin());
-
-            em.persist(ps);
-            em.flush();
-            resp.getProjectSiteStaffList().add(new ProjectSiteStaffDTO(ps));
-            log.log(Level.OFF, "Project site staff registered for: {0} ",
-                    new Object[]{c.getProjectSiteName()});
-
-        } catch (Exception e) {
-            log.log(Level.SEVERE, "Failed", e);
-            throw new DataException("Failed\n" + getErrorString(e));
-        }
-
-        return resp;
-
-    }
+ 
 
     public ResponseDTO registerProjectSite(
             ProjectSiteDTO site) throws DataException {
@@ -713,7 +684,6 @@ public class DataUtil {
             addinitialProjectStatusType(c);
             addInitialCheckpoints(c);
             addInitialTasks(c);
-            addInitialInvoiceCodes(c);
             addInitialProject(c);
 
             resp = listUtil.getCompanyData(c.getCompanyID());
@@ -800,25 +770,7 @@ public class DataUtil {
         log.log(Level.INFO, "#### Initial Project and Sites added");
     }
 
-    private void addInitialInvoiceCodes(Company c) {
-        InvoiceCode code1 = new InvoiceCode();
-        code1.setInvoiceCodeName("InvoiceCode #1");
-        code1.setInvoiceCodeNumber("10001");
-        code1.setCompany(c);
-        em.persist(code1);
-        InvoiceCode code2 = new InvoiceCode();
-        code2.setInvoiceCodeName("InvoiceCode #2");
-        code2.setInvoiceCodeNumber("20002");
-        code2.setCompany(c);
-        em.persist(code2);
-        InvoiceCode code3 = new InvoiceCode();
-        code3.setInvoiceCodeName("InvoiceCode #3");
-        code3.setInvoiceCodeNumber("30003");
-        code3.setCompany(c);
-        em.persist(code3);
-
-        log.log(Level.INFO, "Initial Invoice Codes added");
-    }
+    
 
     private void addInitialTasks(Company c) {
         Task t1 = new Task();

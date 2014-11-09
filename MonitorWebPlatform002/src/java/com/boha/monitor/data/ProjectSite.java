@@ -36,9 +36,10 @@ import javax.validation.constraints.Size;
             query = "SELECT p FROM ProjectSite p WHERE p.project.projectID = :projectID order by p.projectSiteName"),
     @NamedQuery(name = "ProjectSite.findByCompany",
             query = "SELECT p FROM ProjectSite p WHERE p.project.company.companyID = :companyID order by p.project.projectName, p.projectSiteName"),
-    @NamedQuery(name = "ProjectSite.findByActiveFlag",
-            query = "SELECT p FROM ProjectSite p WHERE p.activeFlag = :activeFlag")})
+    })
 public class ProjectSite implements Serializable {
+    @OneToMany(mappedBy = "projectSite")
+    private List<ContractorClaimSite> contractorClaimSiteList;
     @OneToMany(mappedBy = "projectSite")
     private List<PhotoUpload> photoUploadList;
      @Column(name = "accuracy")
@@ -77,9 +78,6 @@ public class ProjectSite implements Serializable {
     @ManyToOne(optional = false)
     private Project project;
     
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "projectSite")
-    private List<ProjectSiteStaff> projectSiteStaffList;
-
     public ProjectSite() {
     }
 
@@ -149,14 +147,6 @@ public class ProjectSite implements Serializable {
 
     public void setProject(Project project) {
         this.project = project;
-    }
-
-    public List<ProjectSiteStaff> getProjectSiteStaffList() {
-        return projectSiteStaffList;
-    }
-
-    public void setProjectSiteStaffList(List<ProjectSiteStaff> projectSiteStaffList) {
-        this.projectSiteStaffList = projectSiteStaffList;
     }
 
     @Override
@@ -230,6 +220,14 @@ public class ProjectSite implements Serializable {
 
     public void setPhotoUploadList(List<PhotoUpload> photoUploadList) {
         this.photoUploadList = photoUploadList;
+    }
+
+    public List<ContractorClaimSite> getContractorClaimSiteList() {
+        return contractorClaimSiteList;
+    }
+
+    public void setContractorClaimSiteList(List<ContractorClaimSite> contractorClaimSiteList) {
+        this.contractorClaimSiteList = contractorClaimSiteList;
     }
 
 }

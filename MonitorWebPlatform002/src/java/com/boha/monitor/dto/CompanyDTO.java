@@ -19,6 +19,7 @@ public class CompanyDTO implements Serializable {
     private static final long serialVersionUID = 1L;
     private Integer companyID;
     private String companyName;
+    private String address, vatNumber, taxNumber;
     
     private List<ProjectDTO> projectList = new ArrayList<>();
     private List<ProjectStatusTypeDTO> projectStatusTypeList = new ArrayList<>();
@@ -27,9 +28,9 @@ public class CompanyDTO implements Serializable {
     private List<TaskDTO> taskList = new ArrayList<>();
     private List<ClientDTO> clientList = new ArrayList<>();
     private List<CheckPointDTO> checkPointList = new ArrayList<>();
-    private List<InvoiceCodeDTO> invoiceCodeList = new ArrayList<>();
     private List<InvoiceDTO> invoiceList = new ArrayList<>();
     private List<BeneficiaryDTO> beneficiaryList = new ArrayList<>();
+    private List<BankDetailDTO> bankDetailList = new ArrayList<>();
     private List<GcmDeviceDTO> gcmDeviceList = new ArrayList<>();
     private List<CompanyStaffTypeDTO> companyStaffTypeList = new ArrayList<>();
     
@@ -51,7 +52,6 @@ public class CompanyDTO implements Serializable {
         sb.append("Projects: ").append(projectList.size()).append("\n");
         sb.append("Staff: ").append(companyStaffList.size()).append("\n");
         sb.append("Invoices: ").append(invoiceList.size()).append("\n");
-        sb.append("InvoiceCodes: ").append(invoiceCodeList.size()).append("\n");
         sb.append("Tasks: ").append(taskList.size()).append("\n");
         sb.append("TaskStatus: ").append(taskStatusList.size()).append("\n");
         sb.append("ProjectStatusTypes: ").append(projectStatusTypeList.size()).append("\n");
@@ -61,6 +61,47 @@ public class CompanyDTO implements Serializable {
         sb.append("#######################");
         System.out.println(sb.toString());
     }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getVatNumber() {
+        return vatNumber;
+    }
+
+    public void setVatNumber(String vatNumber) {
+        this.vatNumber = vatNumber;
+    }
+
+    public String getTaxNumber() {
+        return taxNumber;
+    }
+
+    public void setTaxNumber(String taxNumber) {
+        this.taxNumber = taxNumber;
+    }
+
+    public List<BankDetailDTO> getBankDetailList() {
+        return bankDetailList;
+    }
+
+    public void setBankDetailList(List<BankDetailDTO> bankDetailList) {
+        this.bankDetailList = bankDetailList;
+    }
+
+    public List<CompanyStaffTypeDTO> getCompanyStaffTypeList() {
+        return companyStaffTypeList;
+    }
+
+    public void setCompanyStaffTypeList(List<CompanyStaffTypeDTO> companyStaffTypeList) {
+        this.companyStaffTypeList = companyStaffTypeList;
+    }
+    
     public List<TaskDTO> getTaskList() {
         return taskList;
     }
@@ -86,13 +127,6 @@ public class CompanyDTO implements Serializable {
         this.checkPointList = checkPointList;
     }
 
-    public List<InvoiceCodeDTO> getInvoiceCodeList() {
-        return invoiceCodeList;
-    }
-
-    public void setInvoiceCodeList(List<InvoiceCodeDTO> invoiceCodeList) {
-        this.invoiceCodeList = invoiceCodeList;
-    }
 
     public List<InvoiceDTO> getInvoiceList() {
         return invoiceList;

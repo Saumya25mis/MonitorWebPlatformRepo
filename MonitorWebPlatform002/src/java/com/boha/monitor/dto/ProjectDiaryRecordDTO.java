@@ -18,7 +18,6 @@ public class ProjectDiaryRecordDTO implements Serializable {
     private Integer projectDiaryRecordID;
     private long diaryDate;
     private ProjectStatusTypeDTO projectStatusType;
-    private ProjectSiteStaffDTO projectSiteStaff;
 
     public ProjectDiaryRecordDTO() {
     }
@@ -27,7 +26,6 @@ public class ProjectDiaryRecordDTO implements Serializable {
     public ProjectDiaryRecordDTO(ProjectDiaryRecord a) {
         this.projectDiaryRecordID = a.getProjectDiaryRecordID();
         this.diaryDate = a.getDiaryDate().getTime();
-        this.projectSiteStaff = new ProjectSiteStaffDTO(a.getProjectSiteStaff());
         this.projectStatusType = new ProjectStatusTypeDTO(a.getProjectStatusType());
     }
 
@@ -57,13 +55,6 @@ public class ProjectDiaryRecordDTO implements Serializable {
         this.projectStatusType = projectStatusType;
     }
 
-    public ProjectSiteStaffDTO getProjectSiteStaff() {
-        return projectSiteStaff;
-    }
-
-    public void setProjectSiteStaff(ProjectSiteStaffDTO projectSiteStaff) {
-        this.projectSiteStaff = projectSiteStaff;
-    }
 
 
     @Override

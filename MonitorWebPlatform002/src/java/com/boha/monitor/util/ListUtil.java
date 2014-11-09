@@ -14,12 +14,10 @@ import com.boha.monitor.data.CompanyStaff;
 import com.boha.monitor.data.CompanyStaffType;
 import com.boha.monitor.data.Country;
 import com.boha.monitor.data.ErrorStore;
-import com.boha.monitor.data.InvoiceCode;
 import com.boha.monitor.data.PhotoUpload;
 import com.boha.monitor.data.Project;
 import com.boha.monitor.data.ProjectDiaryRecord;
 import com.boha.monitor.data.ProjectSite;
-import com.boha.monitor.data.ProjectSiteStaff;
 import com.boha.monitor.data.ProjectSiteTask;
 import com.boha.monitor.data.ProjectSiteTaskStatus;
 import com.boha.monitor.data.ProjectStatusType;
@@ -35,11 +33,9 @@ import com.boha.monitor.dto.CompanyDTO;
 import com.boha.monitor.dto.CompanyStaffDTO;
 import com.boha.monitor.dto.CompanyStaffTypeDTO;
 import com.boha.monitor.dto.CountryDTO;
-import com.boha.monitor.dto.InvoiceCodeDTO;
 import com.boha.monitor.dto.ProjectDTO;
 import com.boha.monitor.dto.ProjectDiaryRecordDTO;
 import com.boha.monitor.dto.ProjectSiteDTO;
-import com.boha.monitor.dto.ProjectSiteStaffDTO;
 import com.boha.monitor.dto.ProjectSiteTaskDTO;
 import com.boha.monitor.dto.ProjectSiteTaskStatusDTO;
 import com.boha.monitor.dto.ProjectStatusTypeDTO;
@@ -164,15 +160,6 @@ public class ListUtil {
         return resp;
     }
 
-    public ResponseDTO getInvoiceCodeList(Integer companyID) {
-        ResponseDTO resp = new ResponseDTO();
-        Query q = em.createNamedQuery("InvoiceCode.findByCompany", InvoiceCode.class);
-        List<InvoiceCode> list = q.getResultList();
-        for (InvoiceCode cp : list) {
-            resp.getInvoiceCodeList().add(new InvoiceCodeDTO(cp));
-        }
-        return resp;
-    }
 
     public ResponseDTO getCompanyStaffList(Integer companyID) throws DataException {
         ResponseDTO resp = new ResponseDTO();
@@ -263,10 +250,7 @@ public class ListUtil {
             ResponseDTO resp1 = getTasksByProject(projectID);
             
             resp.setProjectDiaryRecordList(getDiariesByProject(projectID).getProjectDiaryRecordList());
-            resp.setProjectSiteStaffList(getStaffByProject(projectID,
-                    resp.getProjectDiaryRecordList(),
-                    resp1.getProjectSiteTaskStatusList()).getProjectSiteStaffList());
-
+           
             for (ProjectSite site : pList) {
                 ProjectSiteDTO s = new ProjectSiteDTO(site);
                 for (ProjectSiteTaskDTO task : resp1.getProjectSiteTaskList()) {
@@ -303,36 +287,7 @@ public class ListUtil {
         return resp;
     }
 
-    public ResponseDTO getStaffByProject(Integer projectID,
-            List<ProjectDiaryRecordDTO> list,
-            List<ProjectSiteTaskStatusDTO> sList) throws DataException {
-        ResponseDTO resp = new ResponseDTO();
-        try {
-            Query q = em.createNamedQuery("ProjectSiteStaff.findByProject", ProjectSiteStaff.class);
-            q.setParameter("projectID", projectID);
-            List<ProjectSiteStaff> pstList = q.getResultList();
-
-            for (ProjectSiteStaff pss : pstList) {
-                ProjectSiteStaffDTO dto = new ProjectSiteStaffDTO(pss);
-                for (ProjectDiaryRecordDTO diary : list) {
-                    if (Objects.equals(diary.getProjectSiteStaff().getProjectSiteStaffID(), dto.getProjectSiteStaffID())) {
-                        dto.getProjectDiaryRecordList().add(diary);
-                    }
-                }
-                for (ProjectSiteTaskStatusDTO s : sList) {
-                    if (Objects.equals(s.getCompanyStaffID(), dto.getCompanyStaff().getCompanyStaffID())) {
-                        dto.getProjectSiteTaskStatusList().add(s);
-                    }
-                }
-                resp.getProjectSiteStaffList().add(dto);
-            }
-            log.log(Level.INFO, "Project staff found: {0}", pstList.size());
-        } catch (Exception e) {
-            log.log(Level.SEVERE, "Failed", e);
-            throw new DataException("Failed to get tasks\n" + getErrorString(e));
-        }
-        return resp;
-    }
+    
 
     public ResponseDTO getTasksByProject(Integer projectID) throws DataException {
         ResponseDTO resp = new ResponseDTO();
@@ -529,7 +484,6 @@ public class ListUtil {
             q.setParameter("companyID", companyID);
             List<PhotoUpload> photos = q.getResultList();
             List<ProjectSiteTaskDTO> pstList = getSiteTasksByCompany(companyID);
-            List<ProjectSiteStaffDTO> staffList = getSiteStaffByCompany(companyID);
 
             for (ProjectSite s : pList) {
                 ProjectSiteDTO dto = new ProjectSiteDTO(s);
@@ -608,24 +562,7 @@ public class ListUtil {
         return list;
     }
 
-    private List<ProjectSiteStaffDTO> getSiteStaffByCompany(Integer companyID) throws DataException {
-        List<ProjectSiteStaffDTO> list = new ArrayList<>();
-        try {
-            Query q = em.createNamedQuery("ProjectSiteStaff.findByCompany", ProjectSiteStaff.class);
-            q.setParameter("companyID", companyID);
-            List<ProjectSiteStaff> pList = q.getResultList();
-            for (ProjectSiteStaff s : pList) {
-                list.add(new ProjectSiteStaffDTO(s));
-            }
-
-            log.log(Level.OFF, "Company site staff: {0}", list.size());
-        } catch (Exception e) {
-            log.log(Level.SEVERE, "Failed", e);
-            throw new DataException("Failed to get company task status data\n" + getErrorString(e));
-        }
-
-        return list;
-    }
+   
 
     public String getErrorString(Exception e) {
         StringBuilder sb = new StringBuilder();

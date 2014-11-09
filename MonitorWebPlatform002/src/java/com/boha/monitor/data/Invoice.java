@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.boha.monitor.data;
 
 import java.io.Serializable;
@@ -34,12 +33,16 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(name = "invoice")
 @NamedQueries({
-    @NamedQuery(name = "Invoice.findAll", query = "SELECT i FROM Invoice i"),
-    @NamedQuery(name = "Invoice.findByInvoiceID", query = "SELECT i FROM Invoice i WHERE i.invoiceID = :invoiceID"),
-    @NamedQuery(name = "Invoice.findByInvoiceDate", query = "SELECT i FROM Invoice i WHERE i.invoiceDate = :invoiceDate"),
-    @NamedQuery(name = "Invoice.findByInvoiceDueDate", query = "SELECT i FROM Invoice i WHERE i.invoiceDueDate = :invoiceDueDate"),
-    @NamedQuery(name = "Invoice.findByDateRegistered", query = "SELECT i FROM Invoice i WHERE i.dateRegistered = :dateRegistered")})
+    @NamedQuery(name = "Invoice.findByProject", query = "SELECT i FROM Invoice i where i.project.projectID = :projectID")
+
+})
 public class Invoice implements Serializable {
+
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 50)
+    @Column(name = "invoiceNumber")
+    private String invoiceNumber;
     @Basic(optional = false)
     @NotNull
     @Column(name = "totalAmount")
@@ -78,7 +81,7 @@ public class Invoice implements Serializable {
     @Column(name = "invoicePaidDate")
     @Temporal(TemporalType.TIMESTAMP)
     private Date invoicePaidDate;
-   
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "invoice")
     private List<InvoiceItem> invoiceItemList;
     @OneToMany(mappedBy = "invoice")
@@ -119,7 +122,6 @@ public class Invoice implements Serializable {
         this.project = project;
     }
 
-    
     public Invoice(Integer invoiceID) {
         this.invoiceID = invoiceID;
     }
@@ -218,5 +220,12 @@ public class Invoice implements Serializable {
         this.totalAmount = totalAmount;
     }
 
-    
+    public String getInvoiceNumber() {
+        return invoiceNumber;
+    }
+
+    public void setInvoiceNumber(String invoiceNumber) {
+        this.invoiceNumber = invoiceNumber;
+    }
+
 }

@@ -79,9 +79,7 @@ public class TrafficCop {
                 case RequestDTO.REGISTER_PROJECT_SITE:
                     resp = dataUtil.registerProjectSite(req.getProjectSite());
                     break;
-                case RequestDTO.REGISTER_PROJECT_SITE_STAFF:
-                    resp = dataUtil.registerProjectSiteStaff(req.getProjectSiteStaff());
-                    break;
+               
                 //
 
                 case RequestDTO.ADD_DEVICE:

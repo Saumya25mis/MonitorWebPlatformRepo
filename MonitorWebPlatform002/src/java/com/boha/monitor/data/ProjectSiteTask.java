@@ -45,6 +45,8 @@ import javax.validation.constraints.NotNull;
     @NamedQuery(name = "ProjectSiteTask.findByDateRegistered", query = "SELECT p FROM ProjectSiteTask p WHERE p.dateRegistered = :dateRegistered")})
 public class ProjectSiteTask implements Serializable {
     @OneToMany(mappedBy = "projectSiteTask")
+    private List<InvoiceItem> invoiceItemList;
+    @OneToMany(mappedBy = "projectSiteTask")
     private List<PhotoUpload> photoUploadList;
     @JoinColumn(name = "taskID", referencedColumnName = "taskID")
     @ManyToOne(optional = false)
@@ -151,6 +153,14 @@ public class ProjectSiteTask implements Serializable {
 
     public void setPhotoUploadList(List<PhotoUpload> photoUploadList) {
         this.photoUploadList = photoUploadList;
+    }
+
+    public List<InvoiceItem> getInvoiceItemList() {
+        return invoiceItemList;
+    }
+
+    public void setInvoiceItemList(List<InvoiceItem> invoiceItemList) {
+        this.invoiceItemList = invoiceItemList;
     }
 
    

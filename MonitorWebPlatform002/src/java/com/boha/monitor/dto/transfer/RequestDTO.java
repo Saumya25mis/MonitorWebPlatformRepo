@@ -16,7 +16,6 @@ import com.boha.monitor.dto.GcmDeviceDTO;
 import com.boha.monitor.dto.ProjectDTO;
 import com.boha.monitor.dto.ProjectDiaryRecordDTO;
 import com.boha.monitor.dto.ProjectSiteDTO;
-import com.boha.monitor.dto.ProjectSiteStaffDTO;
 import com.boha.monitor.dto.ProjectSiteTaskDTO;
 import com.boha.monitor.dto.ProjectSiteTaskStatusDTO;
 import com.boha.monitor.dto.ProjectStatusTypeDTO;
@@ -39,7 +38,6 @@ public class RequestDTO implements Serializable{
     private CityDTO city;
     private TownshipDTO township;
     private ProjectSiteDTO projectSite;
-    private ProjectSiteStaffDTO projectSiteStaff;
     private GcmDeviceDTO gcmDevice;
     
     private TaskDTO task;
@@ -306,14 +304,6 @@ public class RequestDTO implements Serializable{
 
     public void setProjectSite(ProjectSiteDTO projectSite) {
         this.projectSite = projectSite;
-    }
-
-    public ProjectSiteStaffDTO getProjectSiteStaff() {
-        return projectSiteStaff;
-    }
-
-    public void setProjectSiteStaff(ProjectSiteStaffDTO projectSiteStaff) {
-        this.projectSiteStaff = projectSiteStaff;
     }
 
     public ProjectSiteTaskDTO getProjectSiteTask() {

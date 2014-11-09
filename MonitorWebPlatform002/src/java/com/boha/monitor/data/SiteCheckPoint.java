@@ -59,10 +59,7 @@ public class SiteCheckPoint implements Serializable {
     @JoinColumn(name = "projectSiteID", referencedColumnName = "projectSiteID")
     @ManyToOne(optional = false)
     private ProjectSite projectSite;
-    @JoinColumn(name = "projectSiteStaffID", referencedColumnName = "projectSiteStaffID")
-    @ManyToOne(optional = false)
-    private ProjectSiteStaff projectSiteStaff;
-
+    
     public SiteCheckPoint() {
     }
 
@@ -112,14 +109,6 @@ public class SiteCheckPoint implements Serializable {
 
     public void setProjectSite(ProjectSite projectSite) {
         this.projectSite = projectSite;
-    }
-
-    public ProjectSiteStaff getProjectSiteStaff() {
-        return projectSiteStaff;
-    }
-
-    public void setProjectSiteStaff(ProjectSiteStaff projectSiteStaff) {
-        this.projectSiteStaff = projectSiteStaff;
     }
 
     @Override

@@ -30,11 +30,9 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "projectDiaryRecord")
 @NamedQueries({
-    @NamedQuery(name = "ProjectDiaryRecord.findByProjectSite", 
-            query = "SELECT p FROM ProjectDiaryRecord p where p.projectSiteStaff.projectSite.projectSiteID = :projectSiteID order by p.diaryDate desc"),
-    @NamedQuery(name = "ProjectDiaryRecord.findByProject", 
-            query = "SELECT p FROM ProjectDiaryRecord p where p.projectSiteStaff.projectSite.project.projectID = :projectID order by p.diaryDate desc"),
-    @NamedQuery(name = "ProjectDiaryRecord.findByDiaryDate", query = "SELECT p FROM ProjectDiaryRecord p WHERE p.diaryDate = :diaryDate")})
+    @NamedQuery(name = "ProjectDiaryRecord.findAll", 
+            query = "SELECT p FROM ProjectDiaryRecord p"),
+   })
 public class ProjectDiaryRecord implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -50,9 +48,7 @@ public class ProjectDiaryRecord implements Serializable {
     @JoinColumn(name = "projectStatusTypeID", referencedColumnName = "projectStatusTypeID")
     @ManyToOne(optional = false)
     private ProjectStatusType projectStatusType;
-    @JoinColumn(name = "projectSiteStaffID", referencedColumnName = "projectSiteStaffID")
-    @ManyToOne(optional = false)
-    private ProjectSiteStaff projectSiteStaff;
+    
 
     public ProjectDiaryRecord() {
     }
@@ -89,15 +85,6 @@ public class ProjectDiaryRecord implements Serializable {
     public void setProjectStatusType(ProjectStatusType projectStatusType) {
         this.projectStatusType = projectStatusType;
     }
-
-    public ProjectSiteStaff getProjectSiteStaff() {
-        return projectSiteStaff;
-    }
-
-    public void setProjectSiteStaff(ProjectSiteStaff projectSiteStaff) {
-        this.projectSiteStaff = projectSiteStaff;
-    }
-
 
     @Override
     public int hashCode() {

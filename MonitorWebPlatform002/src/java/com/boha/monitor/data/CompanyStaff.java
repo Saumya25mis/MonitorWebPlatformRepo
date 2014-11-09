@@ -84,10 +84,7 @@ public class CompanyStaff implements Serializable {
     @JoinColumn(name = "companyID", referencedColumnName = "companyID")
     @ManyToOne(optional = false)
     private Company company;
-    
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "companyStaff")
-    private List<ProjectSiteStaff> projectSiteStaffList;
-
+  
     public CompanyStaff() {
     }
 
@@ -165,14 +162,6 @@ public class CompanyStaff implements Serializable {
 
     public void setCompany(Company company) {
         this.company = company;
-    }
-
-    public List<ProjectSiteStaff> getProjectSiteStaffList() {
-        return projectSiteStaffList;
-    }
-
-    public void setProjectSiteStaffList(List<ProjectSiteStaff> projectSiteStaffList) {
-        this.projectSiteStaffList = projectSiteStaffList;
     }
 
     @Override

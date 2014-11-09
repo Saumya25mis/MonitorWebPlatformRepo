@@ -21,7 +21,6 @@ public class SiteCheckPointDTO implements Serializable {
     private Date dateRegistered;
     private InvoiceDTO invoice;
     private ProjectSiteDTO projectSite;
-    private ProjectSiteStaffDTO projectSiteStaff;
 
     public SiteCheckPointDTO() {
     }
@@ -78,14 +77,4 @@ public class SiteCheckPointDTO implements Serializable {
         this.projectSite = projectSite;
     }
 
-    public ProjectSiteStaffDTO getProjectSiteStaff() {
-        return projectSiteStaff;
-    }
-
-    public void setProjectSiteStaff(ProjectSiteStaffDTO projectSiteStaff) {
-        this.projectSiteStaff = projectSiteStaff;
-    }
-
-   
-    
 }

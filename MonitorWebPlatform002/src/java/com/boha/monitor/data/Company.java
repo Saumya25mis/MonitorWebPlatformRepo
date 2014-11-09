@@ -16,11 +16,13 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
@@ -39,6 +41,23 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "Company.findByCompanyName", 
             query = "SELECT c FROM Company c WHERE c.companyName = :companyName")})
 public class Company implements Serializable {
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
+    private List<Engineer> engineerList;
+    
+    @Lob
+    @Size(min = 1, max = 65535)
+    @Column(name = "address")
+    private String address;
+    
+    @Size(min = 1, max = 50)
+    @Column(name = "taxNumber")
+    private String taxNumber;
+    
+    @Size(min = 1, max = 50)
+    @Column(name = "vatNumber")
+    private String vatNumber;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
+    private List<BankDetail> bankDetailList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
     private List<PhotoUpload> photoUploadList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
@@ -60,9 +79,7 @@ public class Company implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
     @OrderBy("lastName, firstName")
     private List<Beneficiary> beneficiaryList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
-    @OrderBy("invoiceCodeName")
-    private List<InvoiceCode> invoiceCodeList;
+   
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
     @OrderBy("checkPointName")
     private List<CheckPoint> checkPointList;
@@ -180,13 +197,7 @@ public class Company implements Serializable {
         this.beneficiaryList = beneficiaryList;
     }
 
-    public List<InvoiceCode> getInvoiceCodeList() {
-        return invoiceCodeList;
-    }
-
-    public void setInvoiceCodeList(List<InvoiceCode> invoiceCodeList) {
-        this.invoiceCodeList = invoiceCodeList;
-    }
+   
 
     public List<CheckPoint> getCheckPointList() {
         return checkPointList;
@@ -242,6 +253,46 @@ public class Company implements Serializable {
 
     public void setPhotoUploadList(List<PhotoUpload> photoUploadList) {
         this.photoUploadList = photoUploadList;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getTaxNumber() {
+        return taxNumber;
+    }
+
+    public void setTaxNumber(String taxNumber) {
+        this.taxNumber = taxNumber;
+    }
+
+    public String getVatNumber() {
+        return vatNumber;
+    }
+
+    public void setVatNumber(String vatNumber) {
+        this.vatNumber = vatNumber;
+    }
+
+    public List<BankDetail> getBankDetailList() {
+        return bankDetailList;
+    }
+
+    public void setBankDetailList(List<BankDetail> bankDetailList) {
+        this.bankDetailList = bankDetailList;
+    }
+
+    public List<Engineer> getEngineerList() {
+        return engineerList;
+    }
+
+    public void setEngineerList(List<Engineer> engineerList) {
+        this.engineerList = engineerList;
     }
     
 }

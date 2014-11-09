@@ -16,12 +16,10 @@ import com.boha.monitor.dto.CountryDTO;
 import com.boha.monitor.dto.ErrorStoreAndroidDTO;
 import com.boha.monitor.dto.ErrorStoreDTO;
 import com.boha.monitor.dto.HappyLetterDTO;
-import com.boha.monitor.dto.InvoiceCodeDTO;
 import com.boha.monitor.dto.InvoiceDTO;
 import com.boha.monitor.dto.ProjectDTO;
 import com.boha.monitor.dto.ProjectDiaryRecordDTO;
 import com.boha.monitor.dto.ProjectSiteDTO;
-import com.boha.monitor.dto.ProjectSiteStaffDTO;
 import com.boha.monitor.dto.ProjectSiteTaskDTO;
 import com.boha.monitor.dto.ProjectSiteTaskStatusDTO;
 import com.boha.monitor.dto.ProjectStatusTypeDTO;
@@ -49,7 +47,6 @@ public class ResponseDTO {
     private List<ProjectSiteDTO> projectSiteList = new ArrayList<>();
     private List<ProjectDTO> projectList = new ArrayList<>();
     private List<CompanyStaffDTO> companyStaffList = new ArrayList<>();
-    private List<ProjectSiteStaffDTO> projectSiteStaffList = new ArrayList<>();
     private List<CompanyStaffTypeDTO> companyStaffTypeList = new ArrayList<>();
     private List<ProjectDiaryRecordDTO> projectDiaryRecordList = new ArrayList<>();
     private List<ProjectSiteTaskDTO> projectSiteTaskList = new ArrayList<>();
@@ -62,7 +59,6 @@ public class ResponseDTO {
     private List<ProvinceDTO> provinceList = new ArrayList<>();
     private List<HappyLetterDTO> happyLetterList = new ArrayList<>();
     private List<SiteCheckPointDTO> siteCheckPointList = new ArrayList<>();
-    private List<InvoiceCodeDTO> invoiceCodeList = new ArrayList<>();
     private List<ClientDTO> clientList = new ArrayList<>();
     private List<TaskDTO> taskList = new ArrayList<>();
     private List<CityDTO> cityList = new ArrayList<>();
@@ -171,14 +167,6 @@ public class ResponseDTO {
 
     public void setSiteCheckPointList(List<SiteCheckPointDTO> siteCheckPointList) {
         this.siteCheckPointList = siteCheckPointList;
-    }
-
-    public List<InvoiceCodeDTO> getInvoiceCodeList() {
-        return invoiceCodeList;
-    }
-
-    public void setInvoiceCodeList(List<InvoiceCodeDTO> invoiceCodeList) {
-        this.invoiceCodeList = invoiceCodeList;
     }
 
     public CompanyStaffDTO getCompanyStaff() {
@@ -291,14 +279,6 @@ public class ResponseDTO {
 
     public void setCompanyStaffList(List<CompanyStaffDTO> companyStaffList) {
         this.companyStaffList = companyStaffList;
-    }
-
-    public List<ProjectSiteStaffDTO> getProjectSiteStaffList() {
-        return projectSiteStaffList;
-    }
-
-    public void setProjectSiteStaffList(List<ProjectSiteStaffDTO> projectSiteStaffList) {
-        this.projectSiteStaffList = projectSiteStaffList;
     }
 
     public List<CompanyStaffTypeDTO> getCompanyStaffTypeList() {
