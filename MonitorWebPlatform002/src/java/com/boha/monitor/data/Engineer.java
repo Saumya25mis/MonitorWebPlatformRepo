@@ -9,6 +9,7 @@ package com.boha.monitor.data;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -35,6 +36,9 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "Engineer.findByEmail", query = "SELECT e FROM Engineer e WHERE e.email = :email"),
     @NamedQuery(name = "Engineer.findByCellphone", query = "SELECT e FROM Engineer e WHERE e.cellphone = :cellphone")})
 public class Engineer implements Serializable {
+    @OneToMany(cascade = CascadeType.ALL,
+            mappedBy = "engineer")
+    private List<ProjectEngineer> projectEngineerList;
     @JoinColumn(name = "companyID", referencedColumnName = "companyID")
     @ManyToOne(optional = false)
     private Company company;
@@ -47,15 +51,13 @@ public class Engineer implements Serializable {
     @Size(max = 255)
     @Column(name = "engineerName")
     private String engineerName;
-    // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
     @Size(max = 255)
     @Column(name = "email")
     private String email;
     @Size(max = 50)
     @Column(name = "cellphone")
     private String cellphone;
-    @OneToMany(mappedBy = "engineer")
-    private List<ContractorClaim> contractorClaimList;
+    
 
     public Engineer() {
     }
@@ -96,14 +98,6 @@ public class Engineer implements Serializable {
         this.cellphone = cellphone;
     }
 
-    public List<ContractorClaim> getContractorClaimList() {
-        return contractorClaimList;
-    }
-
-    public void setContractorClaimList(List<ContractorClaim> contractorClaimList) {
-        this.contractorClaimList = contractorClaimList;
-    }
-
     @Override
     public int hashCode() {
         int hash = 0;
@@ -135,6 +129,14 @@ public class Engineer implements Serializable {
 
     public void setCompany(Company company) {
         this.company = company;
+    }
+
+    public List<ProjectEngineer> getProjectEngineerList() {
+        return projectEngineerList;
+    }
+
+    public void setProjectEngineerList(List<ProjectEngineer> projectEngineerList) {
+        this.projectEngineerList = projectEngineerList;
     }
 
    

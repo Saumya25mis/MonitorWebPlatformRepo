@@ -26,6 +26,7 @@ import com.boha.monitor.data.InvoiceItem;
 import com.boha.monitor.data.PhotoUpload;
 import com.boha.monitor.data.Project;
 import com.boha.monitor.data.ProjectDiaryRecord;
+import com.boha.monitor.data.ProjectEngineer;
 import com.boha.monitor.data.ProjectSite;
 import com.boha.monitor.data.ProjectSiteTask;
 import com.boha.monitor.data.ProjectSiteTaskStatus;
@@ -44,12 +45,14 @@ import com.boha.monitor.dto.CompanyDTO;
 import com.boha.monitor.dto.CompanyStaffDTO;
 import com.boha.monitor.dto.ContractorClaimDTO;
 import com.boha.monitor.dto.ContractorClaimSiteDTO;
+import com.boha.monitor.dto.EngineerDTO;
 import com.boha.monitor.dto.ErrorStoreDTO;
 import com.boha.monitor.dto.GcmDeviceDTO;
 import com.boha.monitor.dto.InvoiceDTO;
 import com.boha.monitor.dto.InvoiceItemDTO;
 import com.boha.monitor.dto.ProjectDTO;
 import com.boha.monitor.dto.ProjectDiaryRecordDTO;
+import com.boha.monitor.dto.ProjectEngineerDTO;
 import com.boha.monitor.dto.ProjectSiteDTO;
 import com.boha.monitor.dto.ProjectSiteTaskDTO;
 import com.boha.monitor.dto.ProjectSiteTaskStatusDTO;
@@ -498,14 +501,15 @@ public class DataUtil {
     public ResponseDTO addContractorClaim(ContractorClaimDTO cc) throws DataException {
         ResponseDTO resp = new ResponseDTO();
         try {
-            Project p = em.find(Project.class, cc.getProject().getProjectID());
-            Task task = em.find(Task.class, cc.getTask().getTaskID());
+            Project p = em.find(Project.class, cc.getProjectID());
+            Task task = em.find(Task.class, cc.getTaskID());
             ContractorClaim t = new ContractorClaim();
             t.setClaimDate(cc.getClaimDate());
             t.setClaimNumber(getClaimNumber(cc));
             t.setProject(p);
             t.setTask(task);
-            t.setEngineer(em.find(Engineer.class, cc.getTask().getTaskID()));
+            t.setProjectEngineer(em.find(ProjectEngineer.class, 
+                    cc.getProjectEngineerID()));
 
             em.persist(t);
             em.flush();
@@ -533,7 +537,6 @@ public class DataUtil {
         try {
             Bank t = new Bank();
             t.setBankName(bank.getBankName());
-
             em.persist(t);
             em.flush();
             resp.getBankList().add(new BankDTO(t));
@@ -663,8 +666,8 @@ public class DataUtil {
 
     private String getClaimNumber(ContractorClaimDTO cc) {
         StringBuilder sb = new StringBuilder();
-        sb.append(cc.getProject().getProjectID()).append("-");
-        sb.append(cc.getEngineer().getEngineerID()).append("-");
+        sb.append(cc.getProjectID()).append("-");
+        sb.append(cc.getEngineerID()).append("-");
         sb.append(System.currentTimeMillis());
         return sb.toString();
     }
@@ -683,6 +686,15 @@ public class DataUtil {
 
             em.persist(ps);
             em.flush();
+            if (site.getBeneficiary() != null) {
+                resp = registerBeneficiary(site.getBeneficiary());
+                if (resp.getStatusCode() == 0) {
+                    resp = connectBeneficiaryToSite(site.getProjectSiteID(), 
+                            resp.getBeneficiaryList().get(0).getBeneficiaryID());
+                    ps = em.find(ProjectSite.class, ps.getProjectSiteID());
+                }
+                
+            }
             resp.getProjectSiteList().add(new ProjectSiteDTO(ps));
             log.log(Level.OFF, "Project site registered for: {0} - {1} ",
                     new Object[]{c.getProjectName(), site.getProjectSiteName()});
@@ -806,7 +818,6 @@ public class DataUtil {
         }
         return resp;
     }
-
     public ResponseDTO registerBeneficiary(BeneficiaryDTO b) throws DataException {
         ResponseDTO resp = new ResponseDTO();
         try {
@@ -843,8 +854,86 @@ public class DataUtil {
         return resp;
     }
 
+    public ResponseDTO connectBeneficiaryToSite(
+        Integer projectSiteID, Integer beneficiaryID) throws DataException {
+       ResponseDTO resp = new ResponseDTO();
+        try {
+            Beneficiary p = em.find(Beneficiary.class, beneficiaryID);
+            ProjectSite cli = em.find(ProjectSite.class, projectSiteID);
+            cli.setBeneficiary(p);
+            em.merge(cli);
+            log.log(Level.OFF, "######## ProjectSite Beneficiary updated");
+
+        } catch (PersistenceException e) {
+            log.log(Level.SEVERE, "Failed", e);
+            resp.setStatusCode(301);
+            resp.setMessage("Duplicate detected, request ignored./nPlease try again");
+
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "Failed", e);
+            throw new DataException("Failed to update ProjectSite Beneficiary \n" + getErrorString(e));
+        }
+        return resp; 
+    }
+    public ResponseDTO connectEngineerToProject(
+        Integer projectID, Integer engineerID) throws DataException {
+       ResponseDTO resp = new ResponseDTO();
+        try {
+            Project p = em.find(Project.class, projectID);
+            Engineer eng = em.find(Engineer.class, engineerID);
+            ProjectEngineer cli = new ProjectEngineer();
+            cli.setEngineer(eng);
+            cli.setProject(p);
+            cli.setActiveFlag(null);
+
+            em.persist(cli);
+            em.flush();
+            resp.getProjectEngineerList().add(new ProjectEngineerDTO(cli));
+            log.log(Level.OFF, "######## ProjectEngineer registered");
+
+        } catch (PersistenceException e) {
+            log.log(Level.SEVERE, "Failed", e);
+            resp.setStatusCode(301);
+            resp.setMessage("Duplicate detected, request ignored./nPlease try again");
+
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "Failed", e);
+            throw new DataException("Failed to add ProjectEngineer\n" + getErrorString(e));
+        }
+        return resp; 
+    }
+    public ResponseDTO registerEngineer(EngineerDTO b) throws DataException {
+        ResponseDTO resp = new ResponseDTO();
+        try {
+            Company c = em.find(Company.class, b.getCompanyID());
+            Engineer cli = new Engineer();
+            cli.setEngineerName(b.getEngineerName());
+            cli.setCellphone(b.getCellphone());
+            cli.setEmail(b.getEmail());
+            cli.setCompany(c);
+
+            em.persist(cli);
+            em.flush();
+            resp.getEngineerList().add(new EngineerDTO(cli));
+            log.log(Level.OFF, "######## Beneficiary registered: {0} at {1}",
+                    new Object[]{cli.getEngineerName(), c.getCompanyName()});
+
+        } catch (PersistenceException e) {
+            log.log(Level.SEVERE, "Failed", e);
+            resp.setStatusCode(301);
+            resp.setMessage("Duplicate detected, request ignored./nPlease try again");
+
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "Failed", e);
+            throw new DataException("Failed to register Engineer\n" + getErrorString(e));
+        }
+        return resp;
+    }
+
     public ResponseDTO registerCompany(CompanyDTO company,
-            CompanyStaffDTO staff, ListUtil listUtil) throws DataException {
+            CompanyStaffDTO staff, 
+            double latitude, double longitude,
+            ListUtil listUtil) throws DataException {
         log.log(Level.OFF, "####### * attempt to register company");
         ResponseDTO resp = new ResponseDTO();
         try {
@@ -875,7 +964,11 @@ public class DataUtil {
             addInitialCheckpoints(c);
             addInitialTasks(c);
             addInitialProject(c);
-
+            // ***********************************************************
+            //TODO Remove this line... or think some more
+            Generator.generate(em, c.getCompanyID(), latitude, longitude);
+            // ***********************************************************
+            
             resp = listUtil.getCompanyData(c.getCompanyID(), company.getCountryID());
             resp.setCompanyStaff(new CompanyStaffDTO(cs));
 
@@ -962,35 +1055,42 @@ public class DataUtil {
 
     private void addInitialTasks(Company c) {
         Task t1 = new Task();
-        t1.setCompany(c);
-        t1.setTaskName("Task #1 - First Task at site");
-        t1.setDescription("Description of Task #1");
+        t1.setTaskName("P5.0 Clear Building Site");
         t1.setTaskNumber(1);
+        t1.setDescription("Preparation of site prior to commencement of construction");
+        t1.setCompany(c);
         em.persist(t1);
         Task t2 = new Task();
-        t2.setCompany(c);
-        t2.setTaskName("Task #2 - Second Task at site");
-        t2.setDescription("Description of Task #2");
+        t2.setTaskName("P5.1 Building Foundation");
+        t2.setDescription("Construction of building foundation and supports");
         t2.setTaskNumber(2);
+        t2.setCompany(c);
         em.persist(t2);
         Task t3 = new Task();
+        t3.setTaskName("P5.2 Walls and Stuff");
+        t3.setDescription("Construct walls, windows, doors, entrance etc.");
+        t3.setTaskNumber(3);
         t3.setCompany(c);
-        t3.setTaskName("Task #3 - Third Task at site");
-        t3.setDescription("Description of Task #3");
-        t3.setTaskNumber(1);
         em.persist(t3);
         Task t4 = new Task();
+        t4.setTaskName("P5.3 Bulding Completion");
+        t4.setDescription("Complete roofing and sundry fittings");
+        t4.setTaskNumber(4);
         t4.setCompany(c);
-        t4.setTaskName("Task #4 - Fourth Task at site");
-        t4.setDescription("Description of Task #4");
-        t4.setTaskNumber(1);
         em.persist(t4);
         Task t5 = new Task();
+        t5.setTaskName("P5.4 Site Cleanup");
+        t5.setDescription("Remove construction rubble and associated debris");
+        t5.setTaskNumber(5);
         t5.setCompany(c);
-        t5.setTaskName("Task #5 - Fifth Task at site");
-        t5.setDescription("Description of Task #5");
-        t5.setTaskNumber(1);
         em.persist(t5);
+        Task t6 = new Task();
+        t6.setTaskName("P5.4 Snag List Preparation");
+        t6.setDescription("Prepare and document Snag List");
+        t6.setTaskNumber(5);
+        t6.setCompany(c);
+        em.persist(t6);
+        em.flush();
         log.log(Level.INFO, "Initial Tasks added");
     }
 
@@ -1096,6 +1196,50 @@ public class DataUtil {
         CompanyStaffType cst = (CompanyStaffType) q.getSingleResult();
         return cst;
 
+    }
+
+    public void removeContractorClaimSite(ContractorClaimSiteDTO site) throws DataException {
+        try {
+            ContractorClaimSite s = em.find(ContractorClaimSite.class, site.getContractorClaimSiteID());
+            em.remove(s);
+            log.log(Level.OFF, "ContractorClaimSite removed");
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "Failed", e);
+            throw new DataException("Failed to remove ContractorClaimSite\n" + getErrorString(e));
+        }
+    }
+
+    public void removeContractorClaim(ContractorClaimDTO claim) throws DataException {
+        try {
+            ContractorClaim s = em.find(ContractorClaim.class, claim.getContractorClaimID());
+            em.remove(s);
+            log.log(Level.OFF, "ContractorClaim removed");
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "Failed", e);
+            throw new DataException("Failed to remove ContractorClaim\n" + getErrorString(e));
+        }
+    }
+
+    public void removeInvoiceItem(InvoiceItemDTO i) throws DataException {
+        try {
+            InvoiceItem s = em.find(InvoiceItem.class, i.getInvoiceItemID());
+            em.remove(s);
+            log.log(Level.OFF, "InvoiceItem removed");
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "Failed", e);
+            throw new DataException("Failed to remove InvoiceItem\n" + getErrorString(e));
+        }
+    }
+
+    public void removeInvoice(InvoiceDTO i) throws DataException {
+        try {
+            Invoice s = em.find(Invoice.class, i.getInvoiceID());
+            em.remove(s);
+            log.log(Level.OFF, "Invoice removed");
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "Failed", e);
+            throw new DataException("Failed to remove Invoice\n" + getErrorString(e));
+        }
     }
 
     public String getErrorString(Exception e) {

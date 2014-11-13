@@ -51,6 +51,14 @@ public class MonitorProperties {
         }
         return d;
     }
+     public static File getDocumentDir() {
+        getProperties();
+        File d = new File(props.getProperty("documents"));
+        if (!d.exists()) {
+            d.mkdir();
+        }
+        return d;
+    }
 
 
     private static void getProperties() {

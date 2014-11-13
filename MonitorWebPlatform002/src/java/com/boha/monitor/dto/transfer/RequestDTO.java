@@ -36,8 +36,11 @@ import java.io.Serializable;
  */
 public class RequestDTO implements Serializable{
     private Integer requestType, companyID, companyStaffID, projectID, 
-            projectSiteID, projectSiteTaskID,loginType, countryID;
+            projectSiteID, projectSiteTaskID,loginType, 
+            countryID, contractorClaimID, invoiceID,
+            beneficiaryID, engineerID;
     private String email, pin, gcmRegistrationID;
+    private Double latitude, longitude;
     private CompanyDTO company;
     private CompanyStaffDTO companyStaff;
     private ProjectDTO project;
@@ -70,14 +73,17 @@ public class RequestDTO implements Serializable{
             REGISTER_PROJECT_SITE = 4,
             REGISTER_PROJECT_SITE_STAFF = 5,
             REGISTER_CLIENT = 6,
-            REGISTER_BENEFICIARY = 7;
+            REGISTER_BENEFICIARY = 7,         
+            REGISTER_ENGINEER = 8;
     //add stuff
     public static final int 
             ADD_PROJECT_SITE_TASK = 11,
             ADD_PROJECT_DIARY_RECORD = 12,
             ADD_PROJECT_SITE_TASK_STATUS = 13,
             ADD_PROJECT_STATUS_TYPE = 14,
-            ADD_DEVICE = 17;
+            ADD_DEVICE = 17,
+            CONNECT_BENEFICIARY_TO_SITE = 18,
+            CONNECT_ENGINEER_TO_PROJECT = 19;
     //get stuff
     public static final int 
             GET_PROJECT_DATA = 101,
@@ -128,6 +134,8 @@ public class RequestDTO implements Serializable{
             REMOVE_CONTRACTOR_CLAIM_SITE = 508,
             GET_PROJECT_INVOICES = 506,
             ADD_CONTRACTOR_CLAIM = 511,
+            GENERATE_CONTRACTOR_CLAIM_PDF = 513,
+            GENERATE_INVOICE_PDF = 514,
             ADD_CONTRACTOR_CLAIM_SITE = 512;
     //reports
     public static final int
@@ -145,6 +153,38 @@ public class RequestDTO implements Serializable{
 
     //
     
+    public Integer getEngineerID() {
+        return engineerID;
+    }
+
+    public void setEngineerID(Integer engineerID) {
+        this.engineerID = engineerID;
+    }
+
+    public Integer getBeneficiaryID() {
+        return beneficiaryID;
+    }
+
+    public void setBeneficiaryID(Integer beneficiaryID) {
+        this.beneficiaryID = beneficiaryID;
+    }
+
+    public Integer getContractorClaimID() {
+        return contractorClaimID;
+    }
+
+    public void setContractorClaimID(Integer contractorClaimID) {
+        this.contractorClaimID = contractorClaimID;
+    }
+
+    public Integer getInvoiceID() {
+        return invoiceID;
+    }
+
+    public void setInvoiceID(Integer invoiceID) {
+        this.invoiceID = invoiceID;
+    }
+
     public BankDTO getBank() {
         return bank;
     }
@@ -219,6 +259,22 @@ public class RequestDTO implements Serializable{
 
     public ClientDTO getClient() {
         return client;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
     }
 
     public void setClient(ClientDTO client) {

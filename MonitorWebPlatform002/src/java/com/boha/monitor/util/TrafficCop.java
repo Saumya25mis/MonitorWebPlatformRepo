@@ -8,6 +8,7 @@ package com.boha.monitor.util;
 import com.boha.monitor.data.ErrorStore;
 import com.boha.monitor.dto.transfer.RequestDTO;
 import com.boha.monitor.dto.transfer.ResponseDTO;
+import com.boha.monitor.pdf.PDFDocumentGenerator;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,11 +24,18 @@ import javax.persistence.PersistenceContext;
 public class TrafficCop {
 
     public ResponseDTO processRequest(RequestDTO req,
-            DataUtil dataUtil, ListUtil listUtil) {
+            DataUtil dataUtil, ListUtil listUtil,
+            PDFDocumentGenerator pdfDocumentGenerator) {
         ResponseDTO resp = new ResponseDTO();
         try {
             switch (req.getRequestType()) {
                 //claim * invoice
+                case RequestDTO.GENERATE_CONTRACTOR_CLAIM_PDF:
+                    resp = pdfDocumentGenerator.getContractorClaimPDF(req.getContractorClaimID());
+                    break;
+                case RequestDTO.GENERATE_INVOICE_PDF:
+                    resp = pdfDocumentGenerator.getInvoicePDF(req.getInvoiceID());
+                    break;
                 case RequestDTO.ADD_BANK:
                     resp = dataUtil.addBank(req.getBank());
                     break;
@@ -47,12 +55,16 @@ public class TrafficCop {
                     resp = dataUtil.addInvoiceItem(req.getInvoiceItem());
                     break;
                 case RequestDTO.REMOVE_CONTRACTOR_CLAIM:
+                    dataUtil.removeContractorClaim(req.getContractorClaim());
                     break;
                 case RequestDTO.REMOVE_CONTRACTOR_CLAIM_SITE:
+                    dataUtil.removeContractorClaimSite(req.getContractorClaimSite());
                     break;
                 case RequestDTO.REMOVE_INVOICE:
+                    dataUtil.removeInvoice(req.getInvoice());
                     break;
                 case RequestDTO.REMOVE_INVOICE_ITEM:
+                    dataUtil.removeInvoiceItem(req.getInvoiceItem());
                     break;
                 //updates
                 case RequestDTO.UPDATE_PROJECT_SITE:
@@ -89,8 +101,9 @@ public class TrafficCop {
 
                 //register entities    
                 case RequestDTO.REGISTER_COMPANY:
-                    resp = dataUtil.registerCompany(req.getCompany(), 
-                            req.getCompanyStaff(), listUtil);
+                    resp = dataUtil.registerCompany(req.getCompany(),
+                            req.getCompanyStaff(),
+                            req.getLatitude(), req.getLongitude(), listUtil);
                     break;
                 case RequestDTO.REGISTER_COMPANY_STAFF:
                     resp = dataUtil.registerCompanyStaff(req.getCompanyStaff());
@@ -107,7 +120,12 @@ public class TrafficCop {
                 case RequestDTO.REGISTER_PROJECT_SITE:
                     resp = dataUtil.registerProjectSite(req.getProjectSite());
                     break;
-
+                case RequestDTO.CONNECT_BENEFICIARY_TO_SITE:
+                    resp = dataUtil.connectBeneficiaryToSite(req.getProjectSiteID(), req.getBeneficiaryID());
+                    break;
+                case RequestDTO.CONNECT_ENGINEER_TO_PROJECT:
+                    resp = dataUtil.connectEngineerToProject(req.getProjectID(), req.getEngineerID());
+                    break;
                 //
                 case RequestDTO.ADD_DEVICE:
                     dataUtil.addDevice(req.getGcmDevice());
@@ -123,6 +141,7 @@ public class TrafficCop {
                     break;
                 case RequestDTO.ADD_PROJECT_STATUS_TYPE:
                     break;
+                    
                 //lists
                 case RequestDTO.GET_PROJECT_DATA:
                     resp = listUtil.getProjectData(req.getProjectID());

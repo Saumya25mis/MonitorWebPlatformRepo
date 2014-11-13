@@ -39,6 +39,9 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "ContractorClaim.findByClaimNumber", query = "SELECT c FROM ContractorClaim c WHERE c.claimNumber = :claimNumber"),
     @NamedQuery(name = "ContractorClaim.findByClaimDate", query = "SELECT c FROM ContractorClaim c WHERE c.claimDate = :claimDate")})
 public class ContractorClaim implements Serializable {
+    @JoinColumn(name = "projectEngineerID", referencedColumnName = "projectEngineerID")
+    @ManyToOne
+    private ProjectEngineer projectEngineer;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -53,9 +56,7 @@ public class ContractorClaim implements Serializable {
     private Date claimDate;
     @OneToMany(mappedBy = "contractorClaim")
     private List<ContractorClaimSite> contractorClaimSiteList;
-    @JoinColumn(name = "engineerID", referencedColumnName = "engineerID")
-    @ManyToOne
-    private Engineer engineer;
+    
     @JoinColumn(name = "projectID", referencedColumnName = "projectID")
     @ManyToOne
     private Project project;
@@ -102,14 +103,6 @@ public class ContractorClaim implements Serializable {
         this.contractorClaimSiteList = contractorClaimSiteList;
     }
 
-    public Engineer getEngineer() {
-        return engineer;
-    }
-
-    public void setEngineer(Engineer engineer) {
-        this.engineer = engineer;
-    }
-
     public Project getProject() {
         return project;
     }
@@ -151,5 +144,14 @@ public class ContractorClaim implements Serializable {
     public String toString() {
         return "com.boha.monitor.data.ContractorClaim[ contractorClaimID=" + contractorClaimID + " ]";
     }
-    
+
+    public ProjectEngineer getProjectEngineer() {
+        return projectEngineer;
+    }
+
+    public void setProjectEngineer(ProjectEngineer projectEngineer) {
+        this.projectEngineer = projectEngineer;
+    }
+
+   
 }

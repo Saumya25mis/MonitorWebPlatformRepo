@@ -21,7 +21,7 @@ public class EngineerDTO implements Serializable {
     private String engineerName;
     private String email;
     private String cellphone;
-    private List<ContractorClaim> contractorClaimList;
+    private List<ContractorClaimDTO> contractorClaimList;
 
     public EngineerDTO() {
     }
@@ -66,13 +66,14 @@ public class EngineerDTO implements Serializable {
         this.cellphone = cellphone;
     }
 
-    public List<ContractorClaim> getContractorClaimList() {
+    public List<ContractorClaimDTO> getContractorClaimList() {
         return contractorClaimList;
     }
 
-    public void setContractorClaimList(List<ContractorClaim> contractorClaimList) {
+    public void setContractorClaimList(List<ContractorClaimDTO> contractorClaimList) {
         this.contractorClaimList = contractorClaimList;
     }
+
 
     @Override
     public int hashCode() {

@@ -45,9 +45,13 @@ public class ProjectSiteDTO implements Serializable {
         this.projectID = p.getProjectID();
         this.projectName = p.getProjectName();
         this.standErfNumber = a.getStandErfNumber();
-        this.beneficiary = new BeneficiaryDTO(a.getBeneficiary());
-        this.happyLetter = new HappyLetterDTO(a.getHappyLetter());
-        
+        if (a.getBeneficiary() != null) {
+            this.beneficiary = new BeneficiaryDTO(a.getBeneficiary());
+        }
+        if (a.getHappyLetter() != null) {
+            this.happyLetter = new HappyLetterDTO(a.getHappyLetter());
+        }
+
     }
 
     public BeneficiaryDTO getBeneficiary() {
@@ -82,7 +86,6 @@ public class ProjectSiteDTO implements Serializable {
         this.accuracy = accuracy;
     }
 
-    
     public String getStandErfNumber() {
         return standErfNumber;
     }
@@ -115,7 +118,6 @@ public class ProjectSiteDTO implements Serializable {
         this.projectSiteName = projectSiteName;
     }
 
-  
     public Double getLatitude() {
         return latitude;
     }
@@ -155,6 +157,5 @@ public class ProjectSiteDTO implements Serializable {
     public void setProjectID(Integer projectID) {
         this.projectID = projectID;
     }
-
 
 }

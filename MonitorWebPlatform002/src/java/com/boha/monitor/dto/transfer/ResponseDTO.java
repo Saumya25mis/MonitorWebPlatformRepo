@@ -17,6 +17,7 @@ import com.boha.monitor.dto.CompanyStaffTypeDTO;
 import com.boha.monitor.dto.ContractorClaimDTO;
 import com.boha.monitor.dto.ContractorClaimSiteDTO;
 import com.boha.monitor.dto.CountryDTO;
+import com.boha.monitor.dto.EngineerDTO;
 import com.boha.monitor.dto.ErrorStoreAndroidDTO;
 import com.boha.monitor.dto.ErrorStoreDTO;
 import com.boha.monitor.dto.HappyLetterDTO;
@@ -24,6 +25,7 @@ import com.boha.monitor.dto.InvoiceDTO;
 import com.boha.monitor.dto.InvoiceItemDTO;
 import com.boha.monitor.dto.ProjectDTO;
 import com.boha.monitor.dto.ProjectDiaryRecordDTO;
+import com.boha.monitor.dto.ProjectEngineerDTO;
 import com.boha.monitor.dto.ProjectSiteDTO;
 import com.boha.monitor.dto.ProjectSiteTaskDTO;
 import com.boha.monitor.dto.ProjectSiteTaskStatusDTO;
@@ -74,10 +76,29 @@ public class ResponseDTO {
     private List<ContractorClaimSiteDTO> contractorClaimSiteList = new ArrayList<>();
     private List<InvoiceItemDTO> invoiceItemList;
     private List<BankDetailDTO> bankDetailList;
+    private List<EngineerDTO> engineerList;
+    private List<ProjectEngineerDTO> projectEngineerList;
     //
     private CompanyDTO company;
     private CompanyStaffDTO companyStaff;
 
+    public List<EngineerDTO> getEngineerList() {
+        return engineerList;
+    }
+
+    public void setEngineerList(List<EngineerDTO> engineerList) {
+        this.engineerList = engineerList;
+    }
+
+    public List<ProjectEngineerDTO> getProjectEngineerList() {
+        return projectEngineerList;
+    }
+
+    public void setProjectEngineerList(List<ProjectEngineerDTO> projectEngineerList) {
+        this.projectEngineerList = projectEngineerList;
+    }
+
+    
     public List<PhotoUploadDTO> getPhotoUploadList() {
         return photoUploadList;
     }

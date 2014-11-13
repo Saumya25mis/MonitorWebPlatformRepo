@@ -43,6 +43,8 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "Project.findByDateRegistered", query = "SELECT p FROM Project p WHERE p.dateRegistered = :dateRegistered"),
     @NamedQuery(name = "Project.findByCompleteFlag", query = "SELECT p FROM Project p WHERE p.completeFlag = :completeFlag")})
 public class Project implements Serializable {
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "project")
+    private List<ProjectEngineer> projectEngineerList;
     @OneToMany(mappedBy = "project")
     private List<ContractorClaim> contractorClaimList;
     @OneToMany(mappedBy = "project")
@@ -204,6 +206,14 @@ public class Project implements Serializable {
 
     public void setContractorClaimList(List<ContractorClaim> contractorClaimList) {
         this.contractorClaimList = contractorClaimList;
+    }
+
+    public List<ProjectEngineer> getProjectEngineerList() {
+        return projectEngineerList;
+    }
+
+    public void setProjectEngineerList(List<ProjectEngineer> projectEngineerList) {
+        this.projectEngineerList = projectEngineerList;
     }
 
     
