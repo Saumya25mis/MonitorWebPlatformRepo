@@ -33,7 +33,7 @@ import javax.validation.constraints.Size;
 @Table(name = "task")
 @NamedQueries({
     @NamedQuery(name = "Task.findByCompany", 
-            query = "SELECT t FROM Task t where t.company.companyID = :companyID"),
+            query = "SELECT t FROM Task t where t.company.companyID = :companyID order by t.taskNumber"),
     @NamedQuery(name = "Task.findByTaskID", query = "SELECT t FROM Task t WHERE t.taskID = :taskID"),
     @NamedQuery(name = "Task.findByTaskName", query = "SELECT t FROM Task t WHERE t.taskName = :taskName")})
 public class Task implements Serializable {
@@ -54,8 +54,7 @@ public class Task implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "taskName")
     private String taskName;
-    @Basic(optional = false)
-    @NotNull
+    @Basic(optional = true)
     @Lob
     @Size(min = 1, max = 65535)
     @Column(name = "description")

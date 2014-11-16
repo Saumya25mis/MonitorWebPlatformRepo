@@ -27,13 +27,12 @@ public class CompanyDTO implements Serializable {
     private List<TaskStatusDTO> taskStatusList = new ArrayList<>();
     private List<TaskDTO> taskList = new ArrayList<>();
     private List<ClientDTO> clientList = new ArrayList<>();
-    private List<CheckPointDTO> checkPointList = new ArrayList<>();
     private List<InvoiceDTO> invoiceList = new ArrayList<>();
-    private List<BeneficiaryDTO> beneficiaryList = new ArrayList<>();
     private List<BankDetailDTO> bankDetailList = new ArrayList<>();
     private List<GcmDeviceDTO> gcmDeviceList = new ArrayList<>();
     private List<ContractorClaimDTO> contractorClaimList = new ArrayList<>();
     private List<CompanyStaffTypeDTO> companyStaffTypeList = new ArrayList<>();
+    private List<EngineerDTO> engineerList = new ArrayList<>();
     
 
     public CompanyDTO() {
@@ -60,13 +59,20 @@ public class CompanyDTO implements Serializable {
         sb.append("Tasks: ").append(taskList.size()).append("\n");
         sb.append("TaskStatus: ").append(taskStatusList.size()).append("\n");
         sb.append("ProjectStatusTypes: ").append(projectStatusTypeList.size()).append("\n");
-        sb.append("Beneficiaries: ").append(beneficiaryList.size()).append("\n");
         sb.append("Devices: ").append(gcmDeviceList.size()).append("\n");
-        sb.append("CheckPoints: ").append(checkPointList.size()).append("\n");
         sb.append("#######################");
         System.out.println(sb.toString());
     }
 
+    public List<EngineerDTO> getEngineerList() {
+        return engineerList;
+    }
+
+    public void setEngineerList(List<EngineerDTO> engineerList) {
+        this.engineerList = engineerList;
+    }
+
+    
     public List<ContractorClaimDTO> getContractorClaimList() {
         return contractorClaimList;
     }
@@ -139,30 +145,12 @@ public class CompanyDTO implements Serializable {
         this.clientList = clientList;
     }
 
-
-    public List<CheckPointDTO> getCheckPointList() {
-        return checkPointList;
-    }
-
-    public void setCheckPointList(List<CheckPointDTO> checkPointList) {
-        this.checkPointList = checkPointList;
-    }
-
-
     public List<InvoiceDTO> getInvoiceList() {
         return invoiceList;
     }
 
     public void setInvoiceList(List<InvoiceDTO> invoiceList) {
         this.invoiceList = invoiceList;
-    }
-
-    public List<BeneficiaryDTO> getBeneficiaryList() {
-        return beneficiaryList;
-    }
-
-    public void setBeneficiaryList(List<BeneficiaryDTO> beneficiaryList) {
-        this.beneficiaryList = beneficiaryList;
     }
 
     public List<GcmDeviceDTO> getGcmDeviceList() {

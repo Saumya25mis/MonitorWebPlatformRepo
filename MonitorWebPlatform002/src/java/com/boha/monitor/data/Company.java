@@ -85,10 +85,6 @@ public class Company implements Serializable {
     private List<Beneficiary> beneficiaryList;
    
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
-    @OrderBy("checkPointName")
-    private List<CheckPoint> checkPointList;
-    
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
     @OrderBy("dateRegistered desc")
     private List<GcmDevice> gcmDeviceList;
     @OneToMany(mappedBy = "company")
@@ -207,16 +203,6 @@ public class Company implements Serializable {
 
     public void setBeneficiaryList(List<Beneficiary> beneficiaryList) {
         this.beneficiaryList = beneficiaryList;
-    }
-
-   
-
-    public List<CheckPoint> getCheckPointList() {
-        return checkPointList;
-    }
-
-    public void setCheckPointList(List<CheckPoint> checkPointList) {
-        this.checkPointList = checkPointList;
     }
 
     public List<Task> getTaskList() {

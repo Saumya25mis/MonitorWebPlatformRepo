@@ -88,8 +88,7 @@ public class Invoice implements Serializable {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "invoice")
     private List<InvoiceItem> invoiceItemList;
-    @OneToMany(mappedBy = "invoice")
-    private List<SiteCheckPoint> siteCheckPointList;
+    
 
     public Invoice() {
     }
@@ -173,14 +172,6 @@ public class Invoice implements Serializable {
 
     public void setInvoiceItemList(List<InvoiceItem> invoiceItemList) {
         this.invoiceItemList = invoiceItemList;
-    }
-
-    public List<SiteCheckPoint> getSiteCheckPointList() {
-        return siteCheckPointList;
-    }
-
-    public void setSiteCheckPointList(List<SiteCheckPoint> siteCheckPointList) {
-        this.siteCheckPointList = siteCheckPointList;
     }
 
     @Override

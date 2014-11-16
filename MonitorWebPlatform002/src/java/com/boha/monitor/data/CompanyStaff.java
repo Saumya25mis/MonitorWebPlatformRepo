@@ -9,10 +9,8 @@ package com.boha.monitor.data;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -59,26 +57,23 @@ public class CompanyStaff implements Serializable {
     private Integer companyStaffID;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 45)
     @Column(name = "firstName")
     private String firstName;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 45)
     @Column(name = "lastName")
     private String lastName;
     @Column(name = "activeFlag")
     private Integer activeFlag;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 255)
     @Column(name = "email")
     private String email;
     @Size(max = 50)
     @Column(name = "cellphone")
     private String cellphone;
     @JoinColumn(name = "companyStaffTypeID", referencedColumnName = "companyStaffTypeID")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = true)
     private CompanyStaffType companyStaffType;
     
     @JoinColumn(name = "companyID", referencedColumnName = "companyID")

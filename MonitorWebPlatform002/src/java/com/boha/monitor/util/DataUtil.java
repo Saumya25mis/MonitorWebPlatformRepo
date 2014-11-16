@@ -8,7 +8,6 @@ package com.boha.monitor.util;
 import com.boha.monitor.data.Bank;
 import com.boha.monitor.data.BankDetail;
 import com.boha.monitor.data.Beneficiary;
-import com.boha.monitor.data.CheckPoint;
 import com.boha.monitor.data.City;
 import com.boha.monitor.data.Client;
 import com.boha.monitor.data.Company;
@@ -38,7 +37,6 @@ import com.boha.monitor.data.Township;
 import com.boha.monitor.dto.BankDTO;
 import com.boha.monitor.dto.BankDetailDTO;
 import com.boha.monitor.dto.BeneficiaryDTO;
-import com.boha.monitor.dto.CheckPointDTO;
 import com.boha.monitor.dto.CityDTO;
 import com.boha.monitor.dto.ClientDTO;
 import com.boha.monitor.dto.CompanyDTO;
@@ -309,31 +307,6 @@ public class DataUtil {
 
     }
 
-    public ResponseDTO addCompanyCheckPoint(CheckPointDTO b) throws DataException {
-        ResponseDTO resp = new ResponseDTO();
-        try {
-            Company c = em.find(Company.class, b.getCompanyID());
-            CheckPoint cli = new CheckPoint();
-            cli.setCheckPointName(b.getCheckPointName());
-            cli.setDescription(b.getDescription());
-            cli.setCompany(c);
-
-            em.persist(cli);
-            em.flush();
-            resp.getCheckPointList().add(new CheckPointDTO(cli));
-            log.log(Level.OFF, "######## CheckPoint added: {0}", b.getCheckPointName());
-
-        } catch (PersistenceException e) {
-            log.log(Level.SEVERE, "Failed", e);
-            resp.setStatusCode(301);
-            resp.setMessage("Duplicate detected, request ignored./nPlease try again");
-
-        } catch (Exception e) {
-            log.log(Level.SEVERE, "Failed", e);
-            throw new DataException("Failed\n" + getErrorString(e));
-        }
-        return resp;
-    }
 
     public ResponseDTO addCompanyProjectStatus(ProjectStatusTypeDTO b) throws DataException {
         ResponseDTO resp = new ResponseDTO();
@@ -822,25 +795,28 @@ public class DataUtil {
         ResponseDTO resp = new ResponseDTO();
         try {
             Company c = em.find(Company.class, b.getCompany().getCompanyID());
-            Beneficiary cli = new Beneficiary();
-            cli.setFirstName(b.getFirstName());
-            cli.setCellphone(b.getCellphone());
-            cli.setMiddleName(b.getMiddleName());
-            cli.setEmail(b.getEmail());
-            cli.setIDNumber(b.getIDNumber());
-            cli.setDateRegistered(new Date());
+            Project p = em.find(Project.class, b.getProjectID());
+            Beneficiary ben = new Beneficiary();
+            ben.setProject(p);
+            ben.setFirstName(b.getFirstName());
+            ben.setCellphone(b.getCellphone());
+            ben.setMiddleName(b.getMiddleName());
+            ben.setLastName(b.getLastName());
+            ben.setEmail(b.getEmail());
+            ben.setIDNumber(b.getIDNumber());
+            ben.setDateRegistered(new Date());
             if (b.getTownship() != null) {
-                cli.setTownship(em.find(Township.class, b.getTownship().getTownshipID()));
+                ben.setTownship(em.find(Township.class, b.getTownship().getTownshipID()));
             }
-            cli.setAmountAuthorized(b.getAmountAuthorized());
-            cli.setAmountPaid(b.getAmountPaid());
-            cli.setCompany(c);
+            ben.setAmountAuthorized(b.getAmountAuthorized());
+            ben.setAmountPaid(b.getAmountPaid());
+            ben.setCompany(c);
 
-            em.persist(cli);
+            em.persist(ben);
             em.flush();
-            resp.getBeneficiaryList().add(new BeneficiaryDTO(cli));
+            resp.getBeneficiaryList().add(new BeneficiaryDTO(ben));
             log.log(Level.OFF, "######## Beneficiary registered: {0} {1}",
-                    new Object[]{cli.getFirstName(), cli.getLastName()});
+                    new Object[]{ben.getFirstName(), ben.getLastName()});
 
         } catch (PersistenceException e) {
             log.log(Level.SEVERE, "Failed", e);
@@ -914,8 +890,9 @@ public class DataUtil {
 
             em.persist(cli);
             em.flush();
+            resp.setEngineerList(new ArrayList<EngineerDTO>());
             resp.getEngineerList().add(new EngineerDTO(cli));
-            log.log(Level.OFF, "######## Beneficiary registered: {0} at {1}",
+            log.log(Level.OFF, "######## engineer registered: {0} at {1}",
                     new Object[]{cli.getEngineerName(), c.getCompanyName()});
 
         } catch (PersistenceException e) {
@@ -961,7 +938,6 @@ public class DataUtil {
             //add sample data - app not empty at startup
             addInitialTaskStatus(c);
             addinitialProjectStatusType(c);
-            addInitialCheckpoints(c);
             addInitialTasks(c);
             addInitialProject(c);
             // ***********************************************************
@@ -1094,34 +1070,6 @@ public class DataUtil {
         log.log(Level.INFO, "Initial Tasks added");
     }
 
-    private void addInitialCheckpoints(Company c) {
-        CheckPoint cp1 = new CheckPoint();
-        cp1.setCompany(c);
-        cp1.setCheckPointName("CheckPoint Number One");
-        cp1.setDescription("Description of CheckPoint Number One");
-        em.persist(cp1);
-        CheckPoint cp2 = new CheckPoint();
-        cp2.setCompany(c);
-        cp2.setCheckPointName("CheckPoint Number Two");
-        cp2.setDescription("Description of CheckPoint Number Two");
-        em.persist(cp2);
-        CheckPoint cp3 = new CheckPoint();
-        cp3.setCompany(c);
-        cp3.setCheckPointName("CheckPoint Number Three");
-        cp3.setDescription("Description of CheckPoint Number Three");
-        em.persist(cp3);
-        CheckPoint cp4 = new CheckPoint();
-        cp4.setCompany(c);
-        cp4.setCheckPointName("CheckPoint Number Four");
-        cp4.setDescription("Description of CheckPoint Number Four");
-        em.persist(cp4);
-        CheckPoint cp5 = new CheckPoint();
-        cp5.setCompany(c);
-        cp5.setCheckPointName("CheckPoint Number Five");
-        cp5.setDescription("Description of CheckPoint Number Five");
-        em.persist(cp5);
-        log.log(Level.INFO, "Initial CheckPoints added");
-    }
 
     private void addinitialProjectStatusType(Company c) {
         ProjectStatusType p1 = new ProjectStatusType();

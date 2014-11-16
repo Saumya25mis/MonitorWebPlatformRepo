@@ -33,11 +33,15 @@ import javax.validation.constraints.Size;
 @Table(name = "contractorClaim")
 @NamedQueries({
     @NamedQuery(name = "ContractorClaim.findByProject", 
-            query = "SELECT c FROM ContractorClaim c where c.project.projectID = :projectID order by c.claimDate desc"),
-    @NamedQuery(name = "ContractorClaim.findByContractorClaimID", 
-            query = "SELECT c FROM ContractorClaim c WHERE c.contractorClaimID = :contractorClaimID"),
-    @NamedQuery(name = "ContractorClaim.findByClaimNumber", query = "SELECT c FROM ContractorClaim c WHERE c.claimNumber = :claimNumber"),
-    @NamedQuery(name = "ContractorClaim.findByClaimDate", query = "SELECT c FROM ContractorClaim c WHERE c.claimDate = :claimDate")})
+            query = "SELECT c FROM ContractorClaim c where c.project.projectID = :projectID "
+                    + "order by c.claimDate desc"),
+    @NamedQuery(name = "ContractorClaim.findByCompany", 
+            query = "SELECT c FROM ContractorClaim c WHERE c.project.company.companyID = :companyID  "
+                    + "order by c.claimDate desc"),
+    @NamedQuery(name = "ContractorClaim.findByClaimNumber", 
+            query = "SELECT c FROM ContractorClaim c WHERE c.claimNumber = :claimNumber"),
+    @NamedQuery(name = "ContractorClaim.findByClaimDate", 
+            query = "SELECT c FROM ContractorClaim c WHERE c.claimDate = :claimDate")})
 public class ContractorClaim implements Serializable {
     @JoinColumn(name = "projectEngineerID", referencedColumnName = "projectEngineerID")
     @ManyToOne

@@ -82,10 +82,7 @@ public class TrafficCop {
                 //add lookups
                 case RequestDTO.ADD_CITY:
                     resp = dataUtil.addCity(req.getCity());
-                    break;
-                case RequestDTO.ADD_COMPANY_CHECKPOINT:
-                    resp = dataUtil.addCompanyCheckPoint(req.getCheckPoint());
-                    break;
+                    break;             
                 case RequestDTO.ADD_COMPANY_PROJECT_STATUS_TYPE:
                     resp = dataUtil.addCompanyProjectStatus(req.getProjectStatusType());
                     break;
@@ -122,6 +119,9 @@ public class TrafficCop {
                     break;
                 case RequestDTO.CONNECT_BENEFICIARY_TO_SITE:
                     resp = dataUtil.connectBeneficiaryToSite(req.getProjectSiteID(), req.getBeneficiaryID());
+                    break;
+                case RequestDTO.REGISTER_ENGINEER:
+                    resp = dataUtil.registerEngineer(req.getEngineer());
                     break;
                 case RequestDTO.CONNECT_ENGINEER_TO_PROJECT:
                     resp = dataUtil.connectEngineerToProject(req.getProjectID(), req.getEngineerID());

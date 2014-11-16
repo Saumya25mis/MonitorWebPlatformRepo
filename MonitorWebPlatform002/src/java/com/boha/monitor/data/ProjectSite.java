@@ -56,8 +56,7 @@ public class ProjectSite implements Serializable {
     
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "projectSite")
     private List<InvoiceItem> invoiceItemList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "projectSite")
-    private List<SiteCheckPoint> siteCheckPointList;
+   
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "projectSite")
     private List<GcmDevice> gcmDeviceList;
@@ -209,14 +208,6 @@ public class ProjectSite implements Serializable {
 
     public void setInvoiceItemList(List<InvoiceItem> invoiceItemList) {
         this.invoiceItemList = invoiceItemList;
-    }
-
-    public List<SiteCheckPoint> getSiteCheckPointList() {
-        return siteCheckPointList;
-    }
-
-    public void setSiteCheckPointList(List<SiteCheckPoint> siteCheckPointList) {
-        this.siteCheckPointList = siteCheckPointList;
     }
 
     public String getStandErfNumber() {

@@ -16,7 +16,7 @@ import java.util.Date;
 public class BeneficiaryDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private Integer beneficiaryID;
+    private Integer beneficiaryID, projectID;
     private String firstName;
     private String lastName;
     private String middleName;
@@ -38,6 +38,9 @@ public class BeneficiaryDTO implements Serializable {
         cellphone = a.getCellphone();
         dateRegistered = a.getDateRegistered();
         phbDate = a.getPhbDate();
+        if (a.getProject() != null) {
+            projectID = a.getProject().getProjectID();
+        }
         
         if (a.getCompany() != null) {
             company = new CompanyDTO(a.getCompany());
@@ -56,6 +59,14 @@ public class BeneficiaryDTO implements Serializable {
 
     public Integer getBeneficiaryID() {
         return beneficiaryID;
+    }
+
+    public Integer getProjectID() {
+        return projectID;
+    }
+
+    public void setProjectID(Integer projectID) {
+        this.projectID = projectID;
     }
 
     public Double getAmountAuthorized() {

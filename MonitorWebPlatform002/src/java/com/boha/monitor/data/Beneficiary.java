@@ -8,9 +8,7 @@ package com.boha.monitor.data;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -20,7 +18,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -38,16 +35,13 @@ import javax.validation.constraints.Size;
                     + "WHERE b.iDNumber = :IDNumber and b.company.companyID = :companyID"),
     @NamedQuery(name = "Beneficiary.findByCompany", 
             query = "SELECT b FROM Beneficiary b WHERE b.company.companyID = :companyID order by b.lastName, b.firstName"),
-    @NamedQuery(name = "Beneficiary.findByFirstName", query = "SELECT b FROM Beneficiary b WHERE b.firstName = :firstName"),
-    @NamedQuery(name = "Beneficiary.findByLastName", query = "SELECT b FROM Beneficiary b WHERE b.lastName = :lastName"),
-    @NamedQuery(name = "Beneficiary.findByMiddleName", query = "SELECT b FROM Beneficiary b WHERE b.middleName = :middleName"),
-    @NamedQuery(name = "Beneficiary.findByIDNumber", 
-            query = "SELECT b FROM Beneficiary b "
-                    + "WHERE b.iDNumber = :iDNumber"),
-    @NamedQuery(name = "Beneficiary.findByEmail", query = "SELECT b FROM Beneficiary b WHERE b.email = :email"),
-    @NamedQuery(name = "Beneficiary.findByCellphone", query = "SELECT b FROM Beneficiary b WHERE b.cellphone = :cellphone"),
-    @NamedQuery(name = "Beneficiary.findByDateRegistered", query = "SELECT b FROM Beneficiary b WHERE b.dateRegistered = :dateRegistered")})
+    @NamedQuery(name = "Beneficiary.findByProject", 
+            query = "SELECT b FROM Beneficiary b WHERE b.project.projectID = :projectID "
+                    + "order by b.lastName, b.firstName")})
 public class Beneficiary implements Serializable {
+    @JoinColumn(name = "projectID", referencedColumnName = "projectID")
+    @ManyToOne(optional = false)
+    private Project project;
     
     
     @Column(name = "amountAuthorized")
@@ -243,6 +237,15 @@ public class Beneficiary implements Serializable {
     public void setAmountPaid(Double amountPaid) {
         this.amountPaid = amountPaid;
     }
+
+    public Project getProject() {
+        return project;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
+    }
+
 
     
 }

@@ -9,13 +9,13 @@ package com.boha.monitor.dto.transfer;
 import com.boha.monitor.dto.BankDTO;
 import com.boha.monitor.dto.BankDetailDTO;
 import com.boha.monitor.dto.BeneficiaryDTO;
-import com.boha.monitor.dto.CheckPointDTO;
 import com.boha.monitor.dto.CityDTO;
 import com.boha.monitor.dto.ClientDTO;
 import com.boha.monitor.dto.CompanyDTO;
 import com.boha.monitor.dto.CompanyStaffDTO;
 import com.boha.monitor.dto.ContractorClaimDTO;
 import com.boha.monitor.dto.ContractorClaimSiteDTO;
+import com.boha.monitor.dto.EngineerDTO;
 import com.boha.monitor.dto.GcmDeviceDTO;
 import com.boha.monitor.dto.InvoiceDTO;
 import com.boha.monitor.dto.InvoiceItemDTO;
@@ -44,6 +44,7 @@ public class RequestDTO implements Serializable{
     private CompanyDTO company;
     private CompanyStaffDTO companyStaff;
     private ProjectDTO project;
+    private EngineerDTO engineer;
     private CityDTO city;
     private TownshipDTO township;
     private ProjectSiteDTO projectSite;
@@ -56,7 +57,6 @@ public class RequestDTO implements Serializable{
     private InvoiceItemDTO invoiceItem;
     
     private TaskDTO task;
-    private CheckPointDTO checkPoint;
     private TaskStatusDTO taskStatus;
     private ClientDTO client;
     
@@ -185,6 +185,14 @@ public class RequestDTO implements Serializable{
         this.invoiceID = invoiceID;
     }
 
+    public EngineerDTO getEngineer() {
+        return engineer;
+    }
+
+    public void setEngineer(EngineerDTO engineer) {
+        this.engineer = engineer;
+    }
+
     public BankDTO getBank() {
         return bank;
     }
@@ -287,14 +295,6 @@ public class RequestDTO implements Serializable{
 
     public void setTask(TaskDTO task) {
         this.task = task;
-    }
-
-    public CheckPointDTO getCheckPoint() {
-        return checkPoint;
-    }
-
-    public void setCheckPoint(CheckPointDTO checkPoint) {
-        this.checkPoint = checkPoint;
     }
 
     public TaskStatusDTO getTaskStatus() {

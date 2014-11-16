@@ -8,7 +8,6 @@ package com.boha.monitor.dto.transfer;
 import com.boha.monitor.dto.BankDTO;
 import com.boha.monitor.dto.BankDetailDTO;
 import com.boha.monitor.dto.BeneficiaryDTO;
-import com.boha.monitor.dto.CheckPointDTO;
 import com.boha.monitor.dto.CityDTO;
 import com.boha.monitor.dto.ClientDTO;
 import com.boha.monitor.dto.CompanyDTO;
@@ -31,7 +30,6 @@ import com.boha.monitor.dto.ProjectSiteTaskDTO;
 import com.boha.monitor.dto.ProjectSiteTaskStatusDTO;
 import com.boha.monitor.dto.ProjectStatusTypeDTO;
 import com.boha.monitor.dto.ProvinceDTO;
-import com.boha.monitor.dto.SiteCheckPointDTO;
 import com.boha.monitor.dto.TaskDTO;
 import com.boha.monitor.dto.TaskStatusDTO;
 import com.boha.monitor.dto.TownshipDTO;
@@ -61,12 +59,10 @@ public class ResponseDTO {
     private List<ProjectSiteTaskStatusDTO> projectSiteTaskStatusList = new ArrayList<>();
     private List<ErrorStoreDTO> errorStoreList = new ArrayList<>();
     private List<ErrorStoreAndroidDTO> errorStoreAndroidList = new ArrayList<>();
-    private List<CheckPointDTO> checkPointList = new ArrayList<>();
     private List<InvoiceDTO> invoiceList = new ArrayList<>();
     private List<BeneficiaryDTO> beneficiaryList = new ArrayList<>();
     private List<ProvinceDTO> provinceList = new ArrayList<>();
     private List<HappyLetterDTO> happyLetterList = new ArrayList<>();
-    private List<SiteCheckPointDTO> siteCheckPointList = new ArrayList<>();
     private List<ClientDTO> clientList = new ArrayList<>();
     private List<TaskDTO> taskList = new ArrayList<>();
     private List<CityDTO> cityList = new ArrayList<>();
@@ -183,22 +179,6 @@ public class ResponseDTO {
     }
 
     
-    public List<CheckPointDTO> getCheckPointList() {
-        return checkPointList;
-    }
-
-    public List<ClientDTO> getClientList() {
-        return clientList;
-    }
-
-    public void setClientList(List<ClientDTO> clientList) {
-        this.clientList = clientList;
-    }
-    
-
-    public void setCheckPointList(List<CheckPointDTO> checkPointList) {
-        this.checkPointList = checkPointList;
-    }
 
     public List<InvoiceDTO> getInvoiceList() {
         return invoiceList;
@@ -232,12 +212,12 @@ public class ResponseDTO {
         this.happyLetterList = happyLetterList;
     }
 
-    public List<SiteCheckPointDTO> getSiteCheckPointList() {
-        return siteCheckPointList;
+    public List<ClientDTO> getClientList() {
+        return clientList;
     }
 
-    public void setSiteCheckPointList(List<SiteCheckPointDTO> siteCheckPointList) {
-        this.siteCheckPointList = siteCheckPointList;
+    public void setClientList(List<ClientDTO> clientList) {
+        this.clientList = clientList;
     }
 
     public CompanyStaffDTO getCompanyStaff() {

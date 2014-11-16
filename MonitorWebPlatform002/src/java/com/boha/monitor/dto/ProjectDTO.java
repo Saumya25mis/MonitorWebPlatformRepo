@@ -26,6 +26,9 @@ public class ProjectDTO implements Serializable {
     private Integer companyID, clientID;
     private List<ProjectSiteDTO> projectSiteList = new ArrayList<>();
     private List<PhotoUploadDTO> photoUploadList = new ArrayList<>();
+    private List<BeneficiaryDTO> beneficiaryList = new ArrayList<>();
+    private List<InvoiceDTO> invoiceList;
+    private List<ContractorClaimDTO> contractorClaimList;
 
     public ProjectDTO() {
     }
@@ -46,6 +49,32 @@ public class ProjectDTO implements Serializable {
             this.clientName = a.getClient().getClientName();
         }
         
+    }
+
+    public List<ContractorClaimDTO> getContractorClaimList() {
+        return contractorClaimList;
+    }
+
+    public void setContractorClaimList(List<ContractorClaimDTO> contractorClaimList) {
+        this.contractorClaimList = contractorClaimList;
+    }
+
+    
+    public List<InvoiceDTO> getInvoiceList() {
+        return invoiceList;
+    }
+
+    public void setInvoiceList(List<InvoiceDTO> invoiceList) {
+        this.invoiceList = invoiceList;
+    }
+
+    
+    public List<BeneficiaryDTO> getBeneficiaryList() {
+        return beneficiaryList;
+    }
+
+    public void setBeneficiaryList(List<BeneficiaryDTO> beneficiaryList) {
+        this.beneficiaryList = beneficiaryList;
     }
 
     public String getClientName() {
