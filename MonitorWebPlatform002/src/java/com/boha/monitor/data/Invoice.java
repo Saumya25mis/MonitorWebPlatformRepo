@@ -34,7 +34,10 @@ import javax.validation.constraints.Size;
 @Table(name = "invoice")
 @NamedQueries({
     @NamedQuery(name = "Invoice.findByProject", 
-            query = "SELECT i FROM Invoice i where i.project.projectID = :projectID order by i.invoiceDate desc")
+            query = "SELECT i FROM Invoice i where i.project.projectID = :projectID order by i.invoiceDate desc"),
+     @NamedQuery(name = "Invoice.findByCompany", 
+            query = "SELECT i FROM Invoice i where i.company.companyID = :companyID order by i.invoiceDate desc")
+
 
 })
 public class Invoice implements Serializable {

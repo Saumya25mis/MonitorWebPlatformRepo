@@ -264,7 +264,6 @@ public class ListUtil {
         return resp;
     }
 
-
     public ResponseDTO getDiariesByProject(Integer projectID) throws DataException {
         ResponseDTO resp = new ResponseDTO();
         try {
@@ -506,32 +505,44 @@ public class ListUtil {
                 dto.setInvoiceList(new ArrayList<InvoiceDTO>());
                 dto.setBeneficiaryList(new ArrayList<BeneficiaryDTO>());
                 dto.setContractorClaimList(new ArrayList<ContractorClaimDTO>());
+                int benCount = 0, invCount = 0, claimCount = 0, siteCount = 0, photoCount = 0;
                 for (Beneficiary b : bList) {
                     if (Objects.equals(b.getProject().getProjectID(), dto.getProjectID())) {
                         dto.getBeneficiaryList().add(new BeneficiaryDTO(b));
+                        benCount++;
                     }
                 }
                 for (InvoiceDTO inv : invList) {
                     if (Objects.equals(inv.getProject().getProjectID(), dto.getProjectID())) {
                         dto.getInvoiceList().add(inv);
+                        invCount++;
                     }
 
                 }
                 for (ContractorClaimDTO cc : ccList) {
                     if (Objects.equals(cc.getProjectID(), dto.getProjectID())) {
                         dto.getContractorClaimList().add(cc);
+                        claimCount++;
                     }
                 }
                 for (PhotoUpload px : photos) {
                     if (Objects.equals(px.getProject().getProjectID(), dto.getProjectID())) {
                         dto.getPhotoUploadList().add(new PhotoUploadDTO(px));
+                        photoCount++;
                     }
                 }
                 for (ProjectSiteDTO ps : psList) {
                     if (Objects.equals(ps.getProjectID(), dto.getProjectID())) {
                         dto.getProjectSiteList().add(ps);
+                        siteCount++;
                     }
                 }
+                dto.setBeneficiaryCount(benCount);
+                dto.setContractorClaimCount(claimCount);
+                dto.setSiteCount(siteCount);
+                dto.setPhotoCount(photoCount);
+                dto.setInvoiceCount(invCount);
+
                 resp.add(dto);
             }
             log.log(Level.INFO, "company projects found: {0}", resp.size());
@@ -571,15 +582,15 @@ public class ListUtil {
             q = em.createNamedQuery("ProjectSite.findByProject", ProjectSite.class);
             q.setParameter("projectID", projectID);
             List<ProjectSite> projectSiteList = q.getResultList();
-            
+
             q = em.createNamedQuery("ProjectSiteTask.findByProject", ProjectSiteTask.class);
             q.setParameter("projectID", projectID);
             List<ProjectSiteTask> siteTaskList = q.getResultList();
-            
+
             q = em.createNamedQuery("ProjectSiteTaskStatus.findByProject", ProjectSiteTaskStatus.class);
             q.setParameter("projectID", projectID);
             List<ProjectSiteTaskStatus> taskStatusList = q.getResultList();
-                      
+
             for (Beneficiary b : bList) {
                 if (Objects.equals(b.getProject().getProjectID(), dto.getProjectID())) {
                     dto.getBeneficiaryList().add(new BeneficiaryDTO(b));
@@ -596,7 +607,7 @@ public class ListUtil {
             }
             for (ProjectSite ps : projectSiteList) {
                 ProjectSiteDTO psDTO = new ProjectSiteDTO(ps);
-                for (ProjectSiteTask pst: siteTaskList) {
+                for (ProjectSiteTask pst : siteTaskList) {
                     ProjectSiteTaskDTO pstDTO = new ProjectSiteTaskDTO(pst);
                     for (ProjectSiteTaskStatus taskStatus : taskStatusList) {
                         if (Objects.equals(taskStatus.getProjectSiteTask().getProjectSiteTaskID(), pst.getProjectSiteTaskID())) {
@@ -606,6 +617,12 @@ public class ListUtil {
                 }
                 dto.getProjectSiteList().add(psDTO);
             }
+            
+            dto.setBeneficiaryCount(dto.getBeneficiaryList().size());
+            dto.setContractorClaimCount(dto.getContractorClaimList().size());
+            dto.setSiteCount(dto.getProjectSiteList().size());
+            dto.setPhotoCount(dto.getPhotoUploadList().size());
+            dto.setInvoiceCount(dto.getInvoiceList().size());
             
             resp.getProjectList().add(dto);
             log.log(Level.INFO, "project data retrieved");
