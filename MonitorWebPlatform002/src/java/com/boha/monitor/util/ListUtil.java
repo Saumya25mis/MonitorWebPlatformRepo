@@ -110,6 +110,18 @@ public class ListUtil {
         return ps;
     }
 
+    public ResponseDTO getContractorClaimListByProject(Integer projectID) {
+        ResponseDTO resp = new ResponseDTO();
+        Query q = em.createNamedQuery("ContractorClaim.findByProject", ContractorClaim.class);
+        q.setParameter("projectID", projectID);
+        List<ContractorClaim> list = q.getResultList();
+        for (ContractorClaim cc : list) {
+            resp.getContractorClaimList().add(new ContractorClaimDTO(cc));
+        }
+
+        return resp;
+    }
+
     public ResponseDTO getBankList(Integer countryID) {
         ResponseDTO resp = new ResponseDTO();
         Query q = em.createNamedQuery("Bank.findByCountry", Bank.class);
@@ -356,41 +368,40 @@ public class ListUtil {
     }
 
     public List<InvoiceDTO> getInvoicesByCompany(Integer companyID) throws DataException {
-        List<InvoiceDTO> resp = new ArrayList<>();
+        List<InvoiceDTO> invList = new ArrayList<>();
 
         try {
             Query q = em.createNamedQuery("Invoice.findByCompany", Invoice.class);
             q.setParameter("companyID", companyID);
             List<Invoice> pList = q.getResultList();
             for (Invoice cc : pList) {
-                resp.add(new InvoiceDTO(cc));
+                invList.add(new InvoiceDTO(cc));
             }
-            log.log(Level.INFO, "company invoices found: {0}", resp.size());
+            log.log(Level.INFO, "company invoices found: {0}", invList.size());
         } catch (Exception e) {
             log.log(Level.SEVERE, "Failed", e);
             throw new DataException("Failed to get company invoices\n" + getErrorString(e));
         }
 
-        return resp;
+        return invList;
     }
 
     public List<ContractorClaimDTO> getContractorClaimsByCompany(Integer companyID) throws DataException {
-        List<ContractorClaimDTO> resp = new ArrayList<>();
-
+        List<ContractorClaimDTO> ccList = new ArrayList<>();
         try {
             Query q = em.createNamedQuery("ContractorClaim.findByCompany", ContractorClaim.class);
             q.setParameter("companyID", companyID);
             List<ContractorClaim> pList = q.getResultList();
             for (ContractorClaim cc : pList) {
-                resp.add(new ContractorClaimDTO(cc));
+                ccList.add(new ContractorClaimDTO(cc));
             }
-            log.log(Level.INFO, "company ContractorClaims found: {0}", resp.size());
+            log.log(Level.INFO, "company ContractorClaims found: {0}", ccList.size());
         } catch (Exception e) {
             log.log(Level.SEVERE, "Failed", e);
             throw new DataException("Failed to get company ContractorClaims\n" + getErrorString(e));
         }
 
-        return resp;
+        return ccList;
     }
 
     public List<BeneficiaryDTO> getBeneficiariesByCompany(Integer companyID) throws DataException {
@@ -617,13 +628,13 @@ public class ListUtil {
                 }
                 dto.getProjectSiteList().add(psDTO);
             }
-            
+
             dto.setBeneficiaryCount(dto.getBeneficiaryList().size());
             dto.setContractorClaimCount(dto.getContractorClaimList().size());
             dto.setSiteCount(dto.getProjectSiteList().size());
             dto.setPhotoCount(dto.getPhotoUploadList().size());
             dto.setInvoiceCount(dto.getInvoiceList().size());
-            
+
             resp.getProjectList().add(dto);
             log.log(Level.INFO, "project data retrieved");
         } catch (Exception e) {

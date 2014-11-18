@@ -36,8 +36,9 @@ import javax.validation.constraints.Size;
             query = "SELECT c FROM ContractorClaim c where c.project.projectID = :projectID "
                     + "order by c.claimDate desc"),
     @NamedQuery(name = "ContractorClaim.findByCompany", 
-            query = "SELECT c FROM ContractorClaim c WHERE c.project.company.companyID = :companyID  "
-                    + "order by c.claimDate desc"),
+            query = "SELECT c FROM ContractorClaim c "
+                    + "WHERE c.project.company.companyID = :companyID "
+                    + "order by c.project.projectID, c.claimDate desc"),
     @NamedQuery(name = "ContractorClaim.findByClaimNumber", 
             query = "SELECT c FROM ContractorClaim c WHERE c.claimNumber = :claimNumber"),
     @NamedQuery(name = "ContractorClaim.findByClaimDate", 

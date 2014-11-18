@@ -6,10 +6,12 @@
 package com.boha.monitor.util;
 
 import com.boha.monitor.data.ErrorStore;
+import com.boha.monitor.dto.ContractorClaimDTO;
 import com.boha.monitor.dto.transfer.RequestDTO;
 import com.boha.monitor.dto.transfer.ResponseDTO;
 import com.boha.monitor.pdf.PDFDocumentGenerator;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
@@ -82,7 +84,7 @@ public class TrafficCop {
                 //add lookups
                 case RequestDTO.ADD_CITY:
                     resp = dataUtil.addCity(req.getCity());
-                    break;             
+                    break;
                 case RequestDTO.ADD_COMPANY_PROJECT_STATUS_TYPE:
                     resp = dataUtil.addCompanyProjectStatus(req.getProjectStatusType());
                     break;
@@ -141,8 +143,15 @@ public class TrafficCop {
                     break;
                 case RequestDTO.ADD_PROJECT_STATUS_TYPE:
                     break;
-                    
+
                 //lists
+                case RequestDTO.GET_CONTRACTOR_CLAIMS_BY_PROJECT:
+                    resp = listUtil.getContractorClaimListByProject(req.getProjectID());
+                    break;
+                case RequestDTO.GET_CONTRACTOR_CLAIMS_BY_COMPANY:
+                    List<ContractorClaimDTO> list = listUtil.getContractorClaimsByCompany(req.getCompanyID());
+                    resp.setContractorClaimList(list);
+                    break;
                 case RequestDTO.GET_PROJECT_DATA:
                     resp = listUtil.getProjectData(req.getProjectID());
                     break;
