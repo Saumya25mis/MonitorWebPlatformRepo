@@ -307,7 +307,6 @@ public class DataUtil {
 
     }
 
-
     public ResponseDTO addCompanyProjectStatus(ProjectStatusTypeDTO b) throws DataException {
         ResponseDTO resp = new ResponseDTO();
         try {
@@ -476,13 +475,27 @@ public class DataUtil {
         try {
             Project p = em.find(Project.class, cc.getProjectID());
             Task task = em.find(Task.class, cc.getTaskID());
+            Engineer e = em.find(Engineer.class, cc.getEngineerID());
+            ProjectEngineer pe = new ProjectEngineer();
+            try {
+                Query q = em.createNamedQuery("ProjectEngineer.findByProjectEngineer", ProjectEngineer.class);
+                q.setParameter("engineerID", cc.getEngineerID());
+                q.setParameter("projectID", cc.getProjectID());
+                q.setMaxResults(1);
+                pe = (ProjectEngineer) q.getSingleResult();
+            } catch (NoResultException ex) {
+                pe.setProject(p);
+                pe.setEngineer(e);
+                em.persist(pe);
+                em.flush();
+            }
+
             ContractorClaim t = new ContractorClaim();
             t.setClaimDate(cc.getClaimDate());
             t.setClaimNumber(getClaimNumber(cc));
             t.setProject(p);
             t.setTask(task);
-            t.setProjectEngineer(em.find(ProjectEngineer.class, 
-                    cc.getProjectEngineerID()));
+            t.setProjectEngineer(pe);
 
             em.persist(t);
             em.flush();
@@ -494,7 +507,7 @@ public class DataUtil {
             }
             resp.setStatusCode(0);
             resp.setMessage("ContractorClaim added successfully");
-            log.log(Level.OFF, "ContractorClaim registered");
+            log.log(Level.OFF, "#### ContractorClaim registered");
 
         } catch (Exception e) {
             log.log(Level.SEVERE, "Failed", e);
@@ -627,7 +640,7 @@ public class DataUtil {
             em.persist(c);
             em.flush();
             resp.getContractorClaimSiteList().add(new ContractorClaimSiteDTO(c));
-
+             log.log(Level.INFO, "ContractorClaimSite added");
         } catch (Exception e) {
             log.log(Level.SEVERE, "Failed", e);
             throw new DataException("Failed\n" + getErrorString(e));
@@ -662,11 +675,11 @@ public class DataUtil {
             if (site.getBeneficiary() != null) {
                 resp = registerBeneficiary(site.getBeneficiary());
                 if (resp.getStatusCode() == 0) {
-                    resp = connectBeneficiaryToSite(site.getProjectSiteID(), 
+                    resp = connectBeneficiaryToSite(site.getProjectSiteID(),
                             resp.getBeneficiaryList().get(0).getBeneficiaryID());
                     ps = em.find(ProjectSite.class, ps.getProjectSiteID());
                 }
-                
+
             }
             resp.getProjectSiteList().add(new ProjectSiteDTO(ps));
             log.log(Level.OFF, "Project site registered for: {0} - {1} ",
@@ -791,6 +804,7 @@ public class DataUtil {
         }
         return resp;
     }
+
     public ResponseDTO registerBeneficiary(BeneficiaryDTO b) throws DataException {
         ResponseDTO resp = new ResponseDTO();
         try {
@@ -831,8 +845,8 @@ public class DataUtil {
     }
 
     public ResponseDTO connectBeneficiaryToSite(
-        Integer projectSiteID, Integer beneficiaryID) throws DataException {
-       ResponseDTO resp = new ResponseDTO();
+            Integer projectSiteID, Integer beneficiaryID) throws DataException {
+        ResponseDTO resp = new ResponseDTO();
         try {
             Beneficiary p = em.find(Beneficiary.class, beneficiaryID);
             ProjectSite cli = em.find(ProjectSite.class, projectSiteID);
@@ -849,11 +863,12 @@ public class DataUtil {
             log.log(Level.SEVERE, "Failed", e);
             throw new DataException("Failed to update ProjectSite Beneficiary \n" + getErrorString(e));
         }
-        return resp; 
+        return resp;
     }
+
     public ResponseDTO connectEngineerToProject(
-        Integer projectID, Integer engineerID) throws DataException {
-       ResponseDTO resp = new ResponseDTO();
+            Integer projectID, Integer engineerID) throws DataException {
+        ResponseDTO resp = new ResponseDTO();
         try {
             Project p = em.find(Project.class, projectID);
             Engineer eng = em.find(Engineer.class, engineerID);
@@ -876,8 +891,9 @@ public class DataUtil {
             log.log(Level.SEVERE, "Failed", e);
             throw new DataException("Failed to add ProjectEngineer\n" + getErrorString(e));
         }
-        return resp; 
+        return resp;
     }
+
     public ResponseDTO registerEngineer(EngineerDTO b) throws DataException {
         ResponseDTO resp = new ResponseDTO();
         try {
@@ -908,7 +924,7 @@ public class DataUtil {
     }
 
     public ResponseDTO registerCompany(CompanyDTO company,
-            CompanyStaffDTO staff, 
+            CompanyStaffDTO staff,
             double latitude, double longitude,
             ListUtil listUtil) throws DataException {
         log.log(Level.OFF, "####### * attempt to register company");
@@ -944,7 +960,7 @@ public class DataUtil {
             //TODO Remove this line... or think some more
             Generator.generate(em, c.getCompanyID(), latitude, longitude);
             // ***********************************************************
-            
+
             resp = listUtil.getCompanyData(c.getCompanyID(), company.getCountryID());
             resp.setCompanyStaff(new CompanyStaffDTO(cs));
 
@@ -1069,7 +1085,6 @@ public class DataUtil {
         em.flush();
         log.log(Level.INFO, "Initial Tasks added");
     }
-
 
     private void addinitialProjectStatusType(Company c) {
         ProjectStatusType p1 = new ProjectStatusType();

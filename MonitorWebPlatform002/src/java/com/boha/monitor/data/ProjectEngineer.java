@@ -28,7 +28,9 @@ import javax.validation.constraints.NotNull;
 @Table(name = "projectEngineer")
 @NamedQueries({
     @NamedQuery(name = "ProjectEngineer.findByProject", 
-            query = "SELECT p FROM ProjectEngineer p where p.project.projectID = :projectID order by p.engineer.engineerName")
+            query = "SELECT p FROM ProjectEngineer p where p.project.projectID = :projectID order by p.engineer.engineerName"),
+        @NamedQuery(name = "ProjectEngineer.findByProjectEngineer", 
+            query = "SELECT p FROM ProjectEngineer p where p.project.projectID = :projectID and p.engineer.engineerID = :engineerID")
     })
 public class ProjectEngineer implements Serializable {
     @JoinColumn(name = "engineerID", referencedColumnName = "engineerID")
