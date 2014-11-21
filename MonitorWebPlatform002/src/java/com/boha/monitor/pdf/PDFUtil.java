@@ -110,10 +110,28 @@ public class PDFUtil {
         p.getFont().setSize(Float.parseFloat("12.0"));
         return p;
     }
+    public static Phrase setBoldBlack10(Phrase p) {
+        p.getFont().setColor(new BaseColor(0x000000));
+        p.getFont().setStyle(Font.BOLD);
+        p.getFont().setSize(Float.parseFloat("10.0"));
+        return p;
+    }
+    public static Phrase setBoldBlack8(Phrase p) {
+        p.getFont().setColor(new BaseColor(0x000000));
+        p.getFont().setStyle(Font.BOLD);
+        p.getFont().setSize(Float.parseFloat("8.0"));
+        return p;
+    }
     public static Phrase setBlack8(Phrase p) {
         p.getFont().setColor(new BaseColor(0x000000));
         p.getFont().setStyle(Font.NORMAL);
         p.getFont().setSize(Float.parseFloat("8.0"));
+        return p;
+    }
+    public static Phrase setBlack6(Phrase p) {
+        p.getFont().setColor(new BaseColor(0x000000));
+        p.getFont().setStyle(Font.NORMAL);
+        p.getFont().setSize(Float.parseFloat("6.0"));
         return p;
     }
 
@@ -130,19 +148,19 @@ public class PDFUtil {
         return p;
     }
 
-    public static Phrase setSetNormalBlack14(Phrase p) {
+    public static Phrase setBlack14(Phrase p) {
         p.getFont().setColor(new BaseColor(0x000000));
         p.getFont().setStyle(Font.NORMAL);
         p.getFont().setSize(Float.parseFloat("14.0"));
         return p;
     }
-    public static Phrase setSetNormalBlack12(Phrase p) {
+    public static Phrase setBlack12(Phrase p) {
         p.getFont().setColor(new BaseColor(0x000000));
         p.getFont().setStyle(Font.NORMAL);
         p.getFont().setSize(Float.parseFloat("12.0"));
         return p;
     }
-    public static Phrase setSetNormalBlack10(Phrase p) {
+    public static Phrase setBlack10(Phrase p) {
         p.getFont().setColor(new BaseColor(0x000000));
         p.getFont().setStyle(Font.NORMAL);
         p.getFont().setSize(Float.parseFloat("10.0"));
@@ -205,7 +223,19 @@ public class PDFUtil {
     }
 
     public static Paragraph getHeaderTitle16(String title) throws Exception {
-        float size = Float.parseFloat("18.6");
+        float size = Float.parseFloat("16.0");
+        Paragraph par = new Paragraph();
+        par.setSpacingBefore(5);
+        par.setFont(getHelveticaFont());
+        par.setAlignment(Paragraph.ALIGN_CENTER);
+        par.getFont().setStyle(Font.BOLD);
+        par.getFont().setSize(size);
+        par.setSpacingAfter(5);
+        par.add(title);
+        return par;
+    }
+     public static Paragraph getHeaderTitle14(String title) throws Exception {
+        float size = Float.parseFloat("14");
         Paragraph par = new Paragraph();
         par.setSpacingBefore(5);
         par.setFont(getHelveticaFont());

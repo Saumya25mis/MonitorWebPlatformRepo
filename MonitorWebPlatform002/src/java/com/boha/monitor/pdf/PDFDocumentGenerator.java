@@ -7,6 +7,7 @@ package com.boha.monitor.pdf;
 
 import com.boha.monitor.data.Client;
 import com.boha.monitor.data.ContractorClaim;
+import com.boha.monitor.data.ContractorClaimSite;
 import com.boha.monitor.data.Invoice;
 import com.boha.monitor.dto.transfer.ResponseDTO;
 import com.boha.monitor.util.PDFException;
@@ -38,6 +39,7 @@ import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 /**
  *
@@ -66,7 +68,7 @@ public class PDFDocumentGenerator {
 //            addHeader(document, inv.getClient());
 //			addPeriodHeader(document, className, startDate, endDate, list);
 //			addPeriodBody(document, list);
-            document.add(new Phrase("*** End of Period Attendance Report ***"));
+//            document.add(new Phrase("*** End of Period Attendance Report ***"));
             document.close();
             resp.setMessage("Invoice PDF generated");
         } catch (BadElementException ex) {
@@ -84,6 +86,10 @@ public class PDFDocumentGenerator {
             Integer contractorClaimID) throws PDFException {
         ResponseDTO resp = new ResponseDTO();
         ContractorClaim cc = em.find(ContractorClaim.class, contractorClaimID);
+        Query q = em.createNamedQuery("ContractorClaimSite.findByClaim",ContractorClaimSite.class);
+        q.setParameter("contractorClaimID", contractorClaimID);
+        cc.setContractorClaimSiteList(q.getResultList());
+        log.log(Level.OFF, "Sites found for claim: {0}", cc.getContractorClaimSiteList().size());
         Document document = new Document(PageSize.A4, 10, 10, 10, 10);
         
         File file = PDFUtil.getContractorClaimFile(cc);
@@ -96,7 +102,7 @@ public class PDFDocumentGenerator {
            
             document.open();
             document.add(ContractorClaimFactory.getMainPage(cc));          
-            document.add(new Phrase("*** End of Contractor Claim: " + cc.getClaimNumber()));
+            //document.add(new Phrase("*** End of Contractor Claim: " + cc.getClaimNumber()));
             document.close();
             resp.setFileString(Utilities.readFileToString(file));
             resp.setMessage("ContractorClaim PDF generated: " + file.getAbsolutePath());

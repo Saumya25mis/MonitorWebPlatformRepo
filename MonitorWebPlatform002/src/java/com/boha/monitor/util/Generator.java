@@ -15,28 +15,35 @@ import com.boha.monitor.data.Task;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionManagement;
+import javax.ejb.TransactionManagementType;
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 /**
  *
  * @author aubreyM
  */
+@Stateless
+@TransactionManagement(TransactionManagementType.CONTAINER)
 public class Generator {
-
-    public static void generate(EntityManager em, Integer companyID,
-            double latitude, double longitude) {
-        
+ @PersistenceContext
+    EntityManager em;
+    public  void generate(Integer companyID) {
         Company c = em.find(Company.class, companyID);
-        generateClients(em, c, latitude, longitude);
+        generateClients(c);
     }
 
-    private static void generateClients(EntityManager em, Company c,
-            double latitude, double longitude) {
-            
+    private  void generateClients(Company c) {       
+        double latitude = 0, longitude = 0;
+                       
         Client cl = new Client();
+        latitude = -29.1183490;
+        longitude = 26.2249199;
         cl.setCompany(c);
-        cl.setClientName("Company Client #1");
+        cl.setClientName("Free State Human Settlements");
         cl.setDateRegistered(new Date());
         cl.setEmail("client1.info@gmail.com");
         cl.setAddress("206 Stanza Bopape Street, Regents Building, Pretoria");
@@ -44,10 +51,13 @@ public class Generator {
         cl.setCellphone("082 355 8273");
         em.persist(cl);
         em.flush();
-        generateProjects(em, c, cl, latitude, longitude);
+        generateProjects(c, cl, latitude, longitude);
+        //
         Client cm = new Client();
+        latitude = -26.1450825;
+        longitude = 28.1527777;
         cm.setCompany(c);
-        cm.setClientName("Company Client #2");
+        cm.setClientName("Gauteng Human Settlements");
         cm.setDateRegistered(new Date());
         cm.setEmail("client2.info@gmail.com");
         cm.setAddress("1340 Sehume Street, 10th Floor, Peace Building, Pretoria");
@@ -55,10 +65,13 @@ public class Generator {
         cm.setCellphone("071 987 7765");
         em.persist(cm);
         em.flush();
-        generateProjects(em, c, cm, latitude, longitude);
+        generateProjects(c, cm, latitude, longitude);
+        //
         Client ck = new Client();
+        latitude = -23.891581;
+        longitude = 29.4496000;
         ck.setCompany(c);
-        ck.setClientName("Company Client #3");
+        ck.setClientName("Limpopo Human Settlements");
         ck.setDateRegistered(new Date());
         ck.setEmail("client3.info@gmail.com");
         ck.setAddress("Absa Court, 309 Stanza Bopape Street, Pretoria");
@@ -66,11 +79,10 @@ public class Generator {
         ck.setCellphone("072 886 8000");
         em.persist(ck);
         em.flush();
-        generateProjects(em, c, ck, latitude, longitude);
+        generateProjects(c, ck, latitude, longitude);
     }
 
-    private static void generateProjects(EntityManager em, 
-            Company c, Client client, 
+    private  void generateProjects(Company c, Client client, 
             double latitude, double longitude) {
 
         Project p = new Project();
@@ -81,7 +93,7 @@ public class Generator {
         p.setProjectName("Project Name One");
         em.persist(p);
         em.flush();
-        generateProjectSites(em, p, latitude, longitude);
+        generateProjectSites(p, latitude, longitude);
         //
         Project p2 = new Project();
         p2.setClient(client);
@@ -91,7 +103,7 @@ public class Generator {
         p2.setProjectName("Project Name Two");
         em.persist(p2);
         em.flush();
-        generateProjectSites(em, p2, latitude, longitude);
+        generateProjectSites(p2, latitude, longitude);
         //
         Project p3 = new Project();
         p3.setClient(client);
@@ -101,7 +113,7 @@ public class Generator {
         p3.setProjectName("Project Name Three");
         em.persist(p3);
         em.flush();
-        generateProjectSites(em, p3, latitude, longitude);
+        generateProjectSites(p3, latitude, longitude);
         //
         Project p4 = new Project();
         p4.setClient(client);
@@ -111,16 +123,16 @@ public class Generator {
         p4.setProjectName("Project Name Four");
         em.persist(p4);
         em.flush();
-        generateProjectSites(em, p4, latitude, longitude);
+        generateProjectSites(p4, latitude, longitude);
         //
 
     }
 
-    private static void generateProjectSites(EntityManager em, Project p,
+    private  void generateProjectSites(Project p,
             double latitude, double longitude) {
-        int count = random.nextInt(20);
-        if (count < 10) {
-            count = 10;
+        int count = random.nextInt(100);
+        if (count < 50) {
+            count = 50;
         }
         for (int i = 0; i < count; i++) {
             ProjectSite site = new ProjectSite();
@@ -134,19 +146,20 @@ public class Generator {
             b.setiDNumber("" + (System.currentTimeMillis() / 100));
             em.persist(b);
             em.flush();
+            //
             site.setBeneficiary(b);
             site.setLatitude(getRandomPoint(latitude));
             site.setLongitude(getRandomPoint(longitude));
             site.setAccuracy(1000f);
-            site.setProjectSiteName("Building Site #"+System.currentTimeMillis());
+            site.setProjectSiteName("Site #"+System.currentTimeMillis());
             em.persist(site);
             System.out.println(site.getProjectSiteName() + " generated");
-            generateProjectSiteTasks(em, site);
+            generateProjectSiteTasks(site);
 
         }
     }
 
-    private static void generateProjectSiteTasks(EntityManager em, ProjectSite site) {
+    private  void generateProjectSiteTasks(ProjectSite site) {
         Query q = em.createNamedQuery("Task.findByCompany", Task.class);
         q.setParameter("companyID", site.getProject().getCompany().getCompanyID());
         List<Task> tasks =q.getResultList();
@@ -160,7 +173,7 @@ public class Generator {
         }
     }
    
-    private static double getRandomPoint(double seed) {
+    private  double getRandomPoint(double seed) {
         double point = 0.00;
         int meters = random.nextInt(10000);
         if (meters < 500) {
@@ -176,8 +189,8 @@ public class Generator {
 
         return point;
     }
-    private static Random random = new Random(System.currentTimeMillis());
-    public static String[] firstNames = {
+    private  Random random = new Random(System.currentTimeMillis());
+    public  String[] firstNames = {
         "Benjamin", "Johnny", "Tom", "Sam", "Thomas", "Zeke", "John",
         "Tommy", "Peter", "Paul", "Forrest", "Bennie", "Mark", "MacDonald",
         "McLean", "Chris", "Frank", "Mark", "Ronald", "Ronnie", "Blake",
@@ -195,7 +208,7 @@ public class Generator {
         "Michael", "Tyler", "Ethan", "Jonathan", "Robert", "Roberto", "Gabriel",
         "Chase", "Logan", "Hudson", "Julian", "Aaron", "Severiano", "Owen"
     };
-    public static String[] lastNames = {
+    public  String[] lastNames = {
         "Armstrong", "Maringa", "Scott", "Oosthuizen", "Els", "Schwartzel",
         "Botha", "Smythe", "Baker", "Watson", "Jobs", "Player", "Locke",
         "Black", "Charles", "Grainger", "Jones", "Brown", "Peterson", "Mickels",
@@ -215,7 +228,7 @@ public class Generator {
 
     };
 
-    public static String[] girls = {
+    public  String[] girls = {
         "Mary", "Louise", "Brenda", "Samantha", "Ivanka", "Petra", "Maria",
         "Sue", "Thabitah", "Henrietta", "Fannie", "Bernande", "Linda", "Catherine",
         "Lee", "Christina", "Denise", "Yvonne", "Isabella", "Mia", "Blake",

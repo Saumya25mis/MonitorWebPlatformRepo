@@ -962,10 +962,7 @@ public class DataUtil {
             addinitialProjectStatusType(c);
             addInitialTasks(c);
             addInitialProject(c);
-            // ***********************************************************
-            //TODO Remove this line... or think some more
-            Generator.generate(em, c.getCompanyID(), latitude, longitude);
-            // ***********************************************************
+            
 
             resp = listUtil.getCompanyData(c.getCompanyID(), company.getCountryID());
             resp.setCompanyStaff(new CompanyStaffDTO(cs));
