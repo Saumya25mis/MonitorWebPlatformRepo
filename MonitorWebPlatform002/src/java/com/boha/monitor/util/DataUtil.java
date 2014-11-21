@@ -60,6 +60,7 @@ import com.boha.monitor.dto.TaskStatusDTO;
 import com.boha.monitor.dto.TownshipDTO;
 import com.boha.monitor.dto.transfer.PhotoUploadDTO;
 import com.boha.monitor.dto.transfer.ResponseDTO;
+import com.boha.monitor.pdf.PDFDocumentGenerator;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -470,7 +471,8 @@ public class DataUtil {
 
     }
 
-    public ResponseDTO addContractorClaim(ContractorClaimDTO cc) throws DataException {
+    public ResponseDTO addContractorClaim(ContractorClaimDTO cc,
+            PDFDocumentGenerator documentGenerator) throws DataException {
         ResponseDTO resp = new ResponseDTO();
         try {
             Project p = em.find(Project.class, cc.getProjectID());
@@ -500,11 +502,14 @@ public class DataUtil {
             em.persist(t);
             em.flush();
             ContractorClaimDTO dto = new ContractorClaimDTO(t);
+            dto.setContractorClaimSiteList(new ArrayList<ContractorClaimSiteDTO>());
             if (cc.getContractorClaimSiteList() != null) {
                 for (ContractorClaimSiteDTO site : cc.getContractorClaimSiteList()) {
+                    site.setContractorClaimID(dto.getContractorClaimID());
                     dto.getContractorClaimSiteList().add(addContractorClaimSite(site).getContractorClaimSiteList().get(0));
                 }
             }
+            resp.setFileString(documentGenerator.getContractorClaimPDF(dto.getContractorClaimID()).getFileString());
             resp.setStatusCode(0);
             resp.setMessage("ContractorClaim added successfully");
             log.log(Level.OFF, "#### ContractorClaim registered");
@@ -639,6 +644,7 @@ public class DataUtil {
             c.setProjectSite(em.find(ProjectSite.class, site.getProjectSite().getProjectSiteID()));
             em.persist(c);
             em.flush();
+            
             resp.getContractorClaimSiteList().add(new ContractorClaimSiteDTO(c));
              log.log(Level.INFO, "ContractorClaimSite added");
         } catch (Exception e) {

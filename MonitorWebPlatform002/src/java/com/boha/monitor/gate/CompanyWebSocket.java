@@ -50,7 +50,7 @@ public class CompanyWebSocket {
     PDFDocumentGenerator pdfDocumentGenerator;
 
     static final String SOURCE = "CompanyWebSocket";
-    //TODO - clean up expired sessions!!!!
+    //TODO - clean up expired sessions!!!! - how?
     public static final Set<Session> peers
             = Collections.synchronizedSet(new HashSet<Session>());
 

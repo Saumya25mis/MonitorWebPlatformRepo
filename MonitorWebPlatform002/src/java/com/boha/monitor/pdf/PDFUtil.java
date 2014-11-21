@@ -98,24 +98,54 @@ public class PDFUtil {
         return p;
     }
 
-    public static Phrase setBoldBlack(Phrase p) {
+    public static Phrase setBoldBlack14(Phrase p) {
         p.getFont().setColor(new BaseColor(0x000000));
         p.getFont().setStyle(Font.BOLD);
         p.getFont().setSize(Float.parseFloat("14.0"));
         return p;
     }
+    public static Phrase setBoldBlack12(Phrase p) {
+        p.getFont().setColor(new BaseColor(0x000000));
+        p.getFont().setStyle(Font.BOLD);
+        p.getFont().setSize(Float.parseFloat("12.0"));
+        return p;
+    }
+    public static Phrase setBlack8(Phrase p) {
+        p.getFont().setColor(new BaseColor(0x000000));
+        p.getFont().setStyle(Font.NORMAL);
+        p.getFont().setSize(Float.parseFloat("8.0"));
+        return p;
+    }
 
-    public static Phrase setBoldRed(Phrase p) {
+    public static Phrase setBoldRed14(Phrase p) {
         p.getFont().setColor(new BaseColor(0xff0000));
         p.getFont().setStyle(Font.BOLD);
         p.getFont().setSize(Float.parseFloat("14.0"));
         return p;
     }
+    public static Phrase setBoldRed12(Phrase p) {
+        p.getFont().setColor(new BaseColor(0xff0000));
+        p.getFont().setStyle(Font.BOLD);
+        p.getFont().setSize(Float.parseFloat("12.0"));
+        return p;
+    }
 
-    public static Phrase setSetNormalBlack(Phrase p) {
+    public static Phrase setSetNormalBlack14(Phrase p) {
         p.getFont().setColor(new BaseColor(0x000000));
         p.getFont().setStyle(Font.NORMAL);
         p.getFont().setSize(Float.parseFloat("14.0"));
+        return p;
+    }
+    public static Phrase setSetNormalBlack12(Phrase p) {
+        p.getFont().setColor(new BaseColor(0x000000));
+        p.getFont().setStyle(Font.NORMAL);
+        p.getFont().setSize(Float.parseFloat("12.0"));
+        return p;
+    }
+    public static Phrase setSetNormalBlack10(Phrase p) {
+        p.getFont().setColor(new BaseColor(0x000000));
+        p.getFont().setStyle(Font.NORMAL);
+        p.getFont().setSize(Float.parseFloat("10.0"));
         return p;
     }
 

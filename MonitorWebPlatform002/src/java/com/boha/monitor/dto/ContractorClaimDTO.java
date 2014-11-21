@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.boha.monitor.dto;
 
 import com.boha.monitor.data.*;
@@ -16,8 +15,9 @@ import java.util.List;
  * @author aubreyM
  */
 public class ContractorClaimDTO implements Serializable {
+
     private static final long serialVersionUID = 1L;
-    private Integer contractorClaimID, projectEngineerID, 
+    private Integer contractorClaimID, projectEngineerID,
             engineerID, projectID, taskID;
     private String claimNumber, projectName, engineerName, taskName;
     private Date claimDate;
@@ -30,9 +30,12 @@ public class ContractorClaimDTO implements Serializable {
         this.contractorClaimID = a.getContractorClaimID();
         claimNumber = a.getClaimNumber();
         claimDate = a.getClaimDate();
-        projectEngineerID = a.getProjectEngineer().getProjectEngineerID();
-        engineerID = a.getProjectEngineer().getEngineer().getEngineerID();
-        engineerName = a.getProjectEngineer().getEngineer().getEngineerName();
+        ProjectEngineer pe = a.getProjectEngineer();
+        if (pe != null) {
+            projectEngineerID = pe.getProjectEngineerID();
+            engineerID = pe.getEngineer().getEngineerID();
+            engineerName = pe.getEngineer().getEngineerName();
+        }
         projectID = a.getProject().getProjectID();
         projectName = a.getProject().getProjectName();
         taskID = a.getTask().getTaskID();
@@ -127,7 +130,6 @@ public class ContractorClaimDTO implements Serializable {
         this.taskName = taskName;
     }
 
-    
     @Override
     public int hashCode() {
         int hash = 0;
@@ -152,5 +154,5 @@ public class ContractorClaimDTO implements Serializable {
     public String toString() {
         return "com.boha.monitor.data.ContractorClaim[ contractorClaimID=" + contractorClaimID + " ]";
     }
-    
+
 }

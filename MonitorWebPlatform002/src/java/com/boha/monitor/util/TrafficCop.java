@@ -45,7 +45,7 @@ public class TrafficCop {
                     resp = dataUtil.addBankDetails(req.getBankDetail());
                     break;
                 case RequestDTO.ADD_CONTRACTOR_CLAIM:
-                    resp = dataUtil.addContractorClaim(req.getContractorClaim());
+                    resp = dataUtil.addContractorClaim(req.getContractorClaim(),pdfDocumentGenerator);
                     break;
                 case RequestDTO.ADD_CONTRACTOR_CLAIM_SITE:
                     resp = dataUtil.addContractorClaimSite(req.getContractorClaimSite());

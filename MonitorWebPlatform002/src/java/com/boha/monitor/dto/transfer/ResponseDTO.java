@@ -43,7 +43,7 @@ import java.util.List;
 public class ResponseDTO {
 
     private Integer statusCode;
-    private String message, sessionID, GCMRegistrationID;
+    private String message, sessionID, GCMRegistrationID, fileString;
     private List<String> taskImageFileNameList;
     private List<BankDTO> bankList;
     private List<String> siteImageFileNameList;
@@ -306,6 +306,14 @@ public class ResponseDTO {
 
     public void setProjectStatusTypeList(List<ProjectStatusTypeDTO> projectStatusTypeList) {
         this.projectStatusTypeList = projectStatusTypeList;
+    }
+
+    public String getFileString() {
+        return fileString;
+    }
+
+    public void setFileString(String fileString) {
+        this.fileString = fileString;
     }
 
     public List<ProjectSiteDTO> getProjectSiteList() {
