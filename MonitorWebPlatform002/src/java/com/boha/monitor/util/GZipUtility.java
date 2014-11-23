@@ -11,7 +11,9 @@ package com.boha.monitor.util;
 import com.boha.monitor.dto.transfer.ResponseDTO;
 import com.google.gson.Gson;
 import java.io.*;
+import java.math.BigDecimal;
 import java.nio.ByteBuffer;
+import java.text.DecimalFormat;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,12 +34,18 @@ public class GZipUtility {
             logger.log(Level.INFO, "Creating byteBuffer, No need to zip this, size: {0}", json.length());
         } else {
             bytes = getZippedBytes(json);
-            logger.log(Level.INFO, "Creating byteBuffer, unzipped size: {0} packed size: {1}", new Object[]{json.length(), bytes.length});
+            logger.log(Level.INFO, "Creating zipped byteBuffer, unpacked size: {0} packed size: {1}", 
+                    new Object[]{getKilobytes(json.length()), getKilobytes(bytes.length)});
         }
         ByteBuffer buf = ByteBuffer.wrap(bytes);
         return buf;
     }
 
+    public static String getKilobytes(int bytes) {
+        BigDecimal m = new BigDecimal(bytes).divide(new BigDecimal(1024));      
+        return df.format(m.doubleValue())  + " KB";
+    }
+    static final DecimalFormat df = new DecimalFormat("###,###,###,###,###,###,###,##0.00");
     public static byte[] getZippedBytes(String json)
             throws IOException {
 

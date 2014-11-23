@@ -101,7 +101,7 @@ public class PDFDocumentGenerator {
             
            
             document.open();
-            document.add(ContractorClaimFactory.getMainPage(cc));          
+//            document.add(ContractorClaimFactory.getMainPage(cc));          
             //document.add(new Phrase("*** End of Contractor Claim: " + cc.getClaimNumber()));
             document.close();
             resp.setFileString(Utilities.readFileToString(file));

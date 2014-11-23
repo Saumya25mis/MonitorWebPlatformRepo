@@ -60,6 +60,7 @@ import com.boha.monitor.dto.TaskStatusDTO;
 import com.boha.monitor.dto.TownshipDTO;
 import com.boha.monitor.dto.transfer.PhotoUploadDTO;
 import com.boha.monitor.dto.transfer.ResponseDTO;
+import com.boha.monitor.pdf.ContractorClaimPDFFactory;
 import com.boha.monitor.pdf.PDFDocumentGenerator;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -472,7 +473,7 @@ public class DataUtil {
     }
 
     public ResponseDTO addContractorClaim(ContractorClaimDTO cc,
-            PDFDocumentGenerator documentGenerator) throws DataException {
+         ContractorClaimPDFFactory claimFactory) throws DataException {
         ResponseDTO resp = new ResponseDTO();
         try {
             Project p = em.find(Project.class, cc.getProjectID());
@@ -506,10 +507,13 @@ public class DataUtil {
             if (cc.getContractorClaimSiteList() != null) {
                 for (ContractorClaimSiteDTO site : cc.getContractorClaimSiteList()) {
                     site.setContractorClaimID(dto.getContractorClaimID());
-                    dto.getContractorClaimSiteList().add(addContractorClaimSite(site).getContractorClaimSiteList().get(0));
+                    addContractorClaimSite(site);
                 }
             }
-            resp.setFileString(documentGenerator.getContractorClaimPDF(dto.getContractorClaimID()).getFileString());
+            claimFactory.getContractorClaimPDF(dto.getContractorClaimID());
+            dto.setSiteCount(cc.getContractorClaimSiteList().size());
+            resp.setContractorClaimList(new ArrayList<ContractorClaimDTO>());
+            resp.getContractorClaimList().add(dto);
             resp.setStatusCode(0);
             resp.setMessage("ContractorClaim added successfully");
             log.log(Level.OFF, "#### ContractorClaim registered");

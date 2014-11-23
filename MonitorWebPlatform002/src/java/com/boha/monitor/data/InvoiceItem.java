@@ -27,8 +27,10 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "invoiceItem")
 @NamedQueries({
-    @NamedQuery(name = "InvoiceItem.findAll", 
-            query = "SELECT i FROM InvoiceItem i"),
+    @NamedQuery(name = "InvoiceItem.findByProject", 
+            query = "SELECT i FROM InvoiceItem i where i.projectSite.project.projectID = :projectID"),
+    @NamedQuery(name = "InvoiceItem.findByInvoice", 
+            query = "SELECT i FROM InvoiceItem i where i.invoice.invoiceID = :invoiceID"),
        })
 public class InvoiceItem implements Serializable {
    

@@ -7,6 +7,7 @@ package com.boha.monitor.gate;
 
 import com.boha.monitor.dto.transfer.RequestDTO;
 import com.boha.monitor.dto.transfer.ResponseDTO;
+import com.boha.monitor.pdf.ContractorClaimPDFFactory;
 import com.boha.monitor.pdf.PDFDocumentGenerator;
 import com.boha.monitor.util.DataUtil;
 import com.boha.monitor.util.GZipUtility;
@@ -47,7 +48,7 @@ public class ProjectWebSocket {
     @EJB
     TrafficCop trafficCop;
     @EJB
-    PDFDocumentGenerator pdfDocumentGenerator;
+    ContractorClaimPDFFactory claimFactory;
     static final String SOURCE = "ProjectWebSocket";
     //TODO - clean up expired sessions!!!!
     public static final Set<Session> peers
@@ -62,7 +63,7 @@ public class ProjectWebSocket {
 
                 RequestDTO dto = gson.fromJson(message, RequestDTO.class);
                 resp = trafficCop.processRequest(dto, dataUtil, 
-                        listUtil, pdfDocumentGenerator);
+                        listUtil, claimFactory);
 
            
             bb = GZipUtility.getZippedResponse(resp);

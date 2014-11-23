@@ -39,9 +39,11 @@ import javax.validation.constraints.Size;
             query = "SELECT p FROM Project p where p.company.companyID = :companyID and p.projectName = :projectName"),
     @NamedQuery(name = "Project.findByCompany", 
             query = "SELECT p FROM Project p WHERE p.company.companyID = :companyID order by p.dateRegistered desc"),
-    @NamedQuery(name = "Project.findByProjectName", query = "SELECT p FROM Project p WHERE p.projectName = :projectName"),
-    @NamedQuery(name = "Project.findByDateRegistered", query = "SELECT p FROM Project p WHERE p.dateRegistered = :dateRegistered"),
-    @NamedQuery(name = "Project.findByCompleteFlag", query = "SELECT p FROM Project p WHERE p.completeFlag = :completeFlag")})
+    @NamedQuery(name = "Project.findActiveProjectsByCompany", 
+            query = "SELECT p FROM Project p WHERE p.company.companyID = :companyID and (p.completeFlag is null) "
+                    + "order by p.dateRegistered desc"),
+    
+})
 public class Project implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "project")
     private List<Beneficiary> beneficiaryList;

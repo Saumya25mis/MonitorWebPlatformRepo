@@ -20,8 +20,8 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author aubreyM
  */
-@WebServlet(name = "GeneratorServlet", urlPatterns = {"/generate"})
-public class GeneratorServlet extends HttpServlet {
+@WebServlet(name = "GenServlet", urlPatterns = {"/gen"})
+public class GenServlet extends HttpServlet {
 
     @EJB
     Generator generator;
@@ -40,16 +40,15 @@ public class GeneratorServlet extends HttpServlet {
         String id = request.getParameter("companyID");
         Integer companyID = Integer.parseInt(id);
         generator.generate(companyID);
-        
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Generator</title>");            
+            out.println("<title>GenServlet</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet GeneratorServlet has completed data generation at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet GenServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }

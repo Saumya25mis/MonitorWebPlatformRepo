@@ -33,17 +33,20 @@ import javax.validation.constraints.Size;
 @NamedQueries({
     @NamedQuery(name = "PhotoUpload.findProjectPhotosByCompany", 
             query = "SELECT p FROM PhotoUpload p "
-                    + "where p.project is not null and p.company.companyID = :companyID order by p.dateTaken desc"),
+                    + "where p.project is not null and p.company.companyID = :companyID and (p.project.completeFlag is null)  order by p.dateTaken desc"),
     
     @NamedQuery(name = "PhotoUpload.findProjectSitePhotosByCompany", 
-            query = "SELECT p FROM PhotoUpload p WHERE p.projectSite is not null "
+            query = "SELECT p FROM PhotoUpload p WHERE p.projectSite is not null  and (p.project.completeFlag is null) "
                     + "and p.company.companyID = :companyID "
+                    + "order by p.dateTaken desc"),
+    @NamedQuery(name = "PhotoUpload.findProjectSitePhotosByProject", 
+            query = "SELECT p FROM PhotoUpload p WHERE p.projectSite.project.projectID = :projectID  and (p.project.completeFlag is null)"
                     + "order by p.dateTaken desc"),
     @NamedQuery(name = "PhotoUpload.findProjectSitePhotos", 
             query = "SELECT p FROM PhotoUpload p WHERE p.projectSite.projectSiteID = :projectSiteID "
                     + "order by p.dateTaken desc"),
     @NamedQuery(name = "PhotoUpload.findProjectPhotos", 
-            query = "SELECT p FROM PhotoUpload p WHERE p.project.projectID = :projectID "
+            query = "SELECT p FROM PhotoUpload p WHERE p.project.projectID = :projectID  and (p.project.completeFlag is null)"
                     + "order by p.dateTaken desc"),
     @NamedQuery(name = "PhotoUpload.findAllProjectPhotos", 
             query = "SELECT p FROM PhotoUpload p WHERE "
@@ -56,6 +59,8 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "PhotoUpload.findSiteTaskPhotosByCompany", 
             query = "SELECT p FROM PhotoUpload p WHERE p.projectSiteTask is not null "
                     + "and p.company.companyID = :companyID order by p.dateTaken desc"),
+    @NamedQuery(name = "PhotoUpload.findSiteTaskPhotosByProject", 
+            query = "SELECT p FROM PhotoUpload p WHERE p.projectSiteTask is not null and p.project.projectID = :projectID order by p.dateTaken desc"),
     @NamedQuery(name = "PhotoUpload.findByDateTaken", 
             query = "SELECT p FROM PhotoUpload p WHERE p.dateTaken = :dateTaken"),
    })

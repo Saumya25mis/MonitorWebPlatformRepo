@@ -97,6 +97,24 @@ public class PDFUtil {
         p.getFont().setSize(Float.parseFloat("14.0"));
         return p;
     }
+    public static Phrase setBoldBlue12(Phrase p) {
+        p.getFont().setColor(new BaseColor(0x0000ff));
+        p.getFont().setStyle(Font.BOLD);
+        p.getFont().setSize(Float.parseFloat("12.0"));
+        return p;
+    }
+    public static Phrase setBoldBlue10(Phrase p) {
+        p.getFont().setColor(new BaseColor(0x0000ff));
+        p.getFont().setStyle(Font.BOLD);
+        p.getFont().setSize(Float.parseFloat("10.0"));
+        return p;
+    }
+    public static Phrase setBoldBlue8(Phrase p) {
+        p.getFont().setColor(new BaseColor(0x0000ff));
+        p.getFont().setStyle(Font.BOLD);
+        p.getFont().setSize(Float.parseFloat("8.0"));
+        return p;
+    }
 
     public static Phrase setBoldBlack14(Phrase p) {
         p.getFont().setColor(new BaseColor(0x000000));
@@ -189,9 +207,9 @@ public class PDFUtil {
     public static PdfPTable getTable(int columns, int[] widths) throws Exception {
         PdfPTable table = new PdfPTable(columns);
         table.setWidths(widths);
-        table.setSpacingBefore(5.0f);
+        table.setSpacingBefore(0.0f);
         table.getDefaultCell().setPadding(5.0f);
-        table.setSpacingAfter(10.0f);
+        table.setSpacingAfter(0.0f);
 
         return table;
     }
@@ -225,7 +243,7 @@ public class PDFUtil {
     public static Paragraph getHeaderTitle16(String title) throws Exception {
         float size = Float.parseFloat("16.0");
         Paragraph par = new Paragraph();
-        par.setSpacingBefore(5);
+        par.setSpacingBefore(50);
         par.setFont(getHelveticaFont());
         par.setAlignment(Paragraph.ALIGN_CENTER);
         par.getFont().setStyle(Font.BOLD);

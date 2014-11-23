@@ -30,8 +30,8 @@ public class ProjectDTO implements Serializable {
     private List<ProjectSiteDTO> projectSiteList = new ArrayList<>();
     private List<PhotoUploadDTO> photoUploadList = new ArrayList<>();
     private List<BeneficiaryDTO> beneficiaryList = new ArrayList<>();
-    private List<InvoiceDTO> invoiceList;
-    private List<ContractorClaimDTO> contractorClaimList;
+    private List<InvoiceDTO> invoiceList = new ArrayList<>();
+    private List<ContractorClaimDTO> contractorClaimList = new ArrayList<>();
 
     public ProjectDTO() {
     }

@@ -9,6 +9,7 @@ import com.boha.monitor.data.ErrorStore;
 import com.boha.monitor.dto.ContractorClaimDTO;
 import com.boha.monitor.dto.transfer.RequestDTO;
 import com.boha.monitor.dto.transfer.ResponseDTO;
+import com.boha.monitor.pdf.ContractorClaimPDFFactory;
 import com.boha.monitor.pdf.PDFDocumentGenerator;
 import java.util.Date;
 import java.util.List;
@@ -27,16 +28,16 @@ public class TrafficCop {
 
     public ResponseDTO processRequest(RequestDTO req,
             DataUtil dataUtil, ListUtil listUtil,
-            PDFDocumentGenerator pdfDocumentGenerator) {
+            ContractorClaimPDFFactory claimFactory) {
         ResponseDTO resp = new ResponseDTO();
         try {
             switch (req.getRequestType()) {
                 //claim * invoice
                 case RequestDTO.GENERATE_CONTRACTOR_CLAIM_PDF:
-                    resp = pdfDocumentGenerator.getContractorClaimPDF(req.getContractorClaimID());
+                    resp = claimFactory.getContractorClaimPDF(req.getContractorClaimID());
                     break;
                 case RequestDTO.GENERATE_INVOICE_PDF:
-                    resp = pdfDocumentGenerator.getInvoicePDF(req.getInvoiceID());
+                    //resp = pdfDocumentGenerator.getInvoicePDF(req.getInvoiceID());
                     break;
                 case RequestDTO.ADD_BANK:
                     resp = dataUtil.addBank(req.getBank());
@@ -45,7 +46,7 @@ public class TrafficCop {
                     resp = dataUtil.addBankDetails(req.getBankDetail());
                     break;
                 case RequestDTO.ADD_CONTRACTOR_CLAIM:
-                    resp = dataUtil.addContractorClaim(req.getContractorClaim(),pdfDocumentGenerator);
+                    resp = dataUtil.addContractorClaim(req.getContractorClaim(),claimFactory);
                     break;
                 case RequestDTO.ADD_CONTRACTOR_CLAIM_SITE:
                     resp = dataUtil.addContractorClaimSite(req.getContractorClaimSite());
@@ -145,6 +146,9 @@ public class TrafficCop {
                     break;
 
                 //lists
+                case RequestDTO.GET_PROJECT_SITE_DATA:
+                    resp = listUtil.getSitesByProject(req.getProjectID());
+                    break;
                 case RequestDTO.GET_CONTRACTOR_CLAIMS_BY_PROJECT:
                     resp = listUtil.getContractorClaimListByProject(req.getProjectID());
                     break;

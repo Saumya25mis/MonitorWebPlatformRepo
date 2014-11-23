@@ -15,6 +15,8 @@ import com.boha.monitor.data.Task;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
@@ -29,16 +31,18 @@ import javax.persistence.Query;
 @Stateless
 @TransactionManagement(TransactionManagementType.CONTAINER)
 public class Generator {
- @PersistenceContext
+
+    @PersistenceContext
     EntityManager em;
-    public  void generate(Integer companyID) {
+
+    public void generate(Integer companyID) {
         Company c = em.find(Company.class, companyID);
         generateClients(c);
     }
 
-    private  void generateClients(Company c) {       
+    private void generateClients(Company c) {
         double latitude = 0, longitude = 0;
-                       
+
         Client cl = new Client();
         latitude = -29.1183490;
         longitude = 26.2249199;
@@ -51,6 +55,7 @@ public class Generator {
         cl.setCellphone("082 355 8273");
         em.persist(cl);
         em.flush();
+        System.out.println("Client generated: " + cl.getClientName());
         generateProjects(c, cl, latitude, longitude);
         //
         Client cm = new Client();
@@ -65,6 +70,7 @@ public class Generator {
         cm.setCellphone("071 987 7765");
         em.persist(cm);
         em.flush();
+        System.out.println("Client generated: " + cm.getClientName());
         generateProjects(c, cm, latitude, longitude);
         //
         Client ck = new Client();
@@ -79,56 +85,77 @@ public class Generator {
         ck.setCellphone("072 886 8000");
         em.persist(ck);
         em.flush();
+        System.out.println("Client generated: " + ck.getClientName());
         generateProjects(c, ck, latitude, longitude);
     }
 
-    private  void generateProjects(Company c, Client client, 
+    private void generateProjects(Company c, Client client,
             double latitude, double longitude) {
 
-        Project p = new Project();
-        p.setClient(client);
-        p.setCompany(c);
-        p.setDateRegistered(new Date());
-        p.setDescription("Detailed description of project. Includes location, project sites and type of project");
-        p.setProjectName("Project Name One");
-        em.persist(p);
-        em.flush();
-        generateProjectSites(p, latitude, longitude);
+        try {
+            Project p = new Project();
+            p.setClient(client);
+            p.setCompany(c);
+            p.setDateRegistered(new Date());
+            p.setDescription("Detailed description of project. Includes location, project sites and type of project");
+            p.setProjectName("RDP Housing Project " + random.nextInt(1000));
+            em.persist(p);
+            em.flush();
+            generateProjectSites(c, p, latitude, longitude);
+            System.out.println("----------------------------------- Project has been generated OK: " + p.getProjectName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         //
-        Project p2 = new Project();
-        p2.setClient(client);
-        p2.setCompany(c);
-        p2.setDateRegistered(new Date());
-        p2.setDescription("Detailed description of project. Includes location, project sites and type of project");
-        p2.setProjectName("Project Name Two");
-        em.persist(p2);
-        em.flush();
-        generateProjectSites(p2, latitude, longitude);
+        try {
+            Project p2 = new Project();
+            p2.setClient(client);
+            p2.setCompany(c);
+            p2.setDateRegistered(new Date());
+            p2.setDescription("Detailed description of project. Includes location, project sites and type of project");
+            p2.setProjectName("RDP Housing Project " + random.nextInt(1000));
+            em.persist(p2);
+            em.flush();
+            generateProjectSites(c, p2, latitude, longitude);
+            System.out.println("Project has been generated OK: " + p2.getProjectName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         //
-        Project p3 = new Project();
-        p3.setClient(client);
-        p3.setCompany(c);
-        p3.setDateRegistered(new Date());
-        p3.setDescription("Detailed description of project. Includes location, project sites and type of project");
-        p3.setProjectName("Project Name Three");
-        em.persist(p3);
-        em.flush();
-        generateProjectSites(p3, latitude, longitude);
+        try {
+            Project p3 = new Project();
+            p3.setClient(client);
+            p3.setCompany(c);
+            p3.setDateRegistered(new Date());
+            p3.setDescription("Detailed description of project. Includes location, project sites and type of project");
+            p3.setProjectName("RDP Housing Project " + random.nextInt(1000));
+            em.persist(p3);
+            em.flush();
+            generateProjectSites(c, p3, latitude, longitude);
+            System.out.println("Project has been generated OK: " + p3.getProjectName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         //
-        Project p4 = new Project();
-        p4.setClient(client);
-        p4.setCompany(c);
-        p4.setDateRegistered(new Date());
-        p4.setDescription("Detailed description of project. Includes location, project sites and type of project");
-        p4.setProjectName("Project Name Four");
-        em.persist(p4);
-        em.flush();
-        generateProjectSites(p4, latitude, longitude);
+        try {
+            Project p4 = new Project();
+            p4.setClient(client);
+            p4.setCompany(c);
+            p4.setDateRegistered(new Date());
+            p4.setDescription("Detailed description of project. Includes location, project sites and type of project");
+            p4.setProjectName("RDP Housing Project " + random.nextInt(1000));
+            em.persist(p4);
+            em.flush();
+            generateProjectSites(c, p4, latitude, longitude);
+            System.out.println("Project has been generated OK: " + p4.getProjectName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         //
 
     }
 
-    private  void generateProjectSites(Project p,
+    private void generateProjectSites(Company c, Project p,
             double latitude, double longitude) {
         int count = random.nextInt(100);
         if (count < 50) {
@@ -137,32 +164,107 @@ public class Generator {
         for (int i = 0; i < count; i++) {
             ProjectSite site = new ProjectSite();
             site.setProject(p);
-            site.setStandErfNumber("Stand #" + (System.currentTimeMillis() / 1001) + "-" + count);
+            site.setStandErfNumber("Stand " + getIDNumber());
             Beneficiary b = new Beneficiary();
-            b.setFirstName(firstNames[random.nextInt(firstNames.length - 1)]);
+            b.setCompany(c);
+            b.setProject(p);
+            int xx = random.nextInt(10);
+
+            if (xx > 4) {
+                b.setFirstName(firstNames[random.nextInt(girls.length - 1)]);
+            } else {
+                b.setFirstName(firstNames[random.nextInt(firstNames.length - 1)]);
+            }
+
             b.setLastName(lastNames[random.nextInt(lastNames.length - 1)]);
             b.setAmountAuthorized(100000.00);
             b.setAmountPaid(0.00);
-            b.setiDNumber("" + (System.currentTimeMillis() / 100));
+            b.setiDNumber(getIDNumber());
             em.persist(b);
             em.flush();
             //
             site.setBeneficiary(b);
-            site.setLatitude(getRandomPoint(latitude));
-            site.setLongitude(getRandomPoint(longitude));
+            Location loc = getRandomPoint(latitude, longitude);
+            site.setLatitude(loc.latitude);
+            site.setLongitude(loc.longitude);
             site.setAccuracy(1000f);
-            site.setProjectSiteName("Site #"+System.currentTimeMillis());
+            site.setProjectSiteName(getSiteName(c, p));
             em.persist(site);
-            System.out.println(site.getProjectSiteName() + " generated");
+            em.flush();
+            System.out.println("Site generated: " + site.getProjectSiteName()
+                    + " bennie: " + b.getFirstName() + " " + b.getLastName());
             generateProjectSiteTasks(site);
+            
 
         }
     }
 
-    private  void generateProjectSiteTasks(ProjectSite site) {
+    Random random = new Random(System.currentTimeMillis());
+
+    private String getIDNumber() {
+        StringBuilder sb = new StringBuilder();
+        int year = random.nextInt(99);
+        if (year < 80) {
+            year = 80;
+        }
+        int mth = random.nextInt(12);
+        if (mth < 1) {
+            mth = 1;
+        }
+        int day = random.nextInt(28);
+        if (day == 0) {
+            day = 1;
+        }
+
+        sb.append(year);
+        if (mth < 10) {
+            sb.append("0").append(mth);
+        } else {
+            sb.append(mth);
+        }
+        if (day < 10) {
+            sb.append("0").append(day);
+        } else {
+            sb.append(day);
+        }
+
+        int ss = random.nextInt(99);
+        if (ss < 10) {
+            sb.append("0").append(ss);
+        } else {
+            sb.append(ss);
+        }
+        int s2 = random.nextInt(99);
+        if (s2 < 10) {
+            sb.append("0").append(s2);
+        } else {
+            sb.append(s2);
+        }
+        int s3 = random.nextInt(99);
+        if (s3 < 10) {
+            sb.append("0").append(s3);
+        } else {
+            sb.append(s3);
+        }
+
+        return sb.toString();
+    }
+
+    private String getSiteName(Company c, Project p) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(c.getCompanyID()).append(p.getProjectID());
+        sb.append(random.nextInt(99));
+        sb.append(random.nextInt(99));
+        sb.append(random.nextInt(99));
+        sb.append(random.nextInt(99));
+
+        return sb.toString();
+    }
+
+    private void generateProjectSiteTasks(ProjectSite site) {
         Query q = em.createNamedQuery("Task.findByCompany", Task.class);
         q.setParameter("companyID", site.getProject().getCompany().getCompanyID());
-        List<Task> tasks =q.getResultList();
+        List<Task> tasks = q.getResultList();
         for (Task task : tasks) {
             ProjectSiteTask ss = new ProjectSiteTask();
             ss.setDateRegistered(new Date());
@@ -170,27 +272,31 @@ public class Generator {
             ss.setTask(task);
             em.persist(ss);
             em.flush();
+            System.out.println("***** site task added: " + task.getTaskName());
         }
     }
-   
-    private  double getRandomPoint(double seed) {
-        double point = 0.00;
-        int meters = random.nextInt(10000);
-        if (meters < 500) {
-            meters = 500 * random.nextInt(20);
-        }
 
-        int sw = random.nextInt(100);
-        if (sw < 50) {
-            point = seed + (meters * 1009);
-        } else {
-            point = seed - (meters * 1009);
-        }
+    private Location getRandomPoint(double lat, double lon) {
 
-        return point;
+        int R = 6378137; //offsets in meters
+        int dn = random.nextInt(2000);
+        int de = random.nextInt(2000); //Coordinate offsets in radians
+        double dLat = dn / R;
+        double dLon = de / (R * Math.cos(Math.PI * lat / 180)); //OffsetPosition, decimal degrees
+        lat = lat + dLat * 180 / Math.PI;
+        lon = lon + dLon * 180 / Math.PI;
+        System.out.println("+++ Random lat: " + lat + " lon: " + lon);
+        return new Location(lat, lon);
     }
-    private  Random random = new Random(System.currentTimeMillis());
-    public  String[] firstNames = {
+    
+    private class Location {
+        double latitude, longitude;
+        public Location(double lat, double lon) {
+            latitude = lat;
+            longitude = lon;
+        }
+    }
+    public String[] firstNames = {
         "Benjamin", "Johnny", "Tom", "Sam", "Thomas", "Zeke", "John",
         "Tommy", "Peter", "Paul", "Forrest", "Bennie", "Mark", "MacDonald",
         "McLean", "Chris", "Frank", "Mark", "Ronald", "Ronnie", "Blake",
@@ -208,27 +314,20 @@ public class Generator {
         "Michael", "Tyler", "Ethan", "Jonathan", "Robert", "Roberto", "Gabriel",
         "Chase", "Logan", "Hudson", "Julian", "Aaron", "Severiano", "Owen"
     };
-    public  String[] lastNames = {
-        "Armstrong", "Maringa", "Scott", "Oosthuizen", "Els", "Schwartzel",
-        "Botha", "Smythe", "Baker", "Watson", "Jobs", "Player", "Locke",
-        "Black", "Charles", "Grainger", "Jones", "Brown", "Peterson", "Mickels",
-        "Pollack", "Peyton", "Williams", "Zuckerberg", "Samuels", "Hernandez", "Johnson", "Gray",
-        "Davidson", "Lombardi", "Smith", "Jackson", "Chauke", "Morris", "Peterson", "Paulson",
-        "Remington", "Priest", "Church", "Charles", "Burmingham", "Naidoo", "Bala", "Renoir", "Switzer",
-        "Dennison", "Johnson", "Jerram", "Adams", "Wilson", "Hepburn", "Giggs", "Stephens",
-        "Dafoe", "Daggett", "Dahlberg", "Dangerfield", "Danziger", "Daniels", "Smith", "Smythe",
-        "Calandrino", "Cadwell", "Callaghan", "California", "Villegas", "Camilleri",
-        "Hackney", "Hackman", "Hackett", "Haagensen", "Hackworth", "Hacker",
-        "Hachmeister", "Hack", "Duff", "Haigwood", "Wood", "Woods", "Mickelson",
-        "Taglieri", "Tanaka", "Tailor", "Talarico", "Talbot", "Tafoya", "Tartaglia",
-        "Gaffney", "Gagliardi", "Gaillard", "Galaska", "Dufner", "Gambetta",
-        "Fabiani", "Factor", "Fahlstrom", "Fagin", "Faldo", "Fariello", "Packwood",
-        "Pacino", "Paganelli", "Page", "Pagani", "Palinski", "Rafferty", "Rabinovitz",
-        "Radcliffe", "Raindford", "Rainsford"
+    public String[] lastNames = {
+        "Molefe", "Maringa", "Sikhakhane", "Hanayani", "Moerane", "Sithole",
+        "Botha", "Khuzwayo", "Ntini", "Mayeza", "Nkosi", "Chauke", "Baloyi",
+        "Black", "Qubeka", "Maisela", "Kgongoane", "Machaka", "Shikwambane", "Mosheou",
+        "Maseko", "Montwedi", "Sibiya", "Sono", "Samuels", "Gondwe", "Maluleke", "Mathebula",
+        "Hlungwane", "Tsotetsi", "Marule", "Moreledi", "Ngwenya", "Chukudu", "Mbhazima", "Shilowa",
+        "Mathe", "Mofua", "Mosiane", "Lwembula", "Kuse", "Dube", "Bala", "Ramakatsa", "Mantsoe",
+        "Molantoa", "Gonyogo", "Nete", "Kalane", "Makitane", "Khampepe", "Mbele", "Nthako",
+        "Nyapoza", "Mlambo", "Ranchebe", "Maketekete", "Phahlane", "Mothekhe", "Tolo", "Moholoholo",
+        "Fuzile"
 
     };
 
-    public  String[] girls = {
+    public String[] girls = {
         "Mary", "Louise", "Brenda", "Samantha", "Ivanka", "Petra", "Maria",
         "Sue", "Thabitah", "Henrietta", "Fannie", "Bernande", "Linda", "Catherine",
         "Lee", "Christina", "Denise", "Yvonne", "Isabella", "Mia", "Blake",
