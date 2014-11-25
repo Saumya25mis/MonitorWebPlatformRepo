@@ -32,12 +32,9 @@ public class ProjectDTO implements Serializable {
     private List<BeneficiaryDTO> beneficiaryList = new ArrayList<>();
     private List<InvoiceDTO> invoiceList = new ArrayList<>();
     private List<ContractorClaimDTO> contractorClaimList = new ArrayList<>();
+    private List<TaskPriceDTO> taskPriceList = new ArrayList<>();
 
     public ProjectDTO() {
-    }
-
-    public ProjectDTO(Integer projectID) {
-        this.projectID = projectID;
     }
 
     public ProjectDTO(Project a) {
@@ -52,6 +49,14 @@ public class ProjectDTO implements Serializable {
             this.clientName = a.getClient().getClientName();
         }
         
+    }
+
+    public List<TaskPriceDTO> getTaskPriceList() {
+        return taskPriceList;
+    }
+
+    public void setTaskPriceList(List<TaskPriceDTO> taskPriceList) {
+        this.taskPriceList = taskPriceList;
     }
 
     public Integer getInvoiceCount() {

@@ -31,6 +31,7 @@ import com.boha.monitor.dto.ProjectSiteTaskStatusDTO;
 import com.boha.monitor.dto.ProjectStatusTypeDTO;
 import com.boha.monitor.dto.ProvinceDTO;
 import com.boha.monitor.dto.TaskDTO;
+import com.boha.monitor.dto.TaskPriceDTO;
 import com.boha.monitor.dto.TaskStatusDTO;
 import com.boha.monitor.dto.TownshipDTO;
 import java.util.ArrayList;
@@ -46,6 +47,7 @@ public class ResponseDTO {
     private String message, sessionID, GCMRegistrationID, fileString;
     private List<String> taskImageFileNameList;
     private List<BankDTO> bankList;
+    private List<TaskPriceDTO> taskPriceList;
     private List<String> siteImageFileNameList;
     private List<PhotoUploadDTO> photoUploadList = new ArrayList<>();
     private List<TaskStatusDTO> taskStatusList = new ArrayList<>();
@@ -78,6 +80,15 @@ public class ResponseDTO {
     private CompanyDTO company;
     private CompanyStaffDTO companyStaff;
 
+    public List<TaskPriceDTO> getTaskPriceList() {
+        return taskPriceList;
+    }
+
+    public void setTaskPriceList(List<TaskPriceDTO> taskPriceList) {
+        this.taskPriceList = taskPriceList;
+    }
+
+    
     public List<EngineerDTO> getEngineerList() {
         return engineerList;
     }

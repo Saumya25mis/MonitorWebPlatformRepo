@@ -48,10 +48,11 @@ public class InvoicePDFFactory {
     @PersistenceContext
     EntityManager em;
 
-    public ResponseDTO getInvoiceClaimPDF(
-            Integer invoiceID) throws PDFException {
+    public ResponseDTO getInvoicePDF(
+            Integer contractorClaimID, Integer invoiceID) throws PDFException {
         ResponseDTO resp = new ResponseDTO();
         Invoice invoice = em.find(Invoice.class, invoiceID);
+        
         Query q = em.createNamedQuery("InvoiceItem.findByInvoice", InvoiceItem.class);
         q.setParameter("invoiceID", invoiceID);
         invoice.setInvoiceItemList(q.getResultList());

@@ -32,6 +32,7 @@ import com.boha.monitor.data.ProjectSiteTaskStatus;
 import com.boha.monitor.data.ProjectStatusType;
 import com.boha.monitor.data.Province;
 import com.boha.monitor.data.Task;
+import com.boha.monitor.data.TaskPrice;
 import com.boha.monitor.data.TaskStatus;
 import com.boha.monitor.data.Township;
 import com.boha.monitor.dto.BankDTO;
@@ -56,6 +57,7 @@ import com.boha.monitor.dto.ProjectSiteTaskDTO;
 import com.boha.monitor.dto.ProjectSiteTaskStatusDTO;
 import com.boha.monitor.dto.ProjectStatusTypeDTO;
 import com.boha.monitor.dto.TaskDTO;
+import com.boha.monitor.dto.TaskPriceDTO;
 import com.boha.monitor.dto.TaskStatusDTO;
 import com.boha.monitor.dto.TownshipDTO;
 import com.boha.monitor.dto.transfer.PhotoUploadDTO;
@@ -514,6 +516,7 @@ public class DataUtil {
             dto.setSiteCount(cc.getContractorClaimSiteList().size());
             resp.setContractorClaimList(new ArrayList<ContractorClaimDTO>());
             resp.getContractorClaimList().add(dto);
+            //
             resp.setStatusCode(0);
             resp.setMessage("ContractorClaim added successfully");
             log.log(Level.OFF, "#### ContractorClaim registered");
@@ -573,6 +576,34 @@ public class DataUtil {
 
     }
 
+    public ResponseDTO addTaskPrice(TaskPriceDTO price) throws DataException {
+        ResponseDTO resp = new ResponseDTO();
+        try {
+            TaskPrice t = new TaskPrice();
+            t.setTask(em.find(Task.class, price.getTaskID()));
+            if (price.getProjectID() != null) {
+                t.setProject(em.find(Project.class, price.getProjectID()));
+            }
+            t.setPrice(price.getPrice());
+            t.setStartDate(new Date());           
+
+            em.persist(t);
+            em.flush();
+            resp.setTaskPriceList(new ArrayList<TaskPriceDTO>());
+            resp.getTaskPriceList().add(new TaskPriceDTO(t));
+            
+            resp.setStatusCode(0);
+            resp.setMessage("TaskPrice added successfully");
+            log.log(Level.OFF, "TaskPrice added");
+
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "Failed", e);
+            throw new DataException("Failed to add TaskPrice\n" + getErrorString(e));
+        }
+
+        return resp;
+
+    }
     public ResponseDTO addInvoice(InvoiceDTO invoice) throws DataException {
         ResponseDTO resp = new ResponseDTO();
         try {
@@ -594,6 +625,9 @@ public class DataUtil {
                     dto.getInvoiceItemList().add(addInvoiceItem(i).getInvoiceItemList().get(0));
                 }
             }
+            resp.setInvoiceList(new ArrayList());
+            resp.getInvoiceList().add(new InvoiceDTO(t));
+            
             resp.setStatusCode(0);
             resp.setMessage("Invoice added successfully");
             log.log(Level.OFF, "Invoice added");

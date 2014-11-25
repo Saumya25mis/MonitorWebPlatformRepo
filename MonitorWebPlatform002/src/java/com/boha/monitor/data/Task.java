@@ -37,6 +37,9 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "Task.findByTaskID", query = "SELECT t FROM Task t WHERE t.taskID = :taskID"),
     @NamedQuery(name = "Task.findByTaskName", query = "SELECT t FROM Task t WHERE t.taskName = :taskName")})
 public class Task implements Serializable {
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "task")
+    
+    private List<TaskPrice> taskPriceList;
     @OneToMany(mappedBy = "task")
     private List<ContractorClaim> contractorClaimList;
     @Basic(optional = false)
@@ -159,6 +162,14 @@ public class Task implements Serializable {
 
     public void setContractorClaimList(List<ContractorClaim> contractorClaimList) {
         this.contractorClaimList = contractorClaimList;
+    }
+
+    public List<TaskPrice> getTaskPriceList() {
+        return taskPriceList;
+    }
+
+    public void setTaskPriceList(List<TaskPrice> taskPriceList) {
+        this.taskPriceList = taskPriceList;
     }
     
 }

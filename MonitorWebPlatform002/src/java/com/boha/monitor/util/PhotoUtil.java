@@ -137,12 +137,12 @@ public class PhotoUtil {
                     resp.setStatusCode(0);
                     resp.setMessage("Photo downloaded from mobile app ");
                     //add database
-                    System.out.println("filepath: " + imageFile.getAbsolutePath());
+                    System.out.println("photo filepath: " + imageFile.getAbsolutePath());
                     //create uri
                     int index = imageFile.getAbsolutePath().indexOf("monitor_images");
                     if (index > -1) {
                         String uri = imageFile.getAbsolutePath().substring(index);
-                        System.out.println("uri: " + uri);
+                        System.out.println("photo uri: " + uri);
                         dto.setUri(uri);
                     }
                     dto.setDateUploaded(new Date());

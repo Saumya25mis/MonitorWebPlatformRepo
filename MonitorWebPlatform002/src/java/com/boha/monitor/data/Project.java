@@ -45,6 +45,8 @@ import javax.validation.constraints.Size;
     
 })
 public class Project implements Serializable {
+    @OneToMany(mappedBy = "project")
+    private List<TaskPrice> taskPriceList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "project")
     private List<Beneficiary> beneficiaryList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "project")
@@ -226,6 +228,14 @@ public class Project implements Serializable {
 
     public void setBeneficiaryList(List<Beneficiary> beneficiaryList) {
         this.beneficiaryList = beneficiaryList;
+    }
+
+    public List<TaskPrice> getTaskPriceList() {
+        return taskPriceList;
+    }
+
+    public void setTaskPriceList(List<TaskPrice> taskPriceList) {
+        this.taskPriceList = taskPriceList;
     }
 
     

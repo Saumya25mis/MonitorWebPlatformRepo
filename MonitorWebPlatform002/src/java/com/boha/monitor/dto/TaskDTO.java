@@ -8,6 +8,8 @@ package com.boha.monitor.dto;
 
 import com.boha.monitor.data.Task;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -18,6 +20,7 @@ public class TaskDTO implements Serializable {
     private Integer taskID, companyID, taskNumber;
     private String taskName;
     private String description;
+    private List<TaskPriceDTO> taskPriceList = new ArrayList<>();
 
     public TaskDTO() {
     }
@@ -31,11 +34,15 @@ public class TaskDTO implements Serializable {
         
     }
 
-    public TaskDTO(Integer taskID, String taskName, String description) {
-        this.taskID = taskID;
-        this.taskName = taskName;
-        this.description = description;
+    public List<TaskPriceDTO> getTaskPriceList() {
+        return taskPriceList;
     }
+
+    public void setTaskPriceList(List<TaskPriceDTO> taskPriceList) {
+        this.taskPriceList = taskPriceList;
+    }
+
+  
 
     public Integer getCompanyID() {
         return companyID;
