@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.boha.monitor.dto;
 
 import com.boha.monitor.data.CompanyStaff;
@@ -17,6 +16,7 @@ import java.util.Date;
  * @author aubreyM
  */
 public class ProjectSiteTaskStatusDTO implements Serializable {
+
     private static final long serialVersionUID = 1L;
     private Integer projectSiteTaskStatusID;
     private Date dateUpdated;
@@ -39,9 +39,12 @@ public class ProjectSiteTaskStatusDTO implements Serializable {
         this.taskStatus = new TaskStatusDTO(a.getTaskStatus());
         this.dateUpdated = a.getDateUpdated();
         this.statusDate = a.getStatusDate();
-        CompanyStaff cs = a.getCompanyStaff();
-        this.companyStaffID = cs.getCompanyStaffID();
-        this.staffName = cs.getFirstName() + " " + cs.getLastName();
+        
+        if (a.getCompanyStaff() != null) {
+            CompanyStaff cs = a.getCompanyStaff();
+            this.companyStaffID = cs.getCompanyStaffID();
+            this.staffName = cs.getFirstName() + " " + cs.getLastName();
+        }
     }
 
     public TaskDTO getTask() {
@@ -52,7 +55,6 @@ public class ProjectSiteTaskStatusDTO implements Serializable {
         this.task = task;
     }
 
-    
     public Integer getCompanyStaffID() {
         return companyStaffID;
     }
@@ -101,8 +103,6 @@ public class ProjectSiteTaskStatusDTO implements Serializable {
         this.staffName = staffName;
     }
 
-   
-
     public Integer getProjectSiteTaskStatusID() {
         return projectSiteTaskStatusID;
     }
@@ -127,10 +127,9 @@ public class ProjectSiteTaskStatusDTO implements Serializable {
         this.projectSiteTaskID = projectSiteTaskID;
     }
 
- 
     @Override
     public String toString() {
         return "com.boha.monitor.data.ProjectSiteTaskStatus[ projectSiteTaskStatusID=" + projectSiteTaskStatusID + " ]";
     }
-    
+
 }

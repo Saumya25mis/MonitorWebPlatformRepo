@@ -626,7 +626,7 @@ public class ListUtil {
             Project p = em.find(Project.class, projectID);
             ProjectDTO project = new ProjectDTO(p);
             project.setTaskPriceList(getTaskPriceListByProject(projectID));
-            
+
             Query q = em.createNamedQuery("PhotoUpload.findProjectPhotos", PhotoUpload.class);
             q.setParameter(
                     "projectID", projectID);
@@ -684,6 +684,8 @@ public class ListUtil {
             q.setParameter(
                     "projectID", projectID);
             List<ProjectSiteTask> siteTaskList = q.getResultList();
+            log.log(Level.WARNING,
+                    "---------- site task status: {0}", siteTaskList.size());
 
             q = em.createNamedQuery("ProjectSiteTaskStatus.findByProject", ProjectSiteTaskStatus.class);
             q.setParameter(
@@ -724,24 +726,28 @@ public class ListUtil {
             log.log(Level.WARNING,
                     "###---------- proj photos done: {0}", project.getPhotoUploadList().size());
             for (ProjectSite ps : projectSiteList) {
-                ProjectSiteDTO psDTO = new ProjectSiteDTO(ps);
-                psDTO.setPhotoUploadList(new ArrayList<PhotoUploadDTO>());
+                ProjectSiteDTO projectSiteDTO = new ProjectSiteDTO(ps);
+                projectSiteDTO.setPhotoUploadList(new ArrayList<PhotoUploadDTO>());
                 for (PhotoUpload up : photos) {
                     if (up.getProjectSite() != null) {
-                        if (Objects.equals(psDTO.getProjectSiteID(), up.getProjectSite().getProjectSiteID())) {
-                            psDTO.getPhotoUploadList().add(new PhotoUploadDTO(up));
+                        if (Objects.equals(projectSiteDTO.getProjectSiteID(), up.getProjectSite().getProjectSiteID())) {
+                            projectSiteDTO.getPhotoUploadList().add(new PhotoUploadDTO(up));
                         }
                     }
                 }
                 for (ProjectSiteTask pst : siteTaskList) {
-                    ProjectSiteTaskDTO pstDTO = new ProjectSiteTaskDTO(pst);
-                    for (ProjectSiteTaskStatus taskStatus : taskStatusList) {
-                        if (Objects.equals(taskStatus.getProjectSiteTask().getProjectSiteTaskID(), pst.getProjectSiteTaskID())) {
-                            pstDTO.getProjectSiteTaskStatusList().add(new ProjectSiteTaskStatusDTO(taskStatus));
+                    if (Objects.equals(ps.getProjectSiteID(), pst.getProjectSite().getProjectSiteID())) {
+                        ProjectSiteTaskDTO pstDTO = new ProjectSiteTaskDTO(pst);
+                        pstDTO.setProjectSiteTaskStatusList(new ArrayList<ProjectSiteTaskStatusDTO>());
+                        for (ProjectSiteTaskStatus taskStatus : taskStatusList) {
+                            if (Objects.equals(taskStatus.getProjectSiteTask().getProjectSiteTaskID(), pst.getProjectSiteTaskID())) {
+                                // pstDTO.getProjectSiteTaskStatusList().add(new ProjectSiteTaskStatusDTO(taskStatus));
+                            }
                         }
+                        projectSiteDTO.getProjectSiteTaskList().add(pstDTO);
                     }
                 }
-                project.getProjectSiteList().add(psDTO);
+                project.getProjectSiteList().add(projectSiteDTO);
             }
 
             log.log(Level.WARNING,

@@ -11,7 +11,11 @@ import com.boha.monitor.data.Company;
 import com.boha.monitor.data.Project;
 import com.boha.monitor.data.ProjectSite;
 import com.boha.monitor.data.ProjectSiteTask;
+import com.boha.monitor.data.ProjectSiteTaskStatus;
 import com.boha.monitor.data.Task;
+import com.boha.monitor.data.TaskStatus;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -21,6 +25,7 @@ import javax.ejb.TransactionManagementType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import org.joda.time.DateTime;
 
 /**
  *
@@ -301,7 +306,6 @@ public class Generator {
             lon = lon - dLon;
         }
 
-        
         return new Location(lat, lon);
     }
 
@@ -320,6 +324,69 @@ public class Generator {
         }
         em.flush();
     }
+
+    public void generateStatus(Integer companyID) {
+        Query q = em.createNamedQuery("ProjectSiteTask.findByCompany", ProjectSiteTask.class);
+        q.setParameter("companyID", companyID);
+        List<ProjectSiteTask> list = q.getResultList();
+        for (ProjectSiteTask task : list) {
+            generateTaskStatus(companyID, task);
+        }
+        em.flush();
+    }
+
+    private void generateTaskStatus(Integer companyID, ProjectSiteTask task) {
+
+        List<Date> list = getDates();
+        for (Date date : list) {
+            ProjectSiteTaskStatus s = new ProjectSiteTaskStatus();
+            s.setDateUpdated(new Date());
+            s.setProjectSiteTask(task);
+            s.setStatusDate(date);
+            s.setTaskStatus(getRandomTaskStatus(companyID));
+            em.persist(s);
+
+        }
+
+    }
+
+    private List<Date> getDates() {
+        DateTime dt = DateTime.now();
+        List<Date> list = new ArrayList<>();
+        int count = random.nextInt(14);
+        if (count == 0) {
+            count = 7;
+        }
+        for (int i = 0; i < count; i++) {
+            DateTime s = dt.minusDays(i + 1);
+            list.add(s.toDate());
+        }
+        System.out.println("###### generated dates: " + list.size());
+        return list;
+    }
+
+    private TaskStatus getRandomTaskStatus(Integer companyID) {
+        if (taskStatusList == null) {
+            Query q = em.createNamedQuery("TaskStatus.findByCompany", TaskStatus.class);
+            q.setParameter("companyID", companyID);
+            taskStatusList = q.getResultList();
+            System.out.println("TaskStatus found: " + taskStatusList.size());
+        }
+
+        try {
+            int index = random.nextInt(taskStatusList.size() - 1);
+            if (index == 0) {
+                index = 1;
+            }
+
+            return taskStatusList.get(index);
+        } catch (Exception e) {
+            return taskStatusList.get(1);
+        }
+
+    }
+    List<TaskStatus> taskStatusList;
+
     private class Location {
 
         double latitude, longitude;

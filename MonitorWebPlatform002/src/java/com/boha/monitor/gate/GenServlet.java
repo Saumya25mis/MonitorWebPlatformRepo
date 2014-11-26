@@ -39,10 +39,16 @@ public class GenServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         String id = request.getParameter("companyID");
         String update = request.getParameter("update");
+        
         Integer companyID = Integer.parseInt(id);
 
         if (update != null) {
+            if (update.equalsIgnoreCase("location")) {
             generator.updateLocationForTestSites(companyID);
+            }
+            if (update.equalsIgnoreCase("status")) {
+                generator.generateStatus(companyID);
+            }
         } else {
             generator.generate(companyID);
         }
