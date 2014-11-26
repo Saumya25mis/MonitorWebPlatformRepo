@@ -133,6 +133,7 @@ public class ListUtil {
         Query q = em.createNamedQuery("Bank.findByCountry", Bank.class);
         q.setParameter("countryID", countryID);
         List<Bank> list = q.getResultList();
+        resp.setBankList(new ArrayList<BankDTO>());
         for (Bank bank : list) {
             resp.getBankList().add(new BankDTO(bank));
         }
@@ -145,6 +146,7 @@ public class ListUtil {
         Query q = em.createNamedQuery("PhotoUpload.findProjectPhotos", PhotoUpload.class);
         q.setParameter("projectID", projectID);
         List<PhotoUpload> list = q.getResultList();
+        resp.setPhotoUploadList(new ArrayList<PhotoUploadDTO>());
         for (PhotoUpload cp : list) {
             resp.getPhotoUploadList().add(new PhotoUploadDTO(cp));
         }
@@ -157,6 +159,7 @@ public class ListUtil {
         Query q = em.createNamedQuery("PhotoUpload.findAllProjectPhotos", PhotoUpload.class);
         q.setParameter("projectID", projectID);
         List<PhotoUpload> list = q.getResultList();
+        resp.setPhotoUploadList(new ArrayList<PhotoUploadDTO>());
         for (PhotoUpload cp : list) {
             resp.getPhotoUploadList().add(new PhotoUploadDTO(cp));
         }

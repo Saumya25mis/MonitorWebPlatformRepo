@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.boha.monitor.gate;
 
 import com.boha.monitor.util.Generator;
@@ -25,6 +24,7 @@ public class GenServlet extends HttpServlet {
 
     @EJB
     Generator generator;
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -38,14 +38,20 @@ public class GenServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         String id = request.getParameter("companyID");
+        String update = request.getParameter("update");
         Integer companyID = Integer.parseInt(id);
-        generator.generate(companyID);
+
+        if (update != null) {
+            generator.updateLocationForTestSites(companyID);
+        } else {
+            generator.generate(companyID);
+        }
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>GenServlet</title>");            
+            out.println("<title>GenServlet</title>");
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet GenServlet at " + request.getContextPath() + "</h1>");

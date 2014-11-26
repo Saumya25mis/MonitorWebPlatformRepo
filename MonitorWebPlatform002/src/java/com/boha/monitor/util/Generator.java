@@ -15,8 +15,6 @@ import com.boha.monitor.data.Task;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
@@ -80,7 +78,7 @@ public class Generator {
         ck.setClientName("Limpopo Human Settlements");
         ck.setDateRegistered(new Date());
         ck.setEmail("client3.info@gmail.com");
-        ck.setAddress("Absa Court, 309 Stanza Bopape Street, Pretoria");
+        ck.setAddress("Absa Court, 309 Stanza Bopape Street, Polokwane");
         ck.setPostCode("0034");
         ck.setCellphone("072 886 8000");
         em.persist(ck);
@@ -194,7 +192,6 @@ public class Generator {
             System.out.println("Site generated: " + site.getProjectSiteName()
                     + " bennie: " + b.getFirstName() + " " + b.getLastName());
             generateProjectSiteTasks(site);
-            
 
         }
     }
@@ -275,22 +272,58 @@ public class Generator {
             System.out.println("***** site task added: " + task.getTaskName());
         }
     }
+    public static final double COORD_PER_KM = 9500 / 1E6;
 
     private Location getRandomPoint(double lat, double lon) {
 
-        int R = 6378137; //offsets in meters
-        int dn = random.nextInt(2000);
-        int de = random.nextInt(2000); //Coordinate offsets in radians
-        double dLat = dn / R;
-        double dLon = de / (R * Math.cos(Math.PI * lat / 180)); //OffsetPosition, decimal degrees
-        lat = lat + dLat * 180 / Math.PI;
-        lon = lon + dLon * 180 / Math.PI;
-        System.out.println("+++ Random lat: " + lat + " lon: " + lon);
+        int dn = random.nextInt(10);
+        if (dn < 2) {
+            dn = random.nextInt(10);
+        }
+        int de = random.nextInt(10);
+        if (de < 2) {
+            de = random.nextInt(10);
+        }
+
+        double dLat = dn * COORD_PER_KM;
+        double dLon = de * COORD_PER_KM;
+
+        int x = random.nextInt(100);
+        if (x > 50) {
+            lat = lat + dLat;
+            lon = lon + dLon;
+        } else {
+            lat = lat - dLat;
+            lon = lon - dLon;
+        }
+        if (x < 20) {
+            lat = lat + dLat;
+            lon = lon - dLon;
+        }
+
+        
         return new Location(lat, lon);
     }
-    
+
+    public void updateLocationForTestSites(Integer companyID) {
+        Query q = em.createNamedQuery("ProjectSite.findByCompany", ProjectSite.class);
+        q.setParameter("companyID", companyID);
+        List<ProjectSite> list = q.getResultList();
+        for (ProjectSite site : list) {
+            if (site.getLatitude() != null) {
+                Location loc = getRandomPoint(site.getLatitude(), site.getLongitude());
+                site.setLatitude(loc.latitude);
+                site.setLongitude(loc.longitude);
+                em.merge(site);
+                System.out.println("+++ Random update, latitude: " + site.getLatitude() + " longitude: " + site.getLongitude());
+            }
+        }
+        em.flush();
+    }
     private class Location {
+
         double latitude, longitude;
+
         public Location(double lat, double lon) {
             latitude = lat;
             longitude = lon;
