@@ -25,6 +25,7 @@ import com.boha.monitor.dto.ProjectSiteDTO;
 import com.boha.monitor.dto.ProjectSiteTaskDTO;
 import com.boha.monitor.dto.ProjectSiteTaskStatusDTO;
 import com.boha.monitor.dto.ProjectStatusTypeDTO;
+import com.boha.monitor.dto.SubTaskDTO;
 import com.boha.monitor.dto.TaskDTO;
 import com.boha.monitor.dto.TaskStatusDTO;
 import com.boha.monitor.dto.TownshipDTO;
@@ -43,6 +44,7 @@ public class RequestDTO implements Serializable{
     private Double latitude, longitude;
     private CompanyDTO company;
     private CompanyStaffDTO companyStaff;
+    private SubTaskDTO subTask;
     private ProjectDTO project;
     private EngineerDTO engineer;
     private CityDTO city;
@@ -100,7 +102,8 @@ public class RequestDTO implements Serializable{
             GET_SITE_IMAGES = 111,
             GET_TASK_IMAGES = 112,
             GET_CONTRACTOR_CLAIMS_BY_PROJECT = 114,
-            GET_CONTRACTOR_CLAIMS_BY_COMPANY = 115;
+            GET_CONTRACTOR_CLAIMS_BY_COMPANY = 115,
+            GET_SITE_STATUS = 116;
     //login's 
     public static final int 
             LOGIN = 200,
@@ -115,7 +118,9 @@ public class RequestDTO implements Serializable{
             ADD_TOWNSHIP = 306,
             ADD_SITE_TASK = 307,
             ADD_BANK_DETAILS = 308,
-            ADD_BANK = 309;
+            ADD_BANK = 309,
+            CONFIRM_LOCATION = 310,
+            ADD_SUB_TASK = 311;
             
     //updates 
     public static final int 
@@ -177,6 +182,14 @@ public class RequestDTO implements Serializable{
 
     public void setContractorClaimID(Integer contractorClaimID) {
         this.contractorClaimID = contractorClaimID;
+    }
+
+    public SubTaskDTO getSubTask() {
+        return subTask;
+    }
+
+    public void setSubTask(SubTaskDTO subTask) {
+        this.subTask = subTask;
     }
 
     public Integer getInvoiceID() {

@@ -137,15 +137,23 @@ public class TrafficCop {
                     resp = dataUtil.addProjectDiaryRecord(req.getProjectDiaryRecord());
                     break;
                 case RequestDTO.ADD_PROJECT_SITE_TASK:
-                    resp = dataUtil.addProjectSiteTask(req.getProjectSiteTask(), listUtil);
+                    resp = dataUtil.addProjectSiteTask(req.getProjectSiteTask());
                     break;
                 case RequestDTO.ADD_PROJECT_SITE_TASK_STATUS:
                     resp = dataUtil.addProjectSiteTaskStatus(req.getProjectSiteTaskStatus());
                     break;
                 case RequestDTO.ADD_PROJECT_STATUS_TYPE:
                     break;
+                case RequestDTO.CONFIRM_LOCATION:
+                    dataUtil.confirmLocation(req.getProjectSiteID());
+                    break;
+                case RequestDTO.ADD_SUB_TASK:
+                    resp = dataUtil.addSubTask(req.getSubTask());
 
                 //lists
+                case RequestDTO.GET_SITE_STATUS:
+                    resp = listUtil.getSiteStatus(req.getProjectSiteID());
+                    break;
                 case RequestDTO.GET_PROJECT_SITE_DATA:
                     resp = listUtil.getSitesByProject(req.getProjectID());
                     break;

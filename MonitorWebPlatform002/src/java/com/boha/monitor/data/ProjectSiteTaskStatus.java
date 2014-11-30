@@ -40,8 +40,10 @@ import javax.validation.constraints.NotNull;
             query = "SELECT p FROM ProjectSiteTaskStatus p "
                     + "WHERE p.projectSiteTask.projectSite.project.company.companyID = :companyID "
                     + "order by p.dateUpdated desc"),
-    @NamedQuery(name = "ProjectSiteTaskStatus.findByDateUpdated", 
-            query = "SELECT p FROM ProjectSiteTaskStatus p WHERE p.dateUpdated = :dateUpdated")})
+     @NamedQuery(name = "ProjectSiteTaskStatus.countByProject", 
+            query = "SELECT count(p) FROM ProjectSiteTaskStatus p WHERE p.projectSiteTask.projectSite.project.projectID = :projectID"),
+    @NamedQuery(name = "ProjectSiteTaskStatus.countByProjectSite", 
+            query = "SELECT count(p) FROM ProjectSiteTaskStatus p WHERE p.projectSiteTask.projectSite.projectSiteID = :projectSiteID")})
 public class ProjectSiteTaskStatus implements Serializable {
     @Column(name = "statusDate")
     @Temporal(TemporalType.TIMESTAMP)

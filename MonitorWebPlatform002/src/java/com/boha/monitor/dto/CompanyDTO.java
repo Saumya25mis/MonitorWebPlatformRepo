@@ -8,7 +8,6 @@ package com.boha.monitor.dto;
 
 import com.boha.monitor.data.Company;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,18 +20,18 @@ public class CompanyDTO implements Serializable {
     private String companyName;
     private String address, vatNumber, taxNumber;
     
-    private List<ProjectDTO> projectList = new ArrayList<>();
-    private List<ProjectStatusTypeDTO> projectStatusTypeList = new ArrayList<>();
-    private List<CompanyStaffDTO> companyStaffList = new ArrayList<>();
-    private List<TaskStatusDTO> taskStatusList = new ArrayList<>();
-    private List<TaskDTO> taskList = new ArrayList<>();
-    private List<ClientDTO> clientList = new ArrayList<>();
-    private List<InvoiceDTO> invoiceList = new ArrayList<>();
-    private List<BankDetailDTO> bankDetailList = new ArrayList<>();
-    private List<GcmDeviceDTO> gcmDeviceList = new ArrayList<>();
-    private List<ContractorClaimDTO> contractorClaimList = new ArrayList<>();
-    private List<CompanyStaffTypeDTO> companyStaffTypeList = new ArrayList<>();
-    private List<EngineerDTO> engineerList = new ArrayList<>();
+    private List<ProjectDTO> projectList;
+    private List<ProjectStatusTypeDTO> projectStatusTypeList;
+    private List<CompanyStaffDTO> companyStaffList;
+    private List<TaskStatusDTO> taskStatusList;
+    private List<TaskDTO> taskList;
+    private List<ClientDTO> clientList;
+    private List<InvoiceDTO> invoiceList;
+    private List<BankDetailDTO> bankDetailList;
+    private List<GcmDeviceDTO> gcmDeviceList;
+    private List<ContractorClaimDTO> contractorClaimList;
+    private List<CompanyStaffTypeDTO> companyStaffTypeList;
+    private List<EngineerDTO> engineerList;
     
 
     public CompanyDTO() {

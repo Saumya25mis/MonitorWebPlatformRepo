@@ -31,6 +31,7 @@ import com.boha.monitor.data.ProjectSiteTask;
 import com.boha.monitor.data.ProjectSiteTaskStatus;
 import com.boha.monitor.data.ProjectStatusType;
 import com.boha.monitor.data.Province;
+import com.boha.monitor.data.SubTask;
 import com.boha.monitor.data.Task;
 import com.boha.monitor.data.TaskPrice;
 import com.boha.monitor.data.TaskStatus;
@@ -56,6 +57,7 @@ import com.boha.monitor.dto.ProjectSiteDTO;
 import com.boha.monitor.dto.ProjectSiteTaskDTO;
 import com.boha.monitor.dto.ProjectSiteTaskStatusDTO;
 import com.boha.monitor.dto.ProjectStatusTypeDTO;
+import com.boha.monitor.dto.SubTaskDTO;
 import com.boha.monitor.dto.TaskDTO;
 import com.boha.monitor.dto.TaskPriceDTO;
 import com.boha.monitor.dto.TaskStatusDTO;
@@ -63,7 +65,6 @@ import com.boha.monitor.dto.TownshipDTO;
 import com.boha.monitor.dto.transfer.PhotoUploadDTO;
 import com.boha.monitor.dto.transfer.ResponseDTO;
 import com.boha.monitor.pdf.ContractorClaimPDFFactory;
-import com.boha.monitor.pdf.PDFDocumentGenerator;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -217,9 +218,7 @@ public class DataUtil {
             u.setThumbFlag(pu.getThumbFlag());
             em.persist(u);
             em.flush();
-            if (pu.getProjectSiteID() != null) {
-                updateProjectSiteLocation(pu.getProjectSiteID(), u);
-            }
+
             log.log(Level.OFF, "PhotoUpload added to table");
         } catch (Exception e) {
             log.log(Level.SEVERE, "PhotoUpload failed", e);
@@ -273,6 +272,7 @@ public class DataUtil {
 
             em.persist(t);
             em.flush();
+             resp.setProjectSiteTaskStatusList(new ArrayList<ProjectSiteTaskStatusDTO>());
             resp.getProjectSiteTaskStatusList().add(
                     new ProjectSiteTaskStatusDTO(t));
             log.log(Level.OFF, "ProjectSiteTaskStatus added");
@@ -298,6 +298,7 @@ public class DataUtil {
 
             em.persist(t);
             em.flush();
+            resp.setProjectDiaryRecordList(new ArrayList<ProjectDiaryRecordDTO>());
             resp.getProjectDiaryRecordList().add(
                     new ProjectDiaryRecordDTO(t));
             log.log(Level.OFF, "ProjectDiaryRecord added");
@@ -322,6 +323,7 @@ public class DataUtil {
 
             em.persist(cli);
             em.flush();
+            resp.setProjectStatusTypeList(new ArrayList<ProjectStatusTypeDTO>());
             resp.getProjectStatusTypeList().add(new ProjectStatusTypeDTO(cli));
             log.log(Level.OFF, "######## ProjectStatusType added: {0}", b.getProjectStatusName());
 
@@ -348,6 +350,7 @@ public class DataUtil {
 
             em.persist(cli);
             em.flush();
+            resp.setTaskStatusList(new ArrayList<TaskStatusDTO>());
             resp.getTaskStatusList().add(new TaskStatusDTO(cli));
             log.log(Level.OFF, "######## TaskStatus added: {0}", b.getTaskStatusName());
 
@@ -375,6 +378,7 @@ public class DataUtil {
 
             em.persist(cli);
             em.flush();
+            resp.setCityList(new ArrayList<CityDTO>());
             resp.getCityList().add(new CityDTO(cli));
             log.log(Level.OFF, "######## City added: {0}", b.getCityName());
 
@@ -402,6 +406,7 @@ public class DataUtil {
 
             em.persist(cli);
             em.flush();
+            resp.setTownshipList(new ArrayList<TownshipDTO>());
             resp.getTownshipList().add(new TownshipDTO(cli));
             log.log(Level.OFF, "######## Township added: {0}", b.getTownshipName());
 
@@ -429,7 +434,16 @@ public class DataUtil {
 
             em.persist(cli);
             em.flush();
-            resp.getTaskList().add(new TaskDTO(cli));
+            b = new TaskDTO(cli);
+            b.setTaskPriceList(new ArrayList<TaskPriceDTO>());
+            if (b.getTaskPriceList() != null && !b.getTaskPriceList().isEmpty()) {
+                TaskPriceDTO p = b.getTaskPriceList().get(0);
+                p.setTaskID(b.getTaskID());
+                b.getTaskPriceList().add(addTaskPrice(p).getTaskPriceList().get(0));
+            }
+
+            resp.setTaskList(new ArrayList<TaskDTO>());
+            resp.getTaskList().add(b);
             log.log(Level.OFF, "######## Task added: {0}", b.getTaskName());
 
         } catch (PersistenceException e) {
@@ -444,8 +458,36 @@ public class DataUtil {
         return resp;
     }
 
+    public ResponseDTO addSubTask(
+            SubTaskDTO st) throws DataException {
+        ResponseDTO resp = new ResponseDTO();
+        try {
+            Task task = em.find(Task.class, st.getTaskID());
+            SubTask t = new SubTask();
+            t.setTask(task);
+            t.setSubTaskName(st.getSubTaskName());
+            t.setSubTaskNumber(st.getSubTaskNumber());
+
+            em.persist(t);
+            em.flush();
+            resp.setSubTaskList(new ArrayList<SubTaskDTO>());
+            resp.getSubTaskList().add(new SubTaskDTO(t));
+            resp.setStatusCode(0);
+            resp.setMessage("Subtask added successfully");
+            log.log(Level.OFF, "SubTask added for: {0} ",
+                    new Object[]{task.getTaskName()});
+
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "Failed", e);
+            throw new DataException("Failed\n" + getErrorString(e));
+        }
+
+        return resp;
+
+    }
+
     public ResponseDTO addProjectSiteTask(
-            ProjectSiteTaskDTO siteTask, ListUtil listUtil) throws DataException {
+            ProjectSiteTaskDTO siteTask) throws DataException {
         ResponseDTO resp = new ResponseDTO();
         try {
             ProjectSite site = em.find(ProjectSite.class, siteTask.getProjectSiteID());
@@ -457,8 +499,7 @@ public class DataUtil {
 
             em.persist(t);
             em.flush();
-            System.out.println("## after add, list of tasks: " + site.getProjectSiteTaskList().size());
-            System.out.println("## ListUtil tasks: " + listUtil.getProjectSite(site.getProjectSiteID()).getProjectSiteTaskList().size());
+            resp.setProjectSiteTaskList(new ArrayList<ProjectSiteTaskDTO>());
             resp.getProjectSiteTaskList().add(new ProjectSiteTaskDTO(t));
             resp.setStatusCode(0);
             resp.setMessage("ProjectSiteTask added successfully");
@@ -475,7 +516,7 @@ public class DataUtil {
     }
 
     public ResponseDTO addContractorClaim(ContractorClaimDTO cc,
-         ContractorClaimPDFFactory claimFactory) throws DataException {
+            ContractorClaimPDFFactory claimFactory) throws DataException {
         ResponseDTO resp = new ResponseDTO();
         try {
             Project p = em.find(Project.class, cc.getProjectID());
@@ -537,6 +578,7 @@ public class DataUtil {
             t.setBankName(bank.getBankName());
             em.persist(t);
             em.flush();
+            resp.setBankList(new ArrayList<BankDTO>());
             resp.getBankList().add(new BankDTO(t));
             resp.setStatusCode(0);
             resp.setMessage("Bank added successfully");
@@ -562,6 +604,7 @@ public class DataUtil {
 
             em.persist(t);
             em.flush();
+            resp.setBankDetailList(new ArrayList<BankDetailDTO>());
             resp.getBankDetailList().add(new BankDetailDTO(t));
             resp.setStatusCode(0);
             resp.setMessage("BankDetail added successfully");
@@ -585,13 +628,13 @@ public class DataUtil {
                 t.setProject(em.find(Project.class, price.getProjectID()));
             }
             t.setPrice(price.getPrice());
-            t.setStartDate(new Date());           
+            t.setStartDate(new Date());
 
             em.persist(t);
             em.flush();
             resp.setTaskPriceList(new ArrayList<TaskPriceDTO>());
             resp.getTaskPriceList().add(new TaskPriceDTO(t));
-            
+
             resp.setStatusCode(0);
             resp.setMessage("TaskPrice added successfully");
             log.log(Level.OFF, "TaskPrice added");
@@ -604,6 +647,7 @@ public class DataUtil {
         return resp;
 
     }
+
     public ResponseDTO addInvoice(InvoiceDTO invoice) throws DataException {
         ResponseDTO resp = new ResponseDTO();
         try {
@@ -619,6 +663,7 @@ public class DataUtil {
             em.persist(t);
             em.flush();
             InvoiceDTO dto = new InvoiceDTO(t);
+            dto.setInvoiceItemList(new ArrayList<InvoiceItemDTO>());
             if (invoice.getInvoiceItemList() != null) {
                 for (InvoiceItemDTO i : invoice.getInvoiceItemList()) {
                     i.setInvoiceID(t.getInvoiceID());
@@ -627,7 +672,7 @@ public class DataUtil {
             }
             resp.setInvoiceList(new ArrayList());
             resp.getInvoiceList().add(new InvoiceDTO(t));
-            
+
             resp.setStatusCode(0);
             resp.setMessage("Invoice added successfully");
             log.log(Level.OFF, "Invoice added");
@@ -663,6 +708,7 @@ public class DataUtil {
 
             em.persist(c);
             em.flush();
+            resp.setInvoiceItemList(new ArrayList<InvoiceItemDTO>());
             resp.getInvoiceItemList().add(new InvoiceItemDTO(c));
             log.log(Level.OFF, "Invoice item added");
         } catch (Exception e) {
@@ -682,9 +728,10 @@ public class DataUtil {
             c.setProjectSite(em.find(ProjectSite.class, site.getProjectSite().getProjectSiteID()));
             em.persist(c);
             em.flush();
-            
+
+            resp.setContractorClaimSiteList(new ArrayList<ContractorClaimSiteDTO>());
             resp.getContractorClaimSiteList().add(new ContractorClaimSiteDTO(c));
-             log.log(Level.INFO, "ContractorClaimSite added");
+            log.log(Level.INFO, "ContractorClaimSite added");
         } catch (Exception e) {
             log.log(Level.SEVERE, "Failed", e);
             throw new DataException("Failed\n" + getErrorString(e));
@@ -725,6 +772,7 @@ public class DataUtil {
                 }
 
             }
+            resp.setProjectSiteList(new ArrayList<ProjectSiteDTO>());
             resp.getProjectSiteList().add(new ProjectSiteDTO(ps));
             log.log(Level.OFF, "Project site registered for: {0} - {1} ",
                     new Object[]{c.getProjectName(), site.getProjectSiteName()});
@@ -761,6 +809,8 @@ public class DataUtil {
             ProjectDTO dto = new ProjectDTO(project);
             dto.setProjectSiteList(new ArrayList<ProjectSiteDTO>());
             dto.getProjectSiteList().add(new ProjectSiteDTO(ps));
+            
+            resp.setProjectList(new ArrayList<ProjectDTO>());
             resp.getProjectList().add(dto);
             log.log(Level.OFF, "Project registered for: {0} - {1} ",
                     new Object[]{c.getCompanyName(), proj.getProjectName()});
@@ -834,6 +884,7 @@ public class DataUtil {
 
             em.persist(cli);
             em.flush();
+            resp.setClientList(new ArrayList<ClientDTO>());
             resp.getClientList().add(new ClientDTO(cli));
             log.log(Level.OFF, "######## Client registered: {0}", cli.getClientName());
 
@@ -872,6 +923,7 @@ public class DataUtil {
 
             em.persist(ben);
             em.flush();
+            resp.setBeneficiaryList(new ArrayList<BeneficiaryDTO>());
             resp.getBeneficiaryList().add(new BeneficiaryDTO(ben));
             log.log(Level.OFF, "######## Beneficiary registered: {0} {1}",
                     new Object[]{ben.getFirstName(), ben.getLastName()});
@@ -923,6 +975,7 @@ public class DataUtil {
 
             em.persist(cli);
             em.flush();
+            resp.setProjectEngineerList(new ArrayList<ProjectEngineerDTO>());
             resp.getProjectEngineerList().add(new ProjectEngineerDTO(cli));
             log.log(Level.OFF, "######## ProjectEngineer registered");
 
@@ -1000,7 +1053,6 @@ public class DataUtil {
             addinitialProjectStatusType(c);
             addInitialTasks(c);
             addInitialProject(c);
-            
 
             resp = listUtil.getCompanyData(c.getCompanyID(), company.getCountryID());
             resp.setCompanyStaff(new CompanyStaffDTO(cs));
@@ -1094,19 +1146,19 @@ public class DataUtil {
         t1.setCompany(c);
         em.persist(t1);
         Task t2 = new Task();
-        t2.setTaskName("P5.1 Building Foundation");
+        t2.setTaskName("P5.1 Foundation");
         t2.setDescription("Construction of building foundation and supports");
         t2.setTaskNumber(2);
         t2.setCompany(c);
         em.persist(t2);
         Task t3 = new Task();
-        t3.setTaskName("P5.2 Walls and Stuff");
+        t3.setTaskName("P5.2 Wallplate");
         t3.setDescription("Construct walls, windows, doors, entrance etc.");
         t3.setTaskNumber(3);
         t3.setCompany(c);
         em.persist(t3);
         Task t4 = new Task();
-        t4.setTaskName("P5.3 Bulding Completion");
+        t4.setTaskName("P5.3 Completion");
         t4.setDescription("Complete roofing and sundry fittings");
         t4.setTaskNumber(4);
         t4.setCompany(c);
@@ -1118,9 +1170,9 @@ public class DataUtil {
         t5.setCompany(c);
         em.persist(t5);
         Task t6 = new Task();
-        t6.setTaskName("P5.4 Snag List Preparation");
+        t6.setTaskName("P5.5 Snag List Preparation");
         t6.setDescription("Prepare and document Snag List");
-        t6.setTaskNumber(5);
+        t6.setTaskNumber(6);
         t6.setCompany(c);
         em.persist(t6);
         em.flush();
@@ -1365,32 +1417,6 @@ public class DataUtil {
 
     }
 
-    public void updateProjectSiteLocation(Integer projectSiteID, PhotoUpload dto) throws DataException {
-        try {
-            ProjectSite ps = em.find(ProjectSite.class, projectSiteID);
-            if (ps != null) {
-                if (ps.getAccuracy() == null) {
-                    ps.setLatitude(dto.getLatitude());
-                    ps.setLongitude(dto.getLongitude());
-                    ps.setAccuracy(dto.getAccuracy());
-                    em.merge(ps);
-                    log.log(Level.INFO, "Project Site location updated, accuracy: {0}", dto.getAccuracy());
-                } else {
-                    if (ps.getAccuracy() > dto.getAccuracy()) {
-                        ps.setLatitude(dto.getLatitude());
-                        ps.setLongitude(dto.getLongitude());
-                        ps.setAccuracy(dto.getAccuracy());
-                        em.merge(ps);
-                        log.log(Level.INFO, "Project Site location, accuracy updated, accuracy: {0}", dto.getAccuracy());
-                    }
-                }
-            }
-        } catch (Exception e) {
-            log.log(Level.OFF, null, e);
-            throw new DataException("Failed to update projectSite\n" + getErrorString(e));
-        }
-    }
-
     public void updateProjectSite(ProjectSiteDTO dto) throws DataException {
         try {
             ProjectSite ps = em.find(ProjectSite.class, dto.getProjectSiteID());
@@ -1413,6 +1439,20 @@ public class DataUtil {
         } catch (Exception e) {
             log.log(Level.OFF, null, e);
             throw new DataException("Failed to update projectSite\n" + getErrorString(e));
+        }
+    }
+
+    public void confirmLocation(Integer projectSiteID) throws DataException {
+        try {
+            ProjectSite ps = em.find(ProjectSite.class, projectSiteID);
+            if (ps != null) {
+                ps.setLocationConfirmed(1);
+                em.merge(ps);
+                log.log(Level.INFO, "Project Site location confirmed");
+            }
+        } catch (Exception e) {
+            log.log(Level.OFF, null, e);
+            throw new DataException("Failed to confirm location\n" + getErrorString(e));
         }
     }
 

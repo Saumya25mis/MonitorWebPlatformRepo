@@ -8,7 +8,6 @@ package com.boha.monitor.dto;
 import com.boha.monitor.data.Project;
 import com.boha.monitor.dto.transfer.PhotoUploadDTO;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,12 +26,13 @@ public class ProjectDTO implements Serializable {
     private Integer completeFlag;
     private Integer companyID, clientID;
     
-    private List<ProjectSiteDTO> projectSiteList = new ArrayList<>();
-    private List<PhotoUploadDTO> photoUploadList = new ArrayList<>();
-    private List<BeneficiaryDTO> beneficiaryList = new ArrayList<>();
-    private List<InvoiceDTO> invoiceList = new ArrayList<>();
-    private List<ContractorClaimDTO> contractorClaimList = new ArrayList<>();
-    private List<TaskPriceDTO> taskPriceList = new ArrayList<>();
+    private List<ProjectSiteDTO> projectSiteList;
+    private List<PhotoUploadDTO> photoUploadList;
+    private List<BeneficiaryDTO> beneficiaryList;
+    private List<InvoiceDTO> invoiceList;
+    private List<ContractorClaimDTO> contractorClaimList;
+    private List<TaskPriceDTO> taskPriceList;
+    private ProjectSiteTaskStatusDTO lastStatus;
 
     public ProjectDTO() {
     }
@@ -49,6 +49,14 @@ public class ProjectDTO implements Serializable {
             this.clientName = a.getClient().getClientName();
         }
         
+    }
+
+    public ProjectSiteTaskStatusDTO getLastStatus() {
+        return lastStatus;
+    }
+
+    public void setLastStatus(ProjectSiteTaskStatusDTO lastStatus) {
+        this.lastStatus = lastStatus;
     }
 
     public List<TaskPriceDTO> getTaskPriceList() {

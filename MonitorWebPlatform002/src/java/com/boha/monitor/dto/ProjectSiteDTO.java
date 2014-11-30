@@ -23,12 +23,13 @@ public class ProjectSiteDTO implements Serializable {
     private String projectSiteName, standErfNumber, projectName;
     private Double latitude;
     private Double longitude;
-    private Integer activeFlag;
+    private Integer activeFlag, locationConfirmed;
     private Float accuracy;
     private BeneficiaryDTO beneficiary;
     private HappyLetterDTO happyLetter;
+    private ProjectSiteTaskStatusDTO lastStatus;
     private List<ProjectSiteTaskDTO> projectSiteTaskList = new ArrayList<>();
-    private Integer projectID;
+    private Integer projectID, statusCount;
     private List<PhotoUploadDTO> photoUploadList = new ArrayList<>();
 
     public ProjectSiteDTO() {
@@ -45,6 +46,7 @@ public class ProjectSiteDTO implements Serializable {
         this.projectID = p.getProjectID();
         this.projectName = p.getProjectName();
         this.standErfNumber = a.getStandErfNumber();
+        this.locationConfirmed = a.getLocationConfirmed();
         if (a.getBeneficiary() != null) {
             this.beneficiary = new BeneficiaryDTO(a.getBeneficiary());
         }
@@ -52,6 +54,31 @@ public class ProjectSiteDTO implements Serializable {
             this.happyLetter = new HappyLetterDTO(a.getHappyLetter());
         }
 
+    }
+
+    public ProjectSiteTaskStatusDTO getLastStatus() {
+        return lastStatus;
+    }
+
+    public void setLastStatus(ProjectSiteTaskStatusDTO lastStatus) {
+        this.lastStatus = lastStatus;
+    }
+
+    public Integer getStatusCount() {
+        return statusCount;
+    }
+
+    public void setStatusCount(Integer statusCount) {
+        this.statusCount = statusCount;
+    }
+
+    
+    public Integer getLocationConfirmed() {
+        return locationConfirmed;
+    }
+
+    public void setLocationConfirmed(Integer locationConfirmed) {
+        this.locationConfirmed = locationConfirmed;
     }
 
     public BeneficiaryDTO getBeneficiary() {

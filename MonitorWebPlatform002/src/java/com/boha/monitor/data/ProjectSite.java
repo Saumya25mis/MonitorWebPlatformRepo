@@ -53,7 +53,8 @@ public class ProjectSite implements Serializable {
     @Size(min = 1, max = 100)
     @Column(name = "standErfNumber")
     private String standErfNumber;
-    
+    @Column(name = "locationConfirmed")
+    private Integer locationConfirmed;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "projectSite")
     private List<InvoiceItem> invoiceItemList;
    
@@ -103,6 +104,14 @@ public class ProjectSite implements Serializable {
 
     public void setProjectSiteName(String projectSiteName) {
         this.projectSiteName = projectSiteName;
+    }
+
+    public Integer getLocationConfirmed() {
+        return locationConfirmed;
+    }
+
+    public void setLocationConfirmed(Integer locationConfirmed) {
+        this.locationConfirmed = locationConfirmed;
     }
 
     public Beneficiary getBeneficiary() {

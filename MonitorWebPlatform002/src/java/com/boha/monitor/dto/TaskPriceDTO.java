@@ -20,6 +20,7 @@ public class TaskPriceDTO implements Serializable {
     private Date startDate;
     private Date endDate;
     private double price;
+    String taskName;
     private Integer taskID, projectID;
 
     public TaskPriceDTO(TaskPrice a) {
@@ -28,6 +29,7 @@ public class TaskPriceDTO implements Serializable {
         endDate = a.getEndDate();
         price = a.getPrice();
         taskID = a.getTask().getTaskID();
+        taskName = a.getTask().getTaskName();
         if (a.getProject() != null) {
             projectID = a.getProject().getProjectID();
         }

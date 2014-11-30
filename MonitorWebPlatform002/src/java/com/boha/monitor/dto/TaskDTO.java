@@ -21,6 +21,7 @@ public class TaskDTO implements Serializable {
     private String taskName;
     private String description;
     private List<TaskPriceDTO> taskPriceList = new ArrayList<>();
+    private List<SubTaskDTO> subTaskList;
 
     public TaskDTO() {
     }
@@ -34,6 +35,15 @@ public class TaskDTO implements Serializable {
         
     }
 
+    public List<SubTaskDTO> getSubTaskList() {
+        return subTaskList;
+    }
+
+    public void setSubTaskList(List<SubTaskDTO> subTaskList) {
+        this.subTaskList = subTaskList;
+    }
+
+    
     public List<TaskPriceDTO> getTaskPriceList() {
         return taskPriceList;
     }

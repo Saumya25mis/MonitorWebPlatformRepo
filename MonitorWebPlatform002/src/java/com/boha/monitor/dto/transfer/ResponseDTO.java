@@ -30,11 +30,11 @@ import com.boha.monitor.dto.ProjectSiteTaskDTO;
 import com.boha.monitor.dto.ProjectSiteTaskStatusDTO;
 import com.boha.monitor.dto.ProjectStatusTypeDTO;
 import com.boha.monitor.dto.ProvinceDTO;
+import com.boha.monitor.dto.SubTaskDTO;
 import com.boha.monitor.dto.TaskDTO;
 import com.boha.monitor.dto.TaskPriceDTO;
 import com.boha.monitor.dto.TaskStatusDTO;
 import com.boha.monitor.dto.TownshipDTO;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -49,29 +49,30 @@ public class ResponseDTO {
     private List<BankDTO> bankList;
     private List<TaskPriceDTO> taskPriceList;
     private List<String> siteImageFileNameList;
-    private List<PhotoUploadDTO> photoUploadList = new ArrayList<>();
-    private List<TaskStatusDTO> taskStatusList = new ArrayList<>();
-    private List<ProjectStatusTypeDTO> projectStatusTypeList = new ArrayList<>();
-    private List<ProjectSiteDTO> projectSiteList = new ArrayList<>();
-    private List<ProjectDTO> projectList = new ArrayList<>();
-    private List<CompanyStaffDTO> companyStaffList = new ArrayList<>();
-    private List<CompanyStaffTypeDTO> companyStaffTypeList = new ArrayList<>();
-    private List<ProjectDiaryRecordDTO> projectDiaryRecordList = new ArrayList<>();
-    private List<ProjectSiteTaskDTO> projectSiteTaskList = new ArrayList<>();
-    private List<ProjectSiteTaskStatusDTO> projectSiteTaskStatusList = new ArrayList<>();
-    private List<ErrorStoreDTO> errorStoreList = new ArrayList<>();
-    private List<ErrorStoreAndroidDTO> errorStoreAndroidList = new ArrayList<>();
-    private List<InvoiceDTO> invoiceList = new ArrayList<>();
-    private List<BeneficiaryDTO> beneficiaryList = new ArrayList<>();
-    private List<ProvinceDTO> provinceList = new ArrayList<>();
-    private List<HappyLetterDTO> happyLetterList = new ArrayList<>();
-    private List<ClientDTO> clientList = new ArrayList<>();
-    private List<TaskDTO> taskList = new ArrayList<>();
-    private List<CityDTO> cityList = new ArrayList<>();
-    private List<TownshipDTO> townshipList = new ArrayList<>();
-    private List<CountryDTO> countryList = new ArrayList<>();
-    private List<ContractorClaimDTO> contractorClaimList = new ArrayList<>();
-    private List<ContractorClaimSiteDTO> contractorClaimSiteList = new ArrayList<>();
+    private List<SubTaskDTO> subTaskList;
+    private List<PhotoUploadDTO> photoUploadList;
+    private List<TaskStatusDTO> taskStatusList;
+    private List<ProjectStatusTypeDTO> projectStatusTypeList;
+    private List<ProjectSiteDTO> projectSiteList;
+    private List<ProjectDTO> projectList;
+    private List<CompanyStaffDTO> companyStaffList;
+    private List<CompanyStaffTypeDTO> companyStaffTypeList;
+    private List<ProjectDiaryRecordDTO> projectDiaryRecordList;
+    private List<ProjectSiteTaskDTO> projectSiteTaskList;
+    private List<ProjectSiteTaskStatusDTO> projectSiteTaskStatusList;
+    private List<ErrorStoreDTO> errorStoreList;
+    private List<ErrorStoreAndroidDTO> errorStoreAndroidList;
+    private List<InvoiceDTO> invoiceList;
+    private List<BeneficiaryDTO> beneficiaryList;
+    private List<ProvinceDTO> provinceList;
+    private List<HappyLetterDTO> happyLetterList;
+    private List<ClientDTO> clientList;
+    private List<TaskDTO> taskList;
+    private List<CityDTO> cityList;
+    private List<TownshipDTO> townshipList;
+    private List<CountryDTO> countryList;
+    private List<ContractorClaimDTO> contractorClaimList;
+    private List<ContractorClaimSiteDTO> contractorClaimSiteList;
     private List<InvoiceItemDTO> invoiceItemList;
     private List<BankDetailDTO> bankDetailList;
     private List<EngineerDTO> engineerList;
@@ -112,6 +113,14 @@ public class ResponseDTO {
 
     public List<BankDTO> getBankList() {
         return bankList;
+    }
+
+    public List<SubTaskDTO> getSubTaskList() {
+        return subTaskList;
+    }
+
+    public void setSubTaskList(List<SubTaskDTO> subTaskList) {
+        this.subTaskList = subTaskList;
     }
 
     public void setBankList(List<BankDTO> bankList) {

@@ -18,7 +18,7 @@ import java.util.List;
 public class ProjectSiteTaskDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private Integer projectSiteTaskID;
+    private Integer projectSiteTaskID, statusCount;
     private TaskDTO task;
     private long dateRegistered;
     private Integer projectSiteID, projectID;
@@ -37,6 +37,14 @@ public class ProjectSiteTaskDTO implements Serializable {
         
        
         
+    }
+
+    public Integer getStatusCount() {
+        return statusCount;
+    }
+
+    public void setStatusCount(Integer statusCount) {
+        this.statusCount = statusCount;
     }
 
     public List<PhotoUploadDTO> getPhotoUploadList() {

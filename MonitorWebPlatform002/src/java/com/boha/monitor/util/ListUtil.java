@@ -92,12 +92,15 @@ public class ListUtil {
 
         Query q = em.createNamedQuery("Country.findAll", Country.class);
         List<Country> list = q.getResultList();
+        resp.setCountryList(new ArrayList<CountryDTO>());
         for (Country cp : list) {
             CountryDTO cn = new CountryDTO(cp);
             for (Province p : cp.getProvinceList()) {
                 ProvinceDTO province = new ProvinceDTO(p);
+                province.setCityList(new ArrayList<CityDTO>());
                 for (City city : p.getCityList()) {
                     CityDTO cityDTO = new CityDTO(city);
+                    cityDTO.setTownshipList(new ArrayList<TownshipDTO>());
                     for (Township ts : city.getTownshipList()) {
                         cityDTO.getTownshipList().add(new TownshipDTO(ts));
                     }
@@ -121,6 +124,7 @@ public class ListUtil {
         Query q = em.createNamedQuery("ContractorClaim.findByProject", ContractorClaim.class);
         q.setParameter("projectID", projectID);
         List<ContractorClaim> list = q.getResultList();
+        resp.setContractorClaimList(new ArrayList<ContractorClaimDTO>());
         for (ContractorClaim cc : list) {
             resp.getContractorClaimList().add(new ContractorClaimDTO(cc));
         }
@@ -169,11 +173,37 @@ public class ListUtil {
         return resp;
     }
 
+    public ResponseDTO getSiteStatus(Integer projectSiteID) {
+        ResponseDTO resp = new ResponseDTO();
+        Query q = em.createNamedQuery("ProjectSiteTaskStatus.findByProjectSite", ProjectSiteTaskStatus.class);
+        q.setParameter("projectSiteID", projectSiteID);
+        List<ProjectSiteTaskStatus> statusList = q.getResultList();
+
+        q = em.createNamedQuery("ProjectSiteTask.findByProjectSite", ProjectSiteTask.class);
+        q.setParameter("projectSiteID", projectSiteID);
+        List<ProjectSiteTask> taskList = q.getResultList();
+
+        resp.setProjectSiteTaskList(new ArrayList<ProjectSiteTaskDTO>());
+        for (ProjectSiteTask task : taskList) {
+            ProjectSiteTaskDTO taskDTO = new ProjectSiteTaskDTO(task);
+            taskDTO.setProjectSiteTaskStatusList(new ArrayList<ProjectSiteTaskStatusDTO>());
+            for (ProjectSiteTaskStatus status : statusList) {
+                if (Objects.equals(status.getProjectSiteTask().getProjectSiteTaskID(), taskDTO.getProjectSiteTaskID())) {
+                    taskDTO.getProjectSiteTaskStatusList().add(new ProjectSiteTaskStatusDTO(status));
+                }
+            }
+            resp.getProjectSiteTaskList().add(taskDTO);
+        }
+
+        return resp;
+    }
+
     public ResponseDTO getPhotosByProjectSite(Integer projectSiteID) {
         ResponseDTO resp = new ResponseDTO();
         Query q = em.createNamedQuery("PhotoUpload.findProjectSitePhotos", PhotoUpload.class);
         q.setParameter("projectSiteID", projectSiteID);
         List<PhotoUpload> list = q.getResultList();
+        resp.setPhotoUploadList(new ArrayList<PhotoUploadDTO>());
         for (PhotoUpload cp : list) {
             resp.getPhotoUploadList().add(new PhotoUploadDTO(cp));
         }
@@ -186,6 +216,7 @@ public class ListUtil {
         Query q = em.createNamedQuery("PhotoUpload.findTaskPhotos", PhotoUpload.class);
         q.setParameter("projectSiteTaskID", projectSiteTaskID);
         List<PhotoUpload> list = q.getResultList();
+        resp.setPhotoUploadList(new ArrayList<PhotoUploadDTO>());
         for (PhotoUpload cp : list) {
             resp.getPhotoUploadList().add(new PhotoUploadDTO(cp));
         }
@@ -200,6 +231,7 @@ public class ListUtil {
             Query q = em.createNamedQuery("CompanyStaff.findByCompany", CompanyStaff.class);
             q.setParameter("companyID", companyID);
             List<CompanyStaff> sList = q.getResultList();
+            resp.setCompanyStaffList(new ArrayList<CompanyStaffDTO>());
             for (CompanyStaff cs : sList) {
                 resp.getCompanyStaffList().add(new CompanyStaffDTO(cs));
             }
@@ -235,6 +267,7 @@ public class ListUtil {
         try {
             Query q = em.createNamedQuery("CompanyStaffType.findAll", CompanyStaffType.class);
             List<CompanyStaffType> sList = q.getResultList();
+            resp.setCompanyStaffTypeList(new ArrayList<CompanyStaffTypeDTO>());
             for (CompanyStaffType cs : sList) {
                 resp.getCompanyStaffTypeList().add(new CompanyStaffTypeDTO(cs));
             }
@@ -254,6 +287,7 @@ public class ListUtil {
             Query q = em.createNamedQuery("TaskStatus.findByCompany", TaskStatus.class);
             q.setParameter("companyID", companyID);
             List<TaskStatus> sList = q.getResultList();
+            resp.setTaskStatusList(new ArrayList<TaskStatusDTO>());
             for (TaskStatus cs : sList) {
                 resp.getTaskStatusList().add(new TaskStatusDTO(cs));
             }
@@ -273,6 +307,7 @@ public class ListUtil {
             Query q = em.createNamedQuery("ProjectStatusType.findByCompany", ProjectStatusType.class);
             q.setParameter("companyID", companyID);
             List<ProjectStatusType> sList = q.getResultList();
+            resp.setProjectStatusTypeList(new ArrayList<ProjectStatusTypeDTO>());
             for (ProjectStatusType cs : sList) {
                 resp.getProjectStatusTypeList().add(new ProjectStatusTypeDTO(cs));
             }
@@ -291,7 +326,7 @@ public class ListUtil {
             Query q = em.createNamedQuery("ProjectDiaryRecord.findByProject", ProjectDiaryRecord.class);
             q.setParameter("projectID", projectID);
             List<ProjectDiaryRecord> pstList = q.getResultList();
-
+            resp.setProjectDiaryRecordList(new ArrayList<ProjectDiaryRecordDTO>());
             for (ProjectDiaryRecord pss : pstList) {
                 resp.getProjectDiaryRecordList().add(new ProjectDiaryRecordDTO(pss));
             }
@@ -314,7 +349,7 @@ public class ListUtil {
                     ProjectSiteTaskStatus.class);
             List<ProjectSiteTaskStatus> xList = q.getResultList();
             log.log(Level.INFO, "task status found: {0}", xList.size());
-
+            resp.setProjectSiteTaskList(new ArrayList<ProjectSiteTaskDTO>());
             for (ProjectSiteTask projectSiteTask : pstList) {
                 ProjectSiteTaskDTO task = new ProjectSiteTaskDTO(projectSiteTask);
                 for (ProjectSiteTaskStatus s : xList) {
@@ -542,20 +577,15 @@ public class ListUtil {
         try {
             Query q = em.createNamedQuery("Project.findActiveProjectsByCompany", Project.class
             );
-            q.setParameter(
-                    "companyID", companyID);
+            q.setParameter("companyID", companyID);
             List<Project> pList = q.getResultList();
 
             q = em.createNamedQuery("PhotoUpload.findProjectPhotosByCompany", PhotoUpload.class);
-
-            q.setParameter(
-                    "companyID", companyID);
+            q.setParameter("companyID", companyID);
             List<PhotoUpload> photos = q.getResultList();
 
             q = em.createNamedQuery("Beneficiary.findByCompany", Beneficiary.class);
-
-            q.setParameter(
-                    "companyID", companyID);
+            q.setParameter("companyID", companyID);
             List<Beneficiary> bList = q.getResultList();
 
             List<ContractorClaimDTO> ccList = getContractorClaimsByCompany(companyID);
@@ -563,7 +593,13 @@ public class ListUtil {
             List<ProjectSiteDTO> psList = getSitesByCompany(companyID);
 
             for (Project project : pList) {
+                q = em.createNamedQuery("ProjectSiteTaskStatus.countByProject", ProjectSiteTaskStatus.class);
+                q.setParameter(
+                        "projectID", project.getProjectID());
+                Long x = (Long) q.getSingleResult();
+
                 ProjectDTO dto = new ProjectDTO(project);
+                dto.setStatusCount(Integer.parseUnsignedInt("" + x.intValue()));
                 dto.setInvoiceList(new ArrayList<InvoiceDTO>());
                 dto.setBeneficiaryList(new ArrayList<BeneficiaryDTO>());
                 dto.setContractorClaimList(new ArrayList<ContractorClaimDTO>());
@@ -685,15 +721,27 @@ public class ListUtil {
                     "projectID", projectID);
             List<ProjectSiteTask> siteTaskList = q.getResultList();
             log.log(Level.WARNING,
-                    "---------- site task status: {0}", siteTaskList.size());
+                    "---------- site tasks: {0}", siteTaskList.size());
+
+            q = em.createNamedQuery("ProjectSiteTaskStatus.countByProject", ProjectSiteTaskStatus.class);
+            q.setParameter(
+                    "projectID", projectID);
+            Long x = (Long) q.getSingleResult();
+            project.setStatusCount(Integer.parseUnsignedInt("" + x.intValue()));
+
+            log.log(Level.WARNING,
+                    "---------- project task status count: {0}", x);
 
             q = em.createNamedQuery("ProjectSiteTaskStatus.findByProject", ProjectSiteTaskStatus.class);
             q.setParameter(
                     "projectID", projectID);
-            List<ProjectSiteTaskStatus> taskStatusList = q.getResultList();
+            q.setMaxResults(1);
+            ProjectSiteTaskStatus lastTask = (ProjectSiteTaskStatus) q.getSingleResult();
+            if (lastTask != null) {
+                project.setLastStatus(new ProjectSiteTaskStatusDTO(lastTask));
+            }
 
-            log.log(Level.WARNING,
-                    "---------- task status: {0}", taskStatusList.size());
+            project.setBeneficiaryList(new ArrayList<BeneficiaryDTO>());
 
             for (Beneficiary b : bList) {
                 if (Objects.equals(b.getProject().getProjectID(), project.getProjectID())) {
@@ -703,6 +751,7 @@ public class ListUtil {
 
             log.log(Level.WARNING,
                     "###---------- bennies done: {0}", project.getBeneficiaryList().size());
+            project.setInvoiceList(new ArrayList<InvoiceDTO>());
             for (Invoice inv : invList) {
                 InvoiceDTO dto = new InvoiceDTO(inv);
                 dto.setInvoiceItemList(new ArrayList<InvoiceItemDTO>());
@@ -716,6 +765,7 @@ public class ListUtil {
                     "###---------- invoices done: {0}", project.getInvoiceList().size());
             invList = null;
 
+            project.setPhotoUploadList(new ArrayList<PhotoUploadDTO>());
             for (PhotoUpload px : photos) {
                 if (px.getProjectSite() == null) {
                     project.getPhotoUploadList().add(new PhotoUploadDTO(px));
@@ -725,9 +775,22 @@ public class ListUtil {
 
             log.log(Level.WARNING,
                     "###---------- proj photos done: {0}", project.getPhotoUploadList().size());
+            q = em.createNamedQuery("ProjectSiteTaskStatus.countByProjectSite", ProjectSiteTaskStatus.class);
+            Query q2 = em.createNamedQuery("ProjectSiteTaskStatus.findByProjectSite", ProjectSiteTaskStatus.class);
+
+            project.setProjectSiteList(new ArrayList<ProjectSiteDTO>());
             for (ProjectSite ps : projectSiteList) {
+                q.setParameter(
+                        "projectSiteID", ps.getProjectSiteID());
+                Long xcount = (Long) q.getSingleResult();
+                q2.setParameter(
+                        "projectSiteID", ps.getProjectSiteID());
+                q2.setMaxResults(1);
+                ProjectSiteTaskStatus taskStatus = (ProjectSiteTaskStatus) q2.getSingleResult();
+
                 ProjectSiteDTO projectSiteDTO = new ProjectSiteDTO(ps);
                 projectSiteDTO.setPhotoUploadList(new ArrayList<PhotoUploadDTO>());
+                projectSiteDTO.setProjectSiteTaskList(new ArrayList<ProjectSiteTaskDTO>());
                 for (PhotoUpload up : photos) {
                     if (up.getProjectSite() != null) {
                         if (Objects.equals(projectSiteDTO.getProjectSiteID(), up.getProjectSite().getProjectSiteID())) {
@@ -735,30 +798,31 @@ public class ListUtil {
                         }
                     }
                 }
+
                 for (ProjectSiteTask pst : siteTaskList) {
                     if (Objects.equals(ps.getProjectSiteID(), pst.getProjectSite().getProjectSiteID())) {
                         ProjectSiteTaskDTO pstDTO = new ProjectSiteTaskDTO(pst);
-                        pstDTO.setProjectSiteTaskStatusList(new ArrayList<ProjectSiteTaskStatusDTO>());
-                        for (ProjectSiteTaskStatus taskStatus : taskStatusList) {
-                            if (Objects.equals(taskStatus.getProjectSiteTask().getProjectSiteTaskID(), pst.getProjectSiteTaskID())) {
-                                // pstDTO.getProjectSiteTaskStatusList().add(new ProjectSiteTaskStatusDTO(taskStatus));
-                            }
-                        }
                         projectSiteDTO.getProjectSiteTaskList().add(pstDTO);
                     }
+                }
+
+                projectSiteDTO.setStatusCount(Integer.parseUnsignedInt("" + xcount.intValue()));
+                if (taskStatus != null) {
+                    projectSiteDTO.setLastStatus(new ProjectSiteTaskStatusDTO(taskStatus));
                 }
                 project.getProjectSiteList().add(projectSiteDTO);
             }
 
             log.log(Level.WARNING,
                     "###---------- sites done: {0}", project.getProjectSiteList().size());
+            project.setContractorClaimList(new ArrayList<ContractorClaimDTO>());
+
             for (ContractorClaim cc : ccList) {
                 ContractorClaimDTO dto = new ContractorClaimDTO(cc);
                 dto.setContractorClaimSiteList(new ArrayList<ContractorClaimSiteDTO>());
                 int count = 0;
                 for (ContractorClaimSite ccSite : ccSiteList) {
                     if (Objects.equals(cc.getContractorClaimID(), ccSite.getContractorClaim().getContractorClaimID())) {
-                        //dto.getContractorClaimSiteList().add(new ContractorClaimSiteDTO(ccSite));
                         count++;
                     }
                 }
@@ -767,9 +831,8 @@ public class ListUtil {
             }
 
             log.log(Level.WARNING,
-                    "###---------- cc''s done: {0}", project.getContractorClaimList().size());
+                    "###---------- contractor claims done: {0}", project.getContractorClaimList().size());
             ccList = null;
-
             photos = null;
             siteTaskList = null;
 
@@ -779,8 +842,8 @@ public class ListUtil {
             project.setPhotoCount(project.getPhotoUploadList().size());
             project.setInvoiceCount(project.getInvoiceList().size());
 
-            resp.getProjectList()
-                    .add(project);
+            resp.setProjectList(new ArrayList<ProjectDTO>());
+            resp.getProjectList().add(project);
             long e = System.currentTimeMillis();
 
             log.log(Level.INFO,
@@ -800,31 +863,14 @@ public class ListUtil {
         List<ProjectSiteDTO> list = new ArrayList<>();
 
         try {
-            Query q = em.createNamedQuery("ProjectSite.findByCompany", ProjectSite.class
-            );
-            q.setParameter(
-                    "companyID", companyID);
+            Query q = em.createNamedQuery("ProjectSite.findByCompany", ProjectSite.class);
+            q.setParameter("companyID", companyID);
             List<ProjectSite> pList = q.getResultList();
             q = em.createNamedQuery("PhotoUpload.findProjectSitePhotosByCompany", PhotoUpload.class);
-
-            q.setParameter(
-                    "companyID", companyID);
-            List<PhotoUpload> photos = q.getResultList();
-            List<ProjectSiteTaskDTO> pstList = getSiteTasksByCompany(companyID);
+            q.setParameter("companyID", companyID);
 
             for (ProjectSite s : pList) {
                 ProjectSiteDTO dto = new ProjectSiteDTO(s);
-                for (ProjectSiteTaskDTO pst : pstList) {
-                    if (Objects.equals(pst.getProjectSiteID(), dto.getProjectSiteID())) {
-                        dto.getProjectSiteTaskList().add(pst);
-                    }
-                }
-                for (PhotoUpload ph : photos) {
-                    if (Objects.equals(ph.getProjectSite().getProjectSiteID(), dto.getProjectSiteID())) {
-                        dto.getPhotoUploadList().add(new PhotoUploadDTO(ph));
-                    }
-                }
-
                 list.add(dto);
             }
 
@@ -882,10 +928,8 @@ public class ListUtil {
         List<ProjectSiteTaskDTO> list = new ArrayList<>();
 
         try {
-            Query q = em.createNamedQuery("ProjectSiteTask.findByCompany", ProjectSiteTask.class
-            );
-            q.setParameter(
-                    "companyID", companyID);
+            Query q = em.createNamedQuery("ProjectSiteTask.findByCompany", ProjectSiteTask.class);
+            q.setParameter("companyID", companyID);
             List<ProjectSiteTask> pList = q.getResultList();
             q = em.createNamedQuery("PhotoUpload.findSiteTaskPhotosByCompany", PhotoUpload.class);
 
@@ -895,6 +939,8 @@ public class ListUtil {
             List<ProjectSiteTaskStatusDTO> pstList = getTaskStatusByCompany(companyID);
             for (ProjectSiteTask s : pList) {
                 ProjectSiteTaskDTO dto = new ProjectSiteTaskDTO(s);
+                dto.setProjectSiteTaskStatusList(new ArrayList<ProjectSiteTaskStatusDTO>());
+                dto.setPhotoUploadList(new ArrayList<PhotoUploadDTO>());
                 for (ProjectSiteTaskStatusDTO pst : pstList) {
                     if (Objects.equals(pst.getProjectSiteTaskID(), dto.getProjectSiteTaskID())) {
                         dto.getProjectSiteTaskStatusList().add(pst);
@@ -936,6 +982,8 @@ public class ListUtil {
             List<ProjectSiteTaskStatusDTO> pstList = getTaskStatusByProject(projectID);
             for (ProjectSiteTask s : pList) {
                 ProjectSiteTaskDTO dto = new ProjectSiteTaskDTO(s);
+                dto.setProjectSiteTaskStatusList(new ArrayList<ProjectSiteTaskStatusDTO>());
+                dto.setPhotoUploadList(new ArrayList<PhotoUploadDTO>());
                 for (ProjectSiteTaskStatusDTO pst : pstList) {
                     if (Objects.equals(pst.getProjectSiteTaskID(), dto.getProjectSiteTaskID())) {
                         dto.getProjectSiteTaskStatusList().add(pst);
@@ -964,8 +1012,7 @@ public class ListUtil {
         List<ProjectSiteTaskStatusDTO> list = new ArrayList<>();
 
         try {
-            Query q = em.createNamedQuery("ProjectSiteTaskStatus.findByCompany", ProjectSiteTaskStatus.class
-            );
+            Query q = em.createNamedQuery("ProjectSiteTaskStatus.findByCompany", ProjectSiteTaskStatus.class);
             q.setParameter(
                     "companyID", companyID);
             List<ProjectSiteTaskStatus> pList = q.getResultList();
