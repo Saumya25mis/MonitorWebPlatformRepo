@@ -151,6 +151,15 @@ public class TrafficCop {
                     resp = dataUtil.addSubTask(req.getSubTask());
 
                 //lists
+                case RequestDTO.GET_COMPANY_STATUS_IN_PERIOD:
+                    resp = listUtil.getCompanyTaskStatusinPeriod(req.getCompanyID(), req.getStartDate(), req.getEndDate());
+                    break;
+                case RequestDTO.GET_PROJECT_STATUS_IN_PERIOD:
+                    resp = listUtil.getProjectTaskStatusinPeriod(req.getProjectID(), req.getStartDate(), req.getEndDate());
+                    break;
+                case RequestDTO.GET_SITE_STATUS_IN_PERIOD:
+                    resp = listUtil.getSiteTaskStatusinPeriod(req.getProjectSiteID(), req.getStartDate(), req.getEndDate());
+                    break;
                 case RequestDTO.GET_SITE_STATUS:
                     resp = listUtil.getSiteStatus(req.getProjectSiteID());
                     break;

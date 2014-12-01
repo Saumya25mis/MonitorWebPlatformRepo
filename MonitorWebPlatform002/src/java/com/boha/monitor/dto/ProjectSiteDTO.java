@@ -31,6 +31,7 @@ public class ProjectSiteDTO implements Serializable {
     private List<ProjectSiteTaskDTO> projectSiteTaskList = new ArrayList<>();
     private Integer projectID, statusCount;
     private List<PhotoUploadDTO> photoUploadList = new ArrayList<>();
+    private List<ProjectSiteTaskStatusDTO> projectSiteTaskStatusList;
 
     public ProjectSiteDTO() {
     }
@@ -54,6 +55,14 @@ public class ProjectSiteDTO implements Serializable {
             this.happyLetter = new HappyLetterDTO(a.getHappyLetter());
         }
 
+    }
+
+    public List<ProjectSiteTaskStatusDTO> getProjectSiteTaskStatusList() {
+        return projectSiteTaskStatusList;
+    }
+
+    public void setProjectSiteTaskStatusList(List<ProjectSiteTaskStatusDTO> projectSiteTaskStatusList) {
+        this.projectSiteTaskStatusList = projectSiteTaskStatusList;
     }
 
     public ProjectSiteTaskStatusDTO getLastStatus() {

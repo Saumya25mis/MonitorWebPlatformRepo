@@ -43,7 +43,7 @@ import java.util.List;
  */
 public class ResponseDTO {
 
-    private Integer statusCode;
+    private Integer statusCode, statusCountInPeriod;
     private String message, sessionID, GCMRegistrationID, fileString;
     private List<String> taskImageFileNameList;
     private List<BankDTO> bankList;
@@ -80,6 +80,14 @@ public class ResponseDTO {
     //
     private CompanyDTO company;
     private CompanyStaffDTO companyStaff;
+
+    public Integer getStatusCountInPeriod() {
+        return statusCountInPeriod;
+    }
+
+    public void setStatusCountInPeriod(Integer statusCountInPeriod) {
+        this.statusCountInPeriod = statusCountInPeriod;
+    }
 
     public List<TaskPriceDTO> getTaskPriceList() {
         return taskPriceList;

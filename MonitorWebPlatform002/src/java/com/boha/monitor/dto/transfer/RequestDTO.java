@@ -30,6 +30,7 @@ import com.boha.monitor.dto.TaskDTO;
 import com.boha.monitor.dto.TaskStatusDTO;
 import com.boha.monitor.dto.TownshipDTO;
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  *
@@ -41,6 +42,7 @@ public class RequestDTO implements Serializable{
             countryID, contractorClaimID, invoiceID,
             beneficiaryID, engineerID;
     private String email, pin, gcmRegistrationID;
+    private Date startDate, endDate;
     private Double latitude, longitude;
     private CompanyDTO company;
     private CompanyStaffDTO companyStaff;
@@ -103,7 +105,10 @@ public class RequestDTO implements Serializable{
             GET_TASK_IMAGES = 112,
             GET_CONTRACTOR_CLAIMS_BY_PROJECT = 114,
             GET_CONTRACTOR_CLAIMS_BY_COMPANY = 115,
-            GET_SITE_STATUS = 116;
+            GET_SITE_STATUS = 116,
+            GET_COMPANY_STATUS_IN_PERIOD = 117,
+            GET_PROJECT_STATUS_IN_PERIOD = 118,
+            GET_SITE_STATUS_IN_PERIOD = 119;
     //login's 
     public static final int 
             LOGIN = 200,
@@ -160,6 +165,22 @@ public class RequestDTO implements Serializable{
 
     //
     
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
+
     public Integer getEngineerID() {
         return engineerID;
     }

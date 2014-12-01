@@ -58,7 +58,9 @@ import com.boha.monitor.dto.TownshipDTO;
 import com.boha.monitor.dto.transfer.PhotoUploadDTO;
 import com.boha.monitor.dto.transfer.ResponseDTO;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -387,6 +389,18 @@ public class ListUtil {
         if (countryID != null) {
             resp.setBankList(getBankList(countryID).getBankList());
         }
+
+        Calendar cal = GregorianCalendar.getInstance();
+        for (int i = 0; i < 7; i++) {
+            cal.roll(Calendar.DATE, false);
+        }
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+
+        Integer xx = countCompanyTaskStatusinPeriod(companyID, cal.getTime(), new Date());
+        resp.setStatusCountInPeriod(xx);
+
         long e = System.currentTimeMillis();
         System.out.println("getCompanyData - time elapsed: " + (e - s));
         return resp;
@@ -842,10 +856,21 @@ public class ListUtil {
             project.setPhotoCount(project.getPhotoUploadList().size());
             project.setInvoiceCount(project.getInvoiceList().size());
 
+            Calendar cal = GregorianCalendar.getInstance();
+            for (int i = 0; i < 7; i++) {
+                cal.roll(Calendar.DATE, false);
+            }
+            cal.set(Calendar.HOUR_OF_DAY, 0);
+            cal.set(Calendar.MINUTE, 0);
+            cal.set(Calendar.SECOND, 0);
+
+            Integer xx = countProjectTaskStatusinPeriod(projectID, cal.getTime(), new Date());
+            resp.setStatusCountInPeriod(xx);
+
             resp.setProjectList(new ArrayList<ProjectDTO>());
             resp.getProjectList().add(project);
-            long e = System.currentTimeMillis();
 
+            long e = System.currentTimeMillis();
             log.log(Level.INFO,
                     "############---------- project data retrieved: {0} seconds", Elapsed.getElapsed(s, e));
         } catch (OutOfMemoryError e) {
@@ -1006,6 +1031,140 @@ public class ListUtil {
         }
 
         return list;
+    }
+
+    public ResponseDTO getProjectTaskStatusinPeriod(Integer projectID,
+            Date startDate, Date endDate) throws DataException {
+
+        ResponseDTO resp = new ResponseDTO();
+        resp.setProjectSiteTaskStatusList(new ArrayList<ProjectSiteTaskStatusDTO>());
+
+        try {
+            Query q = em.createNamedQuery("ProjectSiteTaskStatus.findByProjectInPeriod", ProjectSiteTaskStatus.class);
+            q.setParameter(
+                    "projectID", projectID);
+            q.setParameter("startDate", startDate);
+            q.setParameter("endDate", endDate);
+
+            List<ProjectSiteTaskStatus> pList = q.getResultList();
+            for (ProjectSiteTaskStatus s : pList) {
+                resp.getProjectSiteTaskStatusList().add(new ProjectSiteTaskStatusDTO(s));
+            }
+
+            log.log(Level.OFF,
+                    "project task status in period : {0}", resp.getProjectSiteTaskStatusList().size());
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "Failed", e);
+            throw new DataException("Failed to get project task status data\n" + getErrorString(e));
+        }
+
+        return resp;
+    }
+    public Integer countProjectTaskStatusinPeriod(Integer projectID,
+            Date startDate, Date endDate) throws DataException {
+
+        ResponseDTO resp = new ResponseDTO();
+        resp.setProjectSiteTaskStatusList(new ArrayList<ProjectSiteTaskStatusDTO>());
+
+        try {
+            Query q = em.createNamedQuery("ProjectSiteTaskStatus.countByProjectInPeriod", ProjectSiteTaskStatus.class);
+            q.setParameter(
+                    "projectID", projectID);
+            q.setParameter("startDate", startDate);
+            q.setParameter("endDate", endDate);
+            Long x = (Long)q.getSingleResult();
+            Integer y = Integer.parseUnsignedInt("" + x.intValue());
+
+            log.log(Level.OFF,
+                    "project task status count in period : {0}", resp.getProjectSiteTaskStatusList().size());
+            return y;
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "Failed", e);
+            throw new DataException("Failed to get project task status data\n" + getErrorString(e));
+        }
+
+    }
+
+    public ResponseDTO getSiteTaskStatusinPeriod(Integer projectSiteID,
+            Date startDate, Date endDate) throws DataException {
+
+        ResponseDTO resp = new ResponseDTO();
+        resp.setProjectSiteTaskStatusList(new ArrayList<ProjectSiteTaskStatusDTO>());
+
+        try {
+            Query q = em.createNamedQuery("ProjectSiteTaskStatus.findByProjectSiteInPeriod", ProjectSiteTaskStatus.class);
+            q.setParameter(
+                    "projectSiteID", projectSiteID);
+            q.setParameter("startDate", startDate);
+            q.setParameter("endDate", endDate);
+
+            List<ProjectSiteTaskStatus> pList = q.getResultList();
+            for (ProjectSiteTaskStatus s : pList) {
+                resp.getProjectSiteTaskStatusList().add(new ProjectSiteTaskStatusDTO(s));
+            }
+
+            log.log(Level.OFF,
+                    "site task statusin period : {0}", resp.getProjectSiteTaskStatusList().size());
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "Failed", e);
+            throw new DataException("Failed to get project task status data\n" + getErrorString(e));
+        }
+
+        return resp;
+    }
+
+    public ResponseDTO getCompanyTaskStatusinPeriod(Integer companyID,
+            Date startDate, Date endDate) throws DataException {
+
+        ResponseDTO resp = new ResponseDTO();
+        resp.setProjectSiteTaskStatusList(new ArrayList<ProjectSiteTaskStatusDTO>());
+
+        try {
+            Query q = em.createNamedQuery("ProjectSiteTaskStatus.findByCompanyInPeriod", ProjectSiteTaskStatus.class);
+            q.setParameter(
+                    "companyID", companyID);
+            q.setParameter("startDate", startDate);
+            q.setParameter("endDate", endDate);
+
+            List<ProjectSiteTaskStatus> pList = q.getResultList();
+            for (ProjectSiteTaskStatus s : pList) {
+                resp.getProjectSiteTaskStatusList().add(new ProjectSiteTaskStatusDTO(s));
+            }
+
+            log.log(Level.OFF,
+                    "Company task statusin period : {0}", resp.getProjectSiteTaskStatusList().size());
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "Failed", e);
+            throw new DataException("Failed to get company task status data\n" + getErrorString(e));
+        }
+
+        return resp;
+    }
+    public Integer countCompanyTaskStatusinPeriod(Integer companyID,
+            Date startDate, Date endDate) throws DataException {
+
+        ResponseDTO resp = new ResponseDTO();
+        resp.setProjectSiteTaskStatusList(new ArrayList<ProjectSiteTaskStatusDTO>());
+
+        try {
+            Query q = em.createNamedQuery("ProjectSiteTaskStatus.countByCompanyInPeriod", ProjectSiteTaskStatus.class);
+            q.setParameter(
+                    "companyID", companyID);
+            q.setParameter("startDate", startDate);
+            q.setParameter("endDate", endDate);
+
+            Long x = (Long)q.getSingleResult();
+            Integer y = Integer.parseUnsignedInt("" + x.intValue());
+           
+            
+            log.log(Level.OFF,
+                    "Company task status count in period : {0}", y);
+            return y;
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "Failed", e);
+            throw new DataException("Failed to get company task status data\n" + getErrorString(e));
+        }
+
     }
 
     private List<ProjectSiteTaskStatusDTO> getTaskStatusByCompany(Integer companyID) throws DataException {

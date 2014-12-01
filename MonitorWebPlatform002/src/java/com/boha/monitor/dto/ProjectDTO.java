@@ -33,6 +33,7 @@ public class ProjectDTO implements Serializable {
     private List<ContractorClaimDTO> contractorClaimList;
     private List<TaskPriceDTO> taskPriceList;
     private ProjectSiteTaskStatusDTO lastStatus;
+    private List<ProjectSiteTaskStatusDTO> projectSiteTaskStatusList;
 
     public ProjectDTO() {
     }
@@ -49,6 +50,14 @@ public class ProjectDTO implements Serializable {
             this.clientName = a.getClient().getClientName();
         }
         
+    }
+
+    public List<ProjectSiteTaskStatusDTO> getProjectSiteTaskStatusList() {
+        return projectSiteTaskStatusList;
+    }
+
+    public void setProjectSiteTaskStatusList(List<ProjectSiteTaskStatusDTO> projectSiteTaskStatusList) {
+        this.projectSiteTaskStatusList = projectSiteTaskStatusList;
     }
 
     public ProjectSiteTaskStatusDTO getLastStatus() {

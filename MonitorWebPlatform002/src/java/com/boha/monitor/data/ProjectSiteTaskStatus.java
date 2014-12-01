@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.boha.monitor.data;
 
 import java.io.Serializable;
@@ -30,21 +29,43 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "projectSiteTaskStatus")
 @NamedQueries({
-    @NamedQuery(name = "ProjectSiteTaskStatus.findbyTask", 
+    @NamedQuery(name = "ProjectSiteTaskStatus.findbyTask",
             query = "SELECT p FROM ProjectSiteTaskStatus p where p.projectSiteTask.projectSiteTaskID = :id order by p.dateUpdated desc"),
-    @NamedQuery(name = "ProjectSiteTaskStatus.findByProject", 
+    @NamedQuery(name = "ProjectSiteTaskStatus.findByProject",
             query = "SELECT p FROM ProjectSiteTaskStatus p WHERE p.projectSiteTask.projectSite.project.projectID = :projectID order by p.dateUpdated desc"),
-    @NamedQuery(name = "ProjectSiteTaskStatus.findByProjectSite", 
+    @NamedQuery(name = "ProjectSiteTaskStatus.findByProjectSite",
             query = "SELECT p FROM ProjectSiteTaskStatus p WHERE p.projectSiteTask.projectSite.projectSiteID = :projectSiteID order by p.dateUpdated desc"),
-    @NamedQuery(name = "ProjectSiteTaskStatus.findByCompany", 
+    @NamedQuery(name = "ProjectSiteTaskStatus.findByCompany",
             query = "SELECT p FROM ProjectSiteTaskStatus p "
-                    + "WHERE p.projectSiteTask.projectSite.project.company.companyID = :companyID "
-                    + "order by p.dateUpdated desc"),
-     @NamedQuery(name = "ProjectSiteTaskStatus.countByProject", 
+            + "WHERE p.projectSiteTask.projectSite.project.company.companyID = :companyID "
+            + "order by p.statusDate desc"),
+    @NamedQuery(name = "ProjectSiteTaskStatus.findByCompanyInPeriod",
+            query = "SELECT p FROM ProjectSiteTaskStatus p WHERE p.projectSiteTask.projectSite.project.company.companyID = :companyID "
+            + "and p.statusDate between :startDate and :endDate "
+            + "order by p.statusDate desc"),
+    @NamedQuery(name = "ProjectSiteTaskStatus.countByCompanyInPeriod",
+            query = "SELECT count(p) FROM ProjectSiteTaskStatus p WHERE p.projectSiteTask.projectSite.project.company.companyID = :companyID "
+            + "and p.statusDate between :startDate and :endDate "
+            + "order by p.statusDate desc"),
+    @NamedQuery(name = "ProjectSiteTaskStatus.findByProjectInPeriod",
+            query = "SELECT p FROM ProjectSiteTaskStatus p WHERE p.projectSiteTask.projectSite.project.projectID = :projectID "
+            + "and p.statusDate between :startDate and :endDate "
+            + "order by p.statusDate desc"),
+    @NamedQuery(name = "ProjectSiteTaskStatus.countByProjectInPeriod",
+            query = "SELECT count(p) FROM ProjectSiteTaskStatus p WHERE p.projectSiteTask.projectSite.project.projectID = :projectID "
+            + "and p.statusDate between :startDate and :endDate "
+            + "order by p.dateUpdated desc"),
+    @NamedQuery(name = "ProjectSiteTaskStatus.findByProjectSiteInPeriod",
+            query = "SELECT p FROM ProjectSiteTaskStatus p WHERE p.projectSiteTask.projectSite.projectSiteID = :projectSiteID "
+            + "and p.statusDate between :startDate and :endDate "
+            + "order by p.statusDate desc"),
+
+    @NamedQuery(name = "ProjectSiteTaskStatus.countByProject",
             query = "SELECT count(p) FROM ProjectSiteTaskStatus p WHERE p.projectSiteTask.projectSite.project.projectID = :projectID"),
-    @NamedQuery(name = "ProjectSiteTaskStatus.countByProjectSite", 
+    @NamedQuery(name = "ProjectSiteTaskStatus.countByProjectSite",
             query = "SELECT count(p) FROM ProjectSiteTaskStatus p WHERE p.projectSiteTask.projectSite.projectSiteID = :projectSiteID")})
 public class ProjectSiteTaskStatus implements Serializable {
+
     @Column(name = "statusDate")
     @Temporal(TemporalType.TIMESTAMP)
     private Date statusDate;
@@ -68,7 +89,7 @@ public class ProjectSiteTaskStatus implements Serializable {
     @JoinColumn(name = "projectSiteTaskID", referencedColumnName = "projectSiteTaskID")
     @ManyToOne(optional = false)
     private ProjectSiteTask projectSiteTask;
-    
+
     public ProjectSiteTaskStatus() {
     }
 
@@ -154,5 +175,4 @@ public class ProjectSiteTaskStatus implements Serializable {
         this.statusDate = statusDate;
     }
 
-    
 }
