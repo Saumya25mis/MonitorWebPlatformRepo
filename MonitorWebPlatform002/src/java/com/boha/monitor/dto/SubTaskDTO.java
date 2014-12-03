@@ -8,6 +8,7 @@ package com.boha.monitor.dto;
 
 import com.boha.monitor.data.*;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  *
@@ -19,6 +20,7 @@ public class SubTaskDTO implements Serializable {
     private String subTaskName;
     private Integer subTaskNumber;
     private Integer taskID;
+    private List<SubTaskStatusDTO> subTaskStatusList;
 
     public SubTaskDTO() {
     }
@@ -30,10 +32,15 @@ public class SubTaskDTO implements Serializable {
         this.taskID = a.getTask().getTaskID();
     }
 
-    public SubTaskDTO(Integer subTaskID, String subTaskName) {
-        this.subTaskID = subTaskID;
-        this.subTaskName = subTaskName;
+    public List<SubTaskStatusDTO> getSubTaskStatusList() {
+        return subTaskStatusList;
     }
+
+    public void setSubTaskStatusList(List<SubTaskStatusDTO> subTaskStatusList) {
+        this.subTaskStatusList = subTaskStatusList;
+    }
+
+    
 
     public Integer getTaskID() {
         return taskID;

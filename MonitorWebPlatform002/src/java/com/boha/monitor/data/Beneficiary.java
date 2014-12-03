@@ -8,7 +8,9 @@ package com.boha.monitor.data;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -18,6 +20,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -39,6 +42,10 @@ import javax.validation.constraints.Size;
             query = "SELECT b FROM Beneficiary b WHERE b.project.projectID = :projectID "
                     + "order by b.lastName, b.firstName")})
 public class Beneficiary implements Serializable {
+    @OneToMany(mappedBy = "beneficiary")
+    private List<ProjectSite> projectSiteList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "beneficiary")
+    private List<HappyLetter> happyLetterList;
     @JoinColumn(name = "projectID", referencedColumnName = "projectID")
     @ManyToOne(optional = false)
     private Project project;
@@ -244,6 +251,22 @@ public class Beneficiary implements Serializable {
 
     public void setProject(Project project) {
         this.project = project;
+    }
+
+    public List<ProjectSite> getProjectSiteList() {
+        return projectSiteList;
+    }
+
+    public void setProjectSiteList(List<ProjectSite> projectSiteList) {
+        this.projectSiteList = projectSiteList;
+    }
+
+    public List<HappyLetter> getHappyLetterList() {
+        return happyLetterList;
+    }
+
+    public void setHappyLetterList(List<HappyLetter> happyLetterList) {
+        this.happyLetterList = happyLetterList;
     }
 
 

@@ -36,6 +36,8 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "TaskStatus.findByTaskStatusID", query = "SELECT t FROM TaskStatus t WHERE t.taskStatusID = :taskStatusID"),
     @NamedQuery(name = "TaskStatus.findByTaskStatusName", query = "SELECT t FROM TaskStatus t WHERE t.taskStatusName = :taskStatusName")})
 public class TaskStatus implements Serializable {
+    @OneToMany(mappedBy = "taskStatus")
+    private List<SubTaskStatus> subTaskStatusList;
     @Column(name = "statusColor")
     private Short statusColor;
     @JoinColumn(name = "companyID", referencedColumnName = "companyID")
@@ -130,6 +132,14 @@ public class TaskStatus implements Serializable {
 
     public void setStatusColor(Short statusColor) {
         this.statusColor = statusColor;
+    }
+
+    public List<SubTaskStatus> getSubTaskStatusList() {
+        return subTaskStatusList;
+    }
+
+    public void setSubTaskStatusList(List<SubTaskStatus> subTaskStatusList) {
+        this.subTaskStatusList = subTaskStatusList;
     }
 
     

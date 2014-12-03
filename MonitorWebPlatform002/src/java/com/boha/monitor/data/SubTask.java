@@ -7,6 +7,7 @@
 package com.boha.monitor.data;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,6 +18,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -28,11 +30,14 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(name = "subTask")
 @NamedQueries({
-    @NamedQuery(name = "SubTask.findAll", query = "SELECT s FROM SubTask s"),
-    @NamedQuery(name = "SubTask.findBySubTaskID", query = "SELECT s FROM SubTask s WHERE s.subTaskID = :subTaskID"),
-    @NamedQuery(name = "SubTask.findBySubTaskName", query = "SELECT s FROM SubTask s WHERE s.subTaskName = :subTaskName"),
-    @NamedQuery(name = "SubTask.findBySubTaskNumber", query = "SELECT s FROM SubTask s WHERE s.subTaskNumber = :subTaskNumber")})
+    @NamedQuery(name = "SubTask.findByTask", 
+            query = "SELECT s FROM SubTask s where s.task.taskID = :taskID order by s.subTaskNumber"),
+    @NamedQuery(name = "SubTask.findByCompany", 
+            query = "SELECT s FROM SubTask s where s.task.company.companyID = :companyID")
+})
 public class SubTask implements Serializable {
+    @OneToMany(mappedBy = "subTask")
+    private List<SubTaskStatus> subTaskStatusList;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -118,6 +123,14 @@ public class SubTask implements Serializable {
     @Override
     public String toString() {
         return "com.boha.monitor.data.SubTask[ subTaskID=" + subTaskID + " ]";
+    }
+
+    public List<SubTaskStatus> getSubTaskStatusList() {
+        return subTaskStatusList;
+    }
+
+    public void setSubTaskStatusList(List<SubTaskStatus> subTaskStatusList) {
+        this.subTaskStatusList = subTaskStatusList;
     }
     
 }

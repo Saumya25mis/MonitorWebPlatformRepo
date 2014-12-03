@@ -149,6 +149,10 @@ public class TrafficCop {
                     break;
                 case RequestDTO.ADD_SUB_TASK:
                     resp = dataUtil.addSubTask(req.getSubTask());
+                    break;
+                case RequestDTO.ADD_SUBTASK_STATUS:
+                    resp = dataUtil.addSubTaskStatus(req.getSubTaskStatus());
+                    break;
 
                 //lists
                 case RequestDTO.GET_COMPANY_STATUS_IN_PERIOD:

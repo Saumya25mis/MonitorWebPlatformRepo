@@ -31,6 +31,7 @@ import com.boha.monitor.dto.ProjectSiteTaskStatusDTO;
 import com.boha.monitor.dto.ProjectStatusTypeDTO;
 import com.boha.monitor.dto.ProvinceDTO;
 import com.boha.monitor.dto.SubTaskDTO;
+import com.boha.monitor.dto.SubTaskStatusDTO;
 import com.boha.monitor.dto.TaskDTO;
 import com.boha.monitor.dto.TaskPriceDTO;
 import com.boha.monitor.dto.TaskStatusDTO;
@@ -47,6 +48,7 @@ public class ResponseDTO {
     private String message, sessionID, GCMRegistrationID, fileString;
     private List<String> taskImageFileNameList;
     private List<BankDTO> bankList;
+    private List<SubTaskStatusDTO> subTaskStatusList;
     private List<TaskPriceDTO> taskPriceList;
     private List<String> siteImageFileNameList;
     private List<SubTaskDTO> subTaskList;
@@ -121,6 +123,14 @@ public class ResponseDTO {
 
     public List<BankDTO> getBankList() {
         return bankList;
+    }
+
+    public List<SubTaskStatusDTO> getSubTaskStatusList() {
+        return subTaskStatusList;
+    }
+
+    public void setSubTaskStatusList(List<SubTaskStatusDTO> subTaskStatusList) {
+        this.subTaskStatusList = subTaskStatusList;
     }
 
     public List<SubTaskDTO> getSubTaskList() {

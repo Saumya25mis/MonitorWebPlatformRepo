@@ -10,6 +10,7 @@ import com.boha.monitor.data.ProjectSiteTask;
 import com.boha.monitor.data.ProjectSiteTaskStatus;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -26,6 +27,7 @@ public class ProjectSiteTaskStatusDTO implements Serializable {
     private Integer projectSiteTaskID;
     private Integer companyStaffID;
     private String projectSiteName, projectName, staffName;
+    private List<SubTaskStatusDTO> subTaskStatusList;
 
     public ProjectSiteTaskStatusDTO() {
     }
@@ -45,6 +47,14 @@ public class ProjectSiteTaskStatusDTO implements Serializable {
             this.companyStaffID = cs.getCompanyStaffID();
             this.staffName = cs.getFirstName() + " " + cs.getLastName();
         }
+    }
+
+    public List<SubTaskStatusDTO> getSubTaskStatusList() {
+        return subTaskStatusList;
+    }
+
+    public void setSubTaskStatusList(List<SubTaskStatusDTO> subTaskStatusList) {
+        this.subTaskStatusList = subTaskStatusList;
     }
 
     public TaskDTO getTask() {

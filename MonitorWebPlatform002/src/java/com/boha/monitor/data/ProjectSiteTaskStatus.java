@@ -7,6 +7,7 @@ package com.boha.monitor.data;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,6 +18,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -65,6 +67,8 @@ import javax.validation.constraints.NotNull;
     @NamedQuery(name = "ProjectSiteTaskStatus.countByProjectSite",
             query = "SELECT count(p) FROM ProjectSiteTaskStatus p WHERE p.projectSiteTask.projectSite.projectSiteID = :projectSiteID")})
 public class ProjectSiteTaskStatus implements Serializable {
+    @OneToMany(mappedBy = "projectSiteTaskStatus")
+    private List<SubTaskStatus> subTaskStatusList;
 
     @Column(name = "statusDate")
     @Temporal(TemporalType.TIMESTAMP)
@@ -173,6 +177,14 @@ public class ProjectSiteTaskStatus implements Serializable {
 
     public void setStatusDate(Date statusDate) {
         this.statusDate = statusDate;
+    }
+
+    public List<SubTaskStatus> getSubTaskStatusList() {
+        return subTaskStatusList;
+    }
+
+    public void setSubTaskStatusList(List<SubTaskStatus> subTaskStatusList) {
+        this.subTaskStatusList = subTaskStatusList;
     }
 
 }

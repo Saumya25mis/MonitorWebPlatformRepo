@@ -32,6 +32,7 @@ import com.boha.monitor.data.ProjectSiteTaskStatus;
 import com.boha.monitor.data.ProjectStatusType;
 import com.boha.monitor.data.Province;
 import com.boha.monitor.data.SubTask;
+import com.boha.monitor.data.SubTaskStatus;
 import com.boha.monitor.data.Task;
 import com.boha.monitor.data.TaskPrice;
 import com.boha.monitor.data.TaskStatus;
@@ -58,6 +59,7 @@ import com.boha.monitor.dto.ProjectSiteTaskDTO;
 import com.boha.monitor.dto.ProjectSiteTaskStatusDTO;
 import com.boha.monitor.dto.ProjectStatusTypeDTO;
 import com.boha.monitor.dto.SubTaskDTO;
+import com.boha.monitor.dto.SubTaskStatusDTO;
 import com.boha.monitor.dto.TaskDTO;
 import com.boha.monitor.dto.TaskPriceDTO;
 import com.boha.monitor.dto.TaskStatusDTO;
@@ -257,6 +259,35 @@ public class DataUtil {
         }
     }
 
+    public ResponseDTO addSubTaskStatus(
+            SubTaskStatusDTO status) throws DataException {
+        ResponseDTO resp = new ResponseDTO();
+        try {
+
+            SubTaskStatus t = new SubTaskStatus();
+            t.setCompanyStaff(em.find(CompanyStaff.class, status.getCompanyStaffID()));
+            t.setDateUpdated(new Date());
+            t.setStatusDate(new Date());
+            t.setProjectSiteTaskStatus(em.find(ProjectSiteTaskStatus.class, status.getProjectSiteTaskStatusID()));
+            t.setSubTask(em.find(SubTask.class, status.getSubTaskID()));
+            t.setTaskStatus(em.find(TaskStatus.class, status.getTaskStatus().getTaskStatusID()));
+
+            em.persist(t);
+            em.flush();
+            resp.setSubTaskStatusList(new ArrayList<SubTaskStatusDTO>());
+            resp.getSubTaskStatusList().add(
+                    new SubTaskStatusDTO(t));
+            log.log(Level.OFF, "SubTaskStatus added");
+
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "Failed", e);
+            throw new DataException("Failed");
+        }
+
+        return resp;
+
+    }
+
     public ResponseDTO addProjectSiteTaskStatus(
             ProjectSiteTaskStatusDTO status) throws DataException {
         ResponseDTO resp = new ResponseDTO();
@@ -272,7 +303,7 @@ public class DataUtil {
 
             em.persist(t);
             em.flush();
-             resp.setProjectSiteTaskStatusList(new ArrayList<ProjectSiteTaskStatusDTO>());
+            resp.setProjectSiteTaskStatusList(new ArrayList<ProjectSiteTaskStatusDTO>());
             resp.getProjectSiteTaskStatusList().add(
                     new ProjectSiteTaskStatusDTO(t));
             log.log(Level.OFF, "ProjectSiteTaskStatus added");
@@ -464,6 +495,7 @@ public class DataUtil {
         try {
             Task task = em.find(Task.class, st.getTaskID());
             SubTask t = new SubTask();
+
             t.setTask(task);
             t.setSubTaskName(st.getSubTaskName());
             t.setSubTaskNumber(st.getSubTaskNumber());
@@ -809,7 +841,7 @@ public class DataUtil {
             ProjectDTO dto = new ProjectDTO(project);
             dto.setProjectSiteList(new ArrayList<ProjectSiteDTO>());
             dto.getProjectSiteList().add(new ProjectSiteDTO(ps));
-            
+
             resp.setProjectList(new ArrayList<ProjectDTO>());
             resp.getProjectList().add(dto);
             log.log(Level.OFF, "Project registered for: {0} - {1} ",
@@ -1369,6 +1401,7 @@ public class DataUtil {
                 }
                 em.merge(ps);
                 log.log(Level.INFO, "Task Status updated");
+                Thread.sleep(5000);
             }
         } catch (Exception e) {
             log.log(Level.OFF, null, e);
@@ -1387,7 +1420,15 @@ public class DataUtil {
                 if (dto.getDescription() != null) {
                     ps.setDescription(dto.getDescription());
                 }
+                if (dto.getTaskNumber() != null) {
+                    ps.setTaskNumber(dto.getTaskNumber());
+                }
                 em.merge(ps);
+                //
+                if (dto.getTaskPriceList() != null && !dto.getTaskPriceList().isEmpty()) {
+                    addTaskPrice(dto.getTaskPriceList().get(0));
+                }
+
                 log.log(Level.INFO, "Task updated");
             }
         } catch (Exception e) {
