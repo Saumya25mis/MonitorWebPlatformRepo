@@ -185,6 +185,7 @@ public class ListUtil {
         Query q = em.createNamedQuery("ProjectSiteTask.findByProjectSite", ProjectSiteTask.class);
         q.setParameter("projectSiteID", projectSiteID);
         List<ProjectSiteTask> taskList = q.getResultList();
+        System.out.println("ProjectSiteTasks found: " + taskList.size());
 
         resp.setProjectSiteTaskList(new ArrayList<ProjectSiteTaskDTO>());
         List<ProjectSiteTaskStatusDTO> list = getSiteTaskStatus(projectSiteID);
@@ -237,16 +238,18 @@ public class ListUtil {
         Query q = em.createNamedQuery("ProjectSiteTaskStatus.findByProjectSite", ProjectSiteTaskStatus.class);
         q.setParameter("projectSiteID", projectSiteID);
         List<ProjectSiteTaskStatus> statusList = q.getResultList();
+        System.out.println("ProjectSiteTaskStatus found: " + statusList.size());
 
         q = em.createNamedQuery("SubTaskStatus.findBySite", SubTaskStatus.class);
         q.setParameter("projectSiteID", projectSiteID);
         List<SubTaskStatus> subTaskList = q.getResultList();
+        System.out.println("SubTaskStatus found: " + subTaskList.size());
 
         for (ProjectSiteTaskStatus psts : statusList) {
             ProjectSiteTaskStatusDTO dto = new ProjectSiteTaskStatusDTO(psts);
             dto.setSubTaskStatusList(new ArrayList<SubTaskStatusDTO>());
             for (SubTaskStatus sub : subTaskList) {
-                if (Objects.equals(sub.getProjectSiteTaskStatus().getProjectSiteTask().getProjectSiteTaskID(), dto.getProjectSiteTaskID())) {
+                if (Objects.equals(sub.getProjectSiteTaskStatus().getProjectSiteTaskStatusID(), dto.getProjectSiteTaskStatusID())) {
                     dto.getSubTaskStatusList().add(new SubTaskStatusDTO(sub));
                 }
             }

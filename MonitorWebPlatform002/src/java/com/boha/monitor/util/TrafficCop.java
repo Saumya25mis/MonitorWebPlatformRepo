@@ -29,6 +29,7 @@ public class TrafficCop {
     public ResponseDTO processRequest(RequestDTO req,
             DataUtil dataUtil, ListUtil listUtil,
             ContractorClaimPDFFactory claimFactory) {
+        long start = System.currentTimeMillis();
         ResponseDTO resp = new ResponseDTO();
         try {
             switch (req.getRequestType()) {
@@ -224,6 +225,10 @@ public class TrafficCop {
         if (resp.getStatusCode() == null) {
             resp.setStatusCode(0);
         }
+        long end = System.currentTimeMillis();
+        double elapsed = Elapsed.getElapsed(start, end);
+        resp.setElapsedRequestTimeInSeconds(elapsed);
+        logger.log(Level.WARNING, "*********** request elapsed time: {0} seconds", elapsed);
         return resp;
     }
 

@@ -46,6 +46,7 @@ public class ResponseDTO {
 
     private Integer statusCode, statusCountInPeriod;
     private String message, sessionID, GCMRegistrationID, fileString;
+    private double elapsedRequestTimeInSeconds;
     private List<String> taskImageFileNameList;
     private List<BankDTO> bankList;
     private List<SubTaskStatusDTO> subTaskStatusList;
@@ -82,6 +83,14 @@ public class ResponseDTO {
     //
     private CompanyDTO company;
     private CompanyStaffDTO companyStaff;
+
+    public double getElapsedRequestTimeInSeconds() {
+        return elapsedRequestTimeInSeconds;
+    }
+
+    public void setElapsedRequestTimeInSeconds(double elapsedRequestTimeInSeconds) {
+        this.elapsedRequestTimeInSeconds = elapsedRequestTimeInSeconds;
+    }
 
     public Integer getStatusCountInPeriod() {
         return statusCountInPeriod;
