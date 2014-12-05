@@ -8,7 +8,6 @@ package com.boha.monitor.gate;
 import com.boha.monitor.dto.transfer.RequestDTO;
 import com.boha.monitor.dto.transfer.ResponseDTO;
 import com.boha.monitor.pdf.ContractorClaimPDFFactory;
-import com.boha.monitor.pdf.PDFDocumentGenerator;
 import com.boha.monitor.util.DataUtil;
 import com.boha.monitor.util.GZipUtility;
 import com.boha.monitor.util.ListUtil;
@@ -60,6 +59,7 @@ public class CompanyWebSocket {
         log.log(Level.WARNING, "###### onMessage: {0}", message);
         ResponseDTO resp = new ResponseDTO();
         ByteBuffer bb = null;
+        
         try {
             RequestDTO dto = gson.fromJson(message, RequestDTO.class);
             resp = trafficCop.processRequest(dto, 

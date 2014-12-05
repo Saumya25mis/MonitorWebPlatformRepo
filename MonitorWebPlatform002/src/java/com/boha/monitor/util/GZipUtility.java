@@ -27,6 +27,7 @@ public class GZipUtility {
     private static final Logger logger = Logger.getLogger(GZipUtility.class.getName());
 
     public static ByteBuffer getZippedResponse(ResponseDTO resp) throws IOException {
+        long start = System.currentTimeMillis();
         String json = gson.toJson(resp);
         byte[] bytes = null;
         if (json.length() < ZIP_THRESHOLD) {
@@ -38,6 +39,8 @@ public class GZipUtility {
                     new Object[]{getKilobytes(json.length()), getKilobytes(bytes.length)});
         }
         ByteBuffer buf = ByteBuffer.wrap(bytes);
+        long end = System.currentTimeMillis();
+        logger.log(Level.WARNING, "Elapsed time for zipping up: {0} seconds", Elapsed.getElapsed(start, end));
         return buf;
     }
 
