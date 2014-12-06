@@ -130,6 +130,9 @@ public class TrafficCop {
                 case RequestDTO.CONNECT_ENGINEER_TO_PROJECT:
                     resp = dataUtil.connectEngineerToProject(req.getProjectID(), req.getEngineerID());
                     break;
+                case RequestDTO.IMPORT_BENEFICIARIES:
+                    resp = dataUtil.importBeneficiarie(req.getBeneficiaryList());
+                    break;
                 //
                 case RequestDTO.ADD_DEVICE:
                     dataUtil.addDevice(req.getGcmDevice());

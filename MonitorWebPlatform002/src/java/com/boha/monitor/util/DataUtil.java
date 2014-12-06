@@ -100,6 +100,10 @@ public class DataUtil {
             EXECUTIVE_STAFF = 3,
             PROJECT_MANAGER = 4;
 
+    public EntityManager getEm() {
+        return em;
+    }
+
     public ResponseDTO login(GcmDeviceDTO device, String email,
             String pin, ListUtil listUtil) throws DataException {
         ResponseDTO resp = new ResponseDTO();
@@ -281,7 +285,69 @@ public class DataUtil {
 
         } catch (Exception e) {
             log.log(Level.SEVERE, "Failed", e);
-            throw new DataException("Failed");
+            throw new DataException("Failed\n" + getErrorString(e));
+        }
+
+        return resp;
+
+    }
+
+    public ResponseDTO importBeneficiarie(
+            List<BeneficiaryDTO> list) throws DataException {
+        ResponseDTO resp = new ResponseDTO();
+        int count = 0;
+        try {
+            Company c = em.find(Company.class, list.get(0).getCompany().getCompanyID());
+            Project p = em.find(Project.class, list.get(0).getProjectID());
+            Query q = em.createNamedQuery("Task.findByCompany", Task.class);
+            q.setParameter("companyID", c.getCompanyID());
+            List<Task> taskList = q.getResultList();
+            for (BeneficiaryDTO b : list) {
+                Beneficiary ben = new Beneficiary();
+                ben.setAmountAuthorized(b.getAmountAuthorized());
+                ben.setIDNumber(b.getIDNumber());
+                ben.setCompany(c);
+                ben.setDateRegistered(new Date());
+                ben.setFirstName(b.getFirstName());
+                ben.setLastName(b.getLastName());
+                ben.setPhbDate(b.getPhbDate());
+                ben.setMiddleName(b.getMiddleName());
+                ben.setTownshipName(b.getTownshipName());
+                ben.setStatus(b.getStatus());
+                ben.setProject(p);
+
+                try {
+                    em.persist(ben);
+                    em.flush();
+                    //add beneficiary's project site
+                    ProjectSite s = new ProjectSite();
+                    s.setProject(p);
+                    s.setBeneficiary(ben);
+                    s.setProjectSiteName(b.getSiteNumber());
+                    s.setStandErfNumber(b.getSiteNumber());
+                    em.persist(s);
+                    em.flush();
+                    //add tasks for projectSite
+                    for (Task task: taskList) {
+                        ProjectSiteTask pst = new ProjectSiteTask();
+                        pst.setProjectSite(s);
+                        pst.setDateRegistered(new Date());
+                        pst.setTask(task);
+                        em.persist(pst);
+                    }
+                    count++;
+                    log.log(Level.INFO, "Beneficiary and site added: {0} {1} siteNumber: {2}", new Object[]{b.getFirstName(), b.getLastName(), b.getSiteNumber()});
+
+                } catch (PersistenceException e) {
+                    log.log(Level.OFF, "----- duplicate, ignoring");
+                }
+            }
+            resp.setMessage("Beneficiaries imported " + count);
+            log.log(Level.OFF, "***** Beneficiaries and sites added: {0}", count);
+
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "Failed", e);
+            throw new DataException("Failed\n" + getErrorString(e));
         }
 
         return resp;
@@ -310,7 +376,7 @@ public class DataUtil {
 
         } catch (Exception e) {
             log.log(Level.SEVERE, "Failed", e);
-            throw new DataException("Failed");
+            throw new DataException("Failed\n" + getErrorString(e));
         }
 
         return resp;
@@ -336,7 +402,7 @@ public class DataUtil {
 
         } catch (Exception e) {
             log.log(Level.SEVERE, "Failed", e);
-            throw new DataException("Failed");
+            throw new DataException("Failed\n" + getErrorString(e));
         }
 
         return resp;
@@ -946,11 +1012,10 @@ public class DataUtil {
             ben.setEmail(b.getEmail());
             ben.setIDNumber(b.getIDNumber());
             ben.setDateRegistered(new Date());
-            if (b.getTownship() != null) {
-                ben.setTownship(em.find(Township.class, b.getTownship().getTownshipID()));
-            }
+            ben.setTownshipName(b.getTownshipName());
             ben.setAmountAuthorized(b.getAmountAuthorized());
             ben.setAmountPaid(b.getAmountPaid());
+            ben.setStatus(b.getStatus());
             ben.setCompany(c);
 
             em.persist(ben);

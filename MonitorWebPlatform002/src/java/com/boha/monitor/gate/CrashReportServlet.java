@@ -6,6 +6,7 @@
 package com.boha.monitor.gate;
 
 import com.boha.monitor.data.Company;
+import com.boha.monitor.data.ErrorStore;
 import com.boha.monitor.data.ErrorStoreAndroid;
 import com.boha.monitor.util.DataException;
 import com.boha.monitor.util.DataUtil;
@@ -46,13 +47,12 @@ public class CrashReportServlet extends HttpServlet {
             getErrorData(request);
         } catch (DataException ex) {
             log.log(Level.SEVERE, null, ex);
-            platformUtil.addErrorStore(319, "Unable to add Android Error", "CrashReportServlet");
+            addErrorStore(319, "Unable to add Android Error", "CrashReportServlet");
         }
     }
     @EJB
     DataUtil dataUtil;
-    @EJB
-    PlatformUtil platformUtil;
+    
 
     private void getErrorData(HttpServletRequest request) throws DataException {
         ErrorStoreAndroid e = new ErrorStoreAndroid();
@@ -124,4 +124,19 @@ public class CrashReportServlet extends HttpServlet {
         return "Short description";
     }// </editor-fold>
     private static final Logger log = Logger.getLogger("CrashReportServlet");
+     public void addErrorStore(int statusCode, String message, String origin) {
+        log.log(Level.OFF, "------ adding errorStore, message: {0} origin: {1}", new Object[]{message, origin});
+        try {
+            ErrorStore t = new ErrorStore();
+            t.setDateOccured(new Date());
+            t.setMessage(message);
+            t.setStatusCode(statusCode);
+            t.setOrigin(origin);
+            dataUtil.getEm().persist(t);
+            log.log(Level.INFO, "####### ErrorStore row added, origin {0} \nmessage: {1}",
+                    new Object[]{origin, message});
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "####### Failed to add errorStore from " + origin + "\n" + message, e);
+        }
+    }
 }

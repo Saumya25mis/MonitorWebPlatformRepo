@@ -75,6 +75,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.validation.ConstraintViolation;
@@ -190,7 +191,7 @@ public class ListUtil {
         resp.setProjectSiteTaskList(new ArrayList<ProjectSiteTaskDTO>());
         List<ProjectSiteTaskStatusDTO> list = getSiteTaskStatus(projectSiteID);
         List<TaskDTO> ttList = getTasksBySite(projectSiteID);
-                
+
         for (ProjectSiteTask task : taskList) {
             ProjectSiteTaskDTO siteTask = new ProjectSiteTaskDTO(task);
             for (TaskDTO taskDTO : ttList) {
@@ -198,7 +199,7 @@ public class ListUtil {
                     siteTask.setTask(taskDTO);
                 }
             }
-            
+
             siteTask.setProjectSiteTaskStatusList(new ArrayList<ProjectSiteTaskStatusDTO>());
             for (ProjectSiteTaskStatusDTO psts : list) {
                 if (Objects.equals(psts.getProjectSiteTaskID(), siteTask.getProjectSiteTaskID())) {
@@ -870,7 +871,6 @@ public class ListUtil {
                 q2.setParameter(
                         "projectSiteID", ps.getProjectSiteID());
                 q2.setMaxResults(1);
-                ProjectSiteTaskStatus taskStatus = (ProjectSiteTaskStatus) q2.getSingleResult();
 
                 ProjectSiteDTO projectSiteDTO = new ProjectSiteDTO(ps);
                 projectSiteDTO.setPhotoUploadList(new ArrayList<PhotoUploadDTO>());
@@ -890,9 +890,14 @@ public class ListUtil {
                     }
                 }
 
-                projectSiteDTO.setStatusCount(Integer.parseInt("" + xcount.intValue()));
-                if (taskStatus != null) {
-                    projectSiteDTO.setLastStatus(new ProjectSiteTaskStatusDTO(taskStatus));
+                try {
+                    ProjectSiteTaskStatus taskStatus = (ProjectSiteTaskStatus) q2.getSingleResult();
+                    projectSiteDTO.setStatusCount(Integer.parseInt("" + xcount.intValue()));
+                    if (taskStatus != null) {
+                        projectSiteDTO.setLastStatus(new ProjectSiteTaskStatusDTO(taskStatus));
+                    }
+                } catch (NoResultException e) {
+
                 }
                 project.getProjectSiteList().add(projectSiteDTO);
             }

@@ -7,9 +7,7 @@
 package com.boha.monitor.data;
 
 import java.io.Serializable;
-import java.util.List;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -19,7 +17,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -56,9 +53,7 @@ public class Township implements Serializable {
     @JoinColumn(name = "cityID", referencedColumnName = "cityID")
     @ManyToOne(optional = false)
     private City city;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "township")
-    private List<Beneficiary> beneficiaryList;
-
+    
     public Township() {
     }
 
@@ -97,14 +92,6 @@ public class Township implements Serializable {
         this.city = city;
     }
 
-
-    public List<Beneficiary> getBeneficiaryList() {
-        return beneficiaryList;
-    }
-
-    public void setBeneficiaryList(List<Beneficiary> beneficiaryList) {
-        this.beneficiaryList = beneficiaryList;
-    }
 
     @Override
     public int hashCode() {

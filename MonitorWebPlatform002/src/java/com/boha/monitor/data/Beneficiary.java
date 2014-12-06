@@ -42,6 +42,12 @@ import javax.validation.constraints.Size;
             query = "SELECT b FROM Beneficiary b WHERE b.project.projectID = :projectID "
                     + "order by b.lastName, b.firstName")})
 public class Beneficiary implements Serializable {
+    @Size(max = 255)
+    @Column(name = "townshipName")
+    private String townshipName;
+    @Size(max = 255)
+    @Column(name = "status")
+    private String status;
     @OneToMany(mappedBy = "beneficiary")
     private List<ProjectSite> projectSiteList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "beneficiary")
@@ -60,10 +66,7 @@ public class Beneficiary implements Serializable {
     @Column(name = "phbDate")
     @Temporal(TemporalType.TIMESTAMP)
     private Date phbDate;
-    @JoinColumn(name = "townshipID", referencedColumnName = "townshipID")
-    @ManyToOne(optional = false)
-    private Township township;
-   
+    
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -109,6 +112,14 @@ public class Beneficiary implements Serializable {
 
     public void setBeneficiaryID(Integer beneficiaryID) {
         this.beneficiaryID = beneficiaryID;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public String getFirstName() {
@@ -210,17 +221,6 @@ public class Beneficiary implements Serializable {
         return "com.boha.monitor.data.Beneficiary[ beneficiaryID=" + beneficiaryID + " ]";
     }
 
-  
-
-    public Township getTownship() {
-        return township;
-    }
-
-    public void setTownship(Township township) {
-        this.township = township;
-    }
-
-
     public Date getPhbDate() {
         return phbDate;
     }
@@ -267,6 +267,14 @@ public class Beneficiary implements Serializable {
 
     public void setHappyLetterList(List<HappyLetter> happyLetterList) {
         this.happyLetterList = happyLetterList;
+    }
+
+    public String getTownshipName() {
+        return townshipName;
+    }
+
+    public void setTownshipName(String townshipName) {
+        this.townshipName = townshipName;
     }
 
 

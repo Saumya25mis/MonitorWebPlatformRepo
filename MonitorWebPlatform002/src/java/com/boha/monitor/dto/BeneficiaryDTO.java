@@ -21,12 +21,12 @@ public class BeneficiaryDTO implements Serializable {
     private String lastName;
     private String middleName;
     private String iDNumber;
-    private String email;
-    private String cellphone;
+    private String email, status;
+    private String  siteNumber, cellphone;
     private Double amountAuthorized, amountPaid;
     private Date dateRegistered, phbDate;
     private CompanyDTO company;
-    private TownshipDTO township;
+    private String townshipName;
 
     public BeneficiaryDTO(Beneficiary a) {
         beneficiaryID = a.getBeneficiaryID();
@@ -38,6 +38,7 @@ public class BeneficiaryDTO implements Serializable {
         cellphone = a.getCellphone();
         dateRegistered = a.getDateRegistered();
         phbDate = a.getPhbDate();
+        status = a.getStatus();
         if (a.getProject() != null) {
             projectID = a.getProject().getProjectID();
         }
@@ -45,12 +46,34 @@ public class BeneficiaryDTO implements Serializable {
         if (a.getCompany() != null) {
             company = new CompanyDTO(a.getCompany());
         }
-        if (a.getTownship() != null) {
-            township = new TownshipDTO(a.getTownship());
-        }
+        townshipName = a.getTownshipName();
         amountAuthorized = a.getAmountAuthorized();
         amountPaid = a.getAmountPaid();
 
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getTownshipName() {
+        return townshipName;
+    }
+
+    public void setTownshipName(String townshipName) {
+        this.townshipName = townshipName;
+    }
+
+    public String getSiteNumber() {
+        return siteNumber;
+    }
+
+    public void setSiteNumber(String siteNumber) {
+        this.siteNumber = siteNumber;
     }
 
     public BeneficiaryDTO(Integer beneficiaryID) {
@@ -170,12 +193,6 @@ public class BeneficiaryDTO implements Serializable {
         this.iDNumber = iDNumber;
     }
 
-    public TownshipDTO getTownship() {
-        return township;
-    }
-
-    public void setTownship(TownshipDTO township) {
-        this.township = township;
-    }
+   
 
 }
