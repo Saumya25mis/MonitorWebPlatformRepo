@@ -68,6 +68,7 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -182,7 +183,10 @@ public class ListUtil {
 
     public ResponseDTO getSiteStatus(Integer projectSiteID) {
         ResponseDTO resp = new ResponseDTO();
-
+//TODO - get photos!
+        ProjectSite s = em.find(ProjectSite.class, projectSiteID);
+        ProjectSiteDTO site = new ProjectSiteDTO(s);
+        
         Query q = em.createNamedQuery("ProjectSiteTask.findByProjectSite", ProjectSiteTask.class);
         q.setParameter("projectSiteID", projectSiteID);
         List<ProjectSiteTask> taskList = q.getResultList();
@@ -206,13 +210,33 @@ public class ListUtil {
                     siteTask.getProjectSiteTaskStatusList().add(psts);
                 }
             }
-
-            resp.getProjectSiteTaskList().add(siteTask);
+            site.getProjectSiteTaskList().add(siteTask);
+            
         }
 
+        site.setStatusCount(list.size());
+        site.setLastStatus(list.get(0));
+        resp.setProjectSiteList(new ArrayList<ProjectSiteDTO>());
+        resp.getProjectSiteList().add(site);
         return resp;
     }
 
+    
+    private String getRandomPin() {
+        StringBuilder sb = new StringBuilder();
+        Random rand = new Random(System.currentTimeMillis());
+        int x = rand.nextInt(9);
+        if (x == 0) {
+            x = 3;
+        }
+        sb.append(x);
+        sb.append(rand.nextInt(9));
+        sb.append(rand.nextInt(9));
+        sb.append(rand.nextInt(9));
+        sb.append(rand.nextInt(9));
+        sb.append(rand.nextInt(9));
+        return sb.toString();
+    }
     private List<TaskDTO> getTasksBySite(Integer projectSiteID) {
         List<TaskDTO> list = new ArrayList<>();
         Query q = em.createNamedQuery("ProjectSiteTask.findByProjectSite", ProjectSiteTask.class);
@@ -426,6 +450,7 @@ public class ListUtil {
             log.log(Level.SEVERE, "Failed", e);
             throw new DataException("Failed to get tasks\n" + getErrorString(e));
         }
+        
         return resp;
     }
 
@@ -460,9 +485,10 @@ public class ListUtil {
 
         Integer xx = countCompanyTaskStatusinPeriod(companyID, cal.getTime(), new Date());
         resp.setStatusCountInPeriod(xx);
-
+        
+        
         long e = System.currentTimeMillis();
-        System.out.println("getCompanyData - time elapsed: " + (e - s));
+        System.out.println("getCompanyData - time elapsed: " + Elapsed.getElapsed(s,e));
         return resp;
     }
 
@@ -821,9 +847,13 @@ public class ListUtil {
             q.setParameter(
                     "projectID", projectID);
             q.setMaxResults(1);
-            ProjectSiteTaskStatus lastTask = (ProjectSiteTaskStatus) q.getSingleResult();
-            if (lastTask != null) {
-                project.setLastStatus(new ProjectSiteTaskStatusDTO(lastTask));
+            try {
+                ProjectSiteTaskStatus lastTask = (ProjectSiteTaskStatus) q.getSingleResult();
+                if (lastTask != null) {
+                    project.setLastStatus(new ProjectSiteTaskStatusDTO(lastTask));
+                }
+            } catch (NoResultException e) {
+                //ignore
             }
 
             project.setBeneficiaryList(new ArrayList<BeneficiaryDTO>());

@@ -10,6 +10,7 @@ import com.boha.monitor.data.Company;
 import com.boha.monitor.data.CompanyStaff;
 import com.boha.monitor.dto.transfer.PhotoUploadDTO;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -23,6 +24,7 @@ public class CompanyStaffDTO implements Serializable {
     private String lastName;
     private String email, companyName;
     private String cellphone, pin;
+    private Date appInvitationDate;
     private CompanyStaffTypeDTO companyStaffType;
     private Integer companyID;
     private GcmDeviceDTO gcmDevice;
@@ -42,7 +44,20 @@ public class CompanyStaffDTO implements Serializable {
         this.companyID = c.getCompanyID();
         this.companyName = c.getCompanyName();
         this.activeFlag = a.getActiveFlag();
+        this.appInvitationDate = a.getAppInvitationDate();
+        this.pin = a.getPin();
+        if (a.getPin() != null) {
+            System.out.println("Yebo, pin is " + this.pin + ", should be set in record....???");
+        }
         
+    }
+
+    public Date getAppInvitationDate() {
+        return appInvitationDate;
+    }
+
+    public void setAppInvitationDate(Date appInvitationDate) {
+        this.appInvitationDate = appInvitationDate;
     }
 
     public List<PhotoUploadDTO> getPhotoUploadList() {

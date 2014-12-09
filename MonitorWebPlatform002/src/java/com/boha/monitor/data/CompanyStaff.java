@@ -7,6 +7,7 @@
 package com.boha.monitor.data;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -20,6 +21,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -41,6 +44,9 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "CompanyStaff.findByEmail", query = "SELECT c FROM CompanyStaff c WHERE c.email = :email"),
     @NamedQuery(name = "CompanyStaff.findByCellphone", query = "SELECT c FROM CompanyStaff c WHERE c.cellphone = :cellphone")})
 public class CompanyStaff implements Serializable {
+    @Column(name = "appInvitationDate")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date appInvitationDate;
     @OneToMany(mappedBy = "companyStaff")
     private List<SubTaskStatus> subTaskStatusList;
     @OneToMany(mappedBy = "companyStaff")
@@ -224,6 +230,14 @@ public class CompanyStaff implements Serializable {
 
     public void setSubTaskStatusList(List<SubTaskStatus> subTaskStatusList) {
         this.subTaskStatusList = subTaskStatusList;
+    }
+
+    public Date getAppInvitationDate() {
+        return appInvitationDate;
+    }
+
+    public void setAppInvitationDate(Date appInvitationDate) {
+        this.appInvitationDate = appInvitationDate;
     }
     
 }

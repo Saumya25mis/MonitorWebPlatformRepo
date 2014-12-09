@@ -157,6 +157,12 @@ public class TrafficCop {
                 case RequestDTO.ADD_SUBTASK_STATUS:
                     resp = dataUtil.addSubTaskStatus(req.getSubTaskStatus());
                     break;
+                case RequestDTO.UPDATE_COMPANY_STAFF:
+                    resp = dataUtil.updateStaff(req.getCompanyStaff());
+                    break;
+                case RequestDTO.RESET_STAFF_PIN:
+                    resp = dataUtil.setNewPin(req.getCompanyStaffID());
+                    break;
 
                 //lists
                 case RequestDTO.GET_COMPANY_STATUS_IN_PERIOD:
@@ -172,7 +178,7 @@ public class TrafficCop {
                     resp = listUtil.getSiteStatus(req.getProjectSiteID());
                     break;
                 case RequestDTO.GET_PROJECT_SITE_DATA:
-                    resp = listUtil.getSitesByProject(req.getProjectID());
+                    resp = listUtil.getSiteStatus(req.getProjectSiteID()); 
                     break;
                 case RequestDTO.GET_CONTRACTOR_CLAIMS_BY_PROJECT:
                     resp = listUtil.getContractorClaimListByProject(req.getProjectID());

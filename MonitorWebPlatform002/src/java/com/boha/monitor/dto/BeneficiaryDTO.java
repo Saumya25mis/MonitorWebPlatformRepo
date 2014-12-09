@@ -49,6 +49,7 @@ public class BeneficiaryDTO implements Serializable {
         townshipName = a.getTownshipName();
         amountAuthorized = a.getAmountAuthorized();
         amountPaid = a.getAmountPaid();
+        siteNumber = a.getSiteNumber();
 
     }
 

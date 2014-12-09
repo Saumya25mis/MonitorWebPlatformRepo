@@ -48,6 +48,9 @@ public class Beneficiary implements Serializable {
     @Size(max = 255)
     @Column(name = "status")
     private String status;
+     @Size(max = 255)
+    @Column(name = "siteNumber")
+    private String siteNumber;
     @OneToMany(mappedBy = "beneficiary")
     private List<ProjectSite> projectSiteList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "beneficiary")
@@ -120,6 +123,14 @@ public class Beneficiary implements Serializable {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getSiteNumber() {
+        return siteNumber;
+    }
+
+    public void setSiteNumber(String siteNumber) {
+        this.siteNumber = siteNumber;
     }
 
     public String getFirstName() {

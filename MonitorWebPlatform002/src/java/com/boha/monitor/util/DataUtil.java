@@ -67,6 +67,7 @@ import com.boha.monitor.dto.TownshipDTO;
 import com.boha.monitor.dto.transfer.PhotoUploadDTO;
 import com.boha.monitor.dto.transfer.ResponseDTO;
 import com.boha.monitor.pdf.ContractorClaimPDFFactory;
+import static com.boha.monitor.util.ListUtil.log;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -278,6 +279,7 @@ public class DataUtil {
 
             em.persist(t);
             em.flush();
+
             resp.setSubTaskStatusList(new ArrayList<SubTaskStatusDTO>());
             resp.getSubTaskStatusList().add(
                     new SubTaskStatusDTO(t));
@@ -295,6 +297,12 @@ public class DataUtil {
     public ResponseDTO importBeneficiarie(
             List<BeneficiaryDTO> list) throws DataException {
         ResponseDTO resp = new ResponseDTO();
+
+        if (list.isEmpty()) {
+            resp.setMessage("No beneficiaries sent for import");
+            resp.setStatusCode(9);
+            return resp;
+        }
         int count = 0;
         try {
             Company c = em.find(Company.class, list.get(0).getCompany().getCompanyID());
@@ -314,6 +322,7 @@ public class DataUtil {
                 ben.setMiddleName(b.getMiddleName());
                 ben.setTownshipName(b.getTownshipName());
                 ben.setStatus(b.getStatus());
+                ben.setSiteNumber(b.getSiteNumber());
                 ben.setProject(p);
 
                 try {
@@ -328,19 +337,29 @@ public class DataUtil {
                     em.persist(s);
                     em.flush();
                     //add tasks for projectSite
-                    for (Task task: taskList) {
+                    int count2 = 0;
+                    for (Task task : taskList) {
                         ProjectSiteTask pst = new ProjectSiteTask();
                         pst.setProjectSite(s);
                         pst.setDateRegistered(new Date());
                         pst.setTask(task);
                         em.persist(pst);
+                        count2++;
                     }
+                    //log.log(Level.OFF, "++ tasks added to {0}:  {1}", new Object[]{b.getSiteNumber(), count2});
                     count++;
                     log.log(Level.INFO, "Beneficiary and site added: {0} {1} siteNumber: {2}", new Object[]{b.getFirstName(), b.getLastName(), b.getSiteNumber()});
 
                 } catch (PersistenceException e) {
                     log.log(Level.OFF, "----- duplicate, ignoring");
                 }
+            }
+            q = em.createNamedQuery("Beneficiary.findByProject", Beneficiary.class);
+            q.setParameter("projectID", p.getProjectID());
+            List<Beneficiary> bList = q.getResultList();
+            resp.setBeneficiaryList(new ArrayList<BeneficiaryDTO>());
+            for (Beneficiary ben : bList) {
+                resp.getBeneficiaryList().add(new BeneficiaryDTO(ben));
             }
             resp.setMessage("Beneficiaries imported " + count);
             log.log(Level.OFF, "***** Beneficiaries and sites added: {0}", count);
@@ -1016,6 +1035,7 @@ public class DataUtil {
             ben.setAmountAuthorized(b.getAmountAuthorized());
             ben.setAmountPaid(b.getAmountPaid());
             ben.setStatus(b.getStatus());
+            ben.setSiteNumber(b.getSiteNumber());
             ben.setCompany(c);
 
             em.persist(ben);
@@ -1417,7 +1437,7 @@ public class DataUtil {
         return sb.toString();
     }
 
-    private String getRandomPin() {
+    public String getRandomPin() {
         StringBuilder sb = new StringBuilder();
         Random rand = new Random(System.currentTimeMillis());
         int x = rand.nextInt(9);
@@ -1498,9 +1518,62 @@ public class DataUtil {
             }
         } catch (Exception e) {
             log.log(Level.OFF, null, e);
-            throw new DataException("Failed to update project\n" + getErrorString(e));
+            throw new DataException("Failed to update task\n" + getErrorString(e));
         }
 
+    }
+
+    public ResponseDTO setNewPin(Integer companyStaffID) throws DataException {
+        ResponseDTO resp = new ResponseDTO();
+        try {
+            CompanyStaff cs = em.find(CompanyStaff.class, companyStaffID);
+            cs.setPin(getRandomPin());
+            em.merge(cs);
+            em.flush();
+            resp.setCompanyStaff(new CompanyStaffDTO(cs));
+
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "Failed", e);
+            throw new DataException(("Failed to set PIN\n" + getErrorString(e)));
+        }
+        return resp;
+    }
+
+    public ResponseDTO updateStaff(CompanyStaffDTO dto) throws DataException {
+        ResponseDTO resp = new ResponseDTO();
+        try {
+            CompanyStaff ps = em.find(CompanyStaff.class, dto.getCompanyStaffID());
+            if (ps != null) {
+                if (dto.getFirstName() != null) {
+                    ps.setFirstName(dto.getFirstName());
+                }
+                if (dto.getLastName() != null) {
+                    ps.setLastName(dto.getLastName());
+                }
+                if (dto.getActiveFlag() != null) {
+                    ps.setActiveFlag(dto.getActiveFlag());
+                }
+                if (dto.getEmail() != null) {
+                    ps.setEmail(dto.getEmail());
+                }
+                if (dto.getCellphone() != null) {
+                    ps.setCellphone(dto.getCellphone());
+                }
+                if (dto.getAppInvitationDate() != null) {
+                    ps.setAppInvitationDate(new Date());
+                }
+
+                em.merge(ps);
+                resp.setCompanyStaff(new CompanyStaffDTO(ps));
+
+                log.log(Level.INFO, "Staff updated");
+            }
+        } catch (Exception e) {
+            log.log(Level.OFF, null, e);
+            throw new DataException("Failed to update staff\n" + getErrorString(e));
+        }
+
+        return resp;
     }
 
     public void updateProject(ProjectDTO dto) throws DataException {
