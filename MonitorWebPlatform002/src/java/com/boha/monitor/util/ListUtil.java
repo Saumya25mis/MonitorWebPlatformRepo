@@ -213,7 +213,9 @@ public class ListUtil {
         }
 
         site.setStatusCount(list.size());
-        site.setLastStatus(list.get(0));
+        if (!list.isEmpty()) {
+               site.setLastStatus(list.get(0));
+        }
         resp.setProjectSiteList(new ArrayList<ProjectSiteDTO>());
         resp.getProjectSiteList().add(site);
         return resp;

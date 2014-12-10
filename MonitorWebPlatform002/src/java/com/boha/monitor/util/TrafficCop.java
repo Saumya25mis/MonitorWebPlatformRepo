@@ -10,7 +10,6 @@ import com.boha.monitor.dto.ContractorClaimDTO;
 import com.boha.monitor.dto.transfer.RequestDTO;
 import com.boha.monitor.dto.transfer.ResponseDTO;
 import com.boha.monitor.pdf.ContractorClaimPDFFactory;
-import com.boha.monitor.pdf.PDFDocumentGenerator;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;

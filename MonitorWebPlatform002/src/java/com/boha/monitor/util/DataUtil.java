@@ -204,6 +204,7 @@ public class DataUtil {
             u.setDateTaken(pu.getDateTaken());
             u.setDateUploaded(pu.getDateUploaded());
             u.setThumbFlag(pu.getThumbFlag());
+            u.setAccuracy(pu.getAccuracy());
             em.persist(u);
             em.flush();
 
@@ -914,17 +915,19 @@ public class DataUtil {
             em.persist(project);
             em.flush();
             //create first project site
-            ProjectSite ps = new ProjectSite();
-            ps.setProject(project);
-            ps.setProjectSiteName("Project Site #1");
-            em.persist(ps);
-            em.flush();
+            
+            ProjectSiteDTO d = new ProjectSiteDTO();
+            d.setProjectID(project.getProjectID());
+            d.setProjectSiteName("Project Site No. 1");
+            
+            ResponseDTO rr = registerProjectSite(d);                    
             ProjectDTO dto = new ProjectDTO(project);
             dto.setProjectSiteList(new ArrayList<ProjectSiteDTO>());
-            dto.getProjectSiteList().add(new ProjectSiteDTO(ps));
+            dto.getProjectSiteList().add(rr.getProjectSiteList().get(0));
 
             resp.setProjectList(new ArrayList<ProjectDTO>());
             resp.getProjectList().add(dto);
+            
             log.log(Level.OFF, "Project registered for: {0} - {1} ",
                     new Object[]{c.getCompanyName(), proj.getProjectName()});
 
