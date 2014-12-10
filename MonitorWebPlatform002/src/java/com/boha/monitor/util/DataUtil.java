@@ -12,7 +12,6 @@ import com.boha.monitor.data.City;
 import com.boha.monitor.data.Client;
 import com.boha.monitor.data.Company;
 import com.boha.monitor.data.CompanyStaff;
-import com.boha.monitor.data.CompanyStaffType;
 import com.boha.monitor.data.ContractorClaim;
 import com.boha.monitor.data.ContractorClaimSite;
 import com.boha.monitor.data.Country;
@@ -128,26 +127,8 @@ public class DataUtil {
             } catch (IOException ex) {
                 Logger.getLogger(DataUtil.class.getName()).log(Level.SEVERE, null, ex);
             }
-
-            //load appropriate data for each type
-            int staffCode = cs.getCompanyStaffType().getStaffCode();
-            switch (staffCode) {
-                case OPERATIONS_MANAGER:
-                    resp = listUtil.getCompanyData(company.getCompanyID(), company.getCountry().getCountryID());
+            resp = listUtil.getCompanyData(company.getCompanyID(), company.getCountry().getCountryID());
                     resp.setCompanyStaff(new CompanyStaffDTO(cs));
-                    break;
-                case SITE_SUPERVISOR:
-                    resp.setCompanyStaff(new CompanyStaffDTO(cs));
-                    break;
-                case EXECUTIVE_STAFF:
-                    resp = listUtil.getCompanyData(company.getCompanyID(), company.getCountry().getCountryID());
-                    resp.setCompanyStaff(new CompanyStaffDTO(cs));
-                    break;
-                case PROJECT_MANAGER:
-                    resp.setCompanyStaff(new CompanyStaffDTO(cs));
-                    break;
-
-            }
 
         } catch (NoResultException e) {
             log.log(Level.WARNING, "Invalid login attempt: " + email + " pin: " + pin, e);
@@ -889,8 +870,23 @@ public class DataUtil {
                 }
 
             }
+            //get company tasks and create projectsitetask
+            Query q = em.createNamedQuery("Task.findByCompany", Task.class);
+            q.setParameter("companyID", c.getCompany().getCompanyID());
+            List<Task> taskList = q.getResultList();
+            ProjectSiteDTO dto = new ProjectSiteDTO(ps);
+            dto.setProjectSiteTaskList(new ArrayList<ProjectSiteTaskDTO>());
+            for (Task task : taskList) {
+                ProjectSiteTask pst = new ProjectSiteTask();
+                pst.setDateRegistered(new Date());
+                pst.setProjectSite(ps);
+                pst.setTask(task);
+                em.persist(pst);
+                em.flush();
+                dto.getProjectSiteTaskList().add(new ProjectSiteTaskDTO(pst));
+            }
             resp.setProjectSiteList(new ArrayList<ProjectSiteDTO>());
-            resp.getProjectSiteList().add(new ProjectSiteDTO(ps));
+            resp.getProjectSiteList().add(dto);
             log.log(Level.OFF, "Project site registered for: {0} - {1} ",
                     new Object[]{c.getProjectName(), site.getProjectSiteName()});
 
@@ -953,8 +949,7 @@ public class DataUtil {
             cs.setEmail(staff.getEmail());
             cs.setLastName(staff.getLastName());
             cs.setPin(getRandomPin());
-            cs.setCompanyStaffType(em.find(CompanyStaffType.class,
-                    staff.getCompanyStaffType().getCompanyStaffTypeID()));
+            cs.setActiveFlag(staff.getActiveFlag());
             em.persist(cs);
             em.flush();
             log.log(Level.OFF, "ID just generated : {0}", cs.getCompanyStaffID());
@@ -1161,7 +1156,6 @@ public class DataUtil {
             cs.setEmail(staff.getEmail());
             cs.setLastName(staff.getLastName());
             cs.setPin(staff.getPin());
-            cs.setCompanyStaffType(getOperationsManager());
             em.persist(cs);
             em.flush();
 
@@ -1361,15 +1355,6 @@ public class DataUtil {
         log.log(Level.INFO, "Initial TaskStatus added");
     }
 
-    private CompanyStaffType getOperationsManager() {
-
-        Query q = em.createNamedQuery("CompanyStaffType.findByCompanyStaffTypeName", CompanyStaffType.class);
-        q.setParameter("companyStaffTypeName", "Operations Manager");
-        q.setMaxResults(1);
-        CompanyStaffType cst = (CompanyStaffType) q.getSingleResult();
-        return cst;
-
-    }
 
     public void removeContractorClaimSite(ContractorClaimSiteDTO site) throws DataException {
         try {

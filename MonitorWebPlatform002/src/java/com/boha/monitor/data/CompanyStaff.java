@@ -80,9 +80,7 @@ public class CompanyStaff implements Serializable {
     @Size(max = 50)
     @Column(name = "cellphone")
     private String cellphone;
-    @JoinColumn(name = "companyStaffTypeID", referencedColumnName = "companyStaffTypeID")
-    @ManyToOne(optional = true)
-    private CompanyStaffType companyStaffType;
+    
     
     @JoinColumn(name = "companyID", referencedColumnName = "companyID")
     @ManyToOne(optional = false)
@@ -149,14 +147,6 @@ public class CompanyStaff implements Serializable {
 
     public void setCellphone(String cellphone) {
         this.cellphone = cellphone;
-    }
-
-    public CompanyStaffType getCompanyStaffType() {
-        return companyStaffType;
-    }
-
-    public void setCompanyStaffType(CompanyStaffType companyStaffType) {
-        this.companyStaffType = companyStaffType;
     }
 
     public Company getCompany() {

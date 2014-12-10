@@ -11,7 +11,6 @@ import com.boha.monitor.data.City;
 import com.boha.monitor.data.Client;
 import com.boha.monitor.data.Company;
 import com.boha.monitor.data.CompanyStaff;
-import com.boha.monitor.data.CompanyStaffType;
 import com.boha.monitor.data.ContractorClaim;
 import com.boha.monitor.data.ContractorClaimSite;
 import com.boha.monitor.data.Country;
@@ -39,7 +38,6 @@ import com.boha.monitor.dto.CityDTO;
 import com.boha.monitor.dto.ClientDTO;
 import com.boha.monitor.dto.CompanyDTO;
 import com.boha.monitor.dto.CompanyStaffDTO;
-import com.boha.monitor.dto.CompanyStaffTypeDTO;
 import com.boha.monitor.dto.ContractorClaimDTO;
 import com.boha.monitor.dto.ContractorClaimSiteDTO;
 import com.boha.monitor.dto.CountryDTO;
@@ -347,24 +345,6 @@ public class ListUtil {
         }
     }
 
-    public ResponseDTO getCompanyStaffTypeList() throws DataException {
-        ResponseDTO resp = new ResponseDTO();
-
-        try {
-            Query q = em.createNamedQuery("CompanyStaffType.findAll", CompanyStaffType.class);
-            List<CompanyStaffType> sList = q.getResultList();
-            resp.setCompanyStaffTypeList(new ArrayList<CompanyStaffTypeDTO>());
-            for (CompanyStaffType cs : sList) {
-                resp.getCompanyStaffTypeList().add(new CompanyStaffTypeDTO(cs));
-            }
-            log.log(Level.OFF, "company staff types found: {0}", sList.size());
-        } catch (Exception e) {
-            log.log(Level.SEVERE, "Failed", e);
-            throw new DataException("Failed to get project data\n" + getErrorString(e));
-        }
-
-        return resp;
-    }
 
     public ResponseDTO getTaskStatusList(Integer companyID) throws DataException {
         ResponseDTO resp = new ResponseDTO();
@@ -469,7 +449,6 @@ public class ListUtil {
         c.setEngineerList(getCompanyEngineers(companyID).getEngineerList());
 
         resp.setCompany(c);
-        resp.setCompanyStaffTypeList(getStaffTypeList());
         resp.setCountryList(getCountryList().getCountryList());
         if (countryID != null) {
             resp.setBankList(getBankList(countryID).getBankList());
@@ -586,16 +565,7 @@ public class ListUtil {
         return resp;
     }
 
-    public List<CompanyStaffTypeDTO> getStaffTypeList() {
-        List<CompanyStaffTypeDTO> list = new ArrayList<>();
-        Query q = em.createNamedQuery("CompanyStaffType.findAll", CompanyStaffType.class);
-        List<CompanyStaffType> sList = q.getResultList();
-        for (CompanyStaffType companyStaffType : sList) {
-            list.add(new CompanyStaffTypeDTO(companyStaffType));
-        }
-
-        return list;
-    }
+   
 
     public List<TaskDTO> getTasksByCompany(Integer companyID) throws DataException {
         List<TaskDTO> resp = new ArrayList<>();

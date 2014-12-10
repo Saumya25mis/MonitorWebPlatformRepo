@@ -12,7 +12,6 @@ import com.boha.monitor.dto.CityDTO;
 import com.boha.monitor.dto.ClientDTO;
 import com.boha.monitor.dto.CompanyDTO;
 import com.boha.monitor.dto.CompanyStaffDTO;
-import com.boha.monitor.dto.CompanyStaffTypeDTO;
 import com.boha.monitor.dto.ContractorClaimDTO;
 import com.boha.monitor.dto.ContractorClaimSiteDTO;
 import com.boha.monitor.dto.CountryDTO;
@@ -59,7 +58,6 @@ public class ResponseDTO {
     private List<ProjectSiteDTO> projectSiteList;
     private List<ProjectDTO> projectList;
     private List<CompanyStaffDTO> companyStaffList;
-    private List<CompanyStaffTypeDTO> companyStaffTypeList;
     private List<ProjectDiaryRecordDTO> projectDiaryRecordList;
     private List<ProjectSiteTaskDTO> projectSiteTaskList;
     private List<ProjectSiteTaskStatusDTO> projectSiteTaskStatusList;
@@ -387,13 +385,6 @@ public class ResponseDTO {
         this.companyStaffList = companyStaffList;
     }
 
-    public List<CompanyStaffTypeDTO> getCompanyStaffTypeList() {
-        return companyStaffTypeList;
-    }
-
-    public void setCompanyStaffTypeList(List<CompanyStaffTypeDTO> companyStaffTypeList) {
-        this.companyStaffTypeList = companyStaffTypeList;
-    }
 
     public List<ProjectDiaryRecordDTO> getProjectDiaryRecordList() {
         return projectDiaryRecordList;

@@ -25,7 +25,6 @@ public class CompanyStaffDTO implements Serializable {
     private String email, companyName;
     private String cellphone, pin;
     private Date appInvitationDate;
-    private CompanyStaffTypeDTO companyStaffType;
     private Integer companyID;
     private GcmDeviceDTO gcmDevice;
     private List<PhotoUploadDTO> photoUploadList;
@@ -39,7 +38,6 @@ public class CompanyStaffDTO implements Serializable {
         this.lastName = a.getLastName();
         this.email = a.getEmail();
         this.cellphone = a.getCellphone();
-        this.companyStaffType = new CompanyStaffTypeDTO(a.getCompanyStaffType());
         Company c = a.getCompany();
         this.companyID = c.getCompanyID();
         this.companyName = c.getCompanyName();
@@ -141,14 +139,7 @@ public class CompanyStaffDTO implements Serializable {
         this.cellphone = cellphone;
     }
 
-    public CompanyStaffTypeDTO getCompanyStaffType() {
-        return companyStaffType;
-    }
-
-    public void setCompanyStaffType(CompanyStaffTypeDTO companyStaffType) {
-        this.companyStaffType = companyStaffType;
-    }
-
+  
     public Integer getCompanyID() {
         return companyID;
     }

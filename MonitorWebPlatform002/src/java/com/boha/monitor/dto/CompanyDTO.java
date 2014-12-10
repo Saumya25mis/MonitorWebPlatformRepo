@@ -30,7 +30,6 @@ public class CompanyDTO implements Serializable {
     private List<BankDetailDTO> bankDetailList;
     private List<GcmDeviceDTO> gcmDeviceList;
     private List<ContractorClaimDTO> contractorClaimList;
-    private List<CompanyStaffTypeDTO> companyStaffTypeList;
     private List<EngineerDTO> engineerList;
     
 
@@ -120,14 +119,6 @@ public class CompanyDTO implements Serializable {
         this.bankDetailList = bankDetailList;
     }
 
-    public List<CompanyStaffTypeDTO> getCompanyStaffTypeList() {
-        return companyStaffTypeList;
-    }
-
-    public void setCompanyStaffTypeList(List<CompanyStaffTypeDTO> companyStaffTypeList) {
-        this.companyStaffTypeList = companyStaffTypeList;
-    }
-    
     public List<TaskDTO> getTaskList() {
         return taskList;
     }
