@@ -47,6 +47,7 @@ public class RequestDTO implements Serializable{
     private String email, pin, gcmRegistrationID;
     private Date startDate, endDate;
     private Double latitude, longitude;
+    private Float accuracy;
     private TaskPriceDTO taskPrice;
     private CompanyDTO company;
     private CompanyStaffDTO companyStaff;
@@ -175,6 +176,14 @@ public class RequestDTO implements Serializable{
 
     //
     
+    public Float getAccuracy() {
+        return accuracy;
+    }
+
+    public void setAccuracy(Float accuracy) {
+        this.accuracy = accuracy;
+    }
+
     public SubTaskStatusDTO getSubTaskStatus() {
         return subTaskStatus;
     }

@@ -148,7 +148,7 @@ public class TrafficCop {
                 case RequestDTO.ADD_PROJECT_STATUS_TYPE:
                     break;
                 case RequestDTO.CONFIRM_LOCATION:
-                    dataUtil.confirmLocation(req.getProjectSiteID());
+                    dataUtil.confirmLocation(req.getProjectSiteID(), req.getLatitude(), req.getLongitude(), req.getAccuracy());
                     break;
                 case RequestDTO.ADD_SUB_TASK:
                     resp = dataUtil.addSubTask(req.getSubTask());

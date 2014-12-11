@@ -1609,11 +1609,14 @@ public class DataUtil {
         }
     }
 
-    public void confirmLocation(Integer projectSiteID) throws DataException {
+    public void confirmLocation(Integer projectSiteID, double latitude, double longitude, Float accuracy) throws DataException {
         try {
             ProjectSite ps = em.find(ProjectSite.class, projectSiteID);
             if (ps != null) {
                 ps.setLocationConfirmed(1);
+                ps.setLatitude(latitude);
+                ps.setLongitude(longitude);
+                ps.setAccuracy(accuracy);
                 em.merge(ps);
                 log.log(Level.INFO, "Project Site location confirmed");
             }
