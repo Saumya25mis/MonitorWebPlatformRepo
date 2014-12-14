@@ -6,10 +6,11 @@
 package com.boha.monitor.gate;
 
 import com.boha.monitor.dto.transfer.RequestDTO;
+import com.boha.monitor.dto.transfer.RequestList;
 import com.boha.monitor.dto.transfer.ResponseDTO;
 import com.boha.monitor.pdf.ContractorClaimPDFFactory;
-import com.boha.monitor.pdf.PDFDocumentGenerator;
 import com.boha.monitor.util.DataUtil;
+import com.boha.monitor.util.Elapsed;
 import com.boha.monitor.util.GZipUtility;
 import com.boha.monitor.util.ListUtil;
 import com.boha.monitor.util.PlatformUtil;
@@ -35,46 +36,58 @@ import javax.websocket.server.ServerEndpoint;
  *
  * @author aubreyM
  */
-@ServerEndpoint("/wsproject")
+@ServerEndpoint("/wsrequest")
 @Stateful
-public class ProjectWebSocket {
+public class CachedRequestWebSocket {
 
     @EJB
     DataUtil dataUtil;
     @EJB
     ListUtil listUtil;
-    @EJB 
+    @EJB
     PlatformUtil platformUtil;
     @EJB
     TrafficCop trafficCop;
     @EJB
     ContractorClaimPDFFactory claimFactory;
-    static final String SOURCE = "ProjectWebSocket";
+    static final String SOURCE = "CachedRequestWebSocket";
     //TODO - clean up expired sessions!!!!
     public static final Set<Session> peers
             = Collections.synchronizedSet(new HashSet<Session>());
 
     @OnMessage
     public ByteBuffer onMessage(String message) {
-        log.log(Level.WARNING, "onMessage: {0}", message);
-        ResponseDTO resp = new ResponseDTO();
+        log.log(Level.WARNING, SOURCE + " - onMessage: {0}", message);
+        ResponseDTO response = new ResponseDTO();
         ByteBuffer bb = null;
+        int goodCount = 0, badCount = 0;
+        long start = System.currentTimeMillis();
         try {
 
-                RequestDTO dto = gson.fromJson(message, RequestDTO.class);
-                resp = trafficCop.processRequest(dto, dataUtil, 
-                        listUtil, claimFactory);
-
-           
-            bb = GZipUtility.getZippedResponse(resp);
+            RequestList dto = gson.fromJson(message, RequestList.class);
+            for (RequestDTO req : dto.getRequests()) {
+                ResponseDTO resp = trafficCop.processRequest(req, dataUtil, listUtil, claimFactory);
+                if (resp.getStatusCode() == 0) {
+                    goodCount++;
+                } else {
+                    badCount++;
+                }
+            }
+            response.setStatusCode(0);
+            response.setMessage("Cached requests processed");
+            response.setGoodCount(goodCount);
+            response.setBadCount(badCount);
+            long end = System.currentTimeMillis();
+            response.setElapsedRequestTimeInSeconds(Elapsed.getElapsed(start, end));
+            log.log(Level.INFO, "Total elapsed time: {0}", response.getElapsedRequestTimeInSeconds());
+            bb = GZipUtility.getZippedResponse(response);
         } catch (IOException ex) {
-            Logger.getLogger(ProjectWebSocket.class.getName()).log(Level.SEVERE, null, ex);
-            resp.setStatusCode(111);
-            resp.setMessage("Problem processing request on server");
+            response.setMessage("Unable to process cached requests");
+            response.setStatusCode(777);
             try {
-                bb = GZipUtility.getZippedResponse(resp);
+                bb = GZipUtility.getZippedResponse(response);
             } catch (IOException ex1) {
-                Logger.getLogger(ProjectWebSocket.class.getName()).log(Level.SEVERE, null, ex1);
+                log.log(Level.SEVERE, null, ex1);
             }
         }
         return bb;
@@ -88,7 +101,7 @@ public class ProjectWebSocket {
             ResponseDTO r = new ResponseDTO();
             r.setSessionID(session.getId());
             session.getBasicRemote().sendText(gson.toJson(r));
-            log.log(Level.WARNING, "onOpen...sent session id: {0}", session.getId());
+            log.log(Level.WARNING, SOURCE + " - onOpen...sent session id: {0}", session.getId());
         } catch (IOException ex) {
             log.log(Level.SEVERE, "Failed to send websocket sessionID", ex);
         }
@@ -97,7 +110,7 @@ public class ProjectWebSocket {
     @OnClose
     public void onClose(Session session
     ) {
-        log.log(Level.WARNING, "onClose - remove session: {0}", session.getId());
+        log.log(Level.WARNING, SOURCE + " onClose - remove session: {0}", session.getId());
         for (Session mSession : peers) {
             if (session.getId().equalsIgnoreCase(mSession.getId())) {
                 peers.remove(mSession);
@@ -108,11 +121,10 @@ public class ProjectWebSocket {
 
     @OnError
     public void onError(Throwable t) {
-        log.log(Level.SEVERE, null, t);
+        log.log(Level.SEVERE, SOURCE, t);
 
     }
 
-  
     Gson gson = new Gson();
-    static final Logger log = Logger.getLogger(ProjectWebSocket.class.getSimpleName());
+    static final Logger log = Logger.getLogger(CachedRequestWebSocket.class.getSimpleName());
 }

@@ -66,14 +66,14 @@ public class CompanyWebSocket {
                     dataUtil, listUtil, claimFactory);
             bb = GZipUtility.getZippedResponse(resp);
         } catch (IOException ex) {
-            Logger.getLogger(ProjectWebSocket.class.getName()).log(Level.SEVERE, null, ex);
+            log.log(Level.SEVERE, null, ex);
             resp.setStatusCode(111);
             resp.setMessage("Problem processing request on server");
             dataUtil.addErrorStore(19, dataUtil.getErrorString(ex), SOURCE);
             try {
                 bb = GZipUtility.getZippedResponse(resp);
             } catch (IOException ex1) {
-                Logger.getLogger(ProjectWebSocket.class.getName()).log(Level.SEVERE, null, ex1);
+                log.log(Level.SEVERE, null, ex1);
             }
         }
         return bb;

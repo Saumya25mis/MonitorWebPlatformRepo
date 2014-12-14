@@ -64,6 +64,8 @@ import com.boha.monitor.dto.TaskPriceDTO;
 import com.boha.monitor.dto.TaskStatusDTO;
 import com.boha.monitor.dto.TownshipDTO;
 import com.boha.monitor.dto.transfer.PhotoUploadDTO;
+import com.boha.monitor.dto.transfer.RequestDTO;
+import com.boha.monitor.dto.transfer.RequestList;
 import com.boha.monitor.dto.transfer.ResponseDTO;
 import com.boha.monitor.pdf.ContractorClaimPDFFactory;
 import static com.boha.monitor.util.ListUtil.log;
@@ -127,8 +129,12 @@ public class DataUtil {
             } catch (IOException ex) {
                 Logger.getLogger(DataUtil.class.getName()).log(Level.SEVERE, null, ex);
             }
-            resp = listUtil.getCompanyData(company.getCompanyID(), company.getCountry().getCountryID());
-                    resp.setCompanyStaff(new CompanyStaffDTO(cs));
+            if (company.getCountry() == null) {
+                resp = listUtil.getCompanyData(company.getCompanyID(), null);
+            } else {
+                resp = listUtil.getCompanyData(company.getCompanyID(), company.getCountry().getCountryID());
+            }
+            resp.setCompanyStaff(new CompanyStaffDTO(cs));
 
         } catch (NoResultException e) {
             log.log(Level.WARNING, "Invalid login attempt: " + email + " pin: " + pin, e);
@@ -138,6 +144,7 @@ public class DataUtil {
         return resp;
     }
 
+   
     public void addAndroidError(ErrorStoreAndroid err) throws DataException {
         try {
             em.persist(err);
@@ -866,8 +873,8 @@ public class DataUtil {
                 resp = registerBeneficiary(site.getBeneficiary());
                 if (resp.getStatusCode() == 0) {
                     resp = connectBeneficiaryToSite(site.getProjectSiteID(),
-                            resp.getBeneficiaryList().get(0).getBeneficiaryID());
-                    ps = em.find(ProjectSite.class, ps.getProjectSiteID());
+                            site.getBeneficiary().getBeneficiaryID());
+                    //ps = em.find(ProjectSite.class, ps.getProjectSiteID());
                 }
 
             }
@@ -915,19 +922,21 @@ public class DataUtil {
             em.persist(project);
             em.flush();
             //create first project site
-            
+
             ProjectSiteDTO d = new ProjectSiteDTO();
             d.setProjectID(project.getProjectID());
             d.setProjectSiteName("Project Site No. 1");
-            
-            ResponseDTO rr = registerProjectSite(d);                    
+
+            ResponseDTO rr = registerProjectSite(d);
             ProjectDTO dto = new ProjectDTO(project);
             dto.setProjectSiteList(new ArrayList<ProjectSiteDTO>());
             dto.getProjectSiteList().add(rr.getProjectSiteList().get(0));
 
             resp.setProjectList(new ArrayList<ProjectDTO>());
+            dto.setSiteCount(1);
+            dto.setStatusCount(0);
             resp.getProjectList().add(dto);
-            
+
             log.log(Level.OFF, "Project registered for: {0} - {1} ",
                     new Object[]{c.getCompanyName(), proj.getProjectName()});
 
@@ -1137,7 +1146,6 @@ public class DataUtil {
 
     public ResponseDTO registerCompany(CompanyDTO company,
             CompanyStaffDTO staff,
-            double latitude, double longitude,
             ListUtil listUtil) throws DataException {
         log.log(Level.OFF, "####### * attempt to register company");
         ResponseDTO resp = new ResponseDTO();
@@ -1147,7 +1155,9 @@ public class DataUtil {
             c.setAddress(company.getAddress());
             c.setVatNumber(company.getVatNumber());
             c.setTaxNumber(company.getTaxNumber());
-            c.setCountry(em.find(Country.class, company.getCountryID()));
+            if (company.getCountryID() != null) {
+                c.setCountry(em.find(Country.class, company.getCountryID()));
+            }
             em.persist(c);
             em.flush();
 
@@ -1358,7 +1368,6 @@ public class DataUtil {
         log.log(Level.INFO, "Initial TaskStatus added");
     }
 
-
     public void removeContractorClaimSite(ContractorClaimSiteDTO site) throws DataException {
         try {
             ContractorClaimSite s = em.find(ContractorClaimSite.class, site.getContractorClaimSiteID());
@@ -1404,22 +1413,27 @@ public class DataUtil {
     }
 
     public String getErrorString(Exception e) {
+
         StringBuilder sb = new StringBuilder();
-        if (e.getMessage() != null) {
-            sb.append(e.getMessage()).append("\n\n");
-        }
-        if (e.toString() != null) {
-            sb.append(e.toString()).append("\n\n");
-        }
-        StackTraceElement[] s = e.getStackTrace();
-        if (s.length > 0) {
-            StackTraceElement ss = s[0];
-            String method = ss.getMethodName();
-            String cls = ss.getClassName();
-            int line = ss.getLineNumber();
-            sb.append("Class: ").append(cls).append("\n");
-            sb.append("Method: ").append(method).append("\n");
-            sb.append("Line Number: ").append(line).append("\n");
+        try {
+            if (e.getMessage() != null) {
+                sb.append(e.getMessage()).append("\n\n");
+            }
+            if (e.toString() != null) {
+                sb.append(e.toString()).append("\n\n");
+            }
+            StackTraceElement[] s = e.getStackTrace();
+            if (s.length > 0) {
+                StackTraceElement ss = s[0];
+                String method = ss.getMethodName();
+                String cls = ss.getClassName();
+                int line = ss.getLineNumber();
+                sb.append("Class: ").append(cls).append("\n");
+                sb.append("Method: ").append(method).append("\n");
+                sb.append("Line Number: ").append(line).append("\n");
+            }
+        } catch (Exception ex) {
+             log.log(Level.SEVERE, "Failed, ignored " + ex.getMessage());
         }
 
         return sb.toString();

@@ -44,9 +44,7 @@ public class CompanyStaffDTO implements Serializable {
         this.activeFlag = a.getActiveFlag();
         this.appInvitationDate = a.getAppInvitationDate();
         this.pin = a.getPin();
-        if (a.getPin() != null) {
-            System.out.println("Yebo, pin is " + this.pin + ", should be set in record....???");
-        }
+        
         
     }
 

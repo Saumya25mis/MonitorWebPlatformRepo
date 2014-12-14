@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.boha.monitor.dto;
 
 import com.boha.monitor.data.Company;
@@ -15,11 +14,12 @@ import java.util.List;
  * @author aubreyM
  */
 public class CompanyDTO implements Serializable {
+
     private static final long serialVersionUID = 1L;
     private Integer companyID, countryID;
     private String companyName;
     private String address, vatNumber, taxNumber;
-    
+
     private List<ProjectDTO> projectList;
     private List<ProjectStatusTypeDTO> projectStatusTypeList;
     private List<CompanyStaffDTO> companyStaffList;
@@ -31,20 +31,21 @@ public class CompanyDTO implements Serializable {
     private List<GcmDeviceDTO> gcmDeviceList;
     private List<ContractorClaimDTO> contractorClaimList;
     private List<EngineerDTO> engineerList;
-    
 
     public CompanyDTO() {
     }
 
     public CompanyDTO(Company a) {
+        if (a == null) throw new UnsupportedOperationException("Company object from DB is null");
         this.companyID = a.getCompanyID();
         this.companyName = a.getCompanyName();
         address = a.getAddress();
         vatNumber = a.getVatNumber();
         taxNumber = a.getTaxNumber();
-        countryID = a.getCountry().getCountryID();
+        if (a.getCountry() != null) {
+            countryID = a.getCountry().getCountryID();
+        }
 
-        
     }
 
     private void log() {
@@ -70,7 +71,6 @@ public class CompanyDTO implements Serializable {
         this.engineerList = engineerList;
     }
 
-    
     public List<ContractorClaimDTO> getContractorClaimList() {
         return contractorClaimList;
     }
@@ -151,7 +151,6 @@ public class CompanyDTO implements Serializable {
         this.gcmDeviceList = gcmDeviceList;
     }
 
-    
     public List<TaskStatusDTO> getTaskStatusList() {
         return taskStatusList;
     }
@@ -159,8 +158,6 @@ public class CompanyDTO implements Serializable {
     public void setTaskStatusList(List<TaskStatusDTO> taskStatusList) {
         this.taskStatusList = taskStatusList;
     }
-
-  
 
     public Integer getCompanyID() {
         return companyID;
@@ -226,5 +223,5 @@ public class CompanyDTO implements Serializable {
     public String toString() {
         return "com.boha.monitor.data.Company[ companyID=" + companyID + " ]";
     }
-    
+
 }

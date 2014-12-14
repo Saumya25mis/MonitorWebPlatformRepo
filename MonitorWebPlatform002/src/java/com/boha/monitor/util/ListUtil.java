@@ -218,6 +218,7 @@ public class ListUtil {
         }
         resp.setProjectSiteList(new ArrayList<ProjectSiteDTO>());
         resp.getProjectSiteList().add(site);
+        System.out.println("Hooray");
         return resp;
     }
 
@@ -438,6 +439,7 @@ public class ListUtil {
 
     public ResponseDTO getCompanyData(Integer companyID,
             Integer countryID) throws DataException {
+        log.log(Level.WARNING, "############# getCompanyData, companyID: {0}", companyID);
         long s = System.currentTimeMillis();
         ResponseDTO resp = new ResponseDTO();
         CompanyDTO c = new CompanyDTO(em.find(Company.class, companyID));
@@ -483,7 +485,7 @@ public class ListUtil {
             for (Engineer e : list) {
                 resp.getEngineerList().add(new EngineerDTO(e));
             }
-            System.out.println("company engineers: " + resp.getEngineerList().size());
+            //System.out.println("company engineers: " + resp.getEngineerList().size());
         } catch (Exception e) {
 
             throw new DataException("Failed");
@@ -502,7 +504,7 @@ public class ListUtil {
             for (Invoice cc : pList) {
                 invList.add(new InvoiceDTO(cc));
             }
-            log.log(Level.INFO, "company invoices found: {0}", invList.size());
+            //log.log(Level.INFO, "company invoices found: {0}", invList.size());
         } catch (Exception e) {
             log.log(Level.SEVERE, "Failed", e);
             throw new DataException("Failed to get company invoices\n" + getErrorString(e));
@@ -520,7 +522,7 @@ public class ListUtil {
             for (ContractorClaim cc : pList) {
                 ccList.add(new ContractorClaimDTO(cc));
             }
-            log.log(Level.INFO, "company ContractorClaims found: {0}", ccList.size());
+            //log.log(Level.INFO, "company ContractorClaims found: {0}", ccList.size());
         } catch (Exception e) {
             log.log(Level.SEVERE, "Failed", e);
             throw new DataException("Failed to get company ContractorClaims\n" + getErrorString(e));
@@ -539,7 +541,7 @@ public class ListUtil {
             for (Beneficiary cc : pList) {
                 resp.add(new BeneficiaryDTO(cc));
             }
-            log.log(Level.INFO, "company bennies found: {0}", resp.size());
+            //log.log(Level.INFO, "company bennies found: {0}", resp.size());
         } catch (Exception e) {
             log.log(Level.SEVERE, "Failed", e);
             throw new DataException("Failed to get company beneficiaries\n" + getErrorString(e));
@@ -558,7 +560,7 @@ public class ListUtil {
             for (Beneficiary cc : pList) {
                 resp.add(new BeneficiaryDTO(cc));
             }
-            log.log(Level.INFO, "project bennies found: {0}", resp.size());
+            //log.log(Level.INFO, "project bennies found: {0}", resp.size());
         } catch (Exception e) {
             log.log(Level.SEVERE, "Failed", e);
             throw new DataException("Failed to get project beneficiaries\n" + getErrorString(e));
@@ -602,7 +604,7 @@ public class ListUtil {
 
                 resp.add(dto);
             }
-            log.log(Level.INFO, "company tasks found: {0}", resp.size());
+            //log.log(Level.INFO, "company tasks found: {0}", resp.size());
         } catch (Exception e) {
             log.log(Level.SEVERE, "Failed", e);
             throw new DataException("Failed to get company tasks\n" + getErrorString(e));
@@ -622,7 +624,7 @@ public class ListUtil {
                 resp.add(new TaskPriceDTO(taskPrice));
             }
 
-            log.log(Level.INFO, "project taskPrices found: {0}", resp.size());
+            //log.log(Level.INFO, "project taskPrices found: {0}", resp.size());
         } catch (Exception e) {
             log.log(Level.SEVERE, "Failed", e);
             throw new DataException("Failed to get company tasks\n" + getErrorString(e));
@@ -644,8 +646,8 @@ public class ListUtil {
                 resp.add(new ClientDTO(cc));
             }
 
-            log.log(Level.INFO,
-                    "company clients found: {0}", resp.size());
+            //log.log(Level.INFO,
+              //      "company clients found: {0}", resp.size());
         } catch (Exception e) {
             log.log(Level.SEVERE, "Failed", e);
             throw new DataException("Failed to get company clients\n" + getErrorString(e));
@@ -750,61 +752,61 @@ public class ListUtil {
             q.setParameter(
                     "projectID", projectID);
             List<PhotoUpload> photos = q.getResultList();
-            log.log(Level.INFO,
-                    "---------- photos: {0}", photos.size());
+//            log.log(Level.INFO,
+//                    "---------- photos: {0}", photos.size());
             q = em.createNamedQuery("Beneficiary.findByProject", Beneficiary.class);
             q.setParameter(
                     "projectID", projectID);
             List<Beneficiary> bList = q.getResultList();
 
-            log.log(Level.INFO,
-                    "---------- beneficiaries: {0}", bList.size());
+//            log.log(Level.INFO,
+//                    "---------- beneficiaries: {0}", bList.size());
 
             q = em.createNamedQuery("ContractorClaim.findByProject", ContractorClaim.class);
             q.setParameter(
                     "projectID", projectID);
             List<ContractorClaim> ccList = q.getResultList();
-            log.log(Level.INFO,
-                    "---------- contractorClaims: {0}", ccList.size());
+//            log.log(Level.INFO,
+//                    "---------- contractorClaims: {0}", ccList.size());
 
             q = em.createNamedQuery("ContractorClaimSite.findByProject", ContractorClaimSite.class);
             q.setParameter(
                     "projectID", projectID);
             List<ContractorClaimSite> ccSiteList = q.getResultList();
 
-            log.log(Level.INFO,
-                    "---------- claim sites: {0}", ccSiteList.size());
+//            log.log(Level.INFO,
+//                    "---------- claim sites: {0}", ccSiteList.size());
 
             q = em.createNamedQuery("Invoice.findByProject", Invoice.class);
             q.setParameter(
                     "projectID", projectID);
             List<Invoice> invList = q.getResultList();
 
-            log.log(Level.INFO,
-                    "---------- invoices: {0}", invList.size());
+//            log.log(Level.INFO,
+//                    "---------- invoices: {0}", invList.size());
 
             q = em.createNamedQuery("InvoiceItem.findByProject", Invoice.class);
             q.setParameter(
                     "projectID", projectID);
             List<InvoiceItem> itemList = q.getResultList();
 
-            log.log(Level.INFO,
-                    "---------- invoice items: {0}", itemList.size());
+//            log.log(Level.INFO,
+//                    "---------- invoice items: {0}", itemList.size());
 
             q = em.createNamedQuery("ProjectSite.findByProject", ProjectSite.class);
             q.setParameter(
                     "projectID", projectID);
             List<ProjectSite> projectSiteList = q.getResultList();
 
-            log.log(Level.INFO,
-                    "---------- project sites: {0}", projectSiteList.size());
+//            log.log(Level.INFO,
+//                    "---------- project sites: {0}", projectSiteList.size());
 
             q = em.createNamedQuery("ProjectSiteTask.findByProject", ProjectSiteTask.class);
             q.setParameter(
                     "projectID", projectID);
             List<ProjectSiteTask> siteTaskList = q.getResultList();
-            log.log(Level.WARNING,
-                    "---------- site tasks: {0}", siteTaskList.size());
+//            log.log(Level.WARNING,
+//                    "---------- site tasks: {0}", siteTaskList.size());
 
             q = em.createNamedQuery("ProjectSiteTaskStatus.countByProject", ProjectSiteTaskStatus.class);
             q.setParameter(
@@ -812,8 +814,8 @@ public class ListUtil {
             Long x = (Long) q.getSingleResult();
             project.setStatusCount(Integer.parseInt("" + x.intValue()));
 
-            log.log(Level.WARNING,
-                    "---------- project task status count: {0}", x);
+//            log.log(Level.WARNING,
+//                    "---------- project task status count: {0}", x);
 
             q = em.createNamedQuery("ProjectSiteTaskStatus.findByProject", ProjectSiteTaskStatus.class);
             q.setParameter(
@@ -836,8 +838,8 @@ public class ListUtil {
                 }
             }
 
-            log.log(Level.WARNING,
-                    "###---------- bennies done: {0}", project.getBeneficiaryList().size());
+//            log.log(Level.WARNING,
+//                    "###---------- bennies done: {0}", project.getBeneficiaryList().size());
             project.setInvoiceList(new ArrayList<InvoiceDTO>());
             for (Invoice inv : invList) {
                 InvoiceDTO dto = new InvoiceDTO(inv);
@@ -848,8 +850,8 @@ public class ListUtil {
                 project.getInvoiceList().add(dto);
             }
 
-            log.log(Level.WARNING,
-                    "###---------- invoices done: {0}", project.getInvoiceList().size());
+//            log.log(Level.WARNING,
+//                    "###---------- invoices done: {0}", project.getInvoiceList().size());
             invList = null;
 
             project.setPhotoUploadList(new ArrayList<PhotoUploadDTO>());
@@ -860,8 +862,8 @@ public class ListUtil {
 
             }
 
-            log.log(Level.WARNING,
-                    "###---------- proj photos done: {0}", project.getPhotoUploadList().size());
+//            log.log(Level.WARNING,
+//                    "###---------- proj photos done: {0}", project.getPhotoUploadList().size());
             q = em.createNamedQuery("ProjectSiteTaskStatus.countByProjectSite", ProjectSiteTaskStatus.class);
             Query q2 = em.createNamedQuery("ProjectSiteTaskStatus.findByProjectSite", ProjectSiteTaskStatus.class);
 
@@ -904,8 +906,8 @@ public class ListUtil {
                 project.getProjectSiteList().add(projectSiteDTO);
             }
 
-            log.log(Level.WARNING,
-                    "###---------- sites done: {0}", project.getProjectSiteList().size());
+//            log.log(Level.WARNING,
+//                    "###---------- sites done: {0}", project.getProjectSiteList().size());
             project.setContractorClaimList(new ArrayList<ContractorClaimDTO>());
 
             for (ContractorClaim cc : ccList) {
@@ -921,8 +923,8 @@ public class ListUtil {
                 project.getContractorClaimList().add(dto);
             }
 
-            log.log(Level.WARNING,
-                    "###---------- contractor claims done: {0}", project.getContractorClaimList().size());
+//            log.log(Level.WARNING,
+//                    "###---------- contractor claims done: {0}", project.getContractorClaimList().size());
             ccList = null;
             photos = null;
             siteTaskList = null;
@@ -948,8 +950,8 @@ public class ListUtil {
             resp.getProjectList().add(project);
 
             long e = System.currentTimeMillis();
-            log.log(Level.INFO,
-                    "############---------- project data retrieved: {0} seconds", Elapsed.getElapsed(s, e));
+//            log.log(Level.INFO,
+//                    "############---------- project data retrieved: {0} seconds", Elapsed.getElapsed(s, e));
         } catch (OutOfMemoryError e) {
             log.log(Level.SEVERE, "Failed", e);
             throw new DataException("Failed to get project data: OUT OF MEMORY!\n");
@@ -1056,8 +1058,8 @@ public class ListUtil {
                 list.add(dto);
             }
 
-            log.log(Level.OFF,
-                    "#### Company site tasks: {0}", list.size());
+//            log.log(Level.OFF,
+//                    "#### Company site tasks: {0}", list.size());
 
         } catch (Exception e) {
             log.log(Level.SEVERE, "Failed", e);
@@ -1099,8 +1101,8 @@ public class ListUtil {
                 list.add(dto);
             }
 
-            log.log(Level.OFF,
-                    "#### Project site tasks: {0}", list.size());
+//            log.log(Level.OFF,
+//                    "#### Project site tasks: {0}", list.size());
 
         } catch (Exception e) {
             log.log(Level.SEVERE, "Failed", e);
@@ -1128,8 +1130,8 @@ public class ListUtil {
                 resp.getProjectSiteTaskStatusList().add(new ProjectSiteTaskStatusDTO(s));
             }
 
-            log.log(Level.OFF,
-                    "project task status in period : {0}", resp.getProjectSiteTaskStatusList().size());
+//            log.log(Level.OFF,
+//                    "project task status in period : {0}", resp.getProjectSiteTaskStatusList().size());
         } catch (Exception e) {
             log.log(Level.SEVERE, "Failed", e);
             throw new DataException("Failed to get project task status data\n" + getErrorString(e));
@@ -1194,6 +1196,7 @@ public class ListUtil {
     public ResponseDTO getCompanyTaskStatusinPeriod(Integer companyID,
             Date startDate, Date endDate) throws DataException {
 
+        long start = System.currentTimeMillis();
         ResponseDTO resp = new ResponseDTO();
         resp.setProjectSiteTaskStatusList(new ArrayList<ProjectSiteTaskStatusDTO>());
 
@@ -1205,12 +1208,14 @@ public class ListUtil {
             q.setParameter("endDate", endDate);
 
             List<ProjectSiteTaskStatus> pList = q.getResultList();
+            log.log(Level.OFF, "company ProjectSiteTaskStatus in period: {0}", pList.size());
             for (ProjectSiteTaskStatus s : pList) {
                 resp.getProjectSiteTaskStatusList().add(new ProjectSiteTaskStatusDTO(s));
             }
 
-            log.log(Level.OFF,
-                    "Company task statusin period : {0}", resp.getProjectSiteTaskStatusList().size());
+            long end = System.currentTimeMillis();
+            double elapsed = Elapsed.getElapsed(start, end);
+            log.log(Level.OFF, "Company task status in period : {0} elapsed: {1}", new Object[]{pList.size(), elapsed});
         } catch (Exception e) {
             log.log(Level.SEVERE, "Failed", e);
             throw new DataException("Failed to get company task status data\n" + getErrorString(e));

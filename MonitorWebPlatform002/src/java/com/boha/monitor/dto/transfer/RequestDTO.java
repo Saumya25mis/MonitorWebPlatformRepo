@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.boha.monitor.dto.transfer;
 
 import com.boha.monitor.dto.BankDTO;
@@ -39,11 +38,14 @@ import java.util.List;
  *
  * @author aubreyM
  */
-public class RequestDTO implements Serializable{
-    private Integer requestType, companyID, companyStaffID, projectID, 
-            projectSiteID, projectSiteTaskID,loginType, 
+public class RequestDTO implements Serializable {
+
+    private Integer requestType, companyID, companyStaffID, projectID,
+            projectSiteID, projectSiteTaskID, loginType,
             countryID, contractorClaimID, invoiceID,
             beneficiaryID, engineerID;
+    private boolean responseRequested;
+
     private String email, pin, gcmRegistrationID;
     private Date startDate, endDate;
     private Double latitude, longitude;
@@ -65,11 +67,11 @@ public class RequestDTO implements Serializable{
     private ContractorClaimSiteDTO contractorClaimSite;
     private InvoiceDTO invoice;
     private InvoiceItemDTO invoiceItem;
-    
+
     private TaskDTO task;
     private TaskStatusDTO taskStatus;
     private ClientDTO client;
-    
+
     private ProjectSiteTaskDTO projectSiteTask;
     private ProjectDiaryRecordDTO projectDiaryRecord;
     private ProjectSiteTaskStatusDTO projectSiteTaskStatus;
@@ -77,19 +79,17 @@ public class RequestDTO implements Serializable{
     private BeneficiaryDTO beneficiary;
     private List<BeneficiaryDTO> beneficiaryList;
 //register actors
-    public static final int 
-            REGISTER_COMPANY = 1,
+    public static final int REGISTER_COMPANY = 1,
             REGISTER_COMPANY_STAFF = 2,
             REGISTER_PROJECT = 3,
             REGISTER_PROJECT_SITE = 4,
             REGISTER_PROJECT_SITE_STAFF = 5,
             REGISTER_CLIENT = 6,
-            REGISTER_BENEFICIARY = 7,         
+            REGISTER_BENEFICIARY = 7,
             REGISTER_ENGINEER = 8,
             IMPORT_BENEFICIARIES = 9;
     //add stuff
-    public static final int 
-            ADD_PROJECT_SITE_TASK = 11,
+    public static final int ADD_PROJECT_SITE_TASK = 11,
             ADD_PROJECT_DIARY_RECORD = 12,
             ADD_PROJECT_SITE_TASK_STATUS = 13,
             ADD_PROJECT_STATUS_TYPE = 14,
@@ -97,8 +97,7 @@ public class RequestDTO implements Serializable{
             CONNECT_BENEFICIARY_TO_SITE = 18,
             CONNECT_ENGINEER_TO_PROJECT = 19;
     //get stuff
-    public static final int 
-            GET_PROJECT_DATA = 101,
+    public static final int GET_PROJECT_DATA = 101,
             GET_PROJECT_SITE_DATA = 102,
             GET_SITE_IMAGE_FILENAMES = 103,
             GET_TASK_IMAGE_FILENAMES = 104,
@@ -118,12 +117,10 @@ public class RequestDTO implements Serializable{
             GET_PROJECT_STATUS_IN_PERIOD = 118,
             GET_SITE_STATUS_IN_PERIOD = 119;
     //login's 
-    public static final int 
-            LOGIN = 200,
+    public static final int LOGIN = 200,
             SEND_GCM_REGISTRATION = 204;
-     //lookups 
-    public static final int 
-            ADD_COMPANY_TASK = 301,
+    //lookups 
+    public static final int ADD_COMPANY_TASK = 301,
             ADD_COMPANY_TASK_STATUS = 302,
             ADD_COMPANY_PROJECT_STATUS_TYPE = 303,
             ADD_COMPANY_CHECKPOINT = 304,
@@ -134,11 +131,11 @@ public class RequestDTO implements Serializable{
             ADD_BANK = 309,
             CONFIRM_LOCATION = 310,
             ADD_SUB_TASK = 311,
-            ADD_SUBTASK_STATUS = 312;
-            
+            ADD_SUBTASK_STATUS = 312,
+            SYNC_CACHED_REQUESTS = 313;
+
     //updates 
-    public static final int 
-            UPDATE_COMPANY_TASK = 401,
+    public static final int UPDATE_COMPANY_TASK = 401,
             UPDATE_COMPANY_TASK_STATUS = 402,
             UPDATE_COMPANY_PROJECT_STATUS_TYPE = 403,
             UPDATE_COMPANY_CHECKPOINT = 404,
@@ -147,8 +144,7 @@ public class RequestDTO implements Serializable{
             UPDATE_COMPANY_STAFF = 407,
             RESET_STAFF_PIN = 408;
     //invoice * claim
-    public static final int
-            ADD_INVOICE = 501,
+    public static final int ADD_INVOICE = 501,
             ADD_INVOICE_ITEM = 502,
             REMOVE_INVOICE_ITEM = 503,
             CREATE_INVOICE_PDF = 504,
@@ -161,12 +157,10 @@ public class RequestDTO implements Serializable{
             GENERATE_INVOICE_PDF = 514,
             ADD_CONTRACTOR_CLAIM_SITE = 512;
     //reports
-    public static final int
-            REPORT_PROJECT = 601,
+    public static final int REPORT_PROJECT = 601,
             REPORT_SITE = 602,
             GET_PROJECT_STATUS_LIST = 603,
             GET_PROJECT_SITE_STATUS_LIST = 604;
-    
 
     public static final String COMPANY_DIR = "company";
     public static final String COMPANY_STAFF_DIR = "companyStaff";
@@ -175,7 +169,14 @@ public class RequestDTO implements Serializable{
     public static final String TASK_DIR = "task";
 
     //
-    
+    public boolean isResponseRequested() {
+        return responseRequested;
+    }
+
+    public void setResponseRequested(boolean responseRequested) {
+        this.responseRequested = responseRequested;
+    }
+
     public Float getAccuracy() {
         return accuracy;
     }
@@ -431,8 +432,7 @@ public class RequestDTO implements Serializable{
     public void setPin(String pin) {
         this.pin = pin;
     }
-    
-    
+
     public Integer getRequestType() {
         return requestType;
     }
@@ -445,7 +445,6 @@ public class RequestDTO implements Serializable{
         this.gcmDevice = gcmDevice;
     }
 
-    
     public void setRequestType(Integer requestType) {
         this.requestType = requestType;
     }
@@ -506,8 +505,6 @@ public class RequestDTO implements Serializable{
         this.project = project;
     }
 
-   
-
     public ProjectSiteDTO getProjectSite() {
         return projectSite;
     }
@@ -547,6 +544,5 @@ public class RequestDTO implements Serializable{
     public void setProjectStatusType(ProjectStatusTypeDTO projectStatusType) {
         this.projectStatusType = projectStatusType;
     }
-    
-    
+
 }

@@ -43,7 +43,7 @@ import java.util.List;
  */
 public class ResponseDTO {
 
-    private Integer statusCode, statusCountInPeriod;
+    private Integer statusCode, statusCountInPeriod, goodCount, badCount;
     private String message, sessionID, GCMRegistrationID, fileString;
     private double elapsedRequestTimeInSeconds;
     private List<String> taskImageFileNameList;
@@ -82,6 +82,23 @@ public class ResponseDTO {
     private CompanyDTO company;
     private CompanyStaffDTO companyStaff;
 
+    public Integer getGoodCount() {
+        return goodCount;
+    }
+
+    public void setGoodCount(Integer goodCount) {
+        this.goodCount = goodCount;
+    }
+
+    public Integer getBadCount() {
+        return badCount;
+    }
+
+    public void setBadCount(Integer badCount) {
+        this.badCount = badCount;
+    }
+
+    
     public double getElapsedRequestTimeInSeconds() {
         return elapsedRequestTimeInSeconds;
     }

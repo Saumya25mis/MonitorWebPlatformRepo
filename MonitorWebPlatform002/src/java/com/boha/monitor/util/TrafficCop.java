@@ -101,9 +101,16 @@ public class TrafficCop {
 
                 //register entities    
                 case RequestDTO.REGISTER_COMPANY:
+                    
+                    if (listUtil == null) {
+                         System.out.println("listUtil is NULL");
+                    }
+                    if (dataUtil == null) {
+                         System.out.println("dataUtil is NULL");
+                    }
                     resp = dataUtil.registerCompany(req.getCompany(),
                             req.getCompanyStaff(),
-                            req.getLatitude(), req.getLongitude(), listUtil);
+                            listUtil);
                     break;
                 case RequestDTO.REGISTER_COMPANY_STAFF:
                     resp = dataUtil.registerCompanyStaff(req.getCompanyStaff());
@@ -174,6 +181,7 @@ public class TrafficCop {
                     resp = listUtil.getSiteTaskStatusinPeriod(req.getProjectSiteID(), req.getStartDate(), req.getEndDate());
                     break;
                 case RequestDTO.GET_SITE_STATUS:
+                    System.out.println("starting site status");
                     resp = listUtil.getSiteStatus(req.getProjectSiteID());
                     break;
                 case RequestDTO.GET_PROJECT_SITE_DATA:
