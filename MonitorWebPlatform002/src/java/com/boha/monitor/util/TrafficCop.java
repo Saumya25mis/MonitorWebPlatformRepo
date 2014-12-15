@@ -171,6 +171,9 @@ public class TrafficCop {
                     break;
 
                 //lists
+                case RequestDTO.GET_EXEC_COMPANY_DATA:
+                    resp = listUtil.getCompanyExecData(req.getCompanyID(), req.getCountryID());
+                    break;
                 case RequestDTO.GET_COMPANY_STATUS_IN_PERIOD:
                     resp = listUtil.getCompanyTaskStatusinPeriod(req.getCompanyID(), req.getStartDate(), req.getEndDate());
                     break;
