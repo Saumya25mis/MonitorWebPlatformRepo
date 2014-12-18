@@ -181,7 +181,6 @@ public class ListUtil {
 
     public ResponseDTO getSiteStatus(Integer projectSiteID) {
         ResponseDTO resp = new ResponseDTO();
-//TODO - get photos!
         ProjectSite s = em.find(ProjectSite.class, projectSiteID);
         ProjectSiteDTO site = new ProjectSiteDTO(s);
 
@@ -189,6 +188,15 @@ public class ListUtil {
         q.setParameter("projectSiteID", projectSiteID);
         List<ProjectSiteTask> taskList = q.getResultList();
         System.out.println("ProjectSiteTasks found: " + taskList.size());
+
+        q = em.createNamedQuery("PhotoUpload.findProjectSitePhotos", PhotoUpload.class);
+        q.setParameter("projectSiteID", projectSiteID);
+        List<PhotoUpload> pList = q.getResultList();
+        System.out.println("photos found: " + pList.size());
+        site.setPhotoUploadList(new ArrayList<PhotoUploadDTO>());
+        for (PhotoUpload photoUpload : pList) {
+            site.getPhotoUploadList().add(new PhotoUploadDTO(photoUpload));
+        }
 
         resp.setProjectSiteTaskList(new ArrayList<ProjectSiteTaskDTO>());
         List<ProjectSiteTaskStatusDTO> list = getSiteTaskStatus(projectSiteID);
@@ -469,11 +477,12 @@ public class ListUtil {
         resp.setStatusCountInPeriod(xx);
 
         long e = System.currentTimeMillis();
-        System.out.println("getCompanyData - time elapsed: " + Elapsed.getElapsed(s, e));
+        System.out.println("getCompanyExecData - time elapsed: " + Elapsed.getElapsed(s, e));
         return resp;
     }
 
     public List<ProjectDTO> getProjectsByCompanyForExec(Integer companyID) throws DataException {
+        long start = System.currentTimeMillis();
         List<ProjectDTO> resp = new ArrayList<>();
 
         try {
@@ -492,7 +501,17 @@ public class ListUtil {
 
             List<ContractorClaimDTO> ccList = getContractorClaimsByCompany(companyID);
             List<InvoiceDTO> invList = getInvoicesByCompany(companyID);
-            List<ProjectSiteDTO> psList = getSitesByCompany(companyID);
+            List<ProjectSiteDTO> projectSiteList = getSitesByCompany(companyID);
+
+            StringBuilder sb = new StringBuilder();
+            sb.append("********************************************\n");
+            sb.append("** photos: ").append(photos.size()).append("\n");
+            sb.append("** beneficiaries: ").append(bList.size()).append("\n");
+            sb.append("** contractorClaims: ").append(ccList.size()).append("\n");
+            sb.append("** project sites: ").append(projectSiteList.size()).append("\n");
+            sb.append("** project invoices: ").append(invList.size()).append("\n");
+            sb.append("********************************************\n");
+            System.out.println(sb.toString());
 
             for (Project project : pList) {
                 q = em.createNamedQuery("ProjectSiteTaskStatus.countByProject", ProjectSiteTaskStatus.class);
@@ -506,6 +525,8 @@ public class ListUtil {
                 dto.setInvoiceList(new ArrayList<InvoiceDTO>());
                 dto.setBeneficiaryList(new ArrayList<BeneficiaryDTO>());
                 dto.setContractorClaimList(new ArrayList<ContractorClaimDTO>());
+                dto.setPhotoUploadList(new ArrayList<PhotoUploadDTO>());
+                dto.setProjectSiteList(new ArrayList<ProjectSiteDTO>());
                 int benCount = 0, invCount = 0, claimCount = 0, siteCount = 0, photoCount = 0;
                 for (Beneficiary b : bList) {
                     if (Objects.equals(b.getProject().getProjectID(), dto.getProjectID())) {
@@ -515,26 +536,26 @@ public class ListUtil {
                 }
                 for (InvoiceDTO inv : invList) {
                     if (Objects.equals(inv.getProject().getProjectID(), dto.getProjectID())) {
-                        //dto.getInvoiceList().add(inv);
+                        dto.getInvoiceList().add(inv);
                         invCount++;
                     }
 
                 }
                 for (ContractorClaimDTO cc : ccList) {
                     if (Objects.equals(cc.getProjectID(), dto.getProjectID())) {
-                        //dto.getContractorClaimList().add(cc);
+                        dto.getContractorClaimList().add(cc);
                         claimCount++;
                     }
                 }
                 for (PhotoUpload px : photos) {
                     if (Objects.equals(px.getProject().getProjectID(), dto.getProjectID())) {
-                        //dto.getPhotoUploadList().add(new PhotoUploadDTO(px));
+                        dto.getPhotoUploadList().add(new PhotoUploadDTO(px));
                         photoCount++;
                     }
                 }
-                for (ProjectSiteDTO ps : psList) {
+                for (ProjectSiteDTO ps : projectSiteList) {
                     if (Objects.equals(ps.getProjectID(), dto.getProjectID())) {
-                        //dto.getProjectSiteList().add(ps);
+                        dto.getProjectSiteList().add(ps);
                         siteCount++;
                     }
                 }
@@ -547,8 +568,8 @@ public class ListUtil {
                 resp.add(dto);
             }
 
-            log.log(Level.INFO,
-                    "company projects found: {0}", resp.size());
+            long end = System.currentTimeMillis();
+            log.log(Level.INFO, "getProjectsByCompanyForExec, projects found: {0} elapsed time: {1} seconds", new Object[]{resp.size(), Elapsed.getElapsed(start, end)});
         } catch (Exception e) {
             log.log(Level.SEVERE, "Failed", e);
             throw new DataException("Failed to get company projects\n" + getErrorString(e));
@@ -556,7 +577,7 @@ public class ListUtil {
 
         return resp;
     }
-    static final int MAX_RESULTS = 100;
+    static final int MAX_RESULTS = 20;
 
     private List<ProjectSiteTaskStatusDTO> getStatusByProject(Integer projectID) {
         List<ProjectSiteTaskStatusDTO> list = new ArrayList<>();
@@ -594,7 +615,7 @@ public class ListUtil {
 
         Calendar cal = GregorianCalendar.getInstance();
         for (int i = 0; i < 7; i++) {
-            cal.roll(Calendar.DATE, false);
+            cal.roll(Calendar.DAY_OF_YEAR, false);
         }
         cal.set(Calendar.HOUR_OF_DAY, 0);
         cal.set(Calendar.MINUTE, 0);
@@ -787,6 +808,8 @@ public class ListUtil {
         return resp;
     }
 
+    
+    
     public List<ProjectDTO> getProjectsByCompany(Integer companyID) throws DataException {
         List<ProjectDTO> resp = new ArrayList<>();
 
@@ -806,7 +829,7 @@ public class ListUtil {
 
             List<ContractorClaimDTO> ccList = getContractorClaimsByCompany(companyID);
             List<InvoiceDTO> invList = getInvoicesByCompany(companyID);
-            List<ProjectSiteDTO> psList = getSitesByCompany(companyID);
+           // List<ProjectSiteDTO> projectSiteList = getSitesByCompany(companyID);
 
             for (Project project : pList) {
                 q = em.createNamedQuery("ProjectSiteTaskStatus.countByProject", ProjectSiteTaskStatus.class);
@@ -822,32 +845,32 @@ public class ListUtil {
                 int benCount = 0, invCount = 0, claimCount = 0, siteCount = 0, photoCount = 0;
                 for (Beneficiary b : bList) {
                     if (Objects.equals(b.getProject().getProjectID(), dto.getProjectID())) {
-                        //dto.getBeneficiaryList().add(new BeneficiaryDTO(b));
                         benCount++;
                     }
                 }
                 for (InvoiceDTO inv : invList) {
                     if (Objects.equals(inv.getProject().getProjectID(), dto.getProjectID())) {
-                        //dto.getInvoiceList().add(inv);
                         invCount++;
                     }
 
                 }
                 for (ContractorClaimDTO cc : ccList) {
                     if (Objects.equals(cc.getProjectID(), dto.getProjectID())) {
-                        //dto.getContractorClaimList().add(cc);
                         claimCount++;
                     }
                 }
                 for (PhotoUpload px : photos) {
                     if (Objects.equals(px.getProject().getProjectID(), dto.getProjectID())) {
-                        //dto.getPhotoUploadList().add(new PhotoUploadDTO(px));
                         photoCount++;
                     }
                 }
-                for (ProjectSiteDTO ps : psList) {
-                    if (Objects.equals(ps.getProjectID(), dto.getProjectID())) {
-                        //dto.getProjectSiteList().add(ps);
+                q = em.createNamedQuery("ProjectSite.findByCompany", ProjectSite.class);
+                q.setParameter("companyID", companyID);
+                List<ProjectSite> projectSiteList = q.getResultList();
+                dto.setProjectSiteList(new ArrayList<ProjectSiteDTO>());
+                for (ProjectSite ps : projectSiteList) {
+                    if (Objects.equals(ps.getProject().getProjectID(), dto.getProjectID())) {
+                        dto.getProjectSiteList().add(new ProjectSiteDTO(ps));
                         siteCount++;
                     }
                 }
@@ -1062,7 +1085,7 @@ public class ListUtil {
 
             Calendar cal = GregorianCalendar.getInstance();
             for (int i = 0; i < 7; i++) {
-                cal.roll(Calendar.DATE, false);
+                cal.roll(Calendar.DAY_OF_YEAR, false);
             }
             cal.set(Calendar.HOUR_OF_DAY, 0);
             cal.set(Calendar.MINUTE, 0);
@@ -1075,8 +1098,8 @@ public class ListUtil {
             resp.getProjectList().add(project);
 
             long e = System.currentTimeMillis();
-//            log.log(Level.INFO,
-//                    "############---------- project data retrieved: {0} seconds", Elapsed.getElapsed(s, e));
+            log.log(Level.INFO,
+                    "############---------- project data retrieved: {0} seconds", Elapsed.getElapsed(s, e));
         } catch (OutOfMemoryError e) {
             log.log(Level.SEVERE, "Failed", e);
             throw new DataException("Failed to get project data: OUT OF MEMORY!\n");
@@ -1095,11 +1118,18 @@ public class ListUtil {
             Query q = em.createNamedQuery("ProjectSite.findByCompany", ProjectSite.class);
             q.setParameter("companyID", companyID);
             List<ProjectSite> pList = q.getResultList();
+            
             q = em.createNamedQuery("PhotoUpload.findProjectSitePhotosByCompany", PhotoUpload.class);
             q.setParameter("companyID", companyID);
+            List<PhotoUpload> photoList = q.getResultList();
 
             for (ProjectSite s : pList) {
                 ProjectSiteDTO dto = new ProjectSiteDTO(s);
+                dto.setLastStatus(getLastStatus(s.getProjectSiteID()));
+                dto.setPhotoUploadList(new ArrayList<PhotoUploadDTO>());
+                for (PhotoUpload pp : photoList) {
+                    dto.getPhotoUploadList().add(new PhotoUploadDTO(pp));
+                }
                 list.add(dto);
             }
 
@@ -1109,6 +1139,21 @@ public class ListUtil {
         }
 
         return list;
+    }
+
+    private ProjectSiteTaskStatusDTO getLastStatus(Integer projectSiteID) {
+        ProjectSiteTaskStatusDTO resp = null;
+        try {
+            Query q = em.createNamedQuery("ProjectSiteTaskStatus.findByProjectSite", ProjectSiteTaskStatus.class);
+            q.setParameter("projectSiteID", projectSiteID);
+            q.setMaxResults(1);
+            ProjectSiteTaskStatus status = (ProjectSiteTaskStatus) q.getSingleResult();
+            resp = new ProjectSiteTaskStatusDTO(status);
+        } catch (NoResultException e) {
+            return resp;
+        }
+
+        return resp;
     }
 
     public ResponseDTO getSitesByProject(Integer projectID) throws DataException {

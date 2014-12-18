@@ -6,6 +6,7 @@
 package com.boha.monitor.dto;
 
 import com.boha.monitor.data.CompanyStaff;
+import com.boha.monitor.data.Project;
 import com.boha.monitor.data.ProjectSiteTask;
 import com.boha.monitor.data.ProjectSiteTaskStatus;
 import java.io.Serializable;
@@ -24,7 +25,7 @@ public class ProjectSiteTaskStatusDTO implements Serializable {
     private Date statusDate;
     private TaskStatusDTO taskStatus;
     private TaskDTO task;
-    private Integer projectSiteTaskID;
+    private Integer projectSiteTaskID, projectID, projectSiteID;
     private Integer companyStaffID;
     private String projectSiteName, projectName, staffName;
     private List<SubTaskStatusDTO> subTaskStatusList;
@@ -37,6 +38,7 @@ public class ProjectSiteTaskStatusDTO implements Serializable {
         ProjectSiteTask pst = a.getProjectSiteTask();
         this.task = new TaskDTO(pst.getTask());
         this.projectSiteName = pst.getProjectSite().getProjectSiteName();
+        this.projectSiteID = pst.getProjectSite().getProjectSiteID();
         this.projectSiteTaskID = pst.getProjectSiteTaskID();
         this.taskStatus = new TaskStatusDTO(a.getTaskStatus());
         this.dateUpdated = a.getDateUpdated();
@@ -47,6 +49,28 @@ public class ProjectSiteTaskStatusDTO implements Serializable {
             this.companyStaffID = cs.getCompanyStaffID();
             this.staffName = cs.getFirstName() + " " + cs.getLastName();
         }
+        
+        Project p = pst.getProjectSite().getProject();
+        if (p != null) {
+            projectID = p.getProjectID();
+            //projectName = p.getProjectName();
+        }
+    }
+
+    public Integer getProjectSiteID() {
+        return projectSiteID;
+    }
+
+    public void setProjectSiteID(Integer projectSiteID) {
+        this.projectSiteID = projectSiteID;
+    }
+
+    public Integer getProjectID() {
+        return projectID;
+    }
+
+    public void setProjectID(Integer projectID) {
+        this.projectID = projectID;
     }
 
     public List<SubTaskStatusDTO> getSubTaskStatusList() {
