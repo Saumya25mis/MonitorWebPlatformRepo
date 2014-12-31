@@ -211,6 +211,9 @@ public class DataUtil {
             u.setThumbFlag(pu.getThumbFlag());
             u.setThumbFilePath(pu.getThumbFilePath());
             u.setAccuracy(pu.getAccuracy());
+            if (pu.isIsStaffPicture()) {
+                u.setStaffPicture(1);
+            }
             em.persist(u);
             em.flush();
 

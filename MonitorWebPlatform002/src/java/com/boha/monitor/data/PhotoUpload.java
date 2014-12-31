@@ -65,6 +65,8 @@ import javax.validation.constraints.Size;
             query = "SELECT p FROM PhotoUpload p WHERE p.dateTaken = :dateTaken"),
    })
 public class PhotoUpload implements Serializable {
+    @Column(name = "staffPicture")
+    private Integer staffPicture;
     @Column(name = "accuracy")
     private Float accuracy;
     @Column(name = "latitude")
@@ -274,6 +276,14 @@ public class PhotoUpload implements Serializable {
 
     public void setAccuracy(Float accuracy) {
         this.accuracy = accuracy;
+    }
+
+    public Integer getStaffPicture() {
+        return staffPicture;
+    }
+
+    public void setStaffPicture(Integer staffPicture) {
+        this.staffPicture = staffPicture;
     }
     
 }

@@ -45,6 +45,9 @@ public class PhotoUploadDTO {
         dateUploaded = a.getDateUploaded();
         thumbFlag = a.getThumbFlag();
         thumbFilePath = a.getThumbFilePath();
+        if (a.getStaffPicture() != null) {
+            isStaffPicture = true;
+        }
         switch (pictureType) {
             case PROJECT_IMAGE:
                 Project x = a.getProject();
