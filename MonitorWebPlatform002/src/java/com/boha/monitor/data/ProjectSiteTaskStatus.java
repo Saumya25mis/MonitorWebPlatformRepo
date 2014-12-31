@@ -32,11 +32,14 @@ import javax.validation.constraints.NotNull;
 @Table(name = "projectSiteTaskStatus")
 @NamedQueries({
     @NamedQuery(name = "ProjectSiteTaskStatus.findbyTask",
-            query = "SELECT p FROM ProjectSiteTaskStatus p where p.projectSiteTask.projectSiteTaskID = :id order by p.dateUpdated desc"),
+            query = "SELECT p FROM ProjectSiteTaskStatus p "
+                    + "where p.projectSiteTask.projectSiteTaskID = :id order by p.dateUpdated desc"),
     @NamedQuery(name = "ProjectSiteTaskStatus.findByProject",
-            query = "SELECT p FROM ProjectSiteTaskStatus p WHERE p.projectSiteTask.projectSite.project.projectID = :projectID order by p.dateUpdated desc"),
+            query = "SELECT p FROM ProjectSiteTaskStatus p "
+                    + "WHERE p.projectSiteTask.projectSite.project.projectID = :projectID order by p.dateUpdated desc"),
     @NamedQuery(name = "ProjectSiteTaskStatus.findByProjectSite",
-            query = "SELECT p FROM ProjectSiteTaskStatus p WHERE p.projectSiteTask.projectSite.projectSiteID = :projectSiteID order by p.dateUpdated desc"),
+            query = "SELECT p FROM ProjectSiteTaskStatus p "
+                    + "WHERE p.projectSiteTask.projectSite.projectSiteID = :projectSiteID order by p.dateUpdated desc"),
     @NamedQuery(name = "ProjectSiteTaskStatus.findByCompany",
             query = "SELECT p FROM ProjectSiteTaskStatus p "
             + "WHERE p.projectSiteTask.projectSite.project.company.companyID = :companyID "
@@ -44,34 +47,35 @@ import javax.validation.constraints.NotNull;
     
     @NamedQuery(name = "ProjectSiteTaskStatus.findByCompanyInPeriod",
             query = "SELECT p FROM ProjectSiteTaskStatus p WHERE p.projectSiteTask.projectSite.project.company.companyID = :companyID "
-            + "and p.statusDate between :startDate and :endDate "
+            + "and (p.statusDate between :startDate and :endDate) "
             + "order by p.statusDate desc"),
         
     @NamedQuery(name = "ProjectSiteTaskStatus.countByCompanyInPeriod",
-            query = "SELECT count(p) FROM ProjectSiteTaskStatus p WHERE p.projectSiteTask.projectSite.project.company.companyID = :companyID "
-            + "and p.statusDate between :startDate and :endDate "
+            query = "SELECT count(p) FROM ProjectSiteTaskStatus p "
+                    + "WHERE p.projectSiteTask.projectSite.project.company.companyID = :companyID "
+            + "and (p.statusDate between :startDate and :endDate) "
             + "order by p.statusDate desc"),
     @NamedQuery(name = "ProjectSiteTaskStatus.findByProjectInPeriod",
             query = "SELECT p FROM ProjectSiteTaskStatus p WHERE p.projectSiteTask.projectSite.project.projectID = :projectID "
-            + "and p.statusDate between :startDate and :endDate "
+            + "and (p.statusDate between :startDate and :endDate) "
             + "order by p.statusDate desc"),
     @NamedQuery(name = "ProjectSiteTaskStatus.countByProjectInPeriod",
             query = "SELECT count(p) FROM ProjectSiteTaskStatus p WHERE p.projectSiteTask.projectSite.project.projectID = :projectID "
-            + "and p.statusDate between :startDate and :endDate "
+            + "and (p.statusDate between :startDate and :endDate) "
             + "order by p.dateUpdated desc"),
     @NamedQuery(name = "ProjectSiteTaskStatus.findByProjectSiteInPeriod",
             query = "SELECT p FROM ProjectSiteTaskStatus p WHERE p.projectSiteTask.projectSite.projectSiteID = :projectSiteID "
-            + "and p.statusDate between :startDate and :endDate "
+            + "and (p.statusDate between :startDate and :endDate) "
             + "order by p.statusDate desc"),
 
     @NamedQuery(name = "ProjectSiteTaskStatus.countByProject",
-            query = "SELECT count(p) FROM ProjectSiteTaskStatus p WHERE p.projectSiteTask.projectSite.project.projectID = :projectID"),
+            query = "SELECT count(p) FROM ProjectSiteTaskStatus p "
+                    + "WHERE p.projectSiteTask.projectSite.project.projectID = :projectID"),
     @NamedQuery(name = "ProjectSiteTaskStatus.countByProjectSite",
-            query = "SELECT count(p) FROM ProjectSiteTaskStatus p WHERE p.projectSiteTask.projectSite.projectSiteID = :projectSiteID")})
+            query = "SELECT count(p) FROM ProjectSiteTaskStatus p "
+                    + "WHERE p.projectSiteTask.projectSite.projectSiteID = :projectSiteID")})
 public class ProjectSiteTaskStatus implements Serializable {
-    @OneToMany(mappedBy = "projectSiteTaskStatus")
-    private List<SubTaskStatus> subTaskStatusList;
-
+    
     @Column(name = "statusDate")
     @Temporal(TemporalType.TIMESTAMP)
     private Date statusDate;
@@ -179,14 +183,6 @@ public class ProjectSiteTaskStatus implements Serializable {
 
     public void setStatusDate(Date statusDate) {
         this.statusDate = statusDate;
-    }
-
-    public List<SubTaskStatus> getSubTaskStatusList() {
-        return subTaskStatusList;
-    }
-
-    public void setSubTaskStatusList(List<SubTaskStatus> subTaskStatusList) {
-        this.subTaskStatusList = subTaskStatusList;
     }
 
 }

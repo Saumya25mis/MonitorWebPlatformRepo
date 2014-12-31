@@ -32,6 +32,9 @@ public class TaskDTO implements Serializable {
         this.description = a.getDescription();
         this.companyID = a.getCompany().getCompanyID();
         this.taskNumber = a.getTaskNumber();
+        if (a.getSubTaskList() != null) {
+            
+        }
         
     }
 

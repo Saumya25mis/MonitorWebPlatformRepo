@@ -30,15 +30,11 @@ import javax.persistence.TemporalType;
 @Table(name = "subTaskStatus")
 @NamedQueries({
     @NamedQuery(name = "SubTaskStatus.findByTask", 
-            query = "SELECT s FROM SubTaskStatus s where s.subTask.task.taskID = :taskID"),
-@NamedQuery(name = "SubTaskStatus.findBySite", 
-            query = "SELECT s FROM SubTaskStatus s where s.projectSiteTaskStatus.projectSiteTask.projectSite.projectSiteID = :projectSiteID")
+            query = "SELECT s FROM SubTaskStatus s where s.subTask.task.taskID = :taskID")
 
 })
 public class SubTaskStatus implements Serializable {
-    @JoinColumn(name = "projectSiteTaskStatusID", referencedColumnName = "projectSiteTaskStatusID")
-    @ManyToOne
-    private ProjectSiteTaskStatus projectSiteTaskStatus;
+    
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -142,14 +138,5 @@ public class SubTaskStatus implements Serializable {
     public String toString() {
         return "com.boha.monitor.data.SubTaskStatus[ subTaskStatusID=" + subTaskStatusID + " ]";
     }
-
-    public ProjectSiteTaskStatus getProjectSiteTaskStatus() {
-        return projectSiteTaskStatus;
-    }
-
-    public void setProjectSiteTaskStatus(ProjectSiteTaskStatus projectSiteTaskStatus) {
-        this.projectSiteTaskStatus = projectSiteTaskStatus;
-    }
-
     
 }

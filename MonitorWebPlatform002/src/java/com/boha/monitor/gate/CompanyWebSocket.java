@@ -23,6 +23,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
 import javax.websocket.OnMessage;
@@ -35,9 +37,10 @@ import javax.websocket.server.ServerEndpoint;
  * @author aubreyM
  */
 @ServerEndpoint("/wscompany")
-@Stateful
+@Stateless
 public class CompanyWebSocket {
 
+    
     @EJB
     DataUtil dataUtil;
     @EJB
@@ -65,15 +68,15 @@ public class CompanyWebSocket {
             resp = trafficCop.processRequest(dto, 
                     dataUtil, listUtil, claimFactory);
             bb = GZipUtility.getZippedResponse(resp);
-        } catch (IOException ex) {
+        } catch (Exception ex) {
             log.log(Level.SEVERE, null, ex);
             resp.setStatusCode(111);
             resp.setMessage("Problem processing request on server");
             dataUtil.addErrorStore(19, dataUtil.getErrorString(ex), SOURCE);
             try {
                 bb = GZipUtility.getZippedResponse(resp);
-            } catch (IOException ex1) {
-                log.log(Level.SEVERE, null, ex1);
+            } catch (Exception ex1) {
+                log.log(Level.SEVERE, "Failed to zip error response! What???", ex1);
             }
         }
         return bb;
@@ -106,11 +109,13 @@ public class CompanyWebSocket {
     }
 
     @OnError
-    public void onError(Throwable t) {
-        log.log(Level.SEVERE, "#############################@OnError, websocket failed", t);
-        ResponseDTO r = new ResponseDTO();
-        r.setStatusCode(9);
-        //session.getBasicRemote().sendText(gson.toJson(r));
+    public void onError(Session session, Throwable t) {
+        log.log(Level.SEVERE, "### @OnError, websocket failed.......");
+        try {
+            session.getBasicRemote().sendText("Heita Daarso, things fall apart!");
+        } catch (IOException ex) {
+            Logger.getLogger(CompanyWebSocket.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     Gson gson = new Gson();

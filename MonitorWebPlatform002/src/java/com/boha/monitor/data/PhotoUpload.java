@@ -94,6 +94,9 @@ public class PhotoUpload implements Serializable {
     @Size(max = 255)
     @Column(name = "uri")
     private String uri;
+    @Size(max = 255)
+    @Column(name = "thumbFilePath")
+    private String thumbFilePath;
     @JoinColumn(name = "projectSiteTaskID", referencedColumnName = "projectSiteTaskID")
     @ManyToOne
     private ProjectSiteTask projectSiteTask;
@@ -127,6 +130,14 @@ public class PhotoUpload implements Serializable {
 
     public Integer getPhotoUploadID() {
         return photoUploadID;
+    }
+
+    public String getThumbFilePath() {
+        return thumbFilePath;
+    }
+
+    public void setThumbFilePath(String thumbFilePath) {
+        this.thumbFilePath = thumbFilePath;
     }
 
     public void setPhotoUploadID(Integer photoUploadID) {

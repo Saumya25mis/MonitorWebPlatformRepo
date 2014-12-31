@@ -20,7 +20,7 @@ import java.util.List;
 public class PhotoUploadDTO {
 
     public static final int SITE_IMAGE = 1, TASK_IMAGE = 2, PROJECT_IMAGE = 3, STAFF_IMAGE = 4;
-    private boolean isFullPicture;
+    private boolean isFullPicture, isStaffPicture;
     private Float accuracy;
     private Integer companyID, projectID, projectSiteID, 
             projectSiteTaskID, pictureType, companyStaffID, 
@@ -29,6 +29,8 @@ public class PhotoUploadDTO {
     String projectName, projectSiteName, projectSiteTask;
     private Double latitude, longitude;
     private String uri;
+        private String thumbFilePath;
+
     private Date dateTaken, dateUploaded;
 
     public PhotoUploadDTO(PhotoUpload a) {
@@ -42,6 +44,7 @@ public class PhotoUploadDTO {
         companyID = a.getCompany().getCompanyID();
         dateUploaded = a.getDateUploaded();
         thumbFlag = a.getThumbFlag();
+        thumbFilePath = a.getThumbFilePath();
         switch (pictureType) {
             case PROJECT_IMAGE:
                 Project x = a.getProject();
@@ -68,6 +71,22 @@ public class PhotoUploadDTO {
                 companyStaffID = a.getCompanyStaff().getCompanyStaffID();
                 break;
         }
+    }
+
+    public String getThumbFilePath() {
+        return thumbFilePath;
+    }
+
+    public void setThumbFilePath(String thumbFilePath) {
+        this.thumbFilePath = thumbFilePath;
+    }
+
+    public boolean isIsStaffPicture() {
+        return isStaffPicture;
+    }
+
+    public void setIsStaffPicture(boolean isStaffPicture) {
+        this.isStaffPicture = isStaffPicture;
     }
 
     public Float getAccuracy() {

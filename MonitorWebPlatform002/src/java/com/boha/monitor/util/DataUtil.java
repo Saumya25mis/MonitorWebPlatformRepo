@@ -64,11 +64,8 @@ import com.boha.monitor.dto.TaskPriceDTO;
 import com.boha.monitor.dto.TaskStatusDTO;
 import com.boha.monitor.dto.TownshipDTO;
 import com.boha.monitor.dto.transfer.PhotoUploadDTO;
-import com.boha.monitor.dto.transfer.RequestDTO;
-import com.boha.monitor.dto.transfer.RequestList;
 import com.boha.monitor.dto.transfer.ResponseDTO;
 import com.boha.monitor.pdf.ContractorClaimPDFFactory;
-import static com.boha.monitor.util.ListUtil.log;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -189,6 +186,7 @@ public class DataUtil {
     }
 
     public void addPhotoUpload(PhotoUploadDTO pu) {
+        log.log(Level.OFF, "adding photo to database");
         try {
             PhotoUpload u = new PhotoUpload();
             u.setCompany(em.find(Company.class, pu.getCompanyID()));
@@ -211,11 +209,12 @@ public class DataUtil {
             u.setDateTaken(pu.getDateTaken());
             u.setDateUploaded(pu.getDateUploaded());
             u.setThumbFlag(pu.getThumbFlag());
+            u.setThumbFilePath(pu.getThumbFilePath());
             u.setAccuracy(pu.getAccuracy());
             em.persist(u);
             em.flush();
 
-            log.log(Level.OFF, "PhotoUpload added to table");
+            log.log(Level.OFF, "PhotoUpload added to table, date taken: {0}", pu.getDateTaken().toString());
         } catch (Exception e) {
             log.log(Level.SEVERE, "PhotoUpload failed", e);
             addErrorStore(9,
@@ -262,7 +261,6 @@ public class DataUtil {
             t.setCompanyStaff(em.find(CompanyStaff.class, status.getCompanyStaffID()));
             t.setDateUpdated(new Date());
             t.setStatusDate(new Date());
-            t.setProjectSiteTaskStatus(em.find(ProjectSiteTaskStatus.class, status.getProjectSiteTaskStatusID()));
             t.setSubTask(em.find(SubTask.class, status.getSubTaskID()));
             t.setTaskStatus(em.find(TaskStatus.class, status.getTaskStatus().getTaskStatusID()));
 

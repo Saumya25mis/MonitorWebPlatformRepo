@@ -43,11 +43,9 @@ import org.joda.time.DateTime;
 @WebServlet(name = "PhotoServlet", urlPatterns = {"/photo"})
 public class PhotoServlet extends HttpServlet {
 
-  
     @EJB
     DataUtil dataUtil;
-    
-    
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -73,7 +71,6 @@ public class PhotoServlet extends HttpServlet {
             } else {
                 RequestDTO dto = getRequest(gson, request);
                 switch (dto.getRequestType()) {
-                    
 
                 }
 
@@ -98,13 +95,12 @@ public class PhotoServlet extends HttpServlet {
         }
     }
 
-   
     public static double getElapsed(long start, long end) {
         BigDecimal m = new BigDecimal(end - start).divide(new BigDecimal(1000));
         return m.doubleValue();
     }
     static final Logger logger = Logger.getLogger("PhotoServlet");
-    
+
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
@@ -155,7 +151,7 @@ public class PhotoServlet extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-    
+
     // ################################################################
     public ResponseDTO downloadPhotos(HttpServletRequest request) throws FileUploadException {
         logger.log(Level.INFO, "######### starting PHOTO DOWNLOAD process\n\n");
@@ -164,7 +160,7 @@ public class PhotoServlet extends HttpServlet {
         File rootDir;
         try {
             rootDir = MonitorProperties.getImageDir();
-            logger.log(Level.INFO, "rootDir - {0}", rootDir.getAbsolutePath());
+            //logger.log(Level.INFO, "rootDir - {0}", rootDir.getAbsolutePath());
             if (!rootDir.exists()) {
                 rootDir.mkdir();
             }
@@ -178,7 +174,7 @@ public class PhotoServlet extends HttpServlet {
 
         PhotoUploadDTO dto = null;
         Gson gson = new Gson();
-        File companyDir = null, projectDir = null, 
+        File companyDir = null, projectDir = null,
                 projectSiteDir = null,
                 companyStaffDir = null,
                 projectSiteTaskDir = null;
@@ -204,16 +200,16 @@ public class PhotoServlet extends HttpServlet {
                                     projectSiteDir = createProjectSiteDirectory(
                                             projectDir, projectSiteDir, dto.getProjectSiteID());
                                 }
-                                if (dto.getProjectSiteTaskID()  != null) {
+                                if (dto.getProjectSiteTaskID() != null) {
                                     projectSiteTaskDir = createProjectSiteTaskDirectory(
-                                            projectSiteDir, projectSiteTaskDir, 
+                                            projectSiteDir, projectSiteTaskDir,
                                             dto.getProjectSiteTaskID());
                                 }
                                 if (dto.getCompanyStaffID() != null) {
                                     companyStaffDir = createStaffDirectory(
                                             companyDir, companyStaffDir);
                                 }
-                               
+
                             }
                         } else {
                             logger.log(Level.WARNING, "JSON input seems pretty fucked up! is NULL..");
@@ -232,11 +228,13 @@ public class PhotoServlet extends HttpServlet {
                         fileName = "t" + dt.getMillis() + ".jpg";
                     }
                     if (dto.getCompanyStaffID() != null) {
-                       if (dto.isIsFullPicture()) {
-                        fileName = "f" + dto.getCompanyStaffID() + ".jpg";
-                    } else {
-                        fileName = "t" + dto.getCompanyStaffID() + ".jpg";
-                    } 
+                        if (dto.isIsStaffPicture()) {
+                            if (dto.isIsFullPicture()) {
+                                fileName = "f" + dto.getCompanyStaffID() + ".jpg";
+                            } else {
+                                fileName = "t" + dto.getCompanyStaffID() + ".jpg";
+                            }
+                        }
                     }
                     //
                     switch (dto.getPictureType()) {
@@ -253,17 +251,17 @@ public class PhotoServlet extends HttpServlet {
                             imageFile = new File(companyStaffDir, fileName);
                             break;
                     }
-                    
+
                     writeFile(stream, imageFile);
                     resp.setStatusCode(0);
                     resp.setMessage("Photo downloaded from mobile app ");
                     //add database
-                    System.out.println("photo filepath: " + imageFile.getAbsolutePath());
+                    logger.log(Level.SEVERE, "image downloaded OK: {0}", imageFile.getAbsolutePath());
                     //create uri
                     int index = imageFile.getAbsolutePath().indexOf("monitor_images");
                     if (index > -1) {
                         String uri = imageFile.getAbsolutePath().substring(index);
-                        System.out.println("photo uri: " + uri);
+                        //System.out.println("photo uri: " + uri);
                         dto.setUri(uri);
                     }
                     dto.setDateUploaded(new Date());
@@ -285,9 +283,8 @@ public class PhotoServlet extends HttpServlet {
         return resp;
     }
 
- 
     private File createProjectSiteTaskDirectory(File projectSiteDir, File taskDir, int id) {
-        logger.log(Level.INFO, "task photo to be downloaded");
+        // logger.log(Level.INFO, "task photo to be downloaded");
         taskDir = new File(projectSiteDir, RequestDTO.TASK_DIR + id);
         if (!taskDir.exists()) {
             taskDir.mkdir();
@@ -299,7 +296,7 @@ public class PhotoServlet extends HttpServlet {
     }
 
     private File createProjectSiteDirectory(File projectDir, File projectSiteDir, int id) {
-        logger.log(Level.INFO, "projectSite photo to be downloaded");
+        // logger.log(Level.INFO, "projectSite photo to be downloaded");
         projectSiteDir = new File(projectDir, RequestDTO.PROJECT_SITE_DIR + id);
         if (!projectSiteDir.exists()) {
             projectSiteDir.mkdir();
@@ -312,7 +309,7 @@ public class PhotoServlet extends HttpServlet {
 
     private File createProjectDirectory(File companyDir, File projectDir, int id) {
         projectDir = new File(companyDir, RequestDTO.PROJECT_DIR + id);
-        logger.log(Level.INFO, "just after new {0}", projectDir);
+        // logger.log(Level.INFO, "just after new {0}", projectDir);
         if (!projectDir.exists()) {
             projectDir.mkdir();
             logger.log(Level.INFO, "projectDir created - {0}",
@@ -321,9 +318,10 @@ public class PhotoServlet extends HttpServlet {
         }
         return projectDir;
     }
+
     private File createStaffDirectory(File companyDir, File staffDir) {
         staffDir = new File(companyDir, RequestDTO.COMPANY_STAFF_DIR);
-        logger.log(Level.INFO, "just after new {0}", staffDir);
+        //logger.log(Level.INFO, "just after new {0}", staffDir);
         if (!staffDir.exists()) {
             staffDir.mkdir();
             logger.log(Level.INFO, "staffDir created - {0}",
@@ -340,8 +338,8 @@ public class PhotoServlet extends HttpServlet {
             logger.log(Level.INFO, "company directory created - {0}",
                     companyDir.getAbsolutePath());
         }
-        
-       return companyDir; 
+
+        return companyDir;
     }
 
     private void writeFile(InputStream stream, File imageFile) throws FileNotFoundException, IOException {
