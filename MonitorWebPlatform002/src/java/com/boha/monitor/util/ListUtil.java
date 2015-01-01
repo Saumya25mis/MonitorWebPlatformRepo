@@ -81,6 +81,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import org.joda.time.DateTime;
 
 /**
  *
@@ -608,15 +609,10 @@ public class ListUtil {
             resp.setBankList(getBankList(countryID).getBankList());
         }
 
-        Calendar cal = GregorianCalendar.getInstance();
-        for (int i = 0; i < 7; i++) {
-            cal.roll(Calendar.DAY_OF_YEAR, false);
-        }
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
+        DateTime now = new DateTime();
+        DateTime then = now.minusDays(7);
 
-        Integer xx = countCompanyTaskStatusinPeriod(companyID, cal.getTime(), new Date());
+        Integer xx = countCompanyTaskStatusinPeriod(companyID, then.toDate(), now.toDate());
         resp.setStatusCountInPeriod(xx);
 
         long e = System.currentTimeMillis();
