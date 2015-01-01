@@ -283,7 +283,7 @@ public class ListUtil {
         for (ProjectSiteTaskStatus psts : statusList) {
             ProjectSiteTaskStatusDTO dto = new ProjectSiteTaskStatusDTO(psts);
             dto.setSubTaskStatusList(new ArrayList<SubTaskStatusDTO>());
-            
+
             list.add(dto);
         }
 
@@ -611,6 +611,9 @@ public class ListUtil {
 
         DateTime now = new DateTime();
         DateTime then = now.minusDays(7);
+        then = then.withHourOfDay(0);
+        then = then.withMinuteOfHour(0);
+        then = then.withSecondOfMinute(0);
 
         Integer xx = countCompanyTaskStatusinPeriod(companyID, then.toDate(), now.toDate());
         resp.setStatusCountInPeriod(xx);
@@ -866,7 +869,7 @@ public class ListUtil {
                             q.setParameter("projectSiteID", psdto.getProjectSiteID());
                             Long num = (Long) q.getSingleResult();
                             psdto.setStatusCount(num.intValue());
-                        //get last status
+                            //get last status
 
                             q = em.createNamedQuery("ProjectSiteTaskStatus.findByProjectSite", ProjectSiteTaskStatus.class);
                             q.setParameter("projectSiteID", psdto.getProjectSiteID());
@@ -883,7 +886,7 @@ public class ListUtil {
                             }
                         }
                         psdto.setPhotoUploadList(new ArrayList<PhotoUploadDTO>());
-                        for (PhotoUpload pu: photos) {
+                        for (PhotoUpload pu : photos) {
                             if (pu.getProjectSite() == null) {
                                 continue;
                             }
@@ -891,7 +894,7 @@ public class ListUtil {
                                 psdto.getPhotoUploadList().add(new PhotoUploadDTO(pu));
                             }
                         }
-                        
+
                         dto.getProjectSiteList().add(psdto);
                         siteCount++;
                     }
@@ -906,7 +909,7 @@ public class ListUtil {
             }
 
            // log.log(Level.INFO,
-             //       "company projects found: {0}", resp.size());
+            //       "company projects found: {0}", resp.size());
         } catch (Exception e) {
             log.log(Level.SEVERE, "Failed", e);
             throw new DataException("Failed to get company projects\n" + getErrorString(e));
@@ -1004,7 +1007,7 @@ public class ListUtil {
             q = em.createNamedQuery("SubTask.findByCompany", SubTask.class);
             q.setParameter("companyID", project.getCompanyID());
             List<SubTask> subTaskList = q.getResultList();
-            
+
             q = em.createNamedQuery("ProjectSiteTaskStatus.countByProjectSite", ProjectSiteTaskStatus.class);
             Query q2 = em.createNamedQuery("ProjectSiteTaskStatus.findByProjectSite", ProjectSiteTaskStatus.class);
 
@@ -1084,15 +1087,13 @@ public class ListUtil {
             project.setPhotoCount(project.getPhotoUploadList().size());
             project.setInvoiceCount(project.getInvoiceList().size());
 
-            Calendar cal = GregorianCalendar.getInstance();
-            for (int i = 0; i < 7; i++) {
-                cal.roll(Calendar.DAY_OF_YEAR, false);
-            }
-            cal.set(Calendar.HOUR_OF_DAY, 0);
-            cal.set(Calendar.MINUTE, 0);
-            cal.set(Calendar.SECOND, 0);
+            DateTime now = new DateTime();
+            DateTime then = now.minusDays(7);
+            then = then.withHourOfDay(0);
+            then = then.withMinuteOfHour(0);
+            then = then.withSecondOfMinute(0);
 
-            Integer xx = countProjectTaskStatusinPeriod(projectID, cal.getTime(), new Date());
+            Integer xx = countProjectTaskStatusinPeriod(projectID, then.toDate(), now.toDate());
             resp.setStatusCountInPeriod(xx);
 
             resp.setProjectList(new ArrayList<ProjectDTO>());
