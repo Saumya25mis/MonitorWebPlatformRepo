@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.boha.monitor.data;
 
 import java.io.Serializable;
@@ -29,12 +28,26 @@ import javax.persistence.TemporalType;
 @Entity
 @Table(name = "subTaskStatus")
 @NamedQueries({
-    @NamedQuery(name = "SubTaskStatus.findByTask", 
-            query = "SELECT s FROM SubTaskStatus s where s.subTask.task.taskID = :taskID")
+    @NamedQuery(name = "SubTaskStatus.findByTask",
+            query = "SELECT s FROM SubTaskStatus s where s.subTask.task.taskID = :taskID"),
+
+    @NamedQuery(name = "SubTaskStatus.findBySite",
+            query = "SELECT s FROM SubTaskStatus s where s.projectSiteTask.projectSite.projectSiteID = :projectSiteID "
+            + "order by s.projectSiteTask.projectSiteTaskID, s.statusDate desc"),
+    @NamedQuery(name = "SubTaskStatus.findByProject",
+            query = "SELECT s FROM SubTaskStatus s where s.projectSiteTask.projectSite.project.projectID = :projectID "
+            + "order by s.projectSiteTask.projectSiteTaskID, s.statusDate desc"),
+
+    @NamedQuery(name = "SubTaskStatus.countByProject",
+            query = "SELECT count(s) FROM SubTaskStatus s where s.projectSiteTask.projectSite.project.projectID = :projectID ")
 
 })
 public class SubTaskStatus implements Serializable {
-    
+
+    @JoinColumn(name = "projectSiteTaskID", referencedColumnName = "projectSiteTaskID")
+    @ManyToOne
+    private ProjectSiteTask projectSiteTask;
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -62,6 +75,14 @@ public class SubTaskStatus implements Serializable {
 
     public SubTaskStatus(Integer subTaskStatusID) {
         this.subTaskStatusID = subTaskStatusID;
+    }
+
+    public ProjectSiteTask getProjectSiteTask() {
+        return projectSiteTask;
+    }
+
+    public void setProjectSiteTask(ProjectSiteTask projectSiteTask) {
+        this.projectSiteTask = projectSiteTask;
     }
 
     public Integer getSubTaskStatusID() {
@@ -112,8 +133,6 @@ public class SubTaskStatus implements Serializable {
         this.companyStaff = companyStaff;
     }
 
-   
-
     @Override
     public int hashCode() {
         int hash = 0;
@@ -138,5 +157,5 @@ public class SubTaskStatus implements Serializable {
     public String toString() {
         return "com.boha.monitor.data.SubTaskStatus[ subTaskStatusID=" + subTaskStatusID + " ]";
     }
-    
+
 }

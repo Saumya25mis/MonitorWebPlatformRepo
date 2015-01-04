@@ -34,6 +34,8 @@ import javax.validation.constraints.Size;
             query = "SELECT p FROM ProjectSite p where p.project.projectID = :projectID and p.projectSiteName = :name"),
     @NamedQuery(name = "ProjectSite.findByProject",
             query = "SELECT p FROM ProjectSite p WHERE p.project.projectID = :projectID order by p.projectSiteName"),
+    @NamedQuery(name = "ProjectSite.countByProject",
+            query = "SELECT count(p) FROM ProjectSite p WHERE p.project.projectID = :projectID"),
     @NamedQuery(name = "ProjectSite.findByCompany",
             query = "SELECT p FROM ProjectSite p WHERE p.project.company.companyID = :companyID order by p.project.projectName, p.projectSiteName"),
     })

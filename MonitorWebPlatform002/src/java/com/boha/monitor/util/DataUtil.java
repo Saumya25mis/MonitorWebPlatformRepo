@@ -266,7 +266,7 @@ public class DataUtil {
             t.setStatusDate(new Date());
             t.setSubTask(em.find(SubTask.class, status.getSubTaskID()));
             t.setTaskStatus(em.find(TaskStatus.class, status.getTaskStatus().getTaskStatusID()));
-
+            t.setProjectSiteTask(em.find(ProjectSiteTask.class, status.getProjectSiteTaskID()));
             em.persist(t);
             em.flush();
 

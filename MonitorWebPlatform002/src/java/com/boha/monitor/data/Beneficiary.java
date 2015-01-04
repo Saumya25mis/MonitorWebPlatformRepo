@@ -40,7 +40,10 @@ import javax.validation.constraints.Size;
             query = "SELECT b FROM Beneficiary b WHERE b.company.companyID = :companyID order by b.lastName, b.firstName"),
     @NamedQuery(name = "Beneficiary.findByProject", 
             query = "SELECT b FROM Beneficiary b WHERE b.project.projectID = :projectID "
-                    + "order by b.lastName, b.firstName")})
+                    + "order by b.lastName, b.firstName"),
+@NamedQuery(name = "Beneficiary.countByProject", 
+            query = "SELECT count(b) FROM Beneficiary b WHERE b.project.projectID = :projectID")
+})
 public class Beneficiary implements Serializable {
     @Size(max = 255)
     @Column(name = "townshipName")

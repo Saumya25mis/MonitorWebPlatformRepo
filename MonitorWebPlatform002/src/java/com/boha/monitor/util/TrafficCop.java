@@ -223,6 +223,9 @@ public class TrafficCop {
                 case RequestDTO.GET_ALL_PROJECT_IMAGES:
                     resp = listUtil.getAllPhotosByProject(req.getProjectID());
                     break;
+                case RequestDTO.GET_PROJECT_SITES:
+                    resp = listUtil.getSitesByProject(req.getProjectID());
+                    break;
 
                 case RequestDTO.LOGIN:
                     resp = dataUtil.login(req.getGcmDevice(),

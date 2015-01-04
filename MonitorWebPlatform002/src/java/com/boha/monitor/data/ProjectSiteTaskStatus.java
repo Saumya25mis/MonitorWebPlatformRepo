@@ -51,8 +51,7 @@ import javax.validation.constraints.NotNull;
             + "order by p.statusDate desc"),
         
     @NamedQuery(name = "ProjectSiteTaskStatus.countByCompanyInPeriod",
-            query = "SELECT count(p) FROM ProjectSiteTaskStatus p "
-                    + "WHERE p.projectSiteTask.projectSite.project.company.companyID = :companyID "
+            query = "SELECT count(p) FROM ProjectSiteTaskStatus p WHERE p.companyStaff.company.companyID = :companyID "
             + "and (p.statusDate between :startDate and :endDate) "
             + "order by p.statusDate desc"),
     @NamedQuery(name = "ProjectSiteTaskStatus.findByProjectInPeriod",

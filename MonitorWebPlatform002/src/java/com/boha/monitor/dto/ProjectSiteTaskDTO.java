@@ -23,6 +23,7 @@ public class ProjectSiteTaskDTO implements Serializable {
     private long dateRegistered;
     private Integer projectSiteID, projectID;
     private List<ProjectSiteTaskStatusDTO> projectSiteTaskStatusList = new ArrayList<>();
+    private List<SubTaskStatusDTO> subTaskStatusList = new ArrayList<>();
     private List<PhotoUploadDTO> photoUploadList = new ArrayList<>();
     private String projectSiteName;
 
@@ -39,6 +40,14 @@ public class ProjectSiteTaskDTO implements Serializable {
         
        
         
+    }
+
+    public List<SubTaskStatusDTO> getSubTaskStatusList() {
+        return subTaskStatusList;
+    }
+
+    public void setSubTaskStatusList(List<SubTaskStatusDTO> subTaskStatusList) {
+        this.subTaskStatusList = subTaskStatusList;
     }
 
     public String getProjectSiteName() {

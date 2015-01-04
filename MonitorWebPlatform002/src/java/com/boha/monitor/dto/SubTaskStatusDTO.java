@@ -20,7 +20,7 @@ public class SubTaskStatusDTO implements Serializable {
     private Date statusDate;
     private Date dateUpdated;
     private TaskStatusDTO taskStatus;
-    private Integer subTaskID, taskID;
+    private Integer subTaskID, taskID, projectSiteTaskID;
     private Integer companyStaffID;
     private String staffName, subTaskName;
 
@@ -38,10 +38,20 @@ public class SubTaskStatusDTO implements Serializable {
         this.companyStaffID = cs.getCompanyStaffID();
         this.staffName = cs.getFirstName() + " " + cs.getLastName();
         this.taskID = a.getSubTask().getTask().getTaskID();
+        
+        this.projectSiteTaskID = a.getProjectSiteTask().getProjectSiteTaskID();
     }
 
     public String getSubTaskName() {
         return subTaskName;
+    }
+
+    public Integer getProjectSiteTaskID() {
+        return projectSiteTaskID;
+    }
+
+    public void setProjectSiteTaskID(Integer projectSiteTaskID) {
+        this.projectSiteTaskID = projectSiteTaskID;
     }
 
     public Integer getTaskID() {
