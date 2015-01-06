@@ -991,10 +991,12 @@ public class ListUtil {
             q.setParameter(
                     "projectID", projectID);
             List<ProjectSite> projectSiteList = q.getResultList();
+            
             q = em.createNamedQuery("ProjectSiteTask.findByProject", ProjectSiteTask.class);
             q.setParameter(
                     "projectID", projectID);
             List<ProjectSiteTask> siteTaskList = q.getResultList();
+            
             q = em.createNamedQuery("ProjectSiteTaskStatus.countByProject", ProjectSiteTaskStatus.class);
             q.setParameter(
                     "projectID", projectID);
@@ -1113,7 +1115,7 @@ public class ListUtil {
 //                    "###---------- contractor claims done: {0}", project.getContractorClaimList().size());
             ccList = null;
             photos = null;
-            siteTaskList = null;
+//            siteTaskList = null;
             
             project.setBeneficiaryCount(project.getBeneficiaryList().size());
             project.setContractorClaimCount(project.getContractorClaimList().size());
