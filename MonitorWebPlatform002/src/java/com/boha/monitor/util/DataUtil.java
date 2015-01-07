@@ -838,7 +838,6 @@ public class DataUtil {
 
             resp.setContractorClaimSiteList(new ArrayList<ContractorClaimSiteDTO>());
             resp.getContractorClaimSiteList().add(new ContractorClaimSiteDTO(c));
-            log.log(Level.INFO, "ContractorClaimSite added");
         } catch (Exception e) {
             log.log(Level.SEVERE, "Failed", e);
             throw new DataException("Failed\n" + getErrorString(e));

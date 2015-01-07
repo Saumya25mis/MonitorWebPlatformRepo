@@ -1066,9 +1066,7 @@ public class ListUtil {
                         }
                     }
                 }
-                if (!projectSiteDTO.getPhotoUploadList().isEmpty()) {
-                    log.log(Level.OFF, "site {0} photos: {1}", new Object[]{projectSiteDTO.getProjectSiteName(), projectSiteDTO.getPhotoUploadList().size()});
-                }
+                
                 for (ProjectSiteTask pst : siteTaskList) {
                     if (Objects.equals(ps.getProjectSiteID(), pst.getProjectSite().getProjectSiteID())) {
                         ProjectSiteTaskDTO pstDTO = new ProjectSiteTaskDTO(pst);
