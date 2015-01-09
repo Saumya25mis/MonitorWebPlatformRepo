@@ -171,6 +171,9 @@ public class TrafficCop {
                     break;
 
                 //lists
+                case RequestDTO.GET_ERROR_REPORTS:
+                    resp = listUtil.getServerEvents(req.getStartDate(), req.getEndDate());
+                    break;
                 case RequestDTO.GET_EXEC_COMPANY_DATA:
                     resp = listUtil.getCompanyExecData(req.getCompanyID(), req.getCountryID());
                     break;

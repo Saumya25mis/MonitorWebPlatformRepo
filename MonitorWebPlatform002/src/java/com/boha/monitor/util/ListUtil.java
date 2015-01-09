@@ -16,6 +16,7 @@ import com.boha.monitor.data.ContractorClaimSite;
 import com.boha.monitor.data.Country;
 import com.boha.monitor.data.Engineer;
 import com.boha.monitor.data.ErrorStore;
+import com.boha.monitor.data.ErrorStoreAndroid;
 import com.boha.monitor.data.Invoice;
 import com.boha.monitor.data.InvoiceItem;
 import com.boha.monitor.data.PhotoUpload;
@@ -42,6 +43,8 @@ import com.boha.monitor.dto.ContractorClaimDTO;
 import com.boha.monitor.dto.ContractorClaimSiteDTO;
 import com.boha.monitor.dto.CountryDTO;
 import com.boha.monitor.dto.EngineerDTO;
+import com.boha.monitor.dto.ErrorStoreAndroidDTO;
+import com.boha.monitor.dto.ErrorStoreDTO;
 import com.boha.monitor.dto.InvoiceDTO;
 import com.boha.monitor.dto.InvoiceItemDTO;
 import com.boha.monitor.dto.ProjectDTO;
@@ -59,6 +62,7 @@ import com.boha.monitor.dto.TaskStatusDTO;
 import com.boha.monitor.dto.TownshipDTO;
 import com.boha.monitor.dto.transfer.PhotoUploadDTO;
 import com.boha.monitor.dto.transfer.ResponseDTO;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -1545,6 +1549,64 @@ public class ListUtil {
         } catch (Exception e) {
             log.log(Level.SEVERE, "####### Failed to add errorStore from " + origin + "\n" + message, e);
         }
+    }
+     public ResponseDTO getServerEvents(
+            Date startDate, Date endDate) throws DataException {
+        ResponseDTO r = new ResponseDTO();
+        if (startDate == null) {
+            DateTime ed = new DateTime();
+            DateTime sd = ed.minusMonths(3);
+            startDate = sd.toDate();
+            endDate = ed.toDate();
+        }
+        try {
+            Query q = em.createNamedQuery("ErrorStoreAndroid.findByPeriod", ErrorStoreAndroid.class);
+            q.setParameter("from", startDate);
+            q.setParameter("to", endDate);
+            List<ErrorStoreAndroid> list = q.getResultList();
+            List<ErrorStoreAndroidDTO> dList = new ArrayList();
+            for (ErrorStoreAndroid e : list) {
+                dList.add(new ErrorStoreAndroidDTO(e));
+            }
+            r.setErrorStoreAndroidList(dList);
+            r.setErrorStoreList(getServerErrors(startDate.getTime(), endDate.getTime()).getErrorStoreList());
+
+            String logx = LogfileUtil.getFileString();
+            r.setLog(logx);
+            log.log(Level.OFF, "Android Errors found {0}", r.getErrorStoreAndroidList().size());
+        } catch (DataException | IOException e) {
+            log.log(Level.SEVERE, "Failed to findClubsWithinRadius");
+            throw new DataException("Failed to findClubsWithinRadius\n"
+                    + getErrorString(e));
+        }
+        return r;
+    }
+       public ResponseDTO getServerErrors(
+            long startDate, long endDate) throws DataException {
+        ResponseDTO r = new ResponseDTO();
+        if (startDate == 0) {
+            DateTime ed = new DateTime();
+            DateTime sd = ed.minusMonths(3);
+            startDate = sd.getMillis();
+            endDate = ed.getMillis();
+        }
+        try {
+            Query q = em.createNamedQuery("ErrorStore.findByPeriod", ErrorStore.class);
+            q.setParameter("startDate", new Date(startDate));
+            q.setParameter("endDate", new Date(endDate));
+            List<ErrorStore> list = q.getResultList();
+            List<ErrorStoreDTO> dList = new ArrayList();
+            for (ErrorStore e : list) {
+                dList.add(new ErrorStoreDTO(e));
+            }
+            r.setErrorStoreList(dList);
+            log.log(Level.OFF, "Errors found {0}", r.getErrorStoreList().size());
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "Failed to getServerErrors");
+            throw new DataException("Failed to getServerErrors\n"
+                    + getErrorString(e));
+        }
+        return r;
     }
     static final Logger log = Logger.getLogger(ListUtil.class
             .getSimpleName());

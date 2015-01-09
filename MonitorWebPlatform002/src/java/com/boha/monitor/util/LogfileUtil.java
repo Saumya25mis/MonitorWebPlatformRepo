@@ -24,9 +24,9 @@ public class LogfileUtil {
 
     public static String getFileString() throws IOException {
         File file;
-        file = new File("/Applications/NetBeans/glassfish-4.0/glassfish/domains/cmdomain/logs/server.log");
+        file = new File("/Applications/NetBeans/glassfish-4.0/glassfish/domains/mondomain/logs/server.log");
         if (!file.exists()) {
-            file = new File("/opt/glassfish4/glassfish/domains/malenga-domain/logs/server.log");
+            file = new File("/opt/glassfish4/glassfish/domains/malenga_domain/logs/server.log");
         }
 
         log.log(Level.INFO, "Log file found: {0} size: {1}",

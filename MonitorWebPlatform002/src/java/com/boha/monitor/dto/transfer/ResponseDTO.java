@@ -45,7 +45,8 @@ public class ResponseDTO {
 
     private Integer statusCode, statusCountInPeriod, goodCount, badCount;
     private String message, sessionID, GCMRegistrationID, fileString;
-    private double elapsedRequestTimeInSeconds;
+    private Double elapsedRequestTimeInSeconds;
+    private String log;
     private List<String> taskImageFileNameList;
     private List<BankDTO> bankList;
     private List<SubTaskStatusDTO> subTaskStatusList;
@@ -86,6 +87,22 @@ public class ResponseDTO {
         return goodCount;
     }
 
+    public Double getElapsedRequestTimeInSeconds() {
+        return elapsedRequestTimeInSeconds;
+    }
+
+    public void setElapsedRequestTimeInSeconds(Double elapsedRequestTimeInSeconds) {
+        this.elapsedRequestTimeInSeconds = elapsedRequestTimeInSeconds;
+    }
+
+    public String getLog() {
+        return log;
+    }
+
+    public void setLog(String log) {
+        this.log = log;
+    }
+
     public void setGoodCount(Integer goodCount) {
         this.goodCount = goodCount;
     }
@@ -99,13 +116,6 @@ public class ResponseDTO {
     }
 
     
-    public double getElapsedRequestTimeInSeconds() {
-        return elapsedRequestTimeInSeconds;
-    }
-
-    public void setElapsedRequestTimeInSeconds(double elapsedRequestTimeInSeconds) {
-        this.elapsedRequestTimeInSeconds = elapsedRequestTimeInSeconds;
-    }
 
     public Integer getStatusCountInPeriod() {
         return statusCountInPeriod;
