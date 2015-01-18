@@ -20,7 +20,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
@@ -40,23 +39,19 @@ public class ErrorStore implements Serializable {
     @Basic(optional = false)
     @Column(name = "errorStoreID")
     private Integer errorStoreID;
-    @Basic(optional = false)
-    @NotNull
+    
     @Column(name = "statusCode")
     private int statusCode;
-    @Basic(optional = false)
-    @NotNull
+   
     @Lob
     @Size(min = 1, max = 65535)
     @Column(name = "message")
     private String message;
-    @Basic(optional = false)
-    @NotNull
+    
     @Column(name = "dateOccured")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateOccured;
-    @Basic(optional = false)
-    @NotNull
+    
     @Size(min = 1, max = 255)
     @Column(name = "origin")
     private String origin;
