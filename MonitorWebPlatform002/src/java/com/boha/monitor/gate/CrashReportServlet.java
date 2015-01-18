@@ -5,14 +5,14 @@
  */
 package com.boha.monitor.gate;
 
-import com.boha.monitor.data.Company;
+import com.boha.monitor.data.CompanyStaff;
 import com.boha.monitor.data.ErrorStore;
 import com.boha.monitor.data.ErrorStoreAndroid;
 import com.boha.monitor.util.DataException;
 import com.boha.monitor.util.DataUtil;
-import com.boha.monitor.util.PlatformUtil;
 import java.io.IOException;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
@@ -42,6 +42,17 @@ public class CrashReportServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         log.log(Level.INFO, "CrashReportSevlet started............");
+        
+        StringBuilder sb = new StringBuilder();
+        sb.append("######## parameters coming in #####\n");
+        Enumeration<String> names = request.getParameterNames();
+        while (names.hasMoreElements()) {
+            String parmName = names.nextElement();
+            String value = request.getParameter(parmName);
+            sb.append(parmName).append(" = ").append(value).append("\n");
+        }
+        sb.append("####### end of parameters #####");
+        log.log(Level.WARNING, sb.toString());
 
         try {
             getErrorData(request);
@@ -67,16 +78,16 @@ public class CrashReportServlet extends HttpServlet {
         e.setStackTrace(request.getParameter("STACK_TRACE"));
 
         String custom = request.getParameter("CUSTOM_DATA");
-        //companyID = 21
-        //companyName = MLB Golfers
+        log.log(Level.OFF, "custom data: {0}", custom);
         try {
             if (custom != null || !custom.trim().isEmpty()) {
                 int x = custom.indexOf("=");
                 int y = custom.indexOf("\n");
                 String id = custom.substring(x + 2, y);
-                System.out.println("-----------------------> id extracted: " + id);
-                Company gg = dataUtil.getCompanyByID(Integer.parseInt(id));
-                e.setCompany(gg);
+                System.out.println("------> id extracted: " + id);
+                CompanyStaff staff = dataUtil.getCompanyStaffByID(Integer.parseInt(id));
+                e.setCompany(staff.getCompany());
+                e.setCompanyStaff(staff);
             }
         } catch (Exception ex) {
             log.log(Level.OFF, "no custom data found");

@@ -29,6 +29,7 @@ public class GZipUtility {
     public static ByteBuffer getZippedResponse(ResponseDTO resp) throws IOException {
         long start = System.currentTimeMillis();
         String json = gson.toJson(resp);
+        
         byte[] bytes = null;
         if (json.length() < ZIP_THRESHOLD) {
             bytes = json.getBytes();
@@ -39,6 +40,24 @@ public class GZipUtility {
                     new Object[]{getKilobytes(json.length()), getKilobytes(bytes.length)});
         }
         ByteBuffer buf = ByteBuffer.wrap(bytes);
+        long end = System.currentTimeMillis();
+        logger.log(Level.WARNING, "Elapsed time for zipping up: {0} seconds", Elapsed.getElapsed(start, end));
+        return buf;
+    }
+    public static String getZippedString(ResponseDTO resp) throws IOException {
+        long start = System.currentTimeMillis();
+        String json = gson.toJson(resp);
+        logger.log(Level.OFF, "JSON before zip: {0}", json);
+        byte[] bytes = null;
+        if (json.length() < ZIP_THRESHOLD) {
+            bytes = json.getBytes();
+            logger.log(Level.INFO, "Creating byteBuffer, No need to zip this, size: {0}", json.length());
+        } else {
+            bytes = getZippedBytes(json);
+            logger.log(Level.INFO, "Creating zipped byteBuffer, unpacked size: {0} packed size: {1}", 
+                    new Object[]{getKilobytes(json.length()), getKilobytes(bytes.length)});
+        }
+        String buf = new String(bytes);
         long end = System.currentTimeMillis();
         logger.log(Level.WARNING, "Elapsed time for zipping up: {0} seconds", Elapsed.getElapsed(start, end));
         return buf;

@@ -141,7 +141,6 @@ public class DataUtil {
         return resp;
     }
 
-   
     public void addAndroidError(ErrorStoreAndroid err) throws DataException {
         try {
             em.persist(err);
@@ -183,6 +182,10 @@ public class DataUtil {
 
     public Company getCompanyByID(Integer id) {
         return em.find(Company.class, id);
+    }
+
+    public CompanyStaff getCompanyStaffByID(Integer id) {
+        return em.find(CompanyStaff.class, id);
     }
 
     public void addPhotoUpload(PhotoUploadDTO pu) {
@@ -1211,7 +1214,6 @@ public class DataUtil {
 
         Project project = new Project();
         project.setCompany(c);
-        project.setCompleteFlag(0);
         project.setClient(client);
         project.setDescription("This is a sample project meant to help you practice the features of the Monitor app. "
                 + "This project can be removed when you are done");
@@ -1433,7 +1435,7 @@ public class DataUtil {
                 sb.append("Line Number: ").append(line).append("\n");
             }
         } catch (Exception ex) {
-             log.log(Level.SEVERE, "Failed, ignored " + ex.getMessage());
+            log.log(Level.SEVERE, "Failed, ignored " + ex.getMessage());
         }
 
         return sb.toString();

@@ -10,6 +10,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -53,6 +54,8 @@ public class CompanyStaff implements Serializable {
     private List<ProjectSiteTaskStatus> projectSiteTaskStatusList;
     @OneToMany(mappedBy = "companyStaff")
     private List<PhotoUpload> photoUploadList;
+     @OneToMany(mappedBy = "companyStaff")
+    private List<ErrorStoreAndroid> errorStoreAndroidList;
     @Column(name = "pin")
     private String pin;
     @OneToMany(mappedBy = "companyStaff")
@@ -87,6 +90,14 @@ public class CompanyStaff implements Serializable {
     private Company company;
   
     public CompanyStaff() {
+    }
+
+    public List<ErrorStoreAndroid> getErrorStoreAndroidList() {
+        return errorStoreAndroidList;
+    }
+
+    public void setErrorStoreAndroidList(List<ErrorStoreAndroid> errorStoreAndroidList) {
+        this.errorStoreAndroidList = errorStoreAndroidList;
     }
 
     public CompanyStaff(Integer companyStaffID) {

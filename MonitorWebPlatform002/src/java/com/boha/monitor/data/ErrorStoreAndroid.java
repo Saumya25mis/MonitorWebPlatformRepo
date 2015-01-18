@@ -22,7 +22,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
@@ -43,49 +42,40 @@ public class ErrorStoreAndroid implements Serializable {
     @Basic(optional = false)
     @Column(name = "errorStoreAndroidID")
     private Integer errorStoreAndroidID;
-    @Basic(optional = false)
-    @NotNull
+    
     @Column(name = "errorDate")
     @Temporal(TemporalType.TIMESTAMP)
     private Date errorDate;
-    @Basic(optional = false)
-    @NotNull
+    
     @Size(min = 1, max = 150)
     @Column(name = "packageName")
     private String packageName;
-    @Basic(optional = false)
-    @NotNull
+    
     @Size(min = 1, max = 10)
     @Column(name = "appVersionName")
     private String appVersionName;
-    @Basic(optional = false)
-    @NotNull
+   
     @Size(min = 1, max = 10)
     @Column(name = "appVersionCode")
     private String appVersionCode;
-    @Basic(optional = false)
-    @NotNull
+    
     @Size(min = 1, max = 100)
     @Column(name = "brand")
     private String brand;
-    @Basic(optional = false)
-    @NotNull
+    
     @Size(min = 1, max = 100)
     @Column(name = "phoneModel")
     private String phoneModel;
-    @Basic(optional = false)
-    @NotNull
+    
     @Size(min = 1, max = 20)
     @Column(name = "androidVersion")
     private String androidVersion;
-    @Basic(optional = false)
-    @NotNull
+    
     @Lob
     @Size(min = 1, max = 65535)
     @Column(name = "stackTrace")
     private String stackTrace;
-    @Basic(optional = false)
-    @NotNull
+    
     @Lob
     @Size(min = 1, max = 65535)
     @Column(name = "logCat")
@@ -93,6 +83,10 @@ public class ErrorStoreAndroid implements Serializable {
     @JoinColumn(name = "companyID", referencedColumnName = "companyID")
     @ManyToOne
     private Company company;
+    @JoinColumn(name = "companyStaffID", referencedColumnName = "companyStaffID")
+    @ManyToOne
+    private CompanyStaff companyStaff;
+
 
     public ErrorStoreAndroid() {
     }
@@ -112,6 +106,14 @@ public class ErrorStoreAndroid implements Serializable {
         this.androidVersion = androidVersion;
         this.stackTrace = stackTrace;
         this.logCat = logCat;
+    }
+
+    public CompanyStaff getCompanyStaff() {
+        return companyStaff;
+    }
+
+    public void setCompanyStaff(CompanyStaff companyStaff) {
+        this.companyStaff = companyStaff;
     }
 
     public Integer getErrorStoreAndroidID() {

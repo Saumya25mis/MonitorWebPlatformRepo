@@ -16,7 +16,7 @@ import com.boha.monitor.data.ErrorStoreAndroid;
 public class ErrorStoreAndroidDTO {
 
     private int errorStoreAndroidID, companyID;
-    private String companyName, logCat, stackTrace, androidVersion,
+    private String companyName, staffName, logCat, stackTrace, androidVersion,
             brand, appVersionCode, appVersionName, packageName, phoneModel;
     private long errorDate;
 
@@ -27,6 +27,9 @@ public class ErrorStoreAndroidDTO {
             companyID = a.getCompany().getCompanyID();
             companyName = a.getCompany().getCompanyName();
         }
+        if (a.getCompanyStaff() != null) {
+            staffName = a.getCompanyStaff().getFirstName() + " " + a.getCompanyStaff().getLastName();
+        }
         logCat = a.getLogCat();
         stackTrace = a.getStackTrace();
         androidVersion = a.getAndroidVersion();
@@ -35,6 +38,30 @@ public class ErrorStoreAndroidDTO {
         appVersionName = a.getAppVersionName();
         packageName = a.getPackageName();
         phoneModel = a.getPhoneModel();
+    }
+
+    public int getCompanyID() {
+        return companyID;
+    }
+
+    public void setCompanyID(int companyID) {
+        this.companyID = companyID;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    public String getStaffName() {
+        return staffName;
+    }
+
+    public void setStaffName(String staffName) {
+        this.staffName = staffName;
     }
 
     public int getErrorStoreAndroidID() {

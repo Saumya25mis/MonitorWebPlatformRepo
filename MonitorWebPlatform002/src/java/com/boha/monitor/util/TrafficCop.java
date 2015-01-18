@@ -30,6 +30,7 @@ public class TrafficCop {
             ContractorClaimPDFFactory claimFactory) {
         long start = System.currentTimeMillis();
         ResponseDTO resp = new ResponseDTO();
+        resp.setStatusCode(0);
         try {
             switch (req.getRequestType()) {
                 //claim * invoice
