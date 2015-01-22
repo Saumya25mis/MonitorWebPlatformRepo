@@ -19,7 +19,7 @@ import java.util.List;
 public class ProjectSiteDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private Integer projectSiteID;
+    private Integer projectSiteID, photoCount;
     private String projectSiteName, standErfNumber, projectName;
     private Double latitude;
     private Double longitude;
@@ -55,6 +55,14 @@ public class ProjectSiteDTO implements Serializable {
             this.happyLetter = new HappyLetterDTO(a.getHappyLetter());
         }
 
+    }
+
+    public Integer getPhotoCount() {
+        return photoCount;
+    }
+
+    public void setPhotoCount(Integer photoCount) {
+        this.photoCount = photoCount;
     }
 
     public List<ProjectSiteTaskStatusDTO> getProjectSiteTaskStatusList() {

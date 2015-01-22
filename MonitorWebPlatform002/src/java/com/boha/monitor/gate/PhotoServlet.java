@@ -68,6 +68,7 @@ public class PhotoServlet extends HttpServlet {
             boolean isMultipart = ServletFileUpload.isMultipartContent(request);
             if (isMultipart) {
                 ur = downloadPhotos(request);
+                ur.setStatusCode(0);
             } else {
                 RequestDTO dto = getRequest(gson, request);
                 switch (dto.getRequestType()) {
@@ -156,11 +157,11 @@ public class PhotoServlet extends HttpServlet {
     public ResponseDTO downloadPhotos(HttpServletRequest request) throws FileUploadException {
         logger.log(Level.INFO, "######### starting PHOTO DOWNLOAD process\n\n");
         ResponseDTO resp = new ResponseDTO();
+        resp.setStatusCode(0);
         InputStream stream = null;
         File rootDir;
         try {
             rootDir = MonitorProperties.getImageDir();
-            //logger.log(Level.INFO, "rootDir - {0}", rootDir.getAbsolutePath());
             if (!rootDir.exists()) {
                 rootDir.mkdir();
             }
@@ -213,6 +214,9 @@ public class PhotoServlet extends HttpServlet {
                             }
                         } else {
                             logger.log(Level.WARNING, "JSON input seems pretty fucked up! is NULL..");
+                            resp.setStatusCode(116);
+                            resp.setMessage("Invalid request JSON");
+                            return resp;
                         }
                     }
                 } else {
@@ -240,12 +244,14 @@ public class PhotoServlet extends HttpServlet {
                     switch (dto.getPictureType()) {
                         case PhotoUploadDTO.SITE_IMAGE:
                             imageFile = new File(projectSiteDir, fileName);
+                            logger.log(Level.INFO, "downloading image for site id: {0}", dto.getProjectSiteID());
                             break;
                         case PhotoUploadDTO.TASK_IMAGE:
                             imageFile = new File(projectSiteTaskDir, fileName);
                             break;
                         case PhotoUploadDTO.PROJECT_IMAGE:
                             imageFile = new File(projectDir, fileName);
+                            logger.log(Level.INFO, "downloading image for project id: {0}", dto.getProjectID());
                             break;
                         case PhotoUploadDTO.STAFF_IMAGE:
                             imageFile = new File(companyStaffDir, fileName);
@@ -257,13 +263,7 @@ public class PhotoServlet extends HttpServlet {
                     resp.setMessage("Photo downloaded from mobile app ");
                     //add database
                     logger.log(Level.SEVERE, "image downloaded OK: {0}", imageFile.getAbsolutePath());
-                    //create uri
-                    int index = imageFile.getAbsolutePath().indexOf("monitor_images");
-                    if (index > -1) {
-                        String uri = imageFile.getAbsolutePath().substring(index);
-                        //System.out.println("photo uri: " + uri);
-                        dto.setUri(uri);
-                    }
+                    dto.setUri(imageFile.getName());
                     dto.setDateUploaded(new Date());
                     if (dto.isIsFullPicture()) {
                         dto.setThumbFlag(null);
@@ -271,6 +271,7 @@ public class PhotoServlet extends HttpServlet {
                         dto.setThumbFlag(1);
                     }
                     dataUtil.addPhotoUpload(dto);
+                    resp.setStatusCode(0);
 
                 }
             }
@@ -280,6 +281,9 @@ public class PhotoServlet extends HttpServlet {
             throw new FileUploadException();
         }
 
+        if (resp.getStatusCode() == null) {
+            resp.setStatusCode(0);
+        }
         return resp;
     }
 

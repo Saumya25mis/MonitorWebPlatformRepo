@@ -43,8 +43,9 @@ import java.util.List;
  */
 public class ResponseDTO {
 
-    private Integer statusCode, statusCountInPeriod, goodCount, badCount;
-    private String message, sessionID, GCMRegistrationID, fileString;
+    private Integer statusCode = 0, statusCountInPeriod, goodCount, badCount;
+    private String message = "Request is KOOL!", 
+            sessionID, GCMRegistrationID, fileString;
     private Double elapsedRequestTimeInSeconds;
     private String log;
     private List<String> taskImageFileNameList;

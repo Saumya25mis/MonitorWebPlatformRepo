@@ -8,6 +8,7 @@ package com.boha.monitor.gate;
 import com.boha.monitor.dto.transfer.RequestDTO;
 import com.boha.monitor.dto.transfer.ResponseDTO;
 import com.boha.monitor.pdf.ContractorClaimPDFFactory;
+import com.boha.monitor.util.BohaUnCaughtExceptionHandler;
 import com.boha.monitor.util.DataUtil;
 import com.boha.monitor.util.GZipUtility;
 import com.boha.monitor.util.ListUtil;
@@ -38,7 +39,6 @@ import javax.websocket.server.ServerEndpoint;
 @Stateless
 public class CompanyWebSocket {
 
-    
     @EJB
     DataUtil dataUtil;
     @EJB
@@ -60,10 +60,11 @@ public class CompanyWebSocket {
         log.log(Level.WARNING, "###### onMessage: {0}", message);
         ResponseDTO resp = new ResponseDTO();
         ByteBuffer bb = null;
-        
+
+      
         try {
             RequestDTO dto = gson.fromJson(message, RequestDTO.class);
-            resp = trafficCop.processRequest(dto, 
+            resp = trafficCop.processRequest(dto,
                     dataUtil, listUtil, claimFactory);
             bb = GZipUtility.getZippedResponse(resp);
         } catch (Exception ex) {
@@ -75,6 +76,7 @@ public class CompanyWebSocket {
                 bb = GZipUtility.getZippedResponse(resp);
             } catch (Exception ex1) {
                 log.log(Level.SEVERE, "Failed to zip error response! What???", ex1);
+                throw new UnsupportedOperationException("Failed to compress response");
             }
         }
         return bb;
@@ -110,7 +112,10 @@ public class CompanyWebSocket {
     public void onError(Session session, Throwable t) {
         log.log(Level.SEVERE, "### @OnError, websocket failed.......");
         try {
-            session.getBasicRemote().sendText("Heita Daarso, things fall apart!");
+            ResponseDTO r = new ResponseDTO();
+            r.setStatusCode(117);
+            r.setMessage("Error encountered in cloud server");
+            session.getBasicRemote().sendText(gson.toJson(r));
         } catch (IOException ex) {
             Logger.getLogger(CompanyWebSocket.class.getName()).log(Level.SEVERE, null, ex);
         }

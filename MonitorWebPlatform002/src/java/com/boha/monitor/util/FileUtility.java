@@ -99,6 +99,58 @@ public class FileUtility {
 
         return list;
     }
+     public static boolean deleteSiteImageFile(Integer companyID, 
+             Integer projectID, Integer projectSiteID, String fileName) throws Exception {
+        File rootDir = MonitorProperties.getImageDir();
+        File ggRoot = new File(rootDir, RequestDTO.COMPANY_DIR + companyID);
+        File dir = null;
+
+        dir = new File(ggRoot, RequestDTO.PROJECT_DIR + projectID);
+        if (!dir.exists()) {
+            return false;
+        }
+
+        File target = new File(dir, RequestDTO.PROJECT_SITE_DIR + projectSiteID);
+        if (!target.exists()) {
+            return false;
+        }
+        File[] files = target.listFiles();
+        for (File file : files) {
+            if (file.getName().equalsIgnoreCase(fileName)) {
+                boolean deleted = file.delete();
+                return deleted;
+            }
+            
+        }
+
+        logger.log(Level.OFF, "image deleted: {0}", fileName);
+
+        return false;
+    }
+     public static boolean deleteProjectImageFile(Integer companyID, 
+             Integer projectID, String fileName) throws Exception {
+        File rootDir = MonitorProperties.getImageDir();
+        File ggRoot = new File(rootDir, RequestDTO.COMPANY_DIR + companyID);
+        File dir = null;
+
+        dir = new File(ggRoot, RequestDTO.PROJECT_DIR + projectID);
+        if (!dir.exists()) {
+            return false;
+        }
+
+        File[] files = dir.listFiles();
+        for (File file : files) {
+            if (file.getName().equalsIgnoreCase(fileName)) {
+                boolean deleted = file.delete();
+                return deleted;
+            }
+            
+        }
+
+        logger.log(Level.OFF, "image deleted: {0}", fileName);
+
+        return false;
+    }
 
 
 }

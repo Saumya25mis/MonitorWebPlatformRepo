@@ -28,6 +28,7 @@ import javax.validation.constraints.Size;
  *
  * @author aubreyM
  */
+
 @Entity
 @Table(name = "photoUpload")
 @NamedQueries({
@@ -46,7 +47,7 @@ import javax.validation.constraints.Size;
             query = "SELECT p FROM PhotoUpload p WHERE p.projectSite.projectSiteID = :projectSiteID "
                     + "order by p.dateTaken desc"),
     @NamedQuery(name = "PhotoUpload.findProjectPhotos", 
-            query = "SELECT p FROM PhotoUpload p WHERE p.project.projectID = :projectID  and (p.project.completeFlag is null)"
+            query = "SELECT p FROM PhotoUpload p WHERE p.project.projectID = :projectID "
                     + "order by p.dateTaken desc"),
     @NamedQuery(name = "PhotoUpload.countProjectPhotos", 
             query = "SELECT count(p) FROM PhotoUpload p WHERE p.project.projectID = :projectID "),

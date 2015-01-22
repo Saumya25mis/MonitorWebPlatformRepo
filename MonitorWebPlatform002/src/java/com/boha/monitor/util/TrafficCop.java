@@ -33,6 +33,12 @@ public class TrafficCop {
         resp.setStatusCode(0);
         try {
             switch (req.getRequestType()) {
+                case RequestDTO.DELETE_PROJECT_IMAGES:
+                    resp = dataUtil.deleteProjectPhotos(req.getPhotoUploadList());
+                    break;
+                    case RequestDTO.DELETE_SITE_IMAGES:
+                    resp = dataUtil.deleteSitePhotos(req.getPhotoUploadList());
+                    break;
                 //claim * invoice
                 case RequestDTO.GENERATE_CONTRACTOR_CLAIM_PDF:
                     resp = claimFactory.getContractorClaimPDF(req.getContractorClaimID());

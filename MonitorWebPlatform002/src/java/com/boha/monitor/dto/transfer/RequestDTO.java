@@ -78,6 +78,7 @@ public class RequestDTO implements Serializable {
     private ProjectStatusTypeDTO projectStatusType;
     private BeneficiaryDTO beneficiary;
     private List<BeneficiaryDTO> beneficiaryList;
+    private List<PhotoUploadDTO> photoUploadList;
 //register actors
     public static final int REGISTER_COMPANY = 1,
             REGISTER_COMPANY_STAFF = 2,
@@ -163,8 +164,10 @@ public class RequestDTO implements Serializable {
             REPORT_SITE = 602,
             GET_PROJECT_STATUS_LIST = 603,
             GET_PROJECT_SITE_STATUS_LIST = 604,
-            GET_EXEC_COMPANY_DATA = 605;
-            ;
+            GET_EXEC_COMPANY_DATA = 605,
+            DELETE_SITE_IMAGES = 606,
+            DELETE_PROJECT_IMAGES = 607;
+            
 
     public static final String COMPANY_DIR = "company";
     public static final String COMPANY_STAFF_DIR = "companyStaff";
@@ -173,6 +176,15 @@ public class RequestDTO implements Serializable {
     public static final String TASK_DIR = "task";
 
     //
+    
+    public List<PhotoUploadDTO> getPhotoUploadList() {
+        return photoUploadList;
+    }
+
+    public void setPhotoUploadList(List<PhotoUploadDTO> photoUploadList) {
+        this.photoUploadList = photoUploadList;
+    }
+
     public boolean isResponseRequested() {
         return responseRequested;
     }
