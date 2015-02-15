@@ -45,7 +45,8 @@ public class AccessPasswordProtectedURLWithAuthenticator {
         }
 
     }
-
+static String username = "mobileapp";
+           static String password = "mobileapp";
     public static class CustomAuthenticator extends Authenticator {
 
         // Called when password authorization is needed
@@ -57,8 +58,7 @@ public class AccessPasswordProtectedURLWithAuthenticator {
             InetAddress ipaddr = getRequestingSite();
             int port = getRequestingPort();
 
-            String username = "mobileapp";
-            String password = "mobileapp";
+            
 
             // Return the information (a data holder that is used by Authenticator)
             return new PasswordAuthentication(username, password.toCharArray());

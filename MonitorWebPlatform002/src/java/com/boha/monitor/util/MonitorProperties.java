@@ -12,7 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * Class to expose system properties on file 
  * @author Aubrey Malabie
  */
 public class MonitorProperties {
@@ -54,6 +54,14 @@ public class MonitorProperties {
      public static File getDocumentDir() {
         getProperties();
         File d = new File(props.getProperty("documents"));
+        if (!d.exists()) {
+            d.mkdir();
+        }
+        return d;
+    }
+      public static File getLogDir() {
+        getProperties();
+        File d = new File(props.getProperty("logs"));
         if (!d.exists()) {
             d.mkdir();
         }

@@ -87,6 +87,7 @@ import org.joda.time.DateTime;
  *
  * @author aubreyM
  */
+
 @Stateless
 @TransactionManagement(TransactionManagementType.CONTAINER)
 public class DataUtil {
@@ -102,8 +103,6 @@ public class DataUtil {
     public EntityManager getEm() {
         return em;
     }
-    
-    
 
     public ResponseDTO login(GcmDeviceDTO device, String email,
             String pin, ListUtil listUtil) throws DataException {
@@ -239,10 +238,14 @@ public class DataUtil {
         try {
             for (PhotoUploadDTO p : list) {
                 PhotoUpload u = em.find(PhotoUpload.class, p.getPhotoUploadID());
-                em.remove(u);
-                FileUtility.deleteSiteImageFile(p.getCompanyID(),
-                        p.getProjectID(), p.getProjectSiteID(), p.getUri());
-                count++;
+                if (u != null) {
+                    em.remove(u);
+                    FileUtility.deleteSiteImageFile(p.getCompanyID(),
+                            p.getProjectID(), p.getProjectSiteID(), p.getUri());
+                    count++;
+                } else {
+                    log.log(Level.INFO, "ERROR - db photo record not found, projectSiteID: {0}", p.getProjectSiteID());
+                }
             }
             em.flush();
             resp.setStatusCode(0);
@@ -250,11 +253,12 @@ public class DataUtil {
             log.log(Level.WARNING, "photos deleted: {0}", count);
         } catch (Exception e) {
             log.log(Level.SEVERE, "Failed", e);
-            throw new DataException("Failed to add device\n" + getErrorString(e));
+            throw new DataException("Failed to delete site photos\n" + getErrorString(e));
 
         }
         return resp;
     }
+
     public ResponseDTO deleteProjectPhotos(List<PhotoUploadDTO> list) throws DataException {
         ResponseDTO resp = new ResponseDTO();
         int count = 0;

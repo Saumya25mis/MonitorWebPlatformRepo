@@ -23,12 +23,9 @@ public class LogfileUtil {
     static final Logger log = Logger.getLogger(LogfileUtil.class.getName());
 
     public static String getFileString() throws IOException {
-        File file;
-        file = new File("/Applications/NetBeans/glassfish-4.0/glassfish/domains/mondomain/logs/server.log");
-        if (!file.exists()) {
-            file = new File("/opt/glassfish4/glassfish/domains/malenga_domain/logs/server.log");
-        }
-
+        File dir = MonitorProperties.getLogDir();
+        File file = new File(dir, "server.log");
+        
         log.log(Level.INFO, "Log file found: {0} size: {1}",
                 new Object[]{file.getAbsolutePath(), file.length()});
         return getLatestLines(file);
