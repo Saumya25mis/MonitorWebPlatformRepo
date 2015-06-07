@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.boha.monitor.dto;
 
 import com.boha.monitor.data.PhotoUpload;
@@ -14,6 +13,7 @@ import java.io.Serializable;
  * @author aubreyM
  */
 public class PhotoUploadDTO implements Serializable {
+
     private MonitorDTO monitor;
     private static final long serialVersionUID = 1L;
     private Integer photoUploadID;
@@ -30,12 +30,13 @@ public class PhotoUploadDTO implements Serializable {
     private Integer companyID;
     private Integer projectID;
     private Integer projectTaskID;
-    private Integer staffID ;
+    private Integer staffID, monitorID;
 
     public PhotoUploadDTO() {
     }
-    public static final int TASK_IMAGE = 2, PROJECT_IMAGE = 3, STAFF_IMAGE = 4; 
+    public static final int TASK_IMAGE = 2, PROJECT_IMAGE = 3, STAFF_IMAGE = 4, MONITOR_IMAGE = 5;
     private boolean isFullPicture, isStaffPicture;
+
     public PhotoUploadDTO(Integer photoUploadID) {
         this.photoUploadID = photoUploadID;
     }
@@ -50,18 +51,30 @@ public class PhotoUploadDTO implements Serializable {
         accuracy = a.getAccuracy();
         uri = a.getUri();
         dateUploaded = a.getDateUploaded().getTime();
-        
-        projectID = a.getProject().getProjectID();
-        if (a.getProjectTask()!= null) {
+        if (a.getProject() != null) {
+            projectID = a.getProject().getProjectID();
+        }
+        if (a.getProjectTask() != null) {
             projectTaskID = a.getProjectTask().getProjectTaskID();
         }
         if (a.getStaff() != null) {
             staffID = a.getStaff().getStaffID();
         }
+        if (a.getMonitor() != null) {
+            monitorID = a.getMonitor().getMonitorID();
+        }
     }
 
     public boolean isIsFullPicture() {
         return isFullPicture;
+    }
+
+    public Integer getMonitorID() {
+        return monitorID;
+    }
+
+    public void setMonitorID(Integer monitorID) {
+        this.monitorID = monitorID;
     }
 
     public void setIsFullPicture(boolean isFullPicture) {
@@ -131,8 +144,6 @@ public class PhotoUploadDTO implements Serializable {
     public void setStaffID(Integer staffID) {
         this.staffID = staffID;
     }
-    
-    
 
     public Integer getPhotoUploadID() {
         return photoUploadID;
@@ -142,8 +153,6 @@ public class PhotoUploadDTO implements Serializable {
         this.photoUploadID = photoUploadID;
     }
 
-   
-
     public int getPictureType() {
         return pictureType;
     }
@@ -151,8 +160,6 @@ public class PhotoUploadDTO implements Serializable {
     public void setPictureType(int pictureType) {
         this.pictureType = pictureType;
     }
-
-
 
     public Double getLatitude() {
         return latitude;
@@ -194,8 +201,6 @@ public class PhotoUploadDTO implements Serializable {
         this.thumbFlag = thumbFlag;
     }
 
- 
-
     public String getThumbFilePath() {
         return thumbFilePath;
     }
@@ -204,7 +209,6 @@ public class PhotoUploadDTO implements Serializable {
         this.thumbFilePath = thumbFilePath;
     }
 
-   
     @Override
     public int hashCode() {
         int hash = 0;
@@ -238,5 +242,4 @@ public class PhotoUploadDTO implements Serializable {
         this.monitor = monitor;
     }
 
-    
 }

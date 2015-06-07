@@ -8,7 +8,6 @@ package com.boha.monitor.util;
 import com.boha.monitor.data.*;
 import com.boha.monitor.dto.*;
 import com.boha.monitor.dto.transfer.*;
-import static com.boha.monitor.util.DataUtil.log;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -17,12 +16,8 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionManagement;
-import javax.ejb.TransactionManagementType;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import org.joda.time.DateTime;
 
@@ -30,15 +25,10 @@ import org.joda.time.DateTime;
  *
  * @author aubreyM
  */
-@Stateless
-@TransactionManagement(TransactionManagementType.CONTAINER)
 public class ListUtil {
 
-    @PersistenceContext
-    EntityManager em;
-
-    public ResponseDTO loginStaff(GcmDeviceDTO device, String email,
-            String pin, ListUtil listUtil) throws DataException {
+    public static ResponseDTO loginStaff(EntityManager em, GcmDeviceDTO device, String email,
+            String pin) throws DataException {
         ResponseDTO resp = new ResponseDTO();
         resp.setStaffList(new ArrayList<>());
         Query q = null;
@@ -54,8 +44,7 @@ public class ListUtil {
 
             device.setCompanyID(company.getCompanyID());
             device.setStaffID(cs.getStaffID());
-            addDevice(device);
-
+            addDevice(em, device);
 
             q = em.createNamedQuery("StaffProject.findByStaff", StaffProject.class);
             q.setParameter("staffID", cs.getStaffID());
@@ -73,8 +62,8 @@ public class ListUtil {
         return resp;
     }
 
-    public ResponseDTO loginMonitor(GcmDeviceDTO device, String email,
-            String pin, ListUtil listUtil) throws DataException {
+    public static ResponseDTO loginMonitor(EntityManager em, GcmDeviceDTO device, String email,
+            String pin) throws DataException {
         ResponseDTO resp = new ResponseDTO();
         resp.setMonitorList(new ArrayList<>());
         Query q = null;
@@ -90,10 +79,10 @@ public class ListUtil {
 
             device.setCompanyID(company.getCompanyID());
             device.setMonitorID(cs.getMonitorID());
-            addDevice(device);
+            addDevice(em, device);
 
-            setProjectDetailsForMonitor(resp, cs.getMonitorID());
-            resp.setTaskStatusTypeList(getTaskStatusTypeList(company.getCompanyID()).getTaskStatusTypeList());
+            getProjectDataForMonitor(em, resp, cs.getMonitorID());
+            resp.setTaskStatusTypeList(getTaskStatusTypeList(em, company.getCompanyID()).getTaskStatusTypeList());
 
         } catch (NoResultException e) {
             log.log(Level.WARNING, "Invalid monitor login attempt: " + email + " pin: " + pin, e);
@@ -103,42 +92,59 @@ public class ListUtil {
         return resp;
     }
 
-    public ResponseDTO getMonitorProjects(Integer monitorID) throws DataException{
+    public static ResponseDTO getMonitorProjects(EntityManager em, Integer monitorID) throws DataException {
         ResponseDTO resp = new ResponseDTO();
         try {
-            setProjectDetailsForMonitor(resp, monitorID);
+            getProjectDataForMonitor(em, resp, monitorID);
         } catch (Exception e) {
-            
+            log.log(Level.OFF, "Failed", e);
             throw new DataException("Falied to get monitor projects");
         }
-        
+
         return resp;
     }
-    private void setProjectDetailsForMonitor(ResponseDTO resp, Integer monitorID) {
-        Query q = em.createNamedQuery("MonitorProject.findByMonitor", Project.class);
-        q.setParameter("monitorID", monitorID);
-        List<Project> sList = q.getResultList();
-        resp.setProjectList(new ArrayList<>());
-        for (Project x : sList) {
-            ProjectDTO dto = new ProjectDTO(x);
-            dto.setProjectTaskList(new ArrayList<>());
 
-            for (ProjectTask pts : x.getProjectTaskList()) {
-                ProjectTaskDTO pt = new ProjectTaskDTO(pts);
+    private static void getProjectDataForMonitor(EntityManager em, ResponseDTO resp, Integer monitorID) {
 
-                pt.setProjectTaskStatusList(new ArrayList<>());
-                for (ProjectTaskStatus xx : pts.getProjectTaskStatusList()) {
-                    pt.getProjectTaskStatusList().add(new ProjectTaskStatusDTO(xx));
-                }
-                dto.getProjectTaskList().add(pt);
+        Monitor mon = em.find(Monitor.class, monitorID);
 
+        Query q = em.createNamedQuery("TaskType.findByCompany", TaskType.class);
+        q.setParameter("companyID", mon.getCompany().getCompanyID());
+        List<TaskType> ttList = q.getResultList();
+        resp.setTaskTypeList(new ArrayList<>());
+        for (TaskType taskType : ttList) {
+            TaskTypeDTO ttx = new TaskTypeDTO(taskType);
+            for (Task task : taskType.getTaskList()) {
+                ttx.getTaskList().add(new TaskDTO(task));
             }
+            resp.getTaskTypeList().add(ttx);
 
-            resp.getProjectList().add(dto);
         }
+        q = em.createNamedQuery("MonitorProject.findByMonitor", Project.class);
+        q.setParameter("monitorID", monitorID);
+        List<Project> projectList = q.getResultList();
+        resp.setProjectList(new ArrayList<>());
+
+        for (Project p : projectList) {
+            ProjectDTO project = new ProjectDTO(p);
+            for (ProjectTask pt : p.getProjectTaskList()) {
+                ProjectTaskDTO d = new ProjectTaskDTO(pt);
+                for (ProjectTaskStatus ps : pt.getProjectTaskStatusList()) {
+                    d.getProjectTaskStatusList().add(new ProjectTaskStatusDTO(ps));
+                }
+                for (PhotoUpload ph : pt.getPhotoUploadList()) {
+                    d.getPhotoUploadList().add(new PhotoUploadDTO(ph));
+                }
+                project.getProjectTaskList().add(d);
+            }
+            resp.getProjectList().add(project);
+            log.log(Level.OFF, "## project found for monitor: {0} - {1}",
+                    new Object[]{project.getProjectName(), mon.getFirstName()});
+        }
+
     }
 
-    public ResponseDTO getCompanyData(Integer companyID) throws DataException {
+    public static ResponseDTO getCompanyData(EntityManager em, Integer companyID) throws DataException {
         ResponseDTO resp = new ResponseDTO();
         Query q = em.createNamedQuery("Project.findByCompany", Project.class);
         q.setParameter("companyID", companyID);
@@ -148,16 +154,16 @@ public class ListUtil {
             resp.getProjectList().add(new ProjectDTO(cm));
         }
 
-        resp.setStaffList(getCompanyStaffList(companyID).getStaffList());
-        resp.setTaskStatusTypeList(getTaskStatusTypeList(companyID).getTaskStatusTypeList());
-        resp.setProjectStatusTypeList(getProjectStatusTypeList(companyID).getProjectStatusTypeList());
-        resp.setTaskTypeList(getTaskTypeList(companyID).getTaskTypeList());
-        resp.setMonitorList(getMonitorList(companyID).getMonitorList());
+        resp.setStaffList(getCompanyStaffList(em, companyID).getStaffList());
+        resp.setTaskStatusTypeList(getTaskStatusTypeList(em, companyID).getTaskStatusTypeList());
+        resp.setProjectStatusTypeList(getProjectStatusTypeList(em, companyID).getProjectStatusTypeList());
+        resp.setTaskTypeList(getTaskTypeList(em, companyID).getTaskTypeList());
+        resp.setMonitorList(getMonitorList(em, companyID).getMonitorList());
 
         return resp;
     }
 
-    public void addDevice(GcmDeviceDTO d) throws DataException {
+    public static void addDevice(EntityManager em, GcmDeviceDTO d) throws DataException {
         try {
             GcmDevice g = new GcmDevice();
             g.setCompany(em.find(Company.class, d.getCompanyID()));
@@ -186,7 +192,7 @@ public class ListUtil {
         }
     }
 
-    public ResponseDTO getMonitorList(Integer companyID) {
+    public static ResponseDTO getMonitorList(EntityManager em, Integer companyID) {
         ResponseDTO resp = new ResponseDTO();
         Query q = em.createNamedQuery("Monitor.findByCompany", Monitor.class);
         q.setParameter("companyID", companyID);
@@ -198,7 +204,7 @@ public class ListUtil {
         return resp;
     }
 
-    public ResponseDTO getTaskTypeList(Integer companyID) {
+    public static ResponseDTO getTaskTypeList(EntityManager em, Integer companyID) {
         ResponseDTO resp = new ResponseDTO();
         Query q = em.createNamedQuery("TaskType.findByCompany", TaskType.class);
         q.setParameter("companyID", companyID);
@@ -210,7 +216,7 @@ public class ListUtil {
         return resp;
     }
 
-    public ResponseDTO getMessagesByProjectAndStaff(Integer projectID, Integer companyStaffID) {
+    public static ResponseDTO getMessagesByProjectAndStaff(EntityManager em, Integer projectID, Integer companyStaffID) {
         ResponseDTO resp = new ResponseDTO();
         Query q = em.createNamedQuery("ChatMessage.findByProjectAndStaff", ChatMessage.class);
         q.setParameter("projectID", projectID);
@@ -223,7 +229,7 @@ public class ListUtil {
         return resp;
     }
 
-    public ResponseDTO getMessagesByProject(Integer projectID) {
+    public static ResponseDTO getMessagesByProject(EntityManager em, Integer projectID) {
         ResponseDTO resp = new ResponseDTO();
         Query q = em.createNamedQuery("ChatMessage.findByProject", ChatMessage.class);
         q.setParameter("projectID", projectID);
@@ -236,7 +242,7 @@ public class ListUtil {
         return resp;
     }
 
-    public ResponseDTO getChatsByProject(Integer projectID) {
+    public static ResponseDTO getChatsByProject(EntityManager em, Integer projectID) {
         ResponseDTO resp = new ResponseDTO();
         Query q = em.createNamedQuery("Chat.findByProject", Chat.class);
         q.setParameter("projectID", projectID);
@@ -268,7 +274,7 @@ public class ListUtil {
         return resp;
     }
 
-    public ResponseDTO getLocationTracksByStaff(Integer companyStaffID) {
+    public static ResponseDTO getLocationTracksByStaff(EntityManager em, Integer companyStaffID) {
         ResponseDTO resp = new ResponseDTO();
         Query q = em.createNamedQuery("LocationTracker.findByStaff", LocationTracker.class);
         q.setParameter("companyStaffID", companyStaffID);
@@ -281,7 +287,7 @@ public class ListUtil {
         return resp;
     }
 
-    public ResponseDTO getLocationTracksByStaffInPeriod(Integer companyStaffID,
+    public static ResponseDTO getLocationTracksByStaffInPeriod(EntityManager em, Integer companyStaffID,
             Long df, Long dx) {
         Date dateFrom, dateTo;
         if (df == null) {
@@ -308,7 +314,7 @@ public class ListUtil {
         return resp;
     }
 
-    public ResponseDTO getLocationTracksByCompanyLastMonth(Integer companyID,
+    public static ResponseDTO getLocationTracksByCompanyLastMonth(EntityManager em, Integer companyID,
             Long df, Long dx) {
 
         Date dateFrom, dateTo;
@@ -339,7 +345,7 @@ public class ListUtil {
         return resp;
     }
 
-    public ResponseDTO getPhotosByProject(Integer projectID) {
+    public static ResponseDTO getPhotosByProject(EntityManager em, Integer projectID) {
         ResponseDTO resp = new ResponseDTO();
         Query q = em.createNamedQuery("PhotoUpload.findProjectPhotos", PhotoUpload.class);
         q.setParameter("projectID", projectID);
@@ -352,7 +358,7 @@ public class ListUtil {
         return resp;
     }
 
-    public ResponseDTO getAllPhotosByProject(Integer projectID) {
+    public static ResponseDTO getAllPhotosByProject(EntityManager em, Integer projectID) {
         ResponseDTO resp = new ResponseDTO();
         Query q = em.createNamedQuery("PhotoUpload.findAllProjectPhotos", PhotoUpload.class);
         q.setParameter("projectID", projectID);
@@ -367,7 +373,7 @@ public class ListUtil {
         return resp;
     }
 
-    public ResponseDTO getProjectStatus(Integer projectID) {
+    public static ResponseDTO getProjectStatus(EntityManager em, Integer projectID) {
         ResponseDTO resp = new ResponseDTO();
         Project s = em.find(Project.class, projectID);
         //ProjectDTO project = new ProjectDTO(s);
@@ -431,7 +437,7 @@ public class ListUtil {
         return sb.toString();
     }
 
-    public ResponseDTO getPhotosByTask(Integer projectTaskID) {
+    public static ResponseDTO getPhotosByTask(EntityManager em, Integer projectTaskID) {
         ResponseDTO resp = new ResponseDTO();
         Query q = em.createNamedQuery("PhotoUpload.findByTask", PhotoUpload.class);
         q.setParameter("projectTaskID", projectTaskID);
@@ -444,7 +450,7 @@ public class ListUtil {
         return resp;
     }
 
-    public ResponseDTO getCompanyStaffList(Integer companyID) throws DataException {
+    public static ResponseDTO getCompanyStaffList(EntityManager em, Integer companyID) throws DataException {
         ResponseDTO resp = new ResponseDTO();
 
         try {
@@ -455,7 +461,7 @@ public class ListUtil {
             for (Staff cs : sList) {
                 resp.getStaffList().add(new StaffDTO(cs));
             }
-            //log.log(Level.OFF, "company staff found: {0}", sList.size());
+            //log.log(Level.OFF, "company staff found: {0}", projectList.size());
         } catch (Exception e) {
             log.log(Level.SEVERE, "Failed", e);
             throw new DataException("Failed to get project data\n" + getErrorString(e));
@@ -464,7 +470,7 @@ public class ListUtil {
         return resp;
     }
 
-    public ResponseDTO getTaskStatusTypeList(Integer companyID) throws DataException {
+    public static ResponseDTO getTaskStatusTypeList(EntityManager em, Integer companyID) throws DataException {
         ResponseDTO resp = new ResponseDTO();
 
         try {
@@ -475,7 +481,7 @@ public class ListUtil {
             for (TaskStatusType cs : sList) {
                 resp.getTaskStatusTypeList().add(new TaskStatusTypeDTO(cs));
             }
-            //log.log(Level.OFF, "task status types found: {0}", sList.size());
+            //log.log(Level.OFF, "task status types found: {0}", projectList.size());
         } catch (Exception e) {
             log.log(Level.SEVERE, "Failed", e);
             throw new DataException("Failed to get project data\n" + getErrorString(e));
@@ -484,7 +490,7 @@ public class ListUtil {
         return resp;
     }
 
-    public ResponseDTO getProjectStatusTypeList(Integer companyID) throws DataException {
+    public static ResponseDTO getProjectStatusTypeList(EntityManager em, Integer companyID) throws DataException {
         ResponseDTO resp = new ResponseDTO();
 
         try {
@@ -503,7 +509,7 @@ public class ListUtil {
         return resp;
     }
 
-    public ResponseDTO getProjectTasks(Integer projectID) throws DataException {
+    public static ResponseDTO getProjectTasks(EntityManager em, Integer projectID) throws DataException {
         ResponseDTO resp = new ResponseDTO();
         try {
             Query q = em.createNamedQuery("ProjectTask.findByProject", ProjectTask.class);
@@ -522,14 +528,14 @@ public class ListUtil {
         return resp;
     }
 
-    public ResponseDTO getProjectData(Integer projectID) throws DataException {
+    public static ResponseDTO getProjectData(EntityManager em, Integer projectID) throws DataException {
         long s = System.currentTimeMillis();
         ResponseDTO resp = new ResponseDTO();
         try {
             Project p = em.find(Project.class, projectID);
             ProjectDTO project = new ProjectDTO(p);
-            project.setProjectTaskList(getProjectStatus(projectID).getProjectTaskList());
-            project.setPhotoUploadList(getPhotosByProject(projectID).getPhotoUploadList());
+            project.setProjectTaskList(getProjectStatus(em, projectID).getProjectTaskList());
+            project.setPhotoUploadList(getPhotosByProject(em, projectID).getPhotoUploadList());
 
             DateTime now = new DateTime();
             DateTime then = now.minusDays(7);
@@ -548,7 +554,7 @@ public class ListUtil {
         return resp;
     }
 
-    public String getErrorString(Exception e) {
+    public static String getErrorString(Exception e) {
         StringBuilder sb = new StringBuilder();
         if (e.getMessage() != null) {
             sb.append(e.getMessage()).append("\n\n");
@@ -570,7 +576,7 @@ public class ListUtil {
         return sb.toString();
     }
 
-    public void addErrorStore(int statusCode, String message, String origin) {
+    public static void addErrorStore(EntityManager em, int statusCode, String message, String origin) {
         log.log(Level.OFF, "------ adding errorStore, message: {0} origin: {1}", new Object[]{message, origin});
         try {
             ErrorStore t = new ErrorStore();
@@ -586,7 +592,7 @@ public class ListUtil {
         }
     }
 
-    public ResponseDTO getServerEvents(
+    public static ResponseDTO getServerEvents(EntityManager em,
             Long dt, Long dx) throws DataException {
         ResponseDTO r = new ResponseDTO();
         Date startDate, endDate;
@@ -609,20 +615,20 @@ public class ListUtil {
                 dList.add(new ErrorStoreAndroidDTO(e));
             }
             r.setErrorStoreAndroidList(dList);
-            r.setErrorStoreList(getServerErrors(startDate.getTime(), endDate.getTime()).getErrorStoreList());
+            r.setErrorStoreList(getServerErrors(em, startDate.getTime(), endDate.getTime()).getErrorStoreList());
 
             String logx = LogfileUtil.getFileString();
             r.setLog(logx);
             log.log(Level.OFF, "Android Errors found {0}", r.getErrorStoreAndroidList().size());
         } catch (DataException | IOException e) {
-            log.log(Level.SEVERE, "Failed to findClubsWithinRadius");
-            throw new DataException("Failed to findClubsWithinRadius\n"
+            log.log(Level.SEVERE, "Failed ");
+            throw new DataException("Failed\n"
                     + getErrorString(e));
         }
         return r;
     }
 
-    public ResponseDTO getServerErrors(
+    public static ResponseDTO getServerErrors(EntityManager em,
             long startDate, long endDate) throws DataException {
         ResponseDTO r = new ResponseDTO();
         if (startDate == 0) {

@@ -32,15 +32,16 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(name = "gcmDevice")
 @NamedQueries({
-    @NamedQuery(name = "GcmDevice.findAll", query = "SELECT g FROM GcmDevice g"),
-    @NamedQuery(name = "GcmDevice.findByGcmDeviceID", query = "SELECT g FROM GcmDevice g WHERE g.gcmDeviceID = :gcmDeviceID"),
-    @NamedQuery(name = "GcmDevice.findByManufacturer", query = "SELECT g FROM GcmDevice g WHERE g.manufacturer = :manufacturer"),
-    @NamedQuery(name = "GcmDevice.findByModel", query = "SELECT g FROM GcmDevice g WHERE g.model = :model"),
-    @NamedQuery(name = "GcmDevice.findByProduct", query = "SELECT g FROM GcmDevice g WHERE g.product = :product"),
-    @NamedQuery(name = "GcmDevice.findByMessageCount", query = "SELECT g FROM GcmDevice g WHERE g.messageCount = :messageCount"),
-    @NamedQuery(name = "GcmDevice.findByDateRegistered", query = "SELECT g FROM GcmDevice g WHERE g.dateRegistered = :dateRegistered"),
-    @NamedQuery(name = "GcmDevice.findBySerialNumber", query = "SELECT g FROM GcmDevice g WHERE g.serialNumber = :serialNumber"),
-    @NamedQuery(name = "GcmDevice.findByAndroidVersion", query = "SELECT g FROM GcmDevice g WHERE g.androidVersion = :androidVersion")})
+    @NamedQuery(name = "GcmDevice.findCompanyStaffDevices", 
+            query = "SELECT g FROM GcmDevice g WHERE g.company.companyID = :companyID and g.staff IS NOT NULL"),
+    @NamedQuery(name = "GcmDevice.findByManufacturer", 
+            query = "SELECT g FROM GcmDevice g WHERE g.manufacturer = :manufacturer"),
+    @NamedQuery(name = "GcmDevice.findByModel", 
+            query = "SELECT g FROM GcmDevice g WHERE g.model = :model"),
+    @NamedQuery(name = "GcmDevice.findBySerialNumber", 
+            query = "SELECT g FROM GcmDevice g WHERE g.serialNumber = :serialNumber"),
+    @NamedQuery(name = "GcmDevice.findByAndroidVersion", 
+            query = "SELECT g FROM GcmDevice g WHERE g.androidVersion = :androidVersion")})
 public class GcmDevice implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id

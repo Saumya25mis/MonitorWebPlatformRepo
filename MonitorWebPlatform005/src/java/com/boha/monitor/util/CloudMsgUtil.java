@@ -57,6 +57,7 @@ import org.json.JSONObject;
  */
 @Stateless
 @TransactionManagement(TransactionManagementType.CONTAINER)
+@Deprecated
 public class CloudMsgUtil {
 
     @PersistenceContext
@@ -217,32 +218,31 @@ public class CloudMsgUtil {
             conn.setRequestProperty("Authorization", "key=" + API_KEY);
             conn.setDoOutput(true);
             ObjectMapper mapper = new ObjectMapper();
-            DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
-            try {
+            try (DataOutputStream wr = new DataOutputStream(conn.getOutputStream())) {
                 try {
-                    mapper.writeValue(wr, content);
-                } catch (JsonGenerationException ex) {
-                    LOG.log(Level.SEVERE, null, ex);
-                } catch (JsonMappingException ex) {
+                    try {
+                        mapper.writeValue(wr, content);
+                    } catch (JsonGenerationException | JsonMappingException ex) {
+                        LOG.log(Level.SEVERE, null, ex);
+                    }
+                } catch (IOException ex) {
                     LOG.log(Level.SEVERE, null, ex);
                 }
-            } catch (Exception ex) {
-                LOG.log(Level.SEVERE, null, ex);
+                wr.flush();
             }
-            wr.flush();
-            wr.close();
             int responseCode = conn.getResponseCode();
             String respMsg = conn.getResponseMessage();
             if (responseCode == 200) {
                 InputStream is = conn.getInputStream();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-                StringBuilder out = new StringBuilder();
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    out.append(line);
+                StringBuilder out;
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
+                    out = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        out.append(line);
+                    }
+                    LOG.log(Level.OFF, "GCM Response Text\n{0}", out.toString());   //Prints the string content read from input stream
                 }
-                LOG.log(Level.OFF, "GCM Response Text\n{0}", out.toString());   //Prints the string content read from input stream
-                reader.close();
                 JSONObject o = new JSONObject(out.toString());
 
                 int success = o.getInt("success");
@@ -290,17 +290,18 @@ public class CloudMsgUtil {
 
     }
 
-    public ResponseDTO sendRequestUpdateToProjectSite(int companyID) throws
+    public ResponseDTO sendNoProjectsAssignedMessage(Integer companyID, Integer monitorID) throws
             Exception, DataException {
         ResponseDTO resp = new ResponseDTO();
         //send message to Google servers
         Sender sender = new Sender(API_KEY);
         Message message = new Message.Builder()
-                .addData("message", "refresh class activities")
+                .addData("message", "Please assign projects to Monitor")
+                .addData("monitorID", monitorID.toString())
                 .addData("dateStamp", "" + new Date().getTime()).build();
 
-        Query q = em.createNamedQuery("GcmDevice.findInstructorDevices", GcmDevice.class);
-        q.setParameter("id", companyID);
+        Query q = em.createNamedQuery("GcmDevice.findCompanyStaffDevices", GcmDevice.class);
+        q.setParameter("companyID", companyID);
         List<GcmDevice> gList = q.getResultList();
         List<String> registrationIDs = new ArrayList<>();
         for (GcmDevice m : gList) {
@@ -319,9 +320,10 @@ public class CloudMsgUtil {
             Result result = sender.send(message, registrationIDs.get(0), RETRIES);
             OK = handleResult(result);
         } else {
+            //TODO - batch messages if needed
             MulticastResult multiCastResult = sender.send(
                     message, registrationIDs, RETRIES);
-            OK = handleMultiCastResult(multiCastResult);
+            OK = handleMultiCastResultOld(multiCastResult);
         }
         if (OK) {
             rMsg = "Google GCM - message has been sent to Google servers";
@@ -333,12 +335,6 @@ public class CloudMsgUtil {
         }
         resp.setMessage(rMsg);
         return resp;
-    }
-
-    private List<GcmDevice> getDevices(int companyID) {
-        Query q = em.createNamedQuery("GcmDevice.findInstructorDevices");
-        q.setParameter("id", companyID);
-        return q.getResultList();
     }
 
     public static final int GCM_MESSAGE_ERROR = 3, ALL_OK = 0;
@@ -356,7 +352,7 @@ public class CloudMsgUtil {
         } else {
             MulticastResult multiCastResult = sender.send(
                     message, registrationIDs, RETRIES);
-            OK = handleMultiCastResult(multiCastResult);
+            OK = handleMultiCastResultOld(multiCastResult);
         }
         if (!OK) {
             addErrorStore(889, "Google GCM - message has not been sent. Error occured", "Cloud Message Services");
@@ -402,7 +398,7 @@ public class CloudMsgUtil {
         return true;
     }
 
-    private boolean handleMultiCastResult(MulticastResult multiCastResult)
+    private boolean handleMultiCastResultOld(MulticastResult multiCastResult)
             throws Exception {
         LOG.log(Level.INFO, "Handle result from Google GCM servers: {0}", multiCastResult.toString());
         if (multiCastResult.getFailure() == 0

@@ -23,13 +23,13 @@ import com.boha.monitor.data.Staff;
 import com.boha.monitor.data.StaffProject;
 import com.boha.monitor.data.Task;
 import com.boha.monitor.data.TaskStatusType;
+import com.boha.monitor.data.TaskType;
 import com.boha.monitor.dto.ChatDTO;
 import com.boha.monitor.dto.ChatMemberDTO;
 import com.boha.monitor.dto.CompanyDTO;
 import com.boha.monitor.dto.ErrorStoreDTO;
 import com.boha.monitor.dto.GcmDeviceDTO;
 import com.boha.monitor.dto.LocationTrackerDTO;
-import com.boha.monitor.dto.MonitorDTO;
 import com.boha.monitor.dto.PhotoUploadDTO;
 import com.boha.monitor.dto.ProjectDTO;
 import com.boha.monitor.dto.ProjectStatusTypeDTO;
@@ -39,8 +39,8 @@ import com.boha.monitor.dto.StaffDTO;
 import com.boha.monitor.dto.StaffProjectDTO;
 import com.boha.monitor.dto.TaskDTO;
 import com.boha.monitor.dto.TaskStatusTypeDTO;
+import com.boha.monitor.dto.TaskTypeDTO;
 import com.boha.monitor.dto.transfer.ResponseDTO;
-import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
@@ -51,9 +51,7 @@ import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
-import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
@@ -69,19 +67,77 @@ public class DataUtil {
 
     @PersistenceContext
     EntityManager em;
-    @Inject
-    CloudMsgUtil cloudMsgUtil;
 
-    static final int OPERATIONS_MANAGER = 1,
+    final int OPERATIONS_MANAGER = 1,
             SITE_SUPERVISOR = 2,
             EXECUTIVE_STAFF = 3,
             PROJECT_MANAGER = 4;
 
-    public EntityManager getEm() {
+    public EntityManager getEntityManager() {
         return em;
     }
 
-   
+    /**
+     * Assign tasks to project using taskType. ie, assign all tasks in this
+     * taskType to this project
+     *
+     * @param projectID
+     * @param taskTypeID
+     * @return
+     * @throws DataException
+     */
+    public ResponseDTO addProjectTasks(Integer projectID, Integer taskTypeID) throws DataException {
+        ResponseDTO resp = new ResponseDTO();
+        try {
+            TaskType tt = em.find(TaskType.class, taskTypeID);
+            Project p = em.find(Project.class, projectID);
+            for (Task t : tt.getTaskList()) {
+                ProjectTask pt = new ProjectTask();
+                pt.setDateRegistered(new Date());
+                pt.setProject(p);
+                pt.setTask(t);
+                em.persist(pt);
+                log.log(Level.INFO, "ProjectTask added: {0} - {1}", new Object[]{p.getProjectName(), t.getTaskName()});
+            }
+
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "", e);
+            throw new DataException("Failed to set project tasks");
+        }
+        return resp;
+
+    }
+
+    public ResponseDTO addTasks(TaskTypeDTO taskType, List<TaskDTO> list) throws DataException {
+        ResponseDTO resp = new ResponseDTO();
+        try {
+            TaskType tt = em.find(TaskType.class, taskType.getTaskTypeID());
+            Company c = em.find(Company.class, taskType.getCompanyID());
+            for (TaskDTO taskDTO : list) {
+                Task t = new Task();
+                t.setCompany(c);
+                t.setDescription(taskDTO.getDescription());
+                t.setTaskName(taskDTO.getTaskName());
+                t.setTaskNumber(taskDTO.getTaskNumber());
+                t.setTaskType(tt);
+                em.persist(t);
+                log.log(Level.INFO, "Task added: {0} - {1}", new Object[]{tt.getTaskTypeName(), t.getTaskName()});
+            }
+
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "", e);
+            throw new DataException("Failed to set project tasks");
+        }
+        return resp;
+    }
+
+    /**
+     * Assign projects to Staff member
+     *
+     * @param list
+     * @return
+     * @throws DataException
+     */
     public ResponseDTO setStaffProjects(List<StaffProjectDTO> list) throws DataException {
         ResponseDTO resp = new ResponseDTO();
         Staff cs = em.find(Staff.class, list.get(0).getStaffID());
@@ -239,14 +295,16 @@ public class DataUtil {
             if (pu.getStaffID() != null) {
                 u.setStaff(em.find(Staff.class, pu.getStaffID()));
             }
+            if (pu.getMonitor() != null) {
+                u.setMonitor(em.find(Monitor.class, pu.getMonitor()));
+            }
             u.setPictureType(pu.getPictureType());
             u.setLatitude(pu.getLatitude());
             u.setLongitude(pu.getLongitude());
             u.setUri(pu.getUri());
             u.setDateTaken(new Date(pu.getDateTaken()));
-            u.setDateUploaded(new Date(pu.getDateUploaded()));
+            u.setDateUploaded(new Date());
             u.setThumbFlag(pu.getThumbFlag());
-            u.setThumbFilePath(pu.getThumbFilePath());
             u.setAccuracy(pu.getAccuracy());
             if (pu.isIsStaffPicture()) {
                 u.setStaffPicture(1);
@@ -254,10 +312,10 @@ public class DataUtil {
             em.persist(u);
             em.flush();
 
-            log.log(Level.OFF, "PhotoUpload added to table, date taken: {0}", pu.getDateTaken().toString());
+            log.log(Level.OFF, "PhotoUpload added to table, date taken: {0}", u.getDateTaken().toString());
         } catch (Exception e) {
             log.log(Level.SEVERE, "PhotoUpload failed", e);
-            addErrorStore(9,
+            addErrorStore(StatusCode.ERROR_DATABASE,
                     "PhotoUpload database add failed\n"
                     + getErrorString(e), "DataUtil");
 
@@ -348,16 +406,25 @@ public class DataUtil {
                     status.getProjectTask().getProjectTaskID());
             ProjectTaskStatus t = new ProjectTaskStatus();
             t.setDateUpdated(new Date());
-            t.setStatusDate(new Date());
+            if (status.getStatusDate() != null) {
+                t.setStatusDate(new Date(status.getStatusDate()));
+            } else {
+                t.setStatusDate(new Date());
+            }
             t.setProjectTask(c);
+
+            t.setTaskStatusType(em.find(TaskStatusType.class, 
+                    status.getTaskStatusType().getTaskStatusTypeID()));
+
             if (status.getStaffID() != null) {
                 t.setStaff(em.find(Staff.class, status.getStaffID()));
             }
-            t.setTaskStatusType(em.find(TaskStatusType.class, status.getTaskStatusType().getTaskStatusTypeID()));
+            if (status.getMonitorID() != null) {
+                t.setMonitor(em.find(Monitor.class, status.getMonitorID()));
+            }
 
             em.persist(t);
-            em.flush();
-            resp.setProjectTaskStatusList(new ArrayList<ProjectTaskStatusDTO>());
+            resp.setProjectTaskStatusList(new ArrayList<>());
             resp.getProjectTaskStatusList().add(
                     new ProjectTaskStatusDTO(t));
             log.log(Level.OFF, "ProjectTaskStatus added");
@@ -486,7 +553,7 @@ public class DataUtil {
         ResponseDTO resp = new ResponseDTO();
         try {
             Project site = em.find(Project.class, siteTask.getProjectID());
-            Task task = em.find(Task.class, siteTask.getTaskID());
+            Task task = em.find(Task.class, siteTask.getTask().getTaskID());
             ProjectTask t = new ProjectTask();
             t.setDateRegistered(new Date());
             t.setProject(site);
@@ -638,8 +705,7 @@ public class DataUtil {
     }
 
     public ResponseDTO registerCompany(CompanyDTO company,
-            StaffDTO staff,
-            ListUtil listUtil) throws DataException {
+            StaffDTO staff) throws DataException {
         log.log(Level.OFF, "####### * attempt to register company");
         ResponseDTO resp = new ResponseDTO();
         try {
@@ -669,7 +735,7 @@ public class DataUtil {
             addInitialTasks(c);
             addInitialProject(c);
 
-            resp = listUtil.getCompanyData(c.getCompanyID());
+            resp = ListUtil.getCompanyData(em, c.getCompanyID());
             resp.setStaffList(new ArrayList<>());
             resp.getStaffList().add(new StaffDTO(cs));
 
@@ -854,7 +920,7 @@ public class DataUtil {
         sb.append(rand.nextInt(9));
         return sb.toString();
     }
-    static final Logger log = Logger.getLogger(DataUtil.class.getSimpleName());
+    final Logger log = Logger.getLogger(DataUtil.class.getSimpleName());
 
     public void updateProjectStatusType(ProjectStatusTypeDTO dto) throws DataException {
         try {

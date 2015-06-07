@@ -8,6 +8,7 @@ package com.boha.monitor.dto;
 
 import com.boha.monitor.data.Project;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,9 +28,9 @@ public class ProjectDTO implements Serializable {
     private Boolean locationConfirmed;
     private String address;
     private String description, programmeName;
-    private List<ProjectTaskDTO> projectTaskList;
+    private List<ProjectTaskDTO> projectTaskList = new ArrayList<>();
     private Integer companyID;
-    private List<ProjectStatusDTO> projectStatusList;
+    private List<ProjectStatusDTO> projectStatusList = new ArrayList<>();
     private List<GcmDeviceDTO> gcmDeviceList;
     private List<ChatDTO> chatList;
     private List<MonitorProjectDTO> monitorProjectList;

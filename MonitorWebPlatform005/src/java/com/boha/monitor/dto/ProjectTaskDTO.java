@@ -7,6 +7,7 @@ package com.boha.monitor.dto;
 
 import com.boha.monitor.data.ProjectTask;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,10 +20,10 @@ public class ProjectTaskDTO implements Serializable {
     private Integer projectTaskID;
     private Long dateRegistered;
     private Integer projectID;
-    private Integer taskID;
-    private String taskName, projectName;
-    private List<PhotoUploadDTO> photoUploadList;
-    private List<ProjectTaskStatusDTO> projectTaskStatusList;
+    private TaskDTO task;
+    private String projectName;
+    private List<PhotoUploadDTO> photoUploadList = new ArrayList<>();
+    private List<ProjectTaskStatusDTO> projectTaskStatusList = new ArrayList<>();
 
     public ProjectTaskDTO() {
     }
@@ -31,19 +32,19 @@ public class ProjectTaskDTO implements Serializable {
         this.projectTaskID = a.getProjectTaskID();
         this.dateRegistered = a.getDateRegistered().getTime();
         projectID = a.getProject().getProjectID();
-        taskID = a.getTask().getTaskID();
-        taskName = a.getTask().getTaskName();
+        task = new TaskDTO(a.getTask());
         projectName = a.getProject().getProjectName();
     }
 
-    public String getTaskName() {
-        return taskName;
+    public TaskDTO getTask() {
+        return task;
     }
 
-    public void setTaskName(String taskName) {
-        this.taskName = taskName;
+    public void setTask(TaskDTO task) {
+        this.task = task;
     }
 
+    
     public String getProjectName() {
         return projectName;
     }
@@ -52,7 +53,6 @@ public class ProjectTaskDTO implements Serializable {
         this.projectName = projectName;
     }
 
-    
     public Integer getProjectTaskID() {
         return projectTaskID;
     }
@@ -77,15 +77,6 @@ public class ProjectTaskDTO implements Serializable {
         this.projectID = projectID;
     }
 
-    public Integer getTaskID() {
-        return taskID;
-    }
-
-    public void setTaskID(Integer taskID) {
-        this.taskID = taskID;
-    }
-
- 
 
     public List<PhotoUploadDTO> getPhotoUploadList() {
         return photoUploadList;

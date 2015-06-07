@@ -21,7 +21,11 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.ejb.EJB;
+import javax.ejb.TransactionManagement;
+import javax.ejb.TransactionManagementType;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -43,9 +47,8 @@ import org.joda.time.DateTime;
 @WebServlet(name = "PhotoServlet", urlPatterns = {"/photo"})
 public class PhotoServlet extends HttpServlet {
 
-    @EJB
-    DataUtil dataUtil;
-
+  @Inject
+  DataUtil dataUtil;
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -173,9 +176,11 @@ public class PhotoServlet extends HttpServlet {
             return resp;
         }
 
-        PhotoUploadDTO dto = null;
+        PhotoUploadDTO photoUpload = null;
         Gson gson = new Gson();
-        File companyDir = null, projectDir = null,
+        File companyDir = null, 
+                projectDir = null,
+                monitorDir = null,
                 companyStaffDir = null,
                 projectTaskDir = null;
         try {
@@ -190,21 +195,24 @@ public class PhotoServlet extends HttpServlet {
                         String json = Streams.asString(stream);
                         if (json != null) {
                             logger.log(Level.INFO, "picture with associated json: {0}", json);
-                            dto = gson.fromJson(json, PhotoUploadDTO.class);
-                            if (dto != null) {
-                                companyDir = createCompanyDirectory(rootDir, companyDir, dto.getCompanyID());
-                                if (dto.getProjectID() != null) {
-                                    projectDir = createProjectDirectory(companyDir, projectDir, dto.getProjectID());
+                            photoUpload = gson.fromJson(json, PhotoUploadDTO.class);
+                            if (photoUpload != null) {
+                                companyDir = createCompanyDirectory(rootDir, companyDir, photoUpload.getCompanyID());
+                                if (photoUpload.getProjectID() != null) {
+                                    projectDir = createProjectDirectory(companyDir, projectDir, photoUpload.getProjectID());
                                 }
                                 
-                                if (dto.getProjectTaskID() != null) {
+                                if (photoUpload.getProjectTaskID() != null) {
                                     projectTaskDir = createProjectTaskDirectory(
                                             projectDir, projectTaskDir,
-                                            dto.getProjectTaskID());
+                                            photoUpload.getProjectTaskID());
                                 }
-                                if (dto.getStaffID() != null) {
+                                if (photoUpload.getStaffID() != null) {
                                     companyStaffDir = createStaffDirectory(
                                             companyDir, companyStaffDir);
+                                }
+                                if (photoUpload.getMonitor() != null) {
+                                    monitorDir = createMonitorDirectory(companyDir, monitorDir);
                                 }
 
                             }
@@ -217,37 +225,40 @@ public class PhotoServlet extends HttpServlet {
                     }
                 } else {
                     File imageFile = null;
-                    if (dto == null) {
+                    if (photoUpload == null) {
                         continue;
                     }
                     DateTime dt = new DateTime();
                     String fileName = "";
-                    if (dto.isIsFullPicture()) {
+                    if (photoUpload.isIsFullPicture()) {
                         fileName = "f" + dt.getMillis() + ".jpg";
                     } else {
                         fileName = "t" + dt.getMillis() + ".jpg";
                     }
-                    if (dto.getStaffID() != null) {
-                        if (dto.isIsStaffPicture()) {
-                            if (dto.isIsFullPicture()) {
-                                fileName = "f" + dto.getStaffID() + ".jpg";
+                    if (photoUpload.getStaffID() != null) {
+                        if (photoUpload.isIsStaffPicture()) {
+                            if (photoUpload.isIsFullPicture()) {
+                                fileName = "f" + photoUpload.getStaffID() + ".jpg";
                             } else {
-                                fileName = "t" + dto.getStaffID() + ".jpg";
+                                fileName = "t" + photoUpload.getStaffID() + ".jpg";
                             }
                         }
                     }
-                    //
-                    switch (dto.getPictureType()) {
+                    
+                    switch (photoUpload.getPictureType()) {
                         
                         case PhotoUploadDTO.TASK_IMAGE:
                             imageFile = new File(projectTaskDir, fileName);
                             break;
                         case PhotoUploadDTO.PROJECT_IMAGE:
                             imageFile = new File(projectDir, fileName);
-                            logger.log(Level.INFO, "downloading image for project id: {0}", dto.getProjectID());
+                            logger.log(Level.INFO, "downloading image for project id: {0}", photoUpload.getProjectID());
                             break;
                         case PhotoUploadDTO.STAFF_IMAGE:
                             imageFile = new File(companyStaffDir, fileName);
+                            break;
+                            case PhotoUploadDTO.MONITOR_IMAGE:
+                            imageFile = new File(monitorDir, fileName);
                             break;
                     }
 
@@ -256,14 +267,16 @@ public class PhotoServlet extends HttpServlet {
                     resp.setMessage("Photo downloaded from mobile app ");
                     //add database
                     logger.log(Level.SEVERE, "image downloaded OK: {0}", imageFile.getAbsolutePath());
-                    dto.setUri(imageFile.getName());
-                    dto.setDateUploaded(new Date().getTime());
-                    if (dto.isIsFullPicture()) {
-                        dto.setThumbFlag(null);
+                    photoUpload.setUri(imageFile.getName());
+                    photoUpload.setDateUploaded(new Date().getTime());
+                    if (photoUpload.isIsFullPicture()) {
+                        photoUpload.setThumbFlag(null);
                     } else {
-                        dto.setThumbFlag(1);
+                        photoUpload.setThumbFlag(1);
                     }
-                    dataUtil.addPhotoUpload(dto);
+                    
+                    //add photo to database
+                    dataUtil.addPhotoUpload(photoUpload);
                     resp.setStatusCode(0);
 
                 }
@@ -305,9 +318,18 @@ public class PhotoServlet extends HttpServlet {
         return projectDir;
     }
 
-    private File createStaffDirectory(File companyDir, File staffDir) {
+    private File createMonitorDirectory(File companyDir, File monitorDir) {
+        monitorDir = new File(companyDir, RequestDTO.STAFF_DIR);
+        if (!monitorDir.exists()) {
+            monitorDir.mkdir();
+            logger.log(Level.INFO, "monitorDir created - {0}",
+                    monitorDir.getAbsolutePath());
+
+        }
+        return monitorDir;
+    }
+     private File createStaffDirectory(File companyDir, File staffDir) {
         staffDir = new File(companyDir, RequestDTO.STAFF_DIR);
-        //logger.log(Level.INFO, "just after new {0}", staffDir);
         if (!staffDir.exists()) {
             staffDir.mkdir();
             logger.log(Level.INFO, "staffDir created - {0}",

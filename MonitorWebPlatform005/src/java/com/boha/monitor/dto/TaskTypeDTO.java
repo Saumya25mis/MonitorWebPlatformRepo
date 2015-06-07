@@ -8,6 +8,7 @@ package com.boha.monitor.dto;
 
 import com.boha.monitor.data.TaskType;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,7 +20,7 @@ public class TaskTypeDTO implements Serializable {
     private Integer taskTypeID;
     private String taskTypeName;
     private Integer companyID;
-    private List<TaskDTO> taskList;
+    private List<TaskDTO> taskList = new ArrayList<>();
     
 
     public TaskTypeDTO() {
@@ -29,6 +30,9 @@ public class TaskTypeDTO implements Serializable {
         this.taskTypeID = a.getTaskTypeID();
         this.taskTypeName = a.getTaskTypeName();
         companyID = a.getCompany().getCompanyID();
+        
+        
+        
     }
 
     public Integer getTaskTypeID() {

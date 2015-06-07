@@ -8,15 +8,11 @@ package com.boha.monitor.util;
 import com.boha.monitor.data.ErrorStore;
 import com.boha.monitor.dto.transfer.RequestDTO;
 import com.boha.monitor.dto.transfer.ResponseDTO;
-import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.mail.MessagingException;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 /**
  *
@@ -26,39 +22,40 @@ import javax.persistence.PersistenceContext;
 public class TrafficCop {
 
     @Inject
-    MailUtil mailUtil;
-    @Inject
-    CloudMsgUtil cloudMsgUtil;
+    DataUtil dataUtil;
 
-    public ResponseDTO processRequest(RequestDTO req,
-            DataUtil dataUtil, ListUtil listUtil) {
+    public ResponseDTO processRequest(RequestDTO req) {
         long start = System.currentTimeMillis();
         ResponseDTO resp = new ResponseDTO();
         resp.setStatusCode(0);
         try {
             switch (req.getRequestType()) {
                 case RequestDTO.GET_MESSAGES_BY_PROJECT:
-                    resp = listUtil.getMessagesByProject(req.getProjectID());
+                    resp = ListUtil.getMessagesByProject(dataUtil.getEntityManager(),req.getProjectID());
                     break;
                 case RequestDTO.GET_CHATS_BY_PROJECT_AND_STAFF:
-                    resp = listUtil.getMessagesByProjectAndStaff(req.getProjectID(), req.getStaffID());
+                    resp = ListUtil.getMessagesByProjectAndStaff(dataUtil.getEntityManager(),req.getProjectID(), req.getStaffID());
                     break;
                 case RequestDTO.ADD_CHAT:
                     resp = dataUtil.addChat(req.getChat());
-                    resp.setChatList(listUtil.getChatsByProject(req.getProjectID()).getChatList());
+                    resp.setChatList(ListUtil.getChatsByProject(dataUtil.getEntityManager(),req.getProjectID()).getChatList());
                     break;
                 case RequestDTO.ADD_CHAT_MEMBERS:
                     resp = dataUtil.addChatMembers(req.getChatMemberList());
                     break;
                 case RequestDTO.SEND_CHAT_MESSAGE:
-                    resp = cloudMsgUtil.sendChatMessage(req.getChatMessage());
+//                    resp = cloudMsgUtil.sendChatMessage(req.getChatMessage());
                     break;
                 case RequestDTO.GET_CHATS_BY_PROJECT:
-                    resp = listUtil.getChatsByProject(req.getProjectID());
+                    resp = ListUtil.getChatsByProject(dataUtil.getEntityManager(),req.getProjectID());
                     break;
 
                 case RequestDTO.DELETE_PROJECT_IMAGES:
                     resp = dataUtil.deleteProjectPhotos(req.getPhotoUploadList());
+                    break;
+                case RequestDTO.NOTIFY_SUPERVISOR_NO_PROJECTS:
+                    //TODO - send GCM message to project operations
+                    resp = GoogleCloudMessageUtil.sendNoProjectsAssignedMessage(dataUtil.getEntityManager(), req.getCompanyID(), req.getMonitorID());
                     break;
 
                 //updates
@@ -88,16 +85,8 @@ public class TrafficCop {
 
                 //register entities    
                 case RequestDTO.REGISTER_COMPANY:
-
-                    if (listUtil == null) {
-                        System.out.println("listUtil is NULL");
-                    }
-                    if (dataUtil == null) {
-                        System.out.println("dataUtil is NULL");
-                    }
                     resp = dataUtil.registerCompany(req.getCompany(),
-                            req.getStaff(),
-                            listUtil);
+                            req.getStaff());
                     break;
                 case RequestDTO.REGISTER_COMPANY_STAFF:
                     resp = dataUtil.registerCompanyStaff(req.getStaff());
@@ -116,7 +105,7 @@ public class TrafficCop {
                     resp = dataUtil.addProjectTask(req.getProjectTask());
                     break;
                 case RequestDTO.ADD_PROJECT_TASK_STATUS:
-                    resp = dataUtil.addProjectTaskStatus(req.getProjectSiteTaskStatus());
+                    resp = dataUtil.addProjectTaskStatus(req.getProjectTaskStatus());
                     break;
                 case RequestDTO.ADD_TASK_STATUS_TYPE:
                     resp = dataUtil.addTaskStatusType(req.getTaskStatus());
@@ -134,68 +123,66 @@ public class TrafficCop {
 
                 //lists
                 case RequestDTO.GET_LOCATION_TRACK_BY_COMPANY_IN_PERIOD:
-                    resp = listUtil.getLocationTracksByCompanyLastMonth(
+                    resp = ListUtil.getLocationTracksByCompanyLastMonth(dataUtil.getEntityManager(),
                             req.getCompanyID(), req.getStartDate(), req.getEndDate());
                     break;
                 case RequestDTO.GET_LOCATION_TRACK_BY_STAFF_IN_PERIOD:
-                    resp = listUtil.getLocationTracksByStaffInPeriod(
+                    resp = ListUtil.getLocationTracksByStaffInPeriod(dataUtil.getEntityManager(),
                             req.getStaffID(), req.getStartDate(), req.getEndDate());
                     break;
                 case RequestDTO.GET_LOCATION_TRACK_BY_STAFF:
-                    resp = listUtil.getLocationTracksByStaff(req.getStaffID());
+                    resp = ListUtil.getLocationTracksByStaff(dataUtil.getEntityManager(),req.getStaffID());
                     break;
                 case RequestDTO.GET_MONITOR_PROJECTS:
-                    resp = listUtil.getMonitorProjects(req.getMonitorID());
+                    resp = ListUtil.getMonitorProjects(dataUtil.getEntityManager(),req.getMonitorID());
                     break;
                 case RequestDTO.GET_ERROR_REPORTS:
-                    resp = listUtil.getServerEvents(req.getStartDate(), req.getEndDate());
+                    resp = ListUtil.getServerEvents(dataUtil.getEntityManager(),req.getStartDate(), req.getEndDate());
                     break;
                 case RequestDTO.GET_EXEC_COMPANY_DATA:
-//                    resp = listUtil.getCompanyExecData(req.getCompanyID(), req.getCountryID());
+//                    resp = ListUtil.getCompanyExecData(req.getCompanyID(), req.getCountryID());
                     break;
                 case RequestDTO.GET_COMPANY_STATUS_IN_PERIOD:
-//                    resp = listUtil.getCompanyTaskStatusinPeriod(req.getCompanyID(), req.getStartDate(), req.getEndDate());
+//                    resp = ListUtil.getCompanyTaskStatusinPeriod(req.getCompanyID(), req.getStartDate(), req.getEndDate());
                     break;
                 case RequestDTO.GET_PROJECT_STATUS_IN_PERIOD:
-//                    resp = listUtil.getProjectTaskStatusinPeriod(req.getProjectID(), req.getStartDate(), req.getEndDate());
+//                    resp = ListUtil.getProjectTaskStatusinPeriod(req.getProjectID(), req.getStartDate(), req.getEndDate());
                     break;
 
                 case RequestDTO.GET_PROJECT_DATA:
-                    resp = listUtil.getProjectData(req.getProjectID());
+                    resp = ListUtil.getProjectData(dataUtil.getEntityManager(),req.getProjectID());
                     break;
                 case RequestDTO.GET_COMPANY_STAFF:
-                    resp = listUtil.getCompanyStaffList(req.getCompanyID());
+                    resp = ListUtil.getCompanyStaffList(dataUtil.getEntityManager(),req.getCompanyID());
                     break;
                 case RequestDTO.GET_COMPANY_DATA:
-                    resp = listUtil.getCompanyData(req.getCompanyID());
+                    resp = ListUtil.getCompanyData(dataUtil.getEntityManager(),req.getCompanyID());
                     break;
                 case RequestDTO.GET_TASK_STATUS_LIST:
-                    resp = listUtil.getTaskStatusTypeList(req.getCompanyID());
+                    resp = ListUtil.getTaskStatusTypeList(dataUtil.getEntityManager(),req.getCompanyID());
                     break;
                 //photos
                 case RequestDTO.GET_PROJECT_IMAGES:
-                    resp = listUtil.getPhotosByProject(req.getProjectID());
+                    resp = ListUtil.getPhotosByProject(dataUtil.getEntityManager(),req.getProjectID());
                     break;
 
                 case RequestDTO.GET_TASK_IMAGES:
-                    resp = listUtil.getPhotosByTask(req.getProjectTaskID());
+                    resp = ListUtil.getPhotosByTask(dataUtil.getEntityManager(),req.getProjectTaskID());
                     break;
                 case RequestDTO.GET_ALL_PROJECT_IMAGES:
-                    resp = listUtil.getAllPhotosByProject(req.getProjectID());
+                    resp = ListUtil.getAllPhotosByProject(dataUtil.getEntityManager(),req.getProjectID());
                     break;
 
                 case RequestDTO.LOGIN_STAFF:
-                    resp = listUtil.loginStaff(req.getGcmDevice(),
-                            req.getEmail(), req.getPin(),
-                            listUtil);
+                    resp = ListUtil.loginStaff(dataUtil.getEntityManager(),req.getGcmDevice(),
+                            req.getEmail(), req.getPin());
                     break;
                 case RequestDTO.LOGIN_MONITOR:
-                    resp = listUtil.loginMonitor(req.getGcmDevice(),
-                            req.getEmail(), req.getPin(),
-                            listUtil);
+                    resp = ListUtil.loginMonitor(dataUtil.getEntityManager(),req.getGcmDevice(),
+                            req.getEmail(), req.getPin());
                     break;
                 case RequestDTO.SEND_GCM_REGISTRATION:
-                    resp = CloudMessagingRegistrar.sendRegistration(req.getGcmRegistrationID(), dataUtil);
+                    resp = GoogleCloudMessagingRegistrar.sendGCMRegistration(dataUtil.getEntityManager(), req.getGcmRegistrationID());
                     break;
                 default:
                     resp.setStatusCode(ServerStatus.ERROR_UNKNOWN_REQUEST);
@@ -206,23 +193,14 @@ public class TrafficCop {
             resp.setStatusCode(ServerStatus.ERROR_DATABASE);
             resp.setMessage(ServerStatus.getMessage(resp.getStatusCode()));
             logger.log(Level.SEVERE, resp.getMessage(), e);
-            addErrorStore(19, e.getDescription(), TrafficCop.class.getSimpleName());
-            try {
-                mailUtil.sendAdministratorLogs();
-            } catch (MessagingException | UnsupportedEncodingException ex) {
-                Logger.getLogger(TrafficCop.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            addErrorStore(StatusCode.ERROR_DATABASE, e.getDescription(), TrafficCop.class.getSimpleName());
 
         } catch (Exception e) {
-            resp.setStatusCode(ServerStatus.ERROR_SERVER);
+            resp.setStatusCode(StatusCode.ERROR_SERVER);
             resp.setMessage(ServerStatus.getMessage(resp.getStatusCode()));
             logger.log(Level.SEVERE, resp.getMessage(), e);
-            addErrorStore(19, resp.getMessage() + " \n" + dataUtil.getErrorString(e), TrafficCop.class.getSimpleName());
-            try {
-                mailUtil.sendAdministratorLogs();
-            } catch (MessagingException | UnsupportedEncodingException ex) {
-                Logger.getLogger(TrafficCop.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            addErrorStore(StatusCode.ERROR_SERVER, resp.getMessage() + " \n" + dataUtil.getErrorString(e), TrafficCop.class.getSimpleName());
+
         }
         if (resp.getStatusCode() == null) {
             resp.setStatusCode(0);
@@ -230,7 +208,7 @@ public class TrafficCop {
         long end = System.currentTimeMillis();
         double elapsed = Elapsed.getElapsed(start, end);
         resp.setElapsedRequestTimeInSeconds(elapsed);
-        logger.log(Level.WARNING, "*********** request elapsed time: {0} seconds", elapsed);
+        logger.log(Level.INFO, "******* request elapsed time: {0} seconds", elapsed);
         return resp;
     }
 
@@ -242,14 +220,13 @@ public class TrafficCop {
             t.setMessage(message);
             t.setStatusCode(statusCode);
             t.setOrigin(origin);
-            em.persist(t);
+            dataUtil.getEntityManager().persist(t);
             logger.log(Level.INFO, "####### ErrorStore row added, origin {0} \nmessage: {1}",
                     new Object[]{origin, message});
         } catch (Exception e) {
             logger.log(Level.SEVERE, "####### Failed to add errorStore from " + origin + "\n" + message, e);
         }
     }
-    @PersistenceContext
-    EntityManager em;
+
     static final Logger logger = Logger.getLogger(TrafficCop.class.getSimpleName());
 }

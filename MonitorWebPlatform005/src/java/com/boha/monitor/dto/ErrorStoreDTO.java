@@ -20,6 +20,9 @@ public class ErrorStoreDTO implements Serializable {
     private String message, origin;
     private long dateOccured;
 
+    public ErrorStoreDTO() {
+        
+    }
     public ErrorStoreDTO(ErrorStore a) {
         errorStoreID = a.getErrorStoreID();
         statusCode = a.getStatusCode();

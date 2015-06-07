@@ -6,12 +6,11 @@
 package com.boha.monitor.gate;
 
 import com.boha.monitor.dto.transfer.RequestDTO;
+import com.boha.monitor.dto.transfer.RequestList;
 import com.boha.monitor.dto.transfer.ResponseDTO;
-import com.boha.monitor.util.DataUtil;
+import static com.boha.monitor.gate.CachedRequestWebSocket.log;
+import com.boha.monitor.util.Elapsed;
 import com.boha.monitor.util.GZipUtility;
-import com.boha.monitor.util.GoogleCloudMessageUtil;
-import com.boha.monitor.util.GoogleCloudMessagingRegistrar;
-import com.boha.monitor.util.ListUtil;
 import com.boha.monitor.util.PlatformUtil;
 import com.boha.monitor.util.ServerStatus;
 import com.boha.monitor.util.TrafficCop;
@@ -34,8 +33,8 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author aubreyM
  */
-@WebServlet(name = "MonitorGatewayServlet", urlPatterns = {"/gate"})
-public class MonitorGatewayServlet extends HttpServlet {
+@WebServlet(name = "CachedRequestServlet", urlPatterns = {"/cachedRequests"})
+public class CachedRequestServlet extends HttpServlet {
 
    
     @EJB
@@ -43,7 +42,7 @@ public class MonitorGatewayServlet extends HttpServlet {
     @EJB
     TrafficCop trafficCop;
     
-    static final String SOURCE = "MonitorGatewayServlet";
+    static final String SOURCE = "CachedRequestServlet";
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -59,22 +58,31 @@ public class MonitorGatewayServlet extends HttpServlet {
         long start = System.currentTimeMillis();
 
         Gson gson = new Gson();
-        RequestDTO dto = getRequest(gson, request);
-        ResponseDTO resp = new ResponseDTO();
-        resp.setStatusCode(0);
-
+        ResponseDTO resp = new ResponseDTO();        
+        int goodCount = 0, badCount = 0;
         try {
-            if (dto != null && dto.getRequestType() != null) {
-                log.log(Level.INFO, "{0} started ..requestType: {1}",
-                        new Object[]{MonitorGatewayServlet.class.getSimpleName(), dto.getRequestType()});
-                resp = trafficCop.processRequest(dto);
-            } else {
-                resp.setStatusCode(ServerStatus.ERROR_JSON_SYNTAX);
-                resp.setMessage(ServerStatus.getMessage(resp.getStatusCode()));
+
+            String message = request.getParameter("JSON");
+            RequestList dto = gson.fromJson(message, RequestList.class);
+            for (RequestDTO req : dto.getRequests()) {
+                resp = trafficCop.processRequest(req);
+                if (resp.getStatusCode() == 0) {
+                    goodCount++;
+                } else {
+                    badCount++;
+                }
             }
-        } catch (Exception e) {
-            resp.setStatusCode(ServerStatus.ERROR_SERVER);
-            resp.setMessage(ServerStatus.getMessage(resp.getStatusCode()));
+            resp.setStatusCode(0);
+            resp.setMessage("Cached requests processed");
+            resp.setGoodCount(goodCount);
+            resp.setBadCount(badCount);
+            long end = System.currentTimeMillis();
+            resp.setElapsedRequestTimeInSeconds(Elapsed.getElapsed(start, end));
+            log.log(Level.INFO, "Total elapsed time: {0}", resp.getElapsedRequestTimeInSeconds());
+        } catch (Exception ex) {
+            resp.setMessage("Unable to process cached requests");
+            resp.setStatusCode(777);
+           
         } finally {
             
             response.setContentType("application/zip;charset=UTF-8");
@@ -100,21 +108,7 @@ public class MonitorGatewayServlet extends HttpServlet {
         return m.doubleValue();
     }
 
-    private RequestDTO getRequest(Gson gson, HttpServletRequest req) {
-
-        String json = req.getParameter("JSON");
-        log.log(Level.OFF, "...incoming JSON = {0}", json);
-        RequestDTO cr = new RequestDTO();
-
-        try {
-            cr = gson.fromJson(json, RequestDTO.class);
-
-        } catch (JsonSyntaxException e) {
-            log.log(Level.SEVERE, "Failed JSON", e);
-        }
-        return cr;
-    }
-    private static final Logger log = Logger.getLogger(MonitorGatewayServlet.class
+    private static final Logger log = Logger.getLogger(CachedRequestServlet.class
             .getSimpleName());
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**

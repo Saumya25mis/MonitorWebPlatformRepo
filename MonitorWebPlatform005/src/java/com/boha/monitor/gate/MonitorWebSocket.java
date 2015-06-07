@@ -9,9 +9,12 @@ import com.boha.monitor.dto.transfer.RequestDTO;
 import com.boha.monitor.dto.transfer.ResponseDTO;
 import com.boha.monitor.util.DataUtil;
 import com.boha.monitor.util.GZipUtility;
+import com.boha.monitor.util.GoogleCloudMessageUtil;
+import com.boha.monitor.util.GoogleCloudMessagingRegistrar;
 import com.boha.monitor.util.ListUtil;
 import com.boha.monitor.util.PlatformUtil;
 import com.boha.monitor.util.ServerStatus;
+import com.boha.monitor.util.StatusCode;
 import com.boha.monitor.util.TrafficCop;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
@@ -24,6 +27,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
 import javax.websocket.OnMessage;
@@ -39,14 +44,18 @@ import javax.websocket.server.ServerEndpoint;
 @Stateless
 public class MonitorWebSocket {
 
-    @Inject
-    DataUtil dataUtil;
-    @Inject
-    ListUtil listUtil;
+   
     @Inject
     PlatformUtil platformUtil;
+    
     @Inject
     TrafficCop trafficCop;
+    
+    @Inject
+    DataUtil dataUtil;
+    
+    @PersistenceContext
+    EntityManager em;
 
     static final String SOURCE = "MonitorWebSocket";
     public static final Set<Session> peers
@@ -60,14 +69,14 @@ public class MonitorWebSocket {
 
         try {
             RequestDTO dto = gson.fromJson(message, RequestDTO.class);
-            resp = trafficCop.processRequest(dto,
-                    dataUtil, listUtil);
+            resp = trafficCop.processRequest(dto);
             bb = GZipUtility.getZippedResponse(resp);
         } catch (JsonSyntaxException | IOException ex) {
             log.log(Level.SEVERE, "Failed...", ex);
             resp.setStatusCode(ServerStatus.ERROR_SERVER);
             resp.setMessage(ServerStatus.getMessage(resp.getStatusCode()));
-            dataUtil.addErrorStore(19, dataUtil.getErrorString(ex), SOURCE);
+            dataUtil.addErrorStore(StatusCode.ERROR_JSON_SYNTAX, "JSON Syntax Error", SOURCE);
+            
             try {
                 bb = GZipUtility.getZippedResponse(resp);
             } catch (IOException ex1) {

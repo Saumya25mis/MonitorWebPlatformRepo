@@ -48,7 +48,7 @@ public class RequestDTO implements Serializable {
     private TaskStatusTypeDTO taskStatus;
     private ChatDTO chat;
 
-    private ProjectTaskStatusDTO projectSiteTaskStatus;
+    private ProjectTaskStatusDTO projectTaskStatus;
     private ProjectStatusTypeDTO projectStatusType;
     private List<PhotoUploadDTO> photoUploadList;
     private List<LocationTrackerDTO> locationTrackerList;
@@ -66,7 +66,8 @@ public class RequestDTO implements Serializable {
             SET_STAFF_PROJECTS = 9,
             
             ADD_CHAT = 22,
-            ADD_CHAT_MEMBERS = 23;
+            ADD_CHAT_MEMBERS = 23,
+            NOTIFY_SUPERVISOR_NO_PROJECTS = 30;
     //add stuff
     public static final int ADD_PROJECT_TASK = 11,
             ADD_PROJECT_DIARY_RECORD = 12,
@@ -347,13 +348,14 @@ public class RequestDTO implements Serializable {
         this.chat = chat;
     }
 
-    public ProjectTaskStatusDTO getProjectSiteTaskStatus() {
-        return projectSiteTaskStatus;
+    public ProjectTaskStatusDTO getProjectTaskStatus() {
+        return projectTaskStatus;
     }
 
-    public void setProjectSiteTaskStatus(ProjectTaskStatusDTO projectSiteTaskStatus) {
-        this.projectSiteTaskStatus = projectSiteTaskStatus;
+    public void setProjectTaskStatus(ProjectTaskStatusDTO projectTaskStatus) {
+        this.projectTaskStatus = projectTaskStatus;
     }
+
 
     public ProjectStatusTypeDTO getProjectStatusType() {
         return projectStatusType;

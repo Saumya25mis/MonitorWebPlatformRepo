@@ -15,7 +15,9 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.ejb.EJB;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -29,6 +31,8 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet(name = "CrashReportServlet", urlPatterns = {"/crash"})
 public class CrashReportServlet extends HttpServlet {
 
+    @Inject 
+    DataUtil dataUtil;
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -61,8 +65,7 @@ public class CrashReportServlet extends HttpServlet {
             addErrorStore(319, "Unable to add Android Error", "CrashReportServlet");
         }
     }
-    @EJB
-    DataUtil dataUtil;
+    
     
 
     private void getErrorData(HttpServletRequest request) throws DataException {
@@ -143,7 +146,7 @@ public class CrashReportServlet extends HttpServlet {
             t.setMessage(message);
             t.setStatusCode(statusCode);
             t.setOrigin(origin);
-            dataUtil.getEm().persist(t);
+            dataUtil.addErrorStore(statusCode,  message, origin);
             log.log(Level.INFO, "####### ErrorStore row added, origin {0} \nmessage: {1}",
                     new Object[]{origin, message});
         } catch (Exception e) {

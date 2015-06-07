@@ -8,11 +8,8 @@ package com.boha.monitor.gate;
 import com.boha.monitor.dto.transfer.RequestDTO;
 import com.boha.monitor.dto.transfer.RequestList;
 import com.boha.monitor.dto.transfer.ResponseDTO;
-import com.boha.monitor.util.DataUtil;
 import com.boha.monitor.util.Elapsed;
 import com.boha.monitor.util.GZipUtility;
-import com.boha.monitor.util.ListUtil;
-import com.boha.monitor.util.PlatformUtil;
 import com.boha.monitor.util.TrafficCop;
 import com.google.gson.Gson;
 import java.io.IOException;
@@ -22,8 +19,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.ejb.Stateful;
-import javax.inject.Inject;
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
 import javax.websocket.OnMessage;
@@ -36,17 +33,13 @@ import javax.websocket.server.ServerEndpoint;
  * @author aubreyM
  */
 @ServerEndpoint("/wsrequest")
-@Stateful
+@Stateless
 public class CachedRequestWebSocket {
 
-    @Inject
-    DataUtil dataUtil;
-    @Inject
-    ListUtil listUtil;
-    @Inject
-    PlatformUtil platformUtil;
-    @Inject
+   
+    @EJB
     TrafficCop trafficCop;
+    
     
     static final String SOURCE = "CachedRequestWebSocket";
     //TODO - clean up expired sessions!!!!
@@ -64,7 +57,7 @@ public class CachedRequestWebSocket {
 
             RequestList dto = gson.fromJson(message, RequestList.class);
             for (RequestDTO req : dto.getRequests()) {
-                ResponseDTO resp = trafficCop.processRequest(req, dataUtil, listUtil);
+                ResponseDTO resp = trafficCop.processRequest(req);
                 if (resp.getStatusCode() == 0) {
                     goodCount++;
                 } else {
