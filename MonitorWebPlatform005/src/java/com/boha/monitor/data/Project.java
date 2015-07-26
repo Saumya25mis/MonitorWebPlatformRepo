@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.boha.monitor.data;
 
 import java.io.Serializable;
@@ -36,18 +35,19 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(name = "project")
 @NamedQueries({
-    @NamedQuery(name = "Project.findByCompany", 
-            query = "SELECT p FROM Project p WHERE p.company.companyID = :companyID and p.activeFlag = TRUE ORDER BY p.dateRegistered desc"),
-    @NamedQuery(name = "Project.findByProgramme", 
+    @NamedQuery(name = "Project.findByProgramme",
             query = "SELECT p FROM Project p WHERE p.programme.programmeID = :programmeID and p.activeFlag = TRUE ORDER BY p.dateRegistered desc")
 })
 public class Project implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "project", fetch = FetchType.LAZY)
     private List<ProjectTask> projectTaskList;
-    
-    @OneToMany(mappedBy = "project")
+
+    @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
     private List<PhotoUpload> photoUploadList;
-    private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
@@ -80,13 +80,14 @@ public class Project implements Serializable {
     @Size(max = 65535)
     @Column(name = "description")
     private String description;
-    
+
     @JoinColumn(name = "programmeID", referencedColumnName = "programmeID")
     @ManyToOne(optional = false)
     private Programme programme;
-    @JoinColumn(name = "companyID", referencedColumnName = "companyID")
+    @JoinColumn(name = "cityID", referencedColumnName = "cityID")
     @ManyToOne(optional = false)
-    private Company company;
+    private City city;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "project")
     private List<ProjectStatus> projectStatusList;
     @OneToMany(mappedBy = "project")
@@ -190,8 +191,6 @@ public class Project implements Serializable {
         this.description = description;
     }
 
- 
-
     public List<ProjectStatus> getProjectStatusList() {
         return projectStatusList;
     }
@@ -240,14 +239,6 @@ public class Project implements Serializable {
         this.programme = programme;
     }
 
-    public Company getCompany() {
-        return company;
-    }
-
-    public void setCompany(Company company) {
-        this.company = company;
-    }
-
     @Override
     public int hashCode() {
         int hash = 0;
@@ -281,8 +272,6 @@ public class Project implements Serializable {
         this.photoUploadList = photoUploadList;
     }
 
-    
-
     public List<ProjectTask> getProjectTaskList() {
         return projectTaskList;
     }
@@ -291,7 +280,12 @@ public class Project implements Serializable {
         this.projectTaskList = projectTaskList;
     }
 
-   
+    public City getCity() {
+        return city;
+    }
 
-    
+    public void setCity(City city) {
+        this.city = city;
+    }
+
 }

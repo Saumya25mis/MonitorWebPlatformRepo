@@ -35,8 +35,10 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(name = "portfolio")
 @NamedQueries({
-    @NamedQuery(name = "Portfolio.findAll", query = "SELECT p FROM Portfolio p"),
-    @NamedQuery(name = "Portfolio.findByPortfolioID", query = "SELECT p FROM Portfolio p WHERE p.portfolioID = :portfolioID"),
+    @NamedQuery(name = "Portfolio.findByCompany", 
+            query = "SELECT p FROM Portfolio p where p.company.companyID = :companyID order by p.portfolioName"),
+    @NamedQuery(name = "Portfolio.findByPortfolioID", 
+            query = "SELECT p FROM Portfolio p WHERE p.portfolioID = :portfolioID"),
     @NamedQuery(name = "Portfolio.findByPortfolioName", query = "SELECT p FROM Portfolio p WHERE p.portfolioName = :portfolioName"),
     @NamedQuery(name = "Portfolio.findByDateRegistered", query = "SELECT p FROM Portfolio p WHERE p.dateRegistered = :dateRegistered")})
 public class Portfolio implements Serializable {

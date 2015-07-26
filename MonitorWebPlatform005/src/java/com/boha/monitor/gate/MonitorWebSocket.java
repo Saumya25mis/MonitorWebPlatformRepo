@@ -7,13 +7,11 @@ package com.boha.monitor.gate;
 
 import com.boha.monitor.dto.transfer.RequestDTO;
 import com.boha.monitor.dto.transfer.ResponseDTO;
+import com.boha.monitor.util.DataException;
 import com.boha.monitor.util.DataUtil;
 import com.boha.monitor.util.GZipUtility;
-import com.boha.monitor.util.GoogleCloudMessageUtil;
-import com.boha.monitor.util.GoogleCloudMessagingRegistrar;
-import com.boha.monitor.util.ListUtil;
-import com.boha.monitor.util.PlatformUtil;
 import com.boha.monitor.util.ServerStatus;
+import com.boha.monitor.util.SignInUtil;
 import com.boha.monitor.util.StatusCode;
 import com.boha.monitor.util.TrafficCop;
 import com.google.gson.Gson;
@@ -25,10 +23,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
 import javax.websocket.OnMessage;
@@ -44,18 +41,12 @@ import javax.websocket.server.ServerEndpoint;
 @Stateless
 public class MonitorWebSocket {
 
-   
-    @Inject
-    PlatformUtil platformUtil;
-    
-    @Inject
-    TrafficCop trafficCop;
     
     @Inject
     DataUtil dataUtil;
-    
-    @PersistenceContext
-    EntityManager em;
+    @EJB
+    SignInUtil signInUtil;
+   
 
     static final String SOURCE = "MonitorWebSocket";
     public static final Set<Session> peers
@@ -69,7 +60,7 @@ public class MonitorWebSocket {
 
         try {
             RequestDTO dto = gson.fromJson(message, RequestDTO.class);
-            resp = trafficCop.processRequest(dto);
+            resp = TrafficCop.processRequest(dto, dataUtil, signInUtil);
             bb = GZipUtility.getZippedResponse(resp);
         } catch (JsonSyntaxException | IOException ex) {
             log.log(Level.SEVERE, "Failed...", ex);
@@ -84,6 +75,19 @@ public class MonitorWebSocket {
                 resp.setStatusCode(ServerStatus.ERROR_DATA_COMPRESSION);
                 resp.setMessage(ServerStatus.getMessage(resp.getStatusCode()));
             }
+        } catch (DataException e) {
+            resp.setStatusCode(ServerStatus.ERROR_DATABASE);
+            resp.setMessage(ServerStatus.getMessage(resp.getStatusCode()));
+            log.log(Level.SEVERE, resp.getMessage(), e);
+            dataUtil.addErrorStore(StatusCode.ERROR_DATABASE, e.getDescription(), SOURCE);
+
+        } catch (Exception e) {
+            resp.setStatusCode(StatusCode.ERROR_SERVER);
+            resp.setMessage(ServerStatus.getMessage(resp.getStatusCode()));
+            log.log(Level.SEVERE, resp.getMessage(), e);
+            
+            dataUtil.addErrorStore(StatusCode.ERROR_SERVER, resp.getMessage(), SOURCE);
+
         }
         return bb;
     }
@@ -127,6 +131,7 @@ public class MonitorWebSocket {
         }
     }
 
+    
     Gson gson = new Gson();
     static final Logger log = Logger.getLogger(MonitorWebSocket.class.getSimpleName());
 }

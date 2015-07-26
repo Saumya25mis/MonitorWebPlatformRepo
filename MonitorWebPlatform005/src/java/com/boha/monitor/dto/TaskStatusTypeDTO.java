@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.boha.monitor.dto;
 
 import com.boha.monitor.data.TaskStatusType;
@@ -15,16 +14,17 @@ import java.util.List;
  * @author aubreyM
  */
 public class TaskStatusTypeDTO implements Serializable {
+
     private static final long serialVersionUID = 1L;
     private Integer taskStatusTypeID;
     private String taskStatusTypeName;
     private Short statusColor;
     private List<ProjectTaskStatusDTO> projectTaskStatusList;
     private Integer companyID;
- public static final int 
-            STATUS_COLOR_RED = 3,
-            STATUS_COLOR_GREEN = 1,
-            STATUS_COLOR_YELLOW = 2;
+    public static final int 
+            STATUS_COLOR_RED = 1,
+            STATUS_COLOR_AMBER = 2,
+            STATUS_COLOR_GREEN = 3;
 
     public TaskStatusTypeDTO() {
     }
@@ -43,7 +43,6 @@ public class TaskStatusTypeDTO implements Serializable {
     public void setCompanyID(Integer companyID) {
         this.companyID = companyID;
     }
-    
 
     public Integer getTaskStatusTypeID() {
         return taskStatusTypeID;
@@ -77,8 +76,6 @@ public class TaskStatusTypeDTO implements Serializable {
         this.projectTaskStatusList = projectTaskStatusList;
     }
 
- 
-
     @Override
     public int hashCode() {
         int hash = 0;
@@ -103,5 +100,5 @@ public class TaskStatusTypeDTO implements Serializable {
     public String toString() {
         return "com.boha.monitor.data.TaskStatusType[ taskStatusTypeID=" + taskStatusTypeID + " ]";
     }
-    
+
 }

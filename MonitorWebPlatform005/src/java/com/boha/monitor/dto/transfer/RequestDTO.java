@@ -12,14 +12,21 @@ import com.boha.monitor.dto.ChatMessageDTO;
 import com.boha.monitor.dto.CompanyDTO;
 import com.boha.monitor.dto.GcmDeviceDTO;
 import com.boha.monitor.dto.LocationTrackerDTO;
+import com.boha.monitor.dto.MonitorDTO;
+import com.boha.monitor.dto.MonitorProjectDTO;
 import com.boha.monitor.dto.PhotoUploadDTO;
+import com.boha.monitor.dto.PortfolioDTO;
+import com.boha.monitor.dto.ProgrammeDTO;
 import com.boha.monitor.dto.ProjectDTO;
 import com.boha.monitor.dto.ProjectStatusTypeDTO;
 import com.boha.monitor.dto.ProjectTaskDTO;
 import com.boha.monitor.dto.ProjectTaskStatusDTO;
 import com.boha.monitor.dto.StaffDTO;
+import com.boha.monitor.dto.StaffProjectDTO;
+import com.boha.monitor.dto.SubTaskDTO;
 import com.boha.monitor.dto.TaskDTO;
 import com.boha.monitor.dto.TaskStatusTypeDTO;
+import com.boha.monitor.dto.TaskTypeDTO;
 import java.io.Serializable;
 import java.util.List;
 
@@ -30,7 +37,7 @@ import java.util.List;
 public class RequestDTO implements Serializable {
 
     private Integer requestType, companyID, staffID,
-            projectID, projectTaskID, loginType, monitorID;
+            projectID, projectTaskID, loginType, monitorID, taskTypeID;
     private boolean responseRequested;
 
     private String email, pin, gcmRegistrationID;
@@ -44,39 +51,47 @@ public class RequestDTO implements Serializable {
     private ChatMessageDTO chatMessage;
     private ProjectTaskDTO projectTask;
 
+    private List<TaskDTO> taskList;
+    private List<StaffProjectDTO> staffProjectList;
+    private List<MonitorProjectDTO> monitorProjectList;
+    private List<PortfolioDTO> portfolioList;
+    private List<ProgrammeDTO> programmeList;
+    private List<ProjectDTO> projectList;
+    private List<TaskTypeDTO> taskTypeList;
+    private List<TaskStatusTypeDTO> taskStatusTypeList;
+    private List<ProjectStatusTypeDTO> projectStatusTypeList;
+    private List<StaffDTO> staffList;
+    private List<MonitorDTO> monitorList;
+    private List<ProjectTaskDTO> projectTaskList;
+
     private TaskDTO task;
     private TaskStatusTypeDTO taskStatus;
     private ChatDTO chat;
 
     private ProjectTaskStatusDTO projectTaskStatus;
     private ProjectStatusTypeDTO projectStatusType;
-    private List<PhotoUploadDTO> photoUploadList;
+    private PhotoUploadDTO photoUpload;
     private List<LocationTrackerDTO> locationTrackerList;
     private List<ChatMemberDTO> chatMemberList;
+    private List<SubTaskDTO> subTaskList;
+    
 //register actors
-    public static final int REGISTER_COMPANY = 1,
-            REGISTER_COMPANY_STAFF = 2,
-            REGISTER_PROJECT = 3,
-            REGISTER_PROJECT_SITE = 4,
-            REGISTER_STAFF = 5,
-            REGISTER_MONITOR = 6,
-                                 
-            ADD_LOCATION_TRACKERS = 7,
-            SET_MONITOR_PROJECTS = 8,
-            SET_STAFF_PROJECTS = 9,
-            
-            ADD_CHAT = 22,
-            ADD_CHAT_MEMBERS = 23,
+    public static final int 
+            REGISTER_COMPANY = 1,
+            IMPORT_TASK_INFO = 2,
+            IMPORT_PROJECT_INFO = 3,
             NOTIFY_SUPERVISOR_NO_PROJECTS = 30;
     //add stuff
-    public static final int ADD_PROJECT_TASK = 11,
+    public static final int 
             ADD_PROJECT_DIARY_RECORD = 12,
             ADD_PROJECT_TASK_STATUS = 13,
             ADD_PROJECT_STATUS = 13,
-            ADD_PROJECT_STATUS_TYPE = 14,
-            ADD_DEVICE = 17;
+            ADD_DEVICE = 17,
+            ADD_PHOTO = 18;
     //get stuff
-    public static final int GET_PROJECT_DATA = 101,
+    public static final int 
+            GET_COMPANY_LIST = 100,
+            GET_PROJECT_DATA = 101,
             GET_PROJECT_SITE_DATA = 102,
             GET_SITE_IMAGE_FILENAMES = 103,
             GET_TASK_IMAGE_FILENAMES = 104,
@@ -104,22 +119,42 @@ public class RequestDTO implements Serializable {
             GET_CHATS_BY_PROJECT_AND_STAFF = 127,
             GET_MESSAGES_BY_PROJECT = 128,
             GET_MONITOR_PROJECTS = 129;
-    //login's 
-    public static final int LOGIN_STAFF = 200,
+    //
+    public static final int 
+            LOGIN_STAFF = 200,
             LOGIN_MONITOR = 202,
             SEND_GCM_REGISTRATION = 204;
-    //lookups 
-    public static final int ADD_COMPANY_TASK = 301,
+    // 
+    public static final int
             ADD_COMPANY_TASK_STATUS = 302,
             ADD_COMPANY_PROJECT_STATUS_TYPE = 303,
             ADD_COMPANY_CHECKPOINT = 304,
-            ADD_TASK_STATUS_TYPE = 305,
             
             CONFIRM_LOCATION = 310,
-            SYNC_CACHED_REQUESTS = 313;
+            SYNC_CACHED_REQUESTS = 313,
+            
+            ADD_PORTFOLOIOS = 314,
+            ADD_PROGRAMMES = 315,
+            ADD_PROJECTS = 316,
+            ADD_TASKS = 317,
+            ADD_TASK_TYPES = 318,
+            ADD_PROJECT_STATUS_TYPES = 319,
+            ADD_TASK_STATUS_TYPES = 320,
+            ADD_MONITOR_PROJECTS = 321,
+            ADD_STAFF_PROJECTS = 322,
+            ADD_LOCATION_TRACKERS = 323,
+            
+            
+            ADD_CHAT = 324,
+            ADD_CHAT_MEMBERS = 325,
+            ADD_PROJECT_TASKS = 326,
+            ADD_STAFF = 327,
+            ADD_MONITORS = 328,
+            ADD_SUB_TASKS = 329;
 
     //updates 
-    public static final int UPDATE_COMPANY_TASK = 401,
+    public static final int 
+            UPDATE_COMPANY_TASK = 401,
             UPDATE_COMPANY_TASK_STATUS = 402,
             UPDATE_COMPANY_PROJECT_STATUS_TYPE = 403,
             UPDATE_COMPANY_CHECKPOINT = 404,
@@ -148,6 +183,122 @@ public class RequestDTO implements Serializable {
     public static final String PROJECT_DIR = "project";
     public static final String TASK_DIR = "task";
 
+    public List<SubTaskDTO> getSubTaskList() {
+        return subTaskList;
+    }
+
+    public void setSubTaskList(List<SubTaskDTO> subTaskList) {
+        this.subTaskList = subTaskList;
+    }
+
+    public Integer getTaskTypeID() {
+        return taskTypeID;
+    }
+
+    public void setTaskTypeID(Integer taskTypeID) {
+        this.taskTypeID = taskTypeID;
+    }
+
+    public List<ProjectTaskDTO> getProjectTaskList() {
+        return projectTaskList;
+    }
+
+    public void setProjectTaskList(List<ProjectTaskDTO> projectTaskList) {
+        this.projectTaskList = projectTaskList;
+    }
+
+    
+    public List<StaffDTO> getStaffList() {
+        return staffList;
+    }
+
+    public void setStaffList(List<StaffDTO> staffList) {
+        this.staffList = staffList;
+    }
+
+    public List<MonitorDTO> getMonitorList() {
+        return monitorList;
+    }
+
+    public void setMonitorList(List<MonitorDTO> monitorList) {
+        this.monitorList = monitorList;
+    }
+
+    
+    public List<ProjectStatusTypeDTO> getProjectStatusTypeList() {
+        return projectStatusTypeList;
+    }
+
+    public void setProjectStatusTypeList(List<ProjectStatusTypeDTO> projectStatusTypeList) {
+        this.projectStatusTypeList = projectStatusTypeList;
+    }
+
+    
+    public List<TaskStatusTypeDTO> getTaskStatusTypeList() {
+        return taskStatusTypeList;
+    }
+
+    public void setTaskStatusTypeList(List<TaskStatusTypeDTO> taskStatusTypeList) {
+        this.taskStatusTypeList = taskStatusTypeList;
+    }
+
+    public List<TaskDTO> getTaskList() {
+        return taskList;
+    }
+
+    public void setTaskList(List<TaskDTO> taskList) {
+        this.taskList = taskList;
+    }
+
+    public List<StaffProjectDTO> getStaffProjectList() {
+        return staffProjectList;
+    }
+
+    public void setStaffProjectList(List<StaffProjectDTO> staffProjectList) {
+        this.staffProjectList = staffProjectList;
+    }
+
+    public List<MonitorProjectDTO> getMonitorProjectList() {
+        return monitorProjectList;
+    }
+
+    public void setMonitorProjectList(List<MonitorProjectDTO> monitorProjectList) {
+        this.monitorProjectList = monitorProjectList;
+    }
+
+    public List<PortfolioDTO> getPortfolioList() {
+        return portfolioList;
+    }
+
+    public void setPortfolioList(List<PortfolioDTO> portfolioList) {
+        this.portfolioList = portfolioList;
+    }
+
+    public List<ProgrammeDTO> getProgrammeList() {
+        return programmeList;
+    }
+
+    public void setProgrammeList(List<ProgrammeDTO> programmeList) {
+        this.programmeList = programmeList;
+    }
+
+    public List<ProjectDTO> getProjectList() {
+        return projectList;
+    }
+
+    public void setProjectList(List<ProjectDTO> projectList) {
+        this.projectList = projectList;
+    }
+
+    public List<TaskTypeDTO> getTaskTypeList() {
+        return taskTypeList;
+    }
+
+    public void setTaskTypeList(List<TaskTypeDTO> taskTypeList) {
+        this.taskTypeList = taskTypeList;
+    }
+
+    
     public ProjectTaskDTO getProjectTask() {
         return projectTask;
     }
@@ -365,14 +516,15 @@ public class RequestDTO implements Serializable {
         this.projectStatusType = projectStatusType;
     }
 
-    public List<PhotoUploadDTO> getPhotoUploadList() {
-        return photoUploadList;
+    public PhotoUploadDTO getPhotoUpload() {
+        return photoUpload;
     }
 
-    public void setPhotoUploadList(List<PhotoUploadDTO> photoUploadList) {
-        this.photoUploadList = photoUploadList;
+    public void setPhotoUpload(PhotoUploadDTO photoUpload) {
+        this.photoUpload = photoUpload;
     }
 
+   
     public List<LocationTrackerDTO> getLocationTrackerList() {
         return locationTrackerList;
     }

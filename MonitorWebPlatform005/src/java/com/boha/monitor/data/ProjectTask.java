@@ -34,10 +34,14 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "projectTask")
 @NamedQueries({
-    @NamedQuery(name = "ProjectTask.findAll", query = "SELECT p FROM ProjectTask p"),
-    @NamedQuery(name = "ProjectTask.findByProjectTaskID", query = "SELECT p FROM ProjectTask p WHERE p.projectTaskID = :projectTaskID"),
-    @NamedQuery(name = "ProjectTask.findByDateRegistered", query = "SELECT p FROM ProjectTask p WHERE p.dateRegistered = :dateRegistered")})
+    @NamedQuery(name = "ProjectTask.findByProject", 
+            query = "SELECT p FROM ProjectTask p where p.project.projectID = :projectID")
+})
 public class ProjectTask implements Serializable {
+    @JoinColumn(name = "taskID", referencedColumnName = "taskID")
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private Task task;
+   
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -52,9 +56,7 @@ public class ProjectTask implements Serializable {
     @JoinColumn(name = "projectID", referencedColumnName = "projectID")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Project project;
-    @JoinColumn(name = "taskID", referencedColumnName = "taskID")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Task task;
+    
     @OneToMany(mappedBy = "projectTask", fetch = FetchType.LAZY)
     private List<PhotoUpload> photoUploadList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "projectTask", fetch = FetchType.LAZY)
@@ -70,6 +72,14 @@ public class ProjectTask implements Serializable {
     public ProjectTask(Integer projectTaskID, Date dateRegistered) {
         this.projectTaskID = projectTaskID;
         this.dateRegistered = dateRegistered;
+    }
+
+    public Task getTask() {
+        return task;
+    }
+
+    public void setTask(Task task) {
+        this.task = task;
     }
 
     public Integer getProjectTaskID() {
@@ -96,14 +106,7 @@ public class ProjectTask implements Serializable {
         this.project = project;
     }
 
-    public Task getTask() {
-        return task;
-    }
-
-    public void setTask(Task task) {
-        this.task = task;
-    }
-
+   
    
     public List<PhotoUpload> getPhotoUploadList() {
         return photoUploadList;
@@ -145,5 +148,7 @@ public class ProjectTask implements Serializable {
     public String toString() {
         return "com.boha.monitor.data.ProjectTask[ projectTaskID=" + projectTaskID + " ]";
     }
+
+  
     
 }

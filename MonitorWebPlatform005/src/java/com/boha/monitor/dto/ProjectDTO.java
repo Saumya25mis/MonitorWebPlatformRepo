@@ -6,6 +6,7 @@
 
 package com.boha.monitor.dto;
 
+import com.boha.monitor.data.Portfolio;
 import com.boha.monitor.data.Project;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -18,8 +19,8 @@ import java.util.List;
 public class ProjectDTO implements Serializable {
     private List<PhotoUploadDTO> photoUploadList;
     private static final long serialVersionUID = 1L;
-    private Integer projectID;
-    private Integer programmeID, statusCount;
+    private Integer projectID, cityID;
+    private Integer programmeID, portfolioID, statusCount;
     private String projectName;
     private Double latitude;
     private Double longitude;
@@ -27,9 +28,8 @@ public class ProjectDTO implements Serializable {
     private Boolean activeFlag;
     private Boolean locationConfirmed;
     private String address;
-    private String description, programmeName;
+    private String description, programmeName, portfolioName;
     private List<ProjectTaskDTO> projectTaskList = new ArrayList<>();
-    private Integer companyID;
     private List<ProjectStatusDTO> projectStatusList = new ArrayList<>();
     private List<GcmDeviceDTO> gcmDeviceList;
     private List<ChatDTO> chatList;
@@ -51,14 +51,47 @@ public class ProjectDTO implements Serializable {
         locationConfirmed = a.getLocationConfirmed();
         address = a.getAddress();
         description = a.getDescription();
-        companyID = a.getCompany().getCompanyID();
+      
+        if (a.getCity() != null) {
+            cityID = a.getCity().getCityID();
+        }
         if (a.getProgramme() != null) {
             programmeName = a.getProgramme().getProgrammeName();
             programmeID = a.getProgramme().getProgrammeID();
+            if (a.getProgramme().getPortfolio() != null) {
+                Portfolio p = a.getProgramme().getPortfolio();
+                portfolioID = p.getPortfolioID();
+                portfolioName = p.getPortfolioName();
+            }
         }
         
     }
 
+    public Integer getCityID() {
+        return cityID;
+    }
+
+    public void setCityID(Integer cityID) {
+        this.cityID = cityID;
+    }
+
+    public Integer getPortfolioID() {
+        return portfolioID;
+    }
+
+    public void setPortfolioID(Integer portfolioID) {
+        this.portfolioID = portfolioID;
+    }
+
+    public String getPortfolioName() {
+        return portfolioName;
+    }
+
+    public void setPortfolioName(String portfolioName) {
+        this.portfolioName = portfolioName;
+    }
+
+    
     public String getProgrammeName() {
         return programmeName;
     }
@@ -91,14 +124,6 @@ public class ProjectDTO implements Serializable {
 
     public void setPhotoUploadList(List<PhotoUploadDTO> photoUploadList) {
         this.photoUploadList = photoUploadList;
-    }
-
-    public Integer getCompanyID() {
-        return companyID;
-    }
-
-    public void setCompanyID(Integer companyID) {
-        this.companyID = companyID;
     }
 
     public Integer getProjectID() {

@@ -31,6 +31,13 @@ public class PhotoUploadDTO implements Serializable {
     private Integer projectID;
     private Integer projectTaskID;
     private Integer staffID, monitorID;
+    
+    private String secureUrl;
+    private String eTag;
+    private String signature;
+    private Integer width;
+    private Integer height;
+    private Integer bytes;
 
     public PhotoUploadDTO() {
     }
@@ -51,6 +58,14 @@ public class PhotoUploadDTO implements Serializable {
         accuracy = a.getAccuracy();
         uri = a.getUri();
         dateUploaded = a.getDateUploaded().getTime();
+        
+        secureUrl = a.getSecureUrl();
+        eTag = a.getETag();
+        signature = a.getSignature();
+        width = a.getWidth();
+        height = a.getHeight();
+        bytes = a.getBytes();
+        
         if (a.getProject() != null) {
             projectID = a.getProject().getProjectID();
         }
@@ -63,6 +78,54 @@ public class PhotoUploadDTO implements Serializable {
         if (a.getMonitor() != null) {
             monitorID = a.getMonitor().getMonitorID();
         }
+    }
+
+    public String getSecureUrl() {
+        return secureUrl;
+    }
+
+    public void setSecureUrl(String secureUrl) {
+        this.secureUrl = secureUrl;
+    }
+
+    public String geteTag() {
+        return eTag;
+    }
+
+    public void seteTag(String eTag) {
+        this.eTag = eTag;
+    }
+
+    public String getSignature() {
+        return signature;
+    }
+
+    public void setSignature(String signature) {
+        this.signature = signature;
+    }
+
+    public Integer getWidth() {
+        return width;
+    }
+
+    public void setWidth(Integer width) {
+        this.width = width;
+    }
+
+    public Integer getHeight() {
+        return height;
+    }
+
+    public void setHeight(Integer height) {
+        this.height = height;
+    }
+
+    public Integer getBytes() {
+        return bytes;
+    }
+
+    public void setBytes(Integer bytes) {
+        this.bytes = bytes;
     }
 
     public boolean isIsFullPicture() {

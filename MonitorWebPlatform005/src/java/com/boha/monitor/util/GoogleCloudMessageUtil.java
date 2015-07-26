@@ -4,11 +4,8 @@
  */
 package com.boha.monitor.util;
 
-import com.boha.monitor.data.ErrorStore;
 import com.boha.monitor.data.GcmDevice;
 import com.boha.monitor.dto.transfer.ResponseDTO;
-import static com.boha.monitor.util.CloudMsgUtil.API_KEY;
-import static com.boha.monitor.util.PlatformUtil.log;
 import com.google.android.gcm.server.Constants;
 import com.google.android.gcm.server.Message;
 import com.google.android.gcm.server.MulticastResult;
@@ -33,6 +30,7 @@ public class GoogleCloudMessageUtil {
     private static final int RETRIES = 5;
 
     public static final int GCM_MESSAGE_ERROR = 3, ALL_OK = 0, MAX_MESSAGES_IN_BATCH = 1000;
+    private static String API_KEY;
 
     
     public static ResponseDTO sendNoProjectsAssignedMessage(EntityManager em,Integer companyID, Integer monitorID) throws
@@ -59,7 +57,7 @@ public class GoogleCloudMessageUtil {
             LOG.log(Level.SEVERE, "#### No gcm registrationIDs found ");
             resp.setMessage("No staff found or their devices are not registered");
             resp.setStatusCode(RETRIES);
-            addErrorStore(em,StatusCode.ERROR_GCM, "#### No devices found to send messages to.");
+//            addErrorStore(em,StatusCode.ERROR_GCM, "#### No devices found to send messages to.");
             return resp;
         }
         GCMResult gcmr = null;
@@ -74,7 +72,7 @@ public class GoogleCloudMessageUtil {
                 rMsg = "Google GCM - message has not been sent. Error occured";
                 resp.setStatusCode(StatusCode.ERROR_GCM);
                 resp.setMessage(rMsg);
-                addErrorStore(em,StatusCode.ERROR_GCM, rMsg);
+//                addErrorStore(em,StatusCode.ERROR_GCM, rMsg);
             }
             resp.setMessage(rMsg);
             return resp;
@@ -144,18 +142,18 @@ public class GoogleCloudMessageUtil {
                     Constants.ERROR_NOT_REGISTERED)) {
                 // TODO remove the registration from the database *****
                 LOG.log(Level.SEVERE, "#### GCM device not registered");
-                addErrorStore(em,StatusCode.ERROR_GCM,"#### GCM device not registered");
+//                addErrorStore(em,StatusCode.ERROR_GCM,"#### GCM device not registered");
                 return gcmr;
             }
             if (result.getErrorCodeName().equals(
                     Constants.ERROR_UNAVAILABLE)) {
                 LOG.log(Level.SEVERE, "#### GCM servers not available");
-                addErrorStore(em,StatusCode.ERROR_GCM, "#### GCM servers not available");
+//                addErrorStore(em,StatusCode.ERROR_GCM, "#### GCM servers not available");
                 return gcmr;
             }
             LOG.log(Level.SEVERE, "#### GCM message send error : {0}",
                     result.getErrorCodeName());
-            addErrorStore(em,StatusCode.ERROR_GCM,"#### GCM message send error\nErrorCodeName: " + result.getErrorCodeName());
+//            addErrorStore(em,StatusCode.ERROR_GCM,"#### GCM message send error\nErrorCodeName: " + result.getErrorCodeName());
             return gcmr;
         }
 
@@ -199,21 +197,21 @@ public class GoogleCloudMessageUtil {
                         Constants.ERROR_NOT_REGISTERED)) {
                     gcmr.message = "GCM device not registered";
                     LOG.log(Level.SEVERE, "#### GCM device not registered");
-                    addErrorStore(em,StatusCode.ERROR_GCM,"#### GCM device not registered");
+//                    addErrorStore(em,StatusCode.ERROR_GCM,"#### GCM device not registered");
                     return gcmr;
                 }
                 if (result.getErrorCodeName().equals(
                         Constants.ERROR_UNAVAILABLE)) {
                     gcmr.message = "GCM servers not available";
                     LOG.log(Level.SEVERE, "#### GCM servers not available");
-                    addErrorStore(em,StatusCode.ERROR_GCM,"#### GCM servers not available");
+//                    addErrorStore(em,StatusCode.ERROR_GCM,"#### GCM servers not available");
                     return gcmr;
                 }
                 gcmr.message = "GCM message send error: " + result.getErrorCodeName();
                 LOG.log(Level.SEVERE, "#### GCM message send error : {0}",
                         result.getErrorCodeName());
                 
-                addErrorStore(em,StatusCode.ERROR_GCM, "#### GCM message send error\nErrorCodeName: " + result.getErrorCodeName());
+//                addErrorStore(em,StatusCode.ERROR_GCM, "#### GCM message send error\nErrorCodeName: " + result.getErrorCodeName());
                 return gcmr;
             }
 
@@ -232,21 +230,7 @@ public class GoogleCloudMessageUtil {
     }
     static final Logger LOG = Logger.getLogger("CloudMsgUtil");
 
-  public static void addErrorStore(EntityManager em, int statusCode, String message) {
-        log.log(Level.OFF, "------ adding errorStore, message: {0} statusCode: {1}", new Object[]{message, statusCode});
-        try {
-            ErrorStore t = new ErrorStore();
-            t.setDateOccured(new Date());
-            t.setMessage(message);
-            t.setStatusCode(statusCode);
-            t.setOrigin(GoogleCloudMessagingRegistrar.class.getSimpleName());
-            em.persist(t);
-            log.log(Level.INFO, "####### ErrorStore row added, origin {0} statusCode: {1}",
-                    new Object[]{t.getOrigin(), t.getStatusCode()});
-        } catch (Exception e) {
-            log.log(Level.SEVERE, "####### Failed to add errorStore: " + message, e);
-        }
-    }
+
 
     private static class GCMResult {
 

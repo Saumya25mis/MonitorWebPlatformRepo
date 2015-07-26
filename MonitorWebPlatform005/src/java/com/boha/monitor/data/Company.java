@@ -12,6 +12,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -34,6 +35,9 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "Company.findByCompanyName", query = "SELECT c FROM Company c WHERE c.companyName = :companyName")
 })
 public class Company implements Serializable {
+    
+    @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
+    private List<GcmDevice> gcmDeviceList;
     @Size(max = 255)
     @Column(name = "email")
     private String email;
@@ -59,21 +63,15 @@ public class Company implements Serializable {
     @OneToMany(mappedBy = "company")
     private List<ErrorStoreAndroid> errorStoreAndroidList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
-    private List<PhotoUpload> photoUploadList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
-    private List<Project> projectList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
+    
+    
     private List<Monitor> monitorList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
     private List<Staff> staffList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
     private List<TaskStatusType> taskStatusTypeList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
-    private List<TaskType> taskTypeList;
-    @OneToMany(mappedBy = "company")
-    private List<GcmDevice> gcmDeviceList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
-    private List<Task> taskList;
+    
+    
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
     private List<Portfolio> portfolioList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
@@ -126,21 +124,6 @@ public class Company implements Serializable {
         this.errorStoreAndroidList = errorStoreAndroidList;
     }
 
-    public List<PhotoUpload> getPhotoUploadList() {
-        return photoUploadList;
-    }
-
-    public void setPhotoUploadList(List<PhotoUpload> photoUploadList) {
-        this.photoUploadList = photoUploadList;
-    }
-
-    public List<Project> getProjectList() {
-        return projectList;
-    }
-
-    public void setProjectList(List<Project> projectList) {
-        this.projectList = projectList;
-    }
 
     public List<Monitor> getMonitorList() {
         return monitorList;
@@ -166,30 +149,7 @@ public class Company implements Serializable {
         this.taskStatusTypeList = taskStatusTypeList;
     }
 
-    public List<TaskType> getTaskTypeList() {
-        return taskTypeList;
-    }
-
-    public void setTaskTypeList(List<TaskType> taskTypeList) {
-        this.taskTypeList = taskTypeList;
-    }
-
-    public List<GcmDevice> getGcmDeviceList() {
-        return gcmDeviceList;
-    }
-
-    public void setGcmDeviceList(List<GcmDevice> gcmDeviceList) {
-        this.gcmDeviceList = gcmDeviceList;
-    }
-
-    public List<Task> getTaskList() {
-        return taskList;
-    }
-
-    public void setTaskList(List<Task> taskList) {
-        this.taskList = taskList;
-    }
-
+ 
     public List<Portfolio> getPortfolioList() {
         return portfolioList;
     }
@@ -246,5 +206,13 @@ public class Company implements Serializable {
     public void setCellphone(String cellphone) {
         this.cellphone = cellphone;
     }
-    
+
+    public List<GcmDevice> getGcmDeviceList() {
+        return gcmDeviceList;
+    }
+
+    public void setGcmDeviceList(List<GcmDevice> gcmDeviceList) {
+        this.gcmDeviceList = gcmDeviceList;
+    }
+
 }

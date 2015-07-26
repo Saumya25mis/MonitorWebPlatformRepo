@@ -9,8 +9,10 @@ package com.boha.monitor.data;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -30,11 +32,19 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(name = "taskType")
 @NamedQueries({
-    @NamedQuery(name = "TaskType.findByCompany", 
-            query = "SELECT t FROM TaskType t WHERE t.company.companyID = :companyID ORDER BY t.taskTypeName")
+    @NamedQuery(name = "TaskType.findByProgramme", 
+            query = "SELECT t FROM TaskType t WHERE t.programme.programmeID = :programmeID ORDER BY t.taskTypeName"),
+    
 })
 public class TaskType implements Serializable {
-   
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "taskType")
+    private List<MonitorTrade> monitorTradeList;
+    
+    
+    @JoinColumn(name = "programmeID", referencedColumnName = "programmeID")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Programme programme;
+       
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,12 +53,16 @@ public class TaskType implements Serializable {
     private Integer taskTypeID;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 45)
+    @Size(min = 1, max = 512)
     @Column(name = "taskTypeName")
     private String taskTypeName;
-    @JoinColumn(name = "companyID", referencedColumnName = "companyID")
-    @ManyToOne(optional = false)
-    private Company company;
+    
+    @Basic(optional = true)
+    @NotNull
+    @Size(min = 1, max = 512)
+    @Column(name = "sectionName")
+    private String sectionName;
+    
     @OneToMany(mappedBy = "taskType")
     private List<Task> taskList;
 
@@ -79,15 +93,6 @@ public class TaskType implements Serializable {
     public void setTaskTypeName(String taskTypeName) {
         this.taskTypeName = taskTypeName;
     }
-
-    public Company getCompany() {
-        return company;
-    }
-
-    public void setCompany(Company company) {
-        this.company = company;
-    }
-
 
     public List<Task> getTaskList() {
         return taskList;
@@ -122,6 +127,30 @@ public class TaskType implements Serializable {
         return "com.boha.monitor.data.TaskType[ taskTypeID=" + taskTypeID + " ]";
     }
 
-   
+    public Programme getProgramme() {
+        return programme;
+    }
+
+    public void setProgramme(Programme programme) {
+        this.programme = programme;
+    }
+
+    public String getSectionName() {
+        return sectionName;
+    }
+
+    public void setSectionName(String sectionName) {
+        this.sectionName = sectionName;
+    }
+
+    public List<MonitorTrade> getMonitorTradeList() {
+        return monitorTradeList;
+    }
+
+    public void setMonitorTradeList(List<MonitorTrade> monitorTradeList) {
+        this.monitorTradeList = monitorTradeList;
+    }
+
     
+
 }

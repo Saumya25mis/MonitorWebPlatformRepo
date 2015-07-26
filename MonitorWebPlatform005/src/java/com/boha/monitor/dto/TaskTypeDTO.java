@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.boha.monitor.dto;
 
 import com.boha.monitor.data.TaskType;
@@ -16,12 +15,12 @@ import java.util.List;
  * @author aubreyM
  */
 public class TaskTypeDTO implements Serializable {
+
     private static final long serialVersionUID = 1L;
     private Integer taskTypeID;
-    private String taskTypeName;
-    private Integer companyID;
+    private String taskTypeName, sectionName;
+    private Integer programmeID;
     private List<TaskDTO> taskList = new ArrayList<>();
-    
 
     public TaskTypeDTO() {
     }
@@ -29,12 +28,31 @@ public class TaskTypeDTO implements Serializable {
     public TaskTypeDTO(TaskType a) {
         this.taskTypeID = a.getTaskTypeID();
         this.taskTypeName = a.getTaskTypeName();
-        companyID = a.getCompany().getCompanyID();
-        
-        
-        
+        sectionName = a.getSectionName();
+       
+        if (a.getProgramme() != null) {
+            programmeID = a.getProgramme().getProgrammeID();
+        }
+
     }
 
+    public Integer getProgrammeID() {
+        return programmeID;
+    }
+
+    public void setProgrammeID(Integer programmeID) {
+        this.programmeID = programmeID;
+    }
+
+    public String getSectionName() {
+        return sectionName;
+    }
+
+    public void setSectionName(String sectionName) {
+        this.sectionName = sectionName;
+    }
+
+    
     public Integer getTaskTypeID() {
         return taskTypeID;
     }
@@ -50,15 +68,6 @@ public class TaskTypeDTO implements Serializable {
     public void setTaskTypeName(String taskTypeName) {
         this.taskTypeName = taskTypeName;
     }
-
-    public Integer getCompanyID() {
-        return companyID;
-    }
-
-    public void setCompanyID(Integer companyID) {
-        this.companyID = companyID;
-    }
-
 
     public List<TaskDTO> getTaskList() {
         return taskList;
@@ -92,5 +101,5 @@ public class TaskTypeDTO implements Serializable {
     public String toString() {
         return "com.boha.monitor.data.TaskType[ taskTypeID=" + taskTypeID + " ]";
     }
-    
+
 }

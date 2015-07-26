@@ -19,14 +19,18 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
+import com.boha.monitor.util.DataUtil;
+import com.boha.monitor.util.ServerStatus;
+import com.boha.monitor.util.SignInUtil;
+import com.boha.monitor.util.StatusCode;
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
 
 /**
  *
@@ -36,11 +40,11 @@ import javax.websocket.server.ServerEndpoint;
 @Stateless
 public class CachedRequestWebSocket {
 
-   
     @EJB
-    TrafficCop trafficCop;
-    
-    
+    DataUtil dataUtil;
+    @EJB
+    SignInUtil signInUtil;
+
     static final String SOURCE = "CachedRequestWebSocket";
     //TODO - clean up expired sessions!!!!
     public static final Set<Session> peers
@@ -54,10 +58,9 @@ public class CachedRequestWebSocket {
         int goodCount = 0, badCount = 0;
         long start = System.currentTimeMillis();
         try {
-
             RequestList dto = gson.fromJson(message, RequestList.class);
             for (RequestDTO req : dto.getRequests()) {
-                ResponseDTO resp = trafficCop.processRequest(req);
+                ResponseDTO resp = TrafficCop.processRequest(req, dataUtil, signInUtil);
                 if (resp.getStatusCode() == 0) {
                     goodCount++;
                 } else {
@@ -80,6 +83,12 @@ public class CachedRequestWebSocket {
             } catch (IOException ex1) {
                 log.log(Level.SEVERE, null, ex1);
             }
+        } catch (Exception ex) {
+            response.setStatusCode(StatusCode.ERROR_SERVER);
+            response.setMessage(ServerStatus.getMessage(response.getStatusCode()));
+            log.log(Level.SEVERE, response.getMessage(), ex);
+            dataUtil.addErrorStore(StatusCode.ERROR_SERVER, response.getMessage(), SOURCE);
+
         }
         return bb;
     }
@@ -118,4 +127,5 @@ public class CachedRequestWebSocket {
 
     Gson gson = new Gson();
     static final Logger log = Logger.getLogger(CachedRequestWebSocket.class.getSimpleName());
+
 }

@@ -5,7 +5,6 @@
  */
 package com.boha.monitor.dto.transfer;
 
-import com.boha.monitor.data.TaskType;
 import com.boha.monitor.dto.ChatDTO;
 import com.boha.monitor.dto.ChatMessageDTO;
 import com.boha.monitor.dto.CompanyDTO;
@@ -14,12 +13,17 @@ import com.boha.monitor.dto.ErrorStoreAndroidDTO;
 import com.boha.monitor.dto.ErrorStoreDTO;
 import com.boha.monitor.dto.LocationTrackerDTO;
 import com.boha.monitor.dto.MonitorDTO;
+import com.boha.monitor.dto.MonitorProjectDTO;
+import com.boha.monitor.dto.MonitorTradeDTO;
 import com.boha.monitor.dto.PhotoUploadDTO;
+import com.boha.monitor.dto.PortfolioDTO;
+import com.boha.monitor.dto.ProgrammeDTO;
 import com.boha.monitor.dto.ProjectDTO;
 import com.boha.monitor.dto.ProjectStatusTypeDTO;
 import com.boha.monitor.dto.ProjectTaskDTO;
 import com.boha.monitor.dto.ProjectTaskStatusDTO;
 import com.boha.monitor.dto.StaffProjectDTO;
+import com.boha.monitor.dto.SubTaskDTO;
 import com.boha.monitor.dto.TaskDTO;
 import com.boha.monitor.dto.TaskStatusTypeDTO;
 import com.boha.monitor.dto.TaskTypeDTO;
@@ -31,18 +35,21 @@ import java.util.List;
  */
 public class ResponseDTO {
 
-    private Integer statusCode = 0, statusCount,
+    private int statusCode;
+    private Integer statusCount,
             goodCount, badCount, gcmSuccess, gcmFailure;
     private String message = "Request is KOOL!",
             sessionID, GCMRegistrationID, fileString;
     private Double elapsedRequestTimeInSeconds;
     private String log;
     private ChatDTO chat;
+    private List<CompanyDTO> companyList;
     private List<ChatDTO> chatList;
     private List<LocationTrackerDTO> locationTrackerList;
     private List<String> taskImageFileNameList;
     private List<ChatMessageDTO> chatMessageList;
     private List<StaffProjectDTO> staffProjectList;
+    private List<MonitorProjectDTO> monitorProjectList;
     private List<String> siteImageFileNameList;
     private List<ProjectStatusTypeDTO> projectStatusTypeList;
     private List<ProjectDTO> projectList;
@@ -54,14 +61,72 @@ public class ResponseDTO {
     private List<ProjectTaskDTO> projectTaskList;
     private List<PhotoUploadDTO> photoUploadList;
     private List<TaskTypeDTO> taskTypeList;
+    private List<SubTaskDTO> subTaskList;
+    private List<MonitorTradeDTO> monitorTradeList;
     //
     private CompanyDTO company;
     private List<MonitorDTO> monitorList;
     private List<StaffDTO> staffList;
     private ProjectTaskStatusDTO lastStatus;
+    private List<PortfolioDTO> portfolioList;
+    private List<ProgrammeDTO> programmeList;
 
+    public List<SubTaskDTO> getSubTaskList() {
+        return subTaskList;
+    }
+
+    public void setSubTaskList(List<SubTaskDTO> subTaskList) {
+        this.subTaskList = subTaskList;
+    }
+
+    public List<MonitorTradeDTO> getMonitorTradeList() {
+        return monitorTradeList;
+    }
+
+    public void setMonitorTradeList(List<MonitorTradeDTO> monitorTradeList) {
+        this.monitorTradeList = monitorTradeList;
+    }
+
+    
+    public List<CompanyDTO> getCompanyList() {
+        return companyList;
+    }
+
+    public void setCompanyList(List<CompanyDTO> companyList) {
+        this.companyList = companyList;
+    }
+
+    
+    public List<ProgrammeDTO> getProgrammeList() {
+        return programmeList;
+    }
+
+    public void setProgrammeList(List<ProgrammeDTO> programmeList) {
+        this.programmeList = programmeList;
+    }
+    
+    
+
+    public List<MonitorProjectDTO> getMonitorProjectList() {
+        return monitorProjectList;
+    }
+
+    public void setMonitorProjectList(List<MonitorProjectDTO> monitorProjectList) {
+        this.monitorProjectList = monitorProjectList;
+    }
+
+    
+    
     public List<TaskTypeDTO> getTaskTypeList() {
         return taskTypeList;
+    }
+
+    public List<PortfolioDTO> getPortfolioList() {
+        return portfolioList;
+    }
+
+    public void setPortfolioList(List<PortfolioDTO> portfolioList) {
+        this.portfolioList = portfolioList;
     }
 
     public void setTaskTypeList(List<TaskTypeDTO> taskTypeList) {
@@ -116,11 +181,11 @@ public class ResponseDTO {
         this.staffList = staffList;
     }
 
-    public Integer getStatusCode() {
+    public int getStatusCode() {
         return statusCode;
     }
 
-    public void setStatusCode(Integer statusCode) {
+    public void setStatusCode(int statusCode) {
         this.statusCode = statusCode;
     }
 

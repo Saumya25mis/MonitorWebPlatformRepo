@@ -17,7 +17,6 @@ import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import org.joda.time.DateTime;
 
@@ -27,73 +26,9 @@ import org.joda.time.DateTime;
  */
 public class ListUtil {
 
-    public static ResponseDTO loginStaff(EntityManager em, GcmDeviceDTO device, String email,
-            String pin) throws DataException {
-        ResponseDTO resp = new ResponseDTO();
-        resp.setStaffList(new ArrayList<>());
-        Query q = null;
-        try {
-            q = em.createNamedQuery("Staff.login", Staff.class);
-            q.setParameter("email", email);
-            q.setParameter("pin", pin);
-            q.setMaxResults(1);
-            Staff cs = (Staff) q.getSingleResult();
-            Company company = cs.getCompany();
-            resp.getStaffList().add(new StaffDTO(cs));
-            resp.setCompany(new CompanyDTO(company));
-
-            device.setCompanyID(company.getCompanyID());
-            device.setStaffID(cs.getStaffID());
-            addDevice(em, device);
-
-            q = em.createNamedQuery("StaffProject.findByStaff", StaffProject.class);
-            q.setParameter("staffID", cs.getStaffID());
-            List<StaffProject> sList = q.getResultList();
-            resp.setProjectList(new ArrayList<>());
-            for (StaffProject x : sList) {
-                resp.getProjectList().add(new ProjectDTO(x.getProject()));
-            }
-
-        } catch (NoResultException e) {
-            log.log(Level.WARNING, "Invalid login attempt: " + email + " pin: " + pin, e);
-            resp.setStatusCode(ServerStatus.ERROR_LOGGING_IN);
-            resp.setMessage(ServerStatus.getMessage(resp.getStatusCode()));
-        }
-        return resp;
-    }
-
-    public static ResponseDTO loginMonitor(EntityManager em, GcmDeviceDTO device, String email,
-            String pin) throws DataException {
-        ResponseDTO resp = new ResponseDTO();
-        resp.setMonitorList(new ArrayList<>());
-        Query q = null;
-        try {
-            q = em.createNamedQuery("Monitor.login", Monitor.class);
-            q.setParameter("email", email);
-            q.setParameter("pin", pin);
-            q.setMaxResults(1);
-            Monitor cs = (Monitor) q.getSingleResult();
-            Company company = cs.getCompany();
-            resp.getMonitorList().add(new MonitorDTO(cs));
-            resp.setCompany(new CompanyDTO(company));
-
-            device.setCompanyID(company.getCompanyID());
-            device.setMonitorID(cs.getMonitorID());
-            addDevice(em, device);
-
-            getProjectDataForMonitor(em, resp, cs.getMonitorID());
-            resp.setTaskStatusTypeList(getTaskStatusTypeList(em, company.getCompanyID()).getTaskStatusTypeList());
-
-        } catch (NoResultException e) {
-            log.log(Level.WARNING, "Invalid monitor login attempt: " + email + " pin: " + pin, e);
-            resp.setStatusCode(ServerStatus.ERROR_LOGGING_IN);
-            resp.setMessage(ServerStatus.getMessage(resp.getStatusCode()));
-        }
-        return resp;
-    }
-
     public static ResponseDTO getMonitorProjects(EntityManager em, Integer monitorID) throws DataException {
         ResponseDTO resp = new ResponseDTO();
+        
         try {
             getProjectDataForMonitor(em, resp, monitorID);
         } catch (Exception e) {
@@ -104,7 +39,7 @@ public class ListUtil {
         return resp;
     }
 
-    private static void getProjectDataForMonitor(EntityManager em, ResponseDTO resp, Integer monitorID) {
+    public static void getProjectDataForMonitor(EntityManager em, ResponseDTO resp, Integer monitorID) {
 
         Monitor mon = em.find(Monitor.class, monitorID);
 
@@ -146,50 +81,150 @@ public class ListUtil {
 
     public static ResponseDTO getCompanyData(EntityManager em, Integer companyID) throws DataException {
         ResponseDTO resp = new ResponseDTO();
-        Query q = em.createNamedQuery("Project.findByCompany", Project.class);
-        q.setParameter("companyID", companyID);
-        List<Project> list = q.getResultList();
-        resp.setProjectList(new ArrayList<>());
-        for (Project cm : list) {
-            resp.getProjectList().add(new ProjectDTO(cm));
-        }
 
         resp.setStaffList(getCompanyStaffList(em, companyID).getStaffList());
         resp.setTaskStatusTypeList(getTaskStatusTypeList(em, companyID).getTaskStatusTypeList());
         resp.setProjectStatusTypeList(getProjectStatusTypeList(em, companyID).getProjectStatusTypeList());
-        resp.setTaskTypeList(getTaskTypeList(em, companyID).getTaskTypeList());
         resp.setMonitorList(getMonitorList(em, companyID).getMonitorList());
+        resp.setPortfolioList(getPortfolioList(em, companyID).getPortfolioList());
 
         return resp;
     }
 
-    public static void addDevice(EntityManager em, GcmDeviceDTO d) throws DataException {
+    public static ResponseDTO getProgrammeTaskTypeList(EntityManager em, Integer programmeID) throws DataException {
+        ResponseDTO resp = new ResponseDTO();
         try {
-            GcmDevice g = new GcmDevice();
-            g.setCompany(em.find(Company.class, d.getCompanyID()));
-            if (d.getStaffID() != null) {
-                g.setStaff(em.find(Staff.class, d.getStaffID()));
-            }
-            if (d.getMonitorID() != null) {
-                g.setMonitor(em.find(Monitor.class, d.getMonitorID()));
-            }
+            Query q = em.createNamedQuery("Task.findByProgramme", Task.class);
+            q.setParameter("programmeID", programmeID);
+            List<Task> taskList = q.getResultList();
 
-            g.setDateRegistered(new Date());
-            g.setManufacturer(d.getManufacturer());
-            g.setMessageCount(0);
-            g.setModel(d.getModel());
-            g.setRegistrationID(d.getRegistrationID());
-            g.setSerialNumber(d.getSerialNumber());
-            g.setProduct(d.getProduct());
-            g.setAndroidVersion(d.getAndroidVersion());
+            Query q2 = em.createNamedQuery("TaskType.findByProgramme", TaskType.class);
+            q2.setParameter("programmeID", programmeID);
+            List<TaskType> taskTypeList = q2.getResultList();
 
-            em.persist(g);
-            log.log(Level.WARNING, "New device loaded");
+            q2 = em.createNamedQuery("SubTask.findByProgramme", SubTask.class);
+            q2.setParameter("programmeID", programmeID);
+            List<SubTask> subTaskList = q2.getResultList();
+
+            resp.setTaskTypeList(new ArrayList<>());
+            for (TaskType taskType : taskTypeList) {
+                TaskTypeDTO dto = new TaskTypeDTO(taskType);
+                dto.setTaskList(new ArrayList<>());
+                for (Task task : taskList) {
+                    if (Objects.equals(dto.getTaskTypeID(), task.getTaskType().getTaskTypeID())) {
+                        TaskDTO td = new TaskDTO(task);
+                        td.setSubTaskList(new ArrayList<>());
+                        for (SubTask subTask : subTaskList) {
+                            if (Objects.equals(td.getTaskID(), subTask.getTask().getTaskID())) {
+                                td.getSubTaskList().add(new SubTaskDTO(subTask));
+                            }
+                        }
+                        dto.getTaskList().add(td);
+                    }
+                }
+                resp.getTaskTypeList().add(dto);
+            }
+            log.log(Level.INFO, "TaskTypes found: {0}", resp.getTaskTypeList().size());
         } catch (Exception e) {
-            log.log(Level.SEVERE, "Failed", e);
-            throw new DataException("Failed to add device\n" + getErrorString(e));
-
+            log.log(Level.SEVERE, "", e);
+            throw new DataException("Failed to import tasks");
         }
+
+        return resp;
+    }
+
+    public static ResponseDTO getPortfolioList(EntityManager em, Integer companyID) throws DataException {
+        ResponseDTO resp = new ResponseDTO();
+        Query q = em.createNamedQuery("Portfolio.findByCompany", Portfolio.class);
+        q.setParameter("companyID", companyID);
+        List<Portfolio> tList = q.getResultList();
+        resp.setPortfolioList(new ArrayList<>());
+        for (Portfolio p : tList) {
+            PortfolioDTO dto = new PortfolioDTO(p);
+            dto.setProgrammeList(getProgrammeList(em, p.getPortfolioID()));
+            resp.getPortfolioList().add(dto);
+        }
+        return resp;
+    }
+
+    public static ResponseDTO getCompanyList(EntityManager em) throws DataException {
+        ResponseDTO resp = new ResponseDTO();
+        Query q = em.createNamedQuery("Company.findAll", Company.class);
+        List<Company> tList = q.getResultList();
+        resp.setCompanyList(new ArrayList<>());
+        for (Company p : tList) {
+            CompanyDTO company = new CompanyDTO(p);
+            ResponseDTO r = getCompanyData(em, p.getCompanyID());
+            company.setStaffList(r.getStaffList());
+            company.setMonitorList(r.getMonitorList());
+            company.setPortfolioList(r.getPortfolioList());
+            company.setProjectStatusTypeList(r.getProjectStatusTypeList());
+            company.setTaskStatusTypeList(r.getTaskStatusTypeList());
+            
+            resp.getCompanyList().add(company);
+        }
+        return resp;
+    }
+
+    public static List<ProgrammeDTO> getProgrammeList(EntityManager em, Integer portfolioID) throws DataException {
+        List<ProgrammeDTO> list = new ArrayList<>();
+
+        Query q = em.createNamedQuery("Programme.findByPortfolio", Programme.class);
+        q.setParameter("portfolioID", portfolioID);
+        List<Programme> tList = q.getResultList();
+        for (Programme programme : tList) {
+            ProgrammeDTO dto = new ProgrammeDTO(programme);
+            dto.setProjectList(getProjectList(em, programme.getProgrammeID()));
+            dto.setTaskTypeList(getProgrammeTaskTypeList(em, dto.getProgrammeID()).getTaskTypeList());
+            list.add(dto);
+        }
+
+        return list;
+    }
+
+    public static List<ProjectDTO> getProjectList(EntityManager em, Integer programmeID) {
+        List<ProjectDTO> list = new ArrayList<>();
+        Query q = em.createNamedQuery("Project.findByProgramme", Project.class);
+        q.setParameter("programmeID", programmeID);
+        List<Project> tList = q.getResultList();
+        for (Project proj : tList) {
+            ProjectDTO dto = new ProjectDTO(proj);
+            dto.setProjectTaskList(getProjectTaskList(em, proj.getProjectID()));
+            list.add(dto);
+        }
+
+        return list;
+    }
+
+    public static List<ProjectTaskDTO> getProjectTaskList(EntityManager em, Integer projectID) {
+        List<ProjectTaskDTO> list = new ArrayList<>();
+        Query q = em.createNamedQuery("ProjectTask.findByProject", ProjectTask.class);
+        q.setParameter("projectID", projectID);
+        List<ProjectTask> tList = q.getResultList();
+
+        q = em.createNamedQuery("ProjectTaskStatus.findByProject", ProjectTaskStatus.class);
+        q.setParameter("projectID", projectID);
+        List<ProjectTaskStatus> statusList = q.getResultList();
+        
+        q = em.createNamedQuery("PhotoUpload.findByProject", PhotoUpload.class);
+        q.setParameter("projectID", projectID);
+        List<PhotoUpload> photoList = q.getResultList();
+        for (ProjectTask proj : tList) {
+            ProjectTaskDTO dto = new ProjectTaskDTO(proj);
+            for (ProjectTaskStatus projectTaskStatus : statusList) {
+                if (Objects.equals(dto.getProjectTaskID(), projectTaskStatus.getProjectTask().getProjectTaskID())) {
+                    dto.getProjectTaskStatusList().add(new ProjectTaskStatusDTO(projectTaskStatus));
+                }
+            }
+            for (PhotoUpload photoUpload : photoList) {
+                if (Objects.equals(photoUpload.getProjectTask().getProjectTaskID(), dto.getProjectTaskID())) {
+                    dto.getPhotoUploadList().add(new PhotoUploadDTO(photoUpload));
+                }
+            }
+            list.add(dto);
+        }
+
+        return list;
     }
 
     public static ResponseDTO getMonitorList(EntityManager em, Integer companyID) {
@@ -200,18 +235,6 @@ public class ListUtil {
         resp.setMonitorList(new ArrayList<>());
         for (Monitor mon : tList) {
             resp.getMonitorList().add(new MonitorDTO(mon));
-        }
-        return resp;
-    }
-
-    public static ResponseDTO getTaskTypeList(EntityManager em, Integer companyID) {
-        ResponseDTO resp = new ResponseDTO();
-        Query q = em.createNamedQuery("TaskType.findByCompany", TaskType.class);
-        q.setParameter("companyID", companyID);
-        List<TaskType> tList = q.getResultList();
-        resp.setTaskTypeList(new ArrayList<>());
-        for (TaskType taskType : tList) {
-            resp.getTaskTypeList().add(new TaskTypeDTO(taskType));
         }
         return resp;
     }

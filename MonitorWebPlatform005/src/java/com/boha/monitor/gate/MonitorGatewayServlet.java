@@ -9,11 +9,8 @@ import com.boha.monitor.dto.transfer.RequestDTO;
 import com.boha.monitor.dto.transfer.ResponseDTO;
 import com.boha.monitor.util.DataUtil;
 import com.boha.monitor.util.GZipUtility;
-import com.boha.monitor.util.GoogleCloudMessageUtil;
-import com.boha.monitor.util.GoogleCloudMessagingRegistrar;
-import com.boha.monitor.util.ListUtil;
-import com.boha.monitor.util.PlatformUtil;
 import com.boha.monitor.util.ServerStatus;
+import com.boha.monitor.util.SignInUtil;
 import com.boha.monitor.util.TrafficCop;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
@@ -38,22 +35,13 @@ import javax.servlet.http.HttpServletResponse;
 public class MonitorGatewayServlet extends HttpServlet {
 
    
+   
     @EJB
-    PlatformUtil platformUtil;
+    DataUtil dataUtil; 
     @EJB
-    TrafficCop trafficCop;
+    SignInUtil signInUtil;
     
     static final String SOURCE = "MonitorGatewayServlet";
-
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         long start = System.currentTimeMillis();
@@ -65,18 +53,18 @@ public class MonitorGatewayServlet extends HttpServlet {
 
         try {
             if (dto != null && dto.getRequestType() != null) {
-                log.log(Level.INFO, "{0} started ..requestType: {1}",
+                log.log(Level.INFO, "{0} started .....requestType: {1}",
                         new Object[]{MonitorGatewayServlet.class.getSimpleName(), dto.getRequestType()});
-                resp = trafficCop.processRequest(dto);
+                resp = TrafficCop.processRequest(dto, dataUtil, signInUtil);
             } else {
                 resp.setStatusCode(ServerStatus.ERROR_JSON_SYNTAX);
                 resp.setMessage(ServerStatus.getMessage(resp.getStatusCode()));
             }
         } catch (Exception e) {
+            log.log(Level.SEVERE, "Failed request", e);
             resp.setStatusCode(ServerStatus.ERROR_SERVER);
             resp.setMessage(ServerStatus.getMessage(resp.getStatusCode()));
-        } finally {
-            
+        } finally {         
             response.setContentType("application/zip;charset=UTF-8");
             File zipped;
             String json = gson.toJson(resp);
@@ -103,7 +91,7 @@ public class MonitorGatewayServlet extends HttpServlet {
     private RequestDTO getRequest(Gson gson, HttpServletRequest req) {
 
         String json = req.getParameter("JSON");
-        log.log(Level.OFF, "...incoming JSON = {0}", json);
+        log.log(Level.OFF, "....incoming JSON = {0}", json);
         RequestDTO cr = new RequestDTO();
 
         try {

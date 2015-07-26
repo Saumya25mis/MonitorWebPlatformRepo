@@ -6,8 +6,6 @@
 package com.boha.monitor.gate;
 
 import com.boha.monitor.dto.transfer.ResponseDTO;
-import com.boha.monitor.util.DataUtil;
-import com.boha.monitor.util.ListUtil;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.Collections;
@@ -15,7 +13,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
@@ -31,12 +28,6 @@ import javax.websocket.server.ServerEndpoint;
 @ServerEndpoint("/wschat")
 @Stateless
 public class ChatWebSocket {
-
-    @EJB
-    DataUtil dataUtil;
-    @EJB
-    ListUtil listUtil;
-    
 
     static final String SOURCE = "ChatWebSocket";
     public static final Set<Session> peers

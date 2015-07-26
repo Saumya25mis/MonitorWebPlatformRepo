@@ -8,14 +8,10 @@ package com.boha.monitor.gate;
 import com.boha.monitor.dto.transfer.RequestDTO;
 import com.boha.monitor.dto.transfer.RequestList;
 import com.boha.monitor.dto.transfer.ResponseDTO;
-import static com.boha.monitor.gate.CachedRequestWebSocket.log;
 import com.boha.monitor.util.Elapsed;
 import com.boha.monitor.util.GZipUtility;
-import com.boha.monitor.util.PlatformUtil;
-import com.boha.monitor.util.ServerStatus;
 import com.boha.monitor.util.TrafficCop;
 import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
 import com.oreilly.servlet.ServletUtils;
 import java.io.File;
 import java.io.IOException;
@@ -28,6 +24,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import com.boha.monitor.util.DataUtil;
+import com.boha.monitor.util.SignInUtil;
 
 /**
  *
@@ -36,11 +34,11 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet(name = "CachedRequestServlet", urlPatterns = {"/cachedRequests"})
 public class CachedRequestServlet extends HttpServlet {
 
-   
+
     @EJB
-    PlatformUtil platformUtil;
+    DataUtil dataUtil;
     @EJB
-    TrafficCop trafficCop;
+    SignInUtil signInUtil;
     
     static final String SOURCE = "CachedRequestServlet";
 
@@ -65,7 +63,7 @@ public class CachedRequestServlet extends HttpServlet {
             String message = request.getParameter("JSON");
             RequestList dto = gson.fromJson(message, RequestList.class);
             for (RequestDTO req : dto.getRequests()) {
-                resp = trafficCop.processRequest(req);
+                resp = TrafficCop.processRequest(req, dataUtil, signInUtil);
                 if (resp.getStatusCode() == 0) {
                     goodCount++;
                 } else {

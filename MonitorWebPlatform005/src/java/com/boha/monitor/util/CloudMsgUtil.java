@@ -15,7 +15,6 @@ import com.boha.monitor.dto.ChatDTO;
 import com.boha.monitor.dto.ChatMemberDTO;
 import com.boha.monitor.dto.ChatMessageDTO;
 import com.boha.monitor.dto.transfer.ResponseDTO;
-import static com.boha.monitor.util.PlatformUtil.log;
 import com.google.android.gcm.server.Constants;
 import com.google.android.gcm.server.Message;
 import com.google.android.gcm.server.MulticastResult;
@@ -201,7 +200,7 @@ public class CloudMsgUtil {
         speakToGoogle(content, registrationIDs);
 
         long end = System.currentTimeMillis();
-        log.log(Level.OFF, "sendRequestForTalk, elapsed: {0}", Elapsed.getElapsed(start, end));
+        LOG.log(Level.OFF, "sendRequestForTalk, elapsed: {0}", Elapsed.getElapsed(start, end));
         return validList;
     }
 
@@ -445,7 +444,7 @@ public class CloudMsgUtil {
     static final Logger LOG = Logger.getLogger("CloudMsgUtil");
 
     public void addErrorStore(int statusCode, String message, String origin) {
-        log.log(Level.OFF, "------ adding errorStore, message: {0} origin: {1}", new Object[]{message, origin});
+        LOG.log(Level.OFF, "------ adding errorStore, message: {0} origin: {1}", new Object[]{message, origin});
         try {
             ErrorStore t = new ErrorStore();
             t.setDateOccured(new Date());
@@ -453,10 +452,10 @@ public class CloudMsgUtil {
             t.setStatusCode(statusCode);
             t.setOrigin(origin);
             em.persist(t);
-            log.log(Level.INFO, "####### ErrorStore row added, origin {0} \nmessage: {1}",
+            LOG.log(Level.INFO, "####### ErrorStore row added, origin {0} \nmessage: {1}",
                     new Object[]{origin, message});
         } catch (Exception e) {
-            log.log(Level.SEVERE, "####### Failed to add errorStore from " + origin + "\n" + message, e);
+            LOG.log(Level.SEVERE, "####### Failed to add errorStore from " + origin + "\n" + message, e);
         }
     }
 

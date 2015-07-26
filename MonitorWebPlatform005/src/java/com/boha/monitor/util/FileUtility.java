@@ -11,9 +11,6 @@ package com.boha.monitor.util;
 import com.boha.monitor.dto.transfer.RequestDTO;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,7 +24,7 @@ public class FileUtility {
         Random rand = new Random(System.currentTimeMillis());
         //TODO restore after zip testing
         File dir = MonitorProperties.getTemporaryDir();
-        File file = new File(dir, "x" + System.currentTimeMillis() + "_" + rand.nextInt(999999999) + ".data");
+        File file = new File(dir, "x" + System.currentTimeMillis() + "_" + rand.nextInt(999999999) + ".txt");
         try {
             FileUtils.writeStringToFile(file, data);
         } catch (IOException ex) {

@@ -22,8 +22,8 @@ public class ProjectTaskDTO implements Serializable {
     private Integer projectID;
     private TaskDTO task;
     private String projectName;
-    private List<PhotoUploadDTO> photoUploadList = new ArrayList<>();
-    private List<ProjectTaskStatusDTO> projectTaskStatusList = new ArrayList<>();
+    private List<PhotoUploadDTO> photoUploadList;
+    private List<ProjectTaskStatusDTO> projectTaskStatusList;
 
     public ProjectTaskDTO() {
     }
@@ -34,6 +34,8 @@ public class ProjectTaskDTO implements Serializable {
         projectID = a.getProject().getProjectID();
         task = new TaskDTO(a.getTask());
         projectName = a.getProject().getProjectName();
+        photoUploadList = new ArrayList<>();
+        projectTaskStatusList = new ArrayList<>();
     }
 
     public TaskDTO getTask() {
@@ -44,7 +46,6 @@ public class ProjectTaskDTO implements Serializable {
         this.task = task;
     }
 
-    
     public String getProjectName() {
         return projectName;
     }
@@ -76,7 +77,6 @@ public class ProjectTaskDTO implements Serializable {
     public void setProjectID(Integer projectID) {
         this.projectID = projectID;
     }
-
 
     public List<PhotoUploadDTO> getPhotoUploadList() {
         return photoUploadList;

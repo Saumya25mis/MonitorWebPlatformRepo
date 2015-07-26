@@ -38,6 +38,21 @@ import javax.validation.constraints.Size;
             query = "SELECT p FROM PhotoUpload p WHERE p.projectTask.projectTaskID = :projectTaskID ORDER BY p.dateTaken desc")
 })
 public class PhotoUpload implements Serializable {
+    @Size(max = 400)
+    @Column(name = "secureUrl")
+    private String secureUrl;
+    @Size(max = 400)
+    @Column(name = "eTag")
+    private String eTag;
+    @Size(max = 400)
+    @Column(name = "signature")
+    private String signature;
+    @Column(name = "width")
+    private Integer width;
+    @Column(name = "height")
+    private Integer height;
+    @Column(name = "bytes")
+    private Integer bytes;
     @JoinColumn(name = "projectTaskID", referencedColumnName = "projectTaskID")
     @ManyToOne(fetch = FetchType.LAZY)
     private ProjectTask projectTask;
@@ -258,6 +273,54 @@ public class PhotoUpload implements Serializable {
 
     public void setProjectTask(ProjectTask projectTask) {
         this.projectTask = projectTask;
+    }
+
+    public String getSecureUrl() {
+        return secureUrl;
+    }
+
+    public void setSecureUrl(String secureUrl) {
+        this.secureUrl = secureUrl;
+    }
+
+    public String getETag() {
+        return eTag;
+    }
+
+    public void setETag(String eTag) {
+        this.eTag = eTag;
+    }
+
+    public String getSignature() {
+        return signature;
+    }
+
+    public void setSignature(String signature) {
+        this.signature = signature;
+    }
+
+    public Integer getWidth() {
+        return width;
+    }
+
+    public void setWidth(Integer width) {
+        this.width = width;
+    }
+
+    public Integer getHeight() {
+        return height;
+    }
+
+    public void setHeight(Integer height) {
+        this.height = height;
+    }
+
+    public Integer getBytes() {
+        return bytes;
+    }
+
+    public void setBytes(Integer bytes) {
+        this.bytes = bytes;
     }
 
     

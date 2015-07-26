@@ -4,9 +4,7 @@
  */
 package com.boha.monitor.util;
 
-import com.boha.monitor.data.ErrorStore;
 import com.boha.monitor.dto.transfer.ResponseDTO;
-import static com.boha.monitor.util.PlatformUtil.log;
 import com.google.android.gcm.server.Constants;
 import com.google.android.gcm.server.Message;
 import com.google.android.gcm.server.Result;
@@ -15,7 +13,6 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.persistence.EntityManager;
 
 /**
  * Manage registration of mobile devices with Google Cloud Messaging servers
@@ -26,7 +23,7 @@ import javax.persistence.EntityManager;
 public class GoogleCloudMessagingRegistrar {
     
 
-    public static ResponseDTO sendGCMRegistration(EntityManager em,String regID) throws IOException {
+    public static ResponseDTO sendGCMRegistration(String regID) throws IOException {
         logger.log(Level.INFO,
                 "#### RegisterGCM starting comms with Google servers...."
                 + "sending registration of mobile device\n{0}", regID);
@@ -66,7 +63,7 @@ public class GoogleCloudMessagingRegistrar {
             sb.append("Google Cloud Messaging device registration failed.\n");
             sb.append("Error Code Name: ").append(error);
 
-            addErrorStore(em,StatusCode.ERROR_GCM, sb.toString());
+//            addErrorStore(em,StatusCode.ERROR_GCM, sb.toString());
         } else {
             // we have SUCCESS!!
             resp.setStatusCode(0);
@@ -76,7 +73,7 @@ public class GoogleCloudMessagingRegistrar {
             StringBuilder sb = new StringBuilder();
             sb.append(resp.getMessage()).append("\n");
             sb.append("This device can now participate in push messaging");
-            addErrorStore(em,StatusCode.DEVICE_REGISTERED, sb.toString());
+//            addErrorStore(em,StatusCode.DEVICE_REGISTERED, sb.toString());
             return resp;
         }
 
@@ -92,21 +89,7 @@ public class GoogleCloudMessagingRegistrar {
 
         return resp;
     }
-public static void addErrorStore(EntityManager em, int statusCode, String message) {
-        log.log(Level.OFF, "------ adding errorStore, message: {0} statusCode: {1}", new Object[]{message, statusCode});
-        try {
-            ErrorStore t = new ErrorStore();
-            t.setDateOccured(new Date());
-            t.setMessage(message);
-            t.setStatusCode(statusCode);
-            t.setOrigin(GoogleCloudMessagingRegistrar.class.getSimpleName());
-            em.persist(t);
-            log.log(Level.INFO, "####### ErrorStore row added, origin {0} statusCode: {1}",
-                    new Object[]{t.getOrigin(), t.getStatusCode()});
-        } catch (Exception e) {
-            log.log(Level.SEVERE, "####### Failed to add errorStore: " + message, e);
-        }
-    }
+
     private static final Logger logger = Logger.getLogger(GoogleCloudMessagingRegistrar.class
             .getCanonicalName());
 

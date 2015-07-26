@@ -21,11 +21,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.ejb.TransactionManagement;
-import javax.ejb.TransactionManagementType;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import javax.ejb.EJB;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -47,7 +43,7 @@ import org.joda.time.DateTime;
 @WebServlet(name = "PhotoServlet", urlPatterns = {"/photo"})
 public class PhotoServlet extends HttpServlet {
 
-  @Inject
+  @EJB
   DataUtil dataUtil;
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -287,9 +283,7 @@ public class PhotoServlet extends HttpServlet {
             throw new FileUploadException();
         }
 
-        if (resp.getStatusCode() == null) {
-            resp.setStatusCode(0);
-        }
+       
         return resp;
     }
 

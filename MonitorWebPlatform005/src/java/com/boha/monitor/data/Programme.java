@@ -13,6 +13,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -35,12 +36,13 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(name = "programme")
 @NamedQueries({
-    @NamedQuery(name = "Programme.findAll", query = "SELECT p FROM Programme p"),
-    @NamedQuery(name = "Programme.findByProgrammeID", query = "SELECT p FROM Programme p WHERE p.programmeID = :programmeID"),
-    @NamedQuery(name = "Programme.findByProgrammeName", query = "SELECT p FROM Programme p WHERE p.programmeName = :programmeName"),
-    @NamedQuery(name = "Programme.findByDateRegistered", query = "SELECT p FROM Programme p WHERE p.dateRegistered = :dateRegistered"),
-    @NamedQuery(name = "Programme.findByCompleteFlag", query = "SELECT p FROM Programme p WHERE p.completeFlag = :completeFlag")})
+    @NamedQuery(name = "Programme.findByPortfolio", 
+            query = "SELECT p FROM Programme p where p.portfolio.portfolioID = :portfolioID "
+                    + "order by p.dateRegistered desc, p.programmeName"),
+    })
 public class Programme implements Serializable {
+    @OneToMany(mappedBy = "programme", fetch = FetchType.LAZY)
+    private List<TaskType> taskTypeList;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -163,6 +165,14 @@ public class Programme implements Serializable {
     @Override
     public String toString() {
         return "com.boha.monitor.data.Programme[ programmeID=" + programmeID + " ]";
+    }
+
+    public List<TaskType> getTaskTypeList() {
+        return taskTypeList;
+    }
+
+    public void setTaskTypeList(List<TaskType> taskTypeList) {
+        this.taskTypeList = taskTypeList;
     }
     
 }

@@ -7,8 +7,10 @@
 package com.boha.monitor.dto;
 
 import com.boha.monitor.data.Portfolio;
+import com.boha.monitor.data.Programme;
 import java.io.Serializable;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -16,10 +18,12 @@ import java.util.Date;
  */
 public class PortfolioDTO implements Serializable {
     private static final long serialVersionUID = 1L;
-  private Integer portfolioID;
+    private Integer portfolioID;
     private String portfolioName;
     private Long dateRegistered;
-    private CompanyDTO company;
+    private Integer companyID;
+    
+    private List<ProgrammeDTO> programmeList;
 
     public PortfolioDTO() {
     }
@@ -32,7 +36,21 @@ public class PortfolioDTO implements Serializable {
         this.portfolioID = a.getPortfolioID();
         this.portfolioName = a.getPortfolioName();
         this.dateRegistered = a.getDateRegistered().getTime();
-        company = new CompanyDTO(a.getCompany());
+        companyID = a.getCompany().getCompanyID();
+        if (a.getProgrammeList() != null) {
+            programmeList = new ArrayList<>();
+            for (Programme p : a.getProgrammeList()) {
+                programmeList.add(new ProgrammeDTO(p));
+            }
+        }
+    }
+
+    public List<ProgrammeDTO> getProgrammeList() {
+        return programmeList;
+    }
+
+    public void setProgrammeList(List<ProgrammeDTO> programmeList) {
+        this.programmeList = programmeList;
     }
 
     public Integer getPortfolioID() {
@@ -59,16 +77,15 @@ public class PortfolioDTO implements Serializable {
         this.dateRegistered = dateRegistered;
     }
 
-
-    public CompanyDTO getCompany() {
-        return company;
+    public Integer getCompanyID() {
+        return companyID;
     }
 
-    public void setCompany(CompanyDTO company) {
-        this.company = company;
+    public void setCompanyID(Integer companyID) {
+        this.companyID = companyID;
     }
 
-    
+
     @Override
     public int hashCode() {
         int hash = 0;

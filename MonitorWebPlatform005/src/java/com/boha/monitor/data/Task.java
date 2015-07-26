@@ -33,11 +33,16 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(name = "task")
 @NamedQueries({
-    @NamedQuery(name = "Task.findByCompany", 
-            query = "SELECT t FROM Task t where t.company.companyID = :companyID "
-                    + "order by t.taskType.taskTypeName, t.taskName")
+    @NamedQuery(name = "Task.findByProgramme", 
+            query = "SELECT t FROM Task t where t.taskType.programme.programmeID = :programmeID "
+                    + "order by t.taskType.taskTypeName, t.taskName"),
+    @NamedQuery(name = "Task.findByType", 
+            query = "SELECT t FROM Task t where t.taskType.taskTypeID = :taskTypeID"
+                    + " order by t.taskType.taskTypeName, t.taskName")
     })
 public class Task implements Serializable {
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "task")
+    private List<SubTask> subTaskList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "task", fetch = FetchType.LAZY)
     private List<ProjectTask> projectTaskList;
     private static final long serialVersionUID = 1L;
@@ -48,7 +53,7 @@ public class Task implements Serializable {
     private Integer taskID;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 255)
+    @Size(min = 1, max = 512)
     @Column(name = "taskName")
     private String taskName;
     @Column(name = "taskNumber")
@@ -58,9 +63,6 @@ public class Task implements Serializable {
     @Column(name = "description")
     private String description;
     
-    @JoinColumn(name = "companyID", referencedColumnName = "companyID")
-    @ManyToOne(optional = false)
-    private Company company;
     @JoinColumn(name = "taskTypeID", referencedColumnName = "taskTypeID")
     @ManyToOne
     private TaskType taskType;
@@ -68,13 +70,6 @@ public class Task implements Serializable {
     public Task() {
     }
 
-    public Company getCompany() {
-        return company;
-    }
-
-    public void setCompany(Company company) {
-        this.company = company;
-    }
 
     public TaskType getTaskType() {
         return taskType;
@@ -156,6 +151,14 @@ public class Task implements Serializable {
 
     public void setProjectTaskList(List<ProjectTask> projectTaskList) {
         this.projectTaskList = projectTaskList;
+    }
+
+    public List<SubTask> getSubTaskList() {
+        return subTaskList;
+    }
+
+    public void setSubTaskList(List<SubTask> subTaskList) {
+        this.subTaskList = subTaskList;
     }
     
 }
