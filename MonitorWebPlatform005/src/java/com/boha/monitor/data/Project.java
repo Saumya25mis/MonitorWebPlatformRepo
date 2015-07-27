@@ -36,10 +36,9 @@ import javax.validation.constraints.Size;
 @Table(name = "project")
 @NamedQueries({
     @NamedQuery(name = "Project.findByProgramme",
-            query = "SELECT p FROM Project p WHERE p.programme.programmeID = :programmeID and p.activeFlag = TRUE ORDER BY p.dateRegistered desc")
+            query = "SELECT p FROM Project p WHERE p.programme.programmeID = :programmeID ORDER BY p.city.cityName ")
 })
 public class Project implements Serializable {
-
     private static final long serialVersionUID = 1L;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "project", fetch = FetchType.LAZY)
@@ -47,7 +46,6 @@ public class Project implements Serializable {
 
     @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
     private List<PhotoUpload> photoUploadList;
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)

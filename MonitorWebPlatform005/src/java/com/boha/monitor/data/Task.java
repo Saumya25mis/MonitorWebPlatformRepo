@@ -34,11 +34,9 @@ import javax.validation.constraints.Size;
 @Table(name = "task")
 @NamedQueries({
     @NamedQuery(name = "Task.findByProgramme", 
-            query = "SELECT t FROM Task t where t.taskType.programme.programmeID = :programmeID "
-                    + "order by t.taskType.taskTypeName, t.taskName"),
+            query = "SELECT t FROM Task t where t.taskType.programme.programmeID = :programmeID order by t.taskType.taskTypeNumber, t.taskNumber"),
     @NamedQuery(name = "Task.findByType", 
-            query = "SELECT t FROM Task t where t.taskType.taskTypeID = :taskTypeID"
-                    + " order by t.taskType.taskTypeName, t.taskName")
+            query = "SELECT t FROM Task t where t.taskType.taskTypeID = :taskTypeID order by t.taskNumber")
     })
 public class Task implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "task")
@@ -62,6 +60,7 @@ public class Task implements Serializable {
     @Size(max = 65535)
     @Column(name = "description")
     private String description;
+    
     
     @JoinColumn(name = "taskTypeID", referencedColumnName = "taskTypeID")
     @ManyToOne

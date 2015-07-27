@@ -29,10 +29,10 @@ public class TrafficCop {
                 resp = ListUtil.getCompanyList(dataUtil.getEntityManager());
                 break;
             case RequestDTO.IMPORT_TASK_INFO:
-                resp = dataUtil.importTasks(req.getTaskTypeList());
+                resp = dataUtil.importTaskType(req.getTaskType());
                 break;
                 case RequestDTO.IMPORT_PROJECT_INFO:
-                resp = dataUtil.importProjects(req.getProjectList());
+                resp = dataUtil.importProject(req.getProject());
                 break;
             case RequestDTO.GET_MESSAGES_BY_PROJECT:
                 resp = ListUtil.getMessagesByProject(dataUtil.getEntityManager(), req.getProjectID());
@@ -55,7 +55,7 @@ public class TrafficCop {
                 break;
 
             case RequestDTO.NOTIFY_SUPERVISOR_NO_PROJECTS:
-                //TODO - send GCM message to project operations
+                //TODO - send GCM message to project operations ...
                 resp = GoogleCloudMessageUtil.sendNoProjectsAssignedMessage(dataUtil.getEntityManager(), req.getCompanyID(), req.getMonitorID());
                 break;
 

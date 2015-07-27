@@ -50,6 +50,7 @@ public class RequestDTO implements Serializable {
     private GcmDeviceDTO gcmDevice;
     private ChatMessageDTO chatMessage;
     private ProjectTaskDTO projectTask;
+    private TaskTypeDTO taskType;
 
     private List<TaskDTO> taskList;
     private List<StaffProjectDTO> staffProjectList;
@@ -182,6 +183,14 @@ public class RequestDTO implements Serializable {
     public static final String STAFF_DIR = "staff";
     public static final String PROJECT_DIR = "project";
     public static final String TASK_DIR = "task";
+
+    public TaskTypeDTO getTaskType() {
+        return taskType;
+    }
+
+    public void setTaskType(TaskTypeDTO taskType) {
+        this.taskType = taskType;
+    }
 
     public List<SubTaskDTO> getSubTaskList() {
         return subTaskList;

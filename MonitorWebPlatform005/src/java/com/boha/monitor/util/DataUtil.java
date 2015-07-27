@@ -234,100 +234,115 @@ public class DataUtil {
 
         } catch (Exception e) {
             log.log(Level.SEVERE, "", e);
-            throw new DataException("Failed to set subtasks");
+            throw new DataException("Failed to add subtasks");
         }
         return resp;
     }
 
-    public ResponseDTO importProjects(List<ProjectDTO> list) throws DataException {
+    public ResponseDTO importProject(ProjectDTO dto) throws DataException {
         ResponseDTO resp = new ResponseDTO();
-        log.log(Level.INFO, "########################### Task import started ....###########");
+        resp.setProjectList(new ArrayList<>());
+        log.log(Level.INFO, "#### Projects import started ....########");
         try {
-            for (ProjectDTO dto : list) {
-                Project p = new Project();
-                if (dto.getProgrammeID() != null) {
-                    p.setProgramme(em.find(Programme.class, dto.getProgrammeID()));
-                }
-                if (dto.getCityID() != null) {
-                    p.setCity(em.find(City.class, dto.getCityID()));
-                }
-                p.setProjectName(dto.getProjectName());
-                p.setDateRegistered(new Date());
-
-                em.persist(p);
+            Project p = new Project();
+            if (dto.getProgrammeID() != null) {
+                p.setProgramme(em.find(Programme.class, dto.getProgrammeID()));
             }
+            if (dto.getCityID() != null) {
+                p.setCity(em.find(City.class, dto.getCityID()));
+            }
+            p.setProjectName(dto.getProjectName());
+            p.setDateRegistered(new Date());
+            
+            em.persist(p);
             em.flush();
-            Query q = em.createNamedQuery("Project.findByProgramme", Project.class);
-            q.setParameter("programmeID", list.get(0).getProgrammeID());
-            List<Project> plist = q.getResultList();
-            resp.setProjectList(new ArrayList());
-            for (Project project : plist) {
-                resp.getProjectList().add(new ProjectDTO(project));
+            log.log(Level.INFO, "### Project added: {0}", dto.getProjectName());
+            //assign all programme tasks to projects
+            Query q0 = em.createNamedQuery("Task.findByProgramme", Task.class);
+            q0.setParameter("programmeID", dto.getProgrammeID());
+            List<Task> taskList = q0.getResultList();
+            ProjectDTO projectDTO = new ProjectDTO(p);
+            projectDTO.setProjectTaskList(new ArrayList<>());
+            
+            for (Task task : taskList) {
+                ProjectTask pt = new ProjectTask();
+                pt.setProject(p);
+                pt.setTask(task);
+                pt.setDateRegistered(new Date());
+                em.persist(pt);
+                em.flush();
+                ProjectTaskDTO ptd = new ProjectTaskDTO(pt);
+                projectDTO.getProjectTaskList().add(ptd);
+                log.log(Level.OFF, "ProjectTask added to project:  {0} task: {1}",
+                        new Object[]{projectDTO.getProjectName(), task.getTaskName()});
+
             }
 
         } catch (Exception e) {
-            log.log(Level.SEVERE, "", e);
-            throw new DataException("Failed to import projects ");
+            log.log(Level.SEVERE, "failed", e);
+            throw new DataException("Failed to import project");
         }
         return resp;
-
     }
 
-    public ResponseDTO importTasks(List<TaskTypeDTO> list) throws DataException {
+    public ResponseDTO importTaskType(TaskTypeDTO taskType) throws DataException {
 
         ResponseDTO resp = new ResponseDTO();
-        log.log(Level.INFO, "########################### Task import started ....###########");
+        log.log(Level.INFO, "#### TaskType import started ....###########");
+        
         try {
-            Programme c = em.find(Programme.class, list.get(0).getProgrammeID());
+            Programme c = em.find(Programme.class, taskType.getProgrammeID());
+            TaskType a = new TaskType();
+            a.setProgramme(c);
+            a.setTaskTypeName(taskType.getTaskTypeName());
+            a.setSectionName(taskType.getSectionName());
+            a.setTaskTypeNumber(taskType.getTaskTypeNumber());
+            try {
+                em.persist(a);
+                em.flush();
+            } catch (PersistenceException e) {
+                log.log(Level.OFF, "-------- Duplicate taskType: {0}", a.getTaskTypeName());
+                resp.setStatusCode(StatusCode.ERROR_SERVER);
+                resp.setMessage("Duplicate TaskType attempted");
+                return resp;
+            }
+            log.log(Level.INFO, "## taskType added: {0}", a.getTaskTypeName());
+            if (taskType.getTaskList() != null) {
+                for (TaskDTO t : taskType.getTaskList()) {
+                    Task b = new Task();
+                    b.setTaskType(a);
+                    b.setTaskName(t.getTaskName());
+                    b.setDescription(t.getDescription());
+                    b.setTaskNumber(t.getTaskNumber());
+                    try {
+                        em.persist(b);
+                        em.flush();
+                        log.log(Level.INFO, "## task added for {0} - {1}",
+                                new Object[]{a.getTaskTypeName(), b.getTaskName()});
+                    } catch (PersistenceException e) {
+                        log.log(Level.OFF, "------- Duplicate task: {0}", b.getTaskName());
+                        continue;
+                    }
 
-            for (TaskTypeDTO tt : list) {
-                TaskType a = new TaskType();
-                a.setProgramme(c);
-                a.setTaskTypeName(tt.getTaskTypeName());
-                try {
-                    em.persist(a);
-                    em.flush();
-                } catch (PersistenceException e) {
-                    log.log(Level.OFF, "-------- Duplicate taskType: {0}", a.getTaskTypeName());
-                    continue;
-                }
-                log.log(Level.INFO, "## taskType added: {0}", a.getTaskTypeName());
-                if (tt.getTaskList() != null) {
-                    for (TaskDTO t : tt.getTaskList()) {
-                        Task b = new Task();
-                        b.setTaskType(a);
-                        b.setTaskName(t.getTaskName());
-                        b.setDescription(t.getDescription());
-                        b.setTaskNumber(t.getTaskNumber());
-                        try {
-                            em.persist(b);
-                            em.flush();
-                            log.log(Level.INFO, "## task added for {0} - {1}",
-                                    new Object[]{a.getTaskTypeName(), b.getTaskName()});
-                        } catch (PersistenceException e) {
-                            log.log(Level.OFF, "------- Duplicate task: {0}", b.getTaskName());
-                            continue;
-                        }
+                    if (t.getSubTaskList() != null) {
+                        for (SubTaskDTO sb : t.getSubTaskList()) {
+                            SubTask s = new SubTask();
+                            s.setTask(b);
+                            s.setSubTaskName(sb.getSubTaskName());
+                            s.setDescription(sb.getDescription());
+                            try {
+                                em.persist(s);
+                                log.log(Level.INFO, "## subTask added for {0} - {1}",
+                                        new Object[]{b.getTaskName(), s.getSubTaskName()});
 
-                        if (t.getSubTaskList() != null) {
-                            for (SubTaskDTO sb : t.getSubTaskList()) {
-                                SubTask s = new SubTask();
-                                s.setTask(b);
-                                s.setSubTaskName(sb.getSubTaskName());
-                                s.setDescription(sb.getDescription());
-                                try {
-                                    em.persist(s);
-                                    log.log(Level.INFO, "## subTask added for {0} - {1}",
-                                            new Object[]{b.getTaskName(), s.getSubTaskName()});
-
-                                } catch (PersistenceException e) {
-                                    log.log(Level.OFF, "----- Duplicate SubTask: {0}", s.getSubTaskName());
-                                    continue;
-                                }
-
+                            } catch (PersistenceException e) {
+                                log.log(Level.OFF, "----- Duplicate SubTask: {0}", s.getSubTaskName());
+                                continue;
                             }
+
                         }
                     }
+
                 }
             }
 
@@ -661,8 +676,7 @@ public class DataUtil {
     public void addPhotoUpload(PhotoUploadDTO pu) {
         try {
             PhotoUpload u = new PhotoUpload();
-            u
-                    .setCompany(em.find(Company.class, pu.getCompanyID()));
+            
             if (pu.getProjectID()
                     != null) {
                 u.setProject(em.find(Project.class, pu.getProjectID()));
@@ -730,8 +744,6 @@ public class DataUtil {
                 PhotoUpload u = em.find(PhotoUpload.class, p.getPhotoUploadID());
                 em.remove(u);
 
-                FileUtility.deleteProjectImageFile(p.getCompanyID(),
-                        p.getProjectID(), p.getUri());
                 count++;
             }
             em.flush();

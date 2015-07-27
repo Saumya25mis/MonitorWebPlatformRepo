@@ -11,9 +11,13 @@ import com.boha.monitor.dto.transfer.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
@@ -28,7 +32,7 @@ public class ListUtil {
 
     public static ResponseDTO getMonitorProjects(EntityManager em, Integer monitorID) throws DataException {
         ResponseDTO resp = new ResponseDTO();
-        
+
         try {
             getProjectDataForMonitor(em, resp, monitorID);
         } catch (Exception e) {
@@ -40,41 +44,64 @@ public class ListUtil {
     }
 
     public static void getProjectDataForMonitor(EntityManager em, ResponseDTO resp, Integer monitorID) {
-
         Monitor mon = em.find(Monitor.class, monitorID);
-
-        Query q = em.createNamedQuery("TaskType.findByCompany", TaskType.class);
-        q.setParameter("companyID", mon.getCompany().getCompanyID());
-        List<TaskType> ttList = q.getResultList();
-        resp.setTaskTypeList(new ArrayList<>());
-        for (TaskType taskType : ttList) {
-            TaskTypeDTO ttx = new TaskTypeDTO(taskType);
-            for (Task task : taskType.getTaskList()) {
-                ttx.getTaskList().add(new TaskDTO(task));
-            }
-            resp.getTaskTypeList().add(ttx);
-
-        }
-        q = em.createNamedQuery("MonitorProject.findByMonitor", Project.class);
+        Query q = em.createNamedQuery("MonitorProject.findByMonitor", Project.class);
         q.setParameter("monitorID", monitorID);
         List<Project> projectList = q.getResultList();
         resp.setProjectList(new ArrayList<>());
 
+        HashMap<Integer, Programme> map = new HashMap<>();
         for (Project p : projectList) {
             ProjectDTO project = new ProjectDTO(p);
-            for (ProjectTask pt : p.getProjectTaskList()) {
+            if (!map.containsKey(project.getProgrammeID())) {
+                map.put(project.getProgrammeID(), p.getProgramme());
+            }
+            q = em.createNamedQuery("ProjectTask.findByProject", ProjectTask.class);
+            q.setParameter("projectID", project.getProjectID());
+            List<ProjectTask> ptList = q.getResultList();
+            for (ProjectTask pt : ptList) {
                 ProjectTaskDTO d = new ProjectTaskDTO(pt);
-                for (ProjectTaskStatus ps : pt.getProjectTaskStatusList()) {
+                q = em.createNamedQuery("ProjectTaskStatus.findByProject", ProjectTaskStatus.class);
+                q.setParameter("projectID", project.getProjectID());
+                List<ProjectTaskStatus> ptsList = q.getResultList();
+                for (ProjectTaskStatus ps : ptsList) {
                     d.getProjectTaskStatusList().add(new ProjectTaskStatusDTO(ps));
                 }
-                for (PhotoUpload ph : pt.getPhotoUploadList()) {
+                
+                q = em.createNamedQuery("PhotoUpload.findByProject", PhotoUpload.class);
+                q.setParameter("projectID", project.getProjectID());
+                List<PhotoUpload> photoList = q.getResultList();
+                for (PhotoUpload ph : photoList) {
                     d.getPhotoUploadList().add(new PhotoUploadDTO(ph));
                 }
                 project.getProjectTaskList().add(d);
             }
+
             resp.getProjectList().add(project);
-            log.log(Level.OFF, "## project found for monitor: {0} - {1}",
-                    new Object[]{project.getProjectName(), mon.getFirstName()});
+            log.log(Level.OFF, "## project found for monitor: {0} - {1} {2}",
+                    new Object[]{project.getProjectName(), mon.getFirstName(), mon.getLastName()});
+        }
+        //get TaskTypes for all Programmes that the projects are in
+        List<Integer> programmeIDList = new ArrayList<>();
+        map.entrySet().stream().map((entry) -> entry.getKey()).forEach((id) -> {
+            programmeIDList.add(id);
+        });
+        log.log(Level.OFF, "programmeIDList; {0}", programmeIDList.size());
+        q = em.createNamedQuery("TaskType.findByProgrammeList", TaskType.class);
+        q.setParameter("list", programmeIDList);
+        List<TaskType> ttList = q.getResultList();
+        resp.setTaskTypeList(new ArrayList<>());
+        log.log(Level.OFF, "TaskTypes found: {0}", ttList.size());
+        for (Iterator<TaskType> it = ttList.iterator(); it.hasNext();) {
+            TaskType taskType = it.next();
+            TaskTypeDTO ttx = new TaskTypeDTO(taskType);
+            q = em.createNamedQuery("Task.findByType", Task.class);
+            q.setParameter("taskTypeID", taskType.getTaskTypeID());
+            List<Task> tList = q.getResultList();
+            tList.stream().forEach((task) -> {
+                ttx.getTaskList().add(new TaskDTO(task));
+            });
+            resp.getTaskTypeList().add(ttx);
         }
 
     }
@@ -139,6 +166,7 @@ public class ListUtil {
         q.setParameter("companyID", companyID);
         List<Portfolio> tList = q.getResultList();
         resp.setPortfolioList(new ArrayList<>());
+
         for (Portfolio p : tList) {
             PortfolioDTO dto = new PortfolioDTO(p);
             dto.setProgrammeList(getProgrammeList(em, p.getPortfolioID()));
@@ -160,7 +188,7 @@ public class ListUtil {
             company.setPortfolioList(r.getPortfolioList());
             company.setProjectStatusTypeList(r.getProjectStatusTypeList());
             company.setTaskStatusTypeList(r.getTaskStatusTypeList());
-            
+
             resp.getCompanyList().add(company);
         }
         return resp;
@@ -205,7 +233,7 @@ public class ListUtil {
         q = em.createNamedQuery("ProjectTaskStatus.findByProject", ProjectTaskStatus.class);
         q.setParameter("projectID", projectID);
         List<ProjectTaskStatus> statusList = q.getResultList();
-        
+
         q = em.createNamedQuery("PhotoUpload.findByProject", PhotoUpload.class);
         q.setParameter("projectID", projectID);
         List<PhotoUpload> photoList = q.getResultList();

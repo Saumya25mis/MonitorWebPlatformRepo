@@ -18,6 +18,7 @@ public class TaskTypeDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private Integer taskTypeID;
+    private Integer taskTypeNumber;
     private String taskTypeName, sectionName;
     private Integer programmeID;
     private List<TaskDTO> taskList = new ArrayList<>();
@@ -29,11 +30,20 @@ public class TaskTypeDTO implements Serializable {
         this.taskTypeID = a.getTaskTypeID();
         this.taskTypeName = a.getTaskTypeName();
         sectionName = a.getSectionName();
+        taskTypeNumber = a.getTaskTypeNumber();
        
         if (a.getProgramme() != null) {
             programmeID = a.getProgramme().getProgrammeID();
         }
 
+    }
+
+    public Integer getTaskTypeNumber() {
+        return taskTypeNumber;
+    }
+
+    public void setTaskTypeNumber(Integer taskTypeNumber) {
+        this.taskTypeNumber = taskTypeNumber;
     }
 
     public Integer getProgrammeID() {

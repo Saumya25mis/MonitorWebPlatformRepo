@@ -98,9 +98,7 @@ public class PhotoUpload implements Serializable {
     private String thumbFilePath;
     @Column(name = "staffPicture")
     private Integer staffPicture;
-    @JoinColumn(name = "companyID", referencedColumnName = "companyID")
-    @ManyToOne(optional = false)
-    private Company company;
+
     @JoinColumn(name = "projectID", referencedColumnName = "projectID")
     @ManyToOne
     private Project project;
@@ -207,14 +205,6 @@ public class PhotoUpload implements Serializable {
 
     public void setStaffPicture(Integer staffPicture) {
         this.staffPicture = staffPicture;
-    }
-
-    public Company getCompany() {
-        return company;
-    }
-
-    public void setCompany(Company company) {
-        this.company = company;
     }
 
     public Project getProject() {

@@ -62,6 +62,7 @@ public class ProjectTask implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "projectTask", fetch = FetchType.LAZY)
     private List<ProjectTaskStatus> projectTaskStatusList;
 
+    
     public ProjectTask() {
     }
 

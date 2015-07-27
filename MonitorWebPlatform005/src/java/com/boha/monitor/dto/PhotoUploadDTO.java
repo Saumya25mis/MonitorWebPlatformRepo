@@ -27,7 +27,6 @@ public class PhotoUploadDTO implements Serializable {
     private Long dateUploaded;
     private String thumbFilePath;
     private Integer staffPictureID;
-    private Integer companyID;
     private Integer projectID;
     private Integer projectTaskID;
     private Integer staffID, monitorID;
@@ -52,7 +51,6 @@ public class PhotoUploadDTO implements Serializable {
         this.photoUploadID = a.getPhotoUploadID();
         this.pictureType = a.getPictureType();
         this.dateTaken = a.getDateTaken().getTime();
-        companyID = a.getCompany().getCompanyID();
         latitude = a.getLatitude();
         longitude = a.getLongitude();
         accuracy = a.getAccuracy();
@@ -174,14 +172,6 @@ public class PhotoUploadDTO implements Serializable {
 
     public void setStaffPictureID(Integer staffPictureID) {
         this.staffPictureID = staffPictureID;
-    }
-
-    public Integer getCompanyID() {
-        return companyID;
-    }
-
-    public void setCompanyID(Integer companyID) {
-        this.companyID = companyID;
     }
 
     public Integer getProjectID() {

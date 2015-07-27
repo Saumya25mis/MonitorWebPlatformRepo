@@ -33,10 +33,16 @@ import javax.validation.constraints.Size;
 @Table(name = "taskType")
 @NamedQueries({
     @NamedQuery(name = "TaskType.findByProgramme", 
-            query = "SELECT t FROM TaskType t WHERE t.programme.programmeID = :programmeID ORDER BY t.taskTypeName"),
+           query = "SELECT t FROM TaskType t WHERE t.programme.programmeID = :programmeID order by t.taskTypeNumber"),
+    @NamedQuery(name = "TaskType.findByProgrammeList", 
+           query = "SELECT distinct t FROM TaskType t WHERE t.programme.programmeID in :list order by t.taskTypeNumber")
     
 })
 public class TaskType implements Serializable {
+    
+    @Column(name = "taskTypeNumber")
+    private Integer taskTypeNumber;
+    
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "taskType")
     private List<MonitorTrade> monitorTradeList;
     
@@ -51,6 +57,7 @@ public class TaskType implements Serializable {
     @Basic(optional = false)
     @Column(name = "taskTypeID")
     private Integer taskTypeID;
+    
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 512)
@@ -149,6 +156,15 @@ public class TaskType implements Serializable {
 
     public void setMonitorTradeList(List<MonitorTrade> monitorTradeList) {
         this.monitorTradeList = monitorTradeList;
+    }
+
+
+    public Integer getTaskTypeNumber() {
+        return taskTypeNumber;
+    }
+
+    public void setTaskTypeNumber(Integer taskTypeNumber) {
+        this.taskTypeNumber = taskTypeNumber;
     }
 
     

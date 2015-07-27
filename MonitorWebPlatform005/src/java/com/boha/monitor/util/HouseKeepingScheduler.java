@@ -23,7 +23,7 @@ public class HouseKeepingScheduler {
     
     private void startDiskCleanup() {
         
-        log.log(Level.INFO, "### Monitor Platform checking for expired temporary files");
+        printMessageHead();
         int count = 0;
         File dir = MonitorProperties.getTemporaryDir();
         if (dir.exists()) {
@@ -33,9 +33,6 @@ public class HouseKeepingScheduler {
                 long now = new Date().getTime();
                 long cutOff = now - FIVE_MINUTES;
                 if (file.lastModified() < cutOff) {
-                    printMessageHead();
-                    log.log(Level.INFO, "### startDiskCleanup - deleting temporary file dated: {0}", 
-                            new Date(file.lastModified()));
                     boolean OK = file.delete();
                     if (OK) {
                         count++;
@@ -45,19 +42,12 @@ public class HouseKeepingScheduler {
         }
 
         log.log(Level.INFO, "### Monitor HouseKeeping cleaned up {0} temporary files", count);
-        try {
-            if (count > 10) {
-                //platformUtil.addErrorStore(PlatformUtil.SIGNIFICANT_EVENT,
-                  //      "MGGolf temporary files cleaned up: " + count, "HouseKeeper");
-            }
-        } catch (Exception e) {
-
-        }
+        
     }
     private void printMessageHead() {
         StringBuilder sb = new StringBuilder();
         sb.append("\n\n\n### ##########################################################################\n");
-        sb.append("### SmartCity Disk Cleanup STARTED: ").append(new Date()).append("\n");
+        sb.append("### Monitor Disk Cleanup STARTED: ").append(new Date()).append("\n");
         sb.append("### ##########################################################################\n\n");
         log.log(Level.INFO, sb.toString());
     }

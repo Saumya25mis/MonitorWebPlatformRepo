@@ -11,6 +11,8 @@ import com.boha.monitor.data.Project;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -27,7 +29,7 @@ public class ProjectDTO implements Serializable {
     private Float accuracy;
     private Boolean activeFlag;
     private Boolean locationConfirmed;
-    private String address;
+    private String address, cityName, municipalityName;
     private String description, programmeName, portfolioName;
     private List<ProjectTaskDTO> projectTaskList = new ArrayList<>();
     private List<ProjectStatusDTO> projectStatusList = new ArrayList<>();
@@ -40,7 +42,6 @@ public class ProjectDTO implements Serializable {
     public ProjectDTO() {
     }
 
-    
     public ProjectDTO(Project a) {
         this.projectID = a.getProjectID();
         this.projectName = a.getProjectName();
@@ -54,7 +55,12 @@ public class ProjectDTO implements Serializable {
       
         if (a.getCity() != null) {
             cityID = a.getCity().getCityID();
+            cityName = a.getCity().getCityName();
+            if (a.getCity().getMunicipality() != null) {
+                municipalityName = a.getCity().getMunicipality().getMunicipalityName();
+            }
         }
+        
         if (a.getProgramme() != null) {
             programmeName = a.getProgramme().getProgrammeName();
             programmeID = a.getProgramme().getProgrammeID();
@@ -65,6 +71,22 @@ public class ProjectDTO implements Serializable {
             }
         }
         
+    }
+
+    public String getMunicipalityName() {
+        return municipalityName;
+    }
+
+    public void setMunicipalityName(String municipalityName) {
+        this.municipalityName = municipalityName;
+    }
+
+    public String getCityName() {
+        return cityName;
+    }
+
+    public void setCityName(String cityName) {
+        this.cityName = cityName;
     }
 
     public Integer getCityID() {
