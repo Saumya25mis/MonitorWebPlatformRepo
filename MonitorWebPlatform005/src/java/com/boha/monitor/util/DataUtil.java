@@ -855,6 +855,7 @@ public class DataUtil {
             }
 
             em.persist(t);
+            em.flush();
 
             resp.setProjectTaskStatusList(
                     new ArrayList<>());

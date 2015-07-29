@@ -31,7 +31,9 @@ import javax.validation.constraints.NotNull;
 @Table(name = "projectTaskStatus")
 @NamedQueries({
     @NamedQuery(name = "ProjectTaskStatus.findByProject",
-            query = "SELECT p FROM ProjectTaskStatus p WHERE p.projectTask.project.projectID = :projectID ORDER BY p.dateUpdated desc")
+            query = "SELECT p FROM ProjectTaskStatus p WHERE p.projectTask.project.projectID = :projectID ORDER BY p.dateUpdated desc"),
+    @NamedQuery(name = "ProjectTaskStatus.findByTask",
+            query = "SELECT p FROM ProjectTaskStatus p WHERE p.projectTask.projectTaskID = :projectTaskID ORDER BY p.dateUpdated desc")
 })
 public class ProjectTaskStatus implements Serializable {
 

@@ -11,8 +11,6 @@ import com.boha.monitor.data.Project;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -35,8 +33,8 @@ public class ProjectDTO implements Serializable {
     private List<ProjectStatusDTO> projectStatusList = new ArrayList<>();
     private List<GcmDeviceDTO> gcmDeviceList;
     private List<ChatDTO> chatList;
-    private List<MonitorProjectDTO> monitorProjectList;
-    private List<StaffProjectDTO> staffProjectList;
+    private List<MonitorDTO> monitorList;
+    private List<StaffDTO> staffList;
     private ProjectTaskStatusDTO lastStatus;
 
     public ProjectDTO() {
@@ -261,22 +259,21 @@ public class ProjectDTO implements Serializable {
         this.chatList = chatList;
     }
 
-    public List<MonitorProjectDTO> getMonitorProjectList() {
-        return monitorProjectList;
+    public List<MonitorDTO> getMonitorList() {
+        return monitorList;
     }
 
-    public void setMonitorProjectList(List<MonitorProjectDTO> monitorProjectList) {
-        this.monitorProjectList = monitorProjectList;
+    public void setMonitorList(List<MonitorDTO> monitorList) {
+        this.monitorList = monitorList;
     }
 
-    public List<StaffProjectDTO> getStaffProjectList() {
-        return staffProjectList;
+    public List<StaffDTO> getStaffList() {
+        return staffList;
     }
 
-    public void setStaffProjectList(List<StaffProjectDTO> staffProjectList) {
-        this.staffProjectList = staffProjectList;
+    public void setStaffList(List<StaffDTO> staffList) {
+        this.staffList = staffList;
     }
-
 
     @Override
     public int hashCode() {

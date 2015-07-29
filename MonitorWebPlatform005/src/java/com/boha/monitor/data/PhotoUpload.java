@@ -33,7 +33,7 @@ import javax.validation.constraints.Size;
 @Table(name = "photoUpload")
 @NamedQueries({
     @NamedQuery(name = "PhotoUpload.findByProject", 
-            query = "SELECT p FROM PhotoUpload p WHERE p.project.projectID = :projectID ORDER BY p.dateTaken desc"),
+            query = "SELECT p FROM PhotoUpload p WHERE p.project.projectID = :projectID and p.projectTask IS NULL ORDER BY p.dateTaken desc"),
     @NamedQuery(name = "PhotoUpload.findByTask", 
             query = "SELECT p FROM PhotoUpload p WHERE p.projectTask.projectTaskID = :projectTaskID ORDER BY p.dateTaken desc")
 })

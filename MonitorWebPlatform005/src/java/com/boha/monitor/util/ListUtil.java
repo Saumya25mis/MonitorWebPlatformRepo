@@ -43,9 +43,18 @@ public class ListUtil {
         return resp;
     }
 
+    /**
+     * Get all the data needed for the Monitor app. This includes data about the
+     * projects the monitor is assigned to. Also lists all the monitors assigned
+     * to the same projects as the requesting monitor.
+     *
+     * @param em
+     * @param resp
+     * @param monitorID
+     */
     public static void getProjectDataForMonitor(EntityManager em, ResponseDTO resp, Integer monitorID) {
         Monitor mon = em.find(Monitor.class, monitorID);
-        Query q = em.createNamedQuery("MonitorProject.findByMonitor", Project.class);
+        Query q = em.createNamedQuery("MonitorProject.findProjectsByMonitor", Project.class);
         q.setParameter("monitorID", monitorID);
         List<Project> projectList = q.getResultList();
         resp.setProjectList(new ArrayList<>());
@@ -56,31 +65,55 @@ public class ListUtil {
             if (!map.containsKey(project.getProgrammeID())) {
                 map.put(project.getProgrammeID(), p.getProgramme());
             }
+            //get this project's monitors
+            q = em.createNamedQuery("MonitorProject.findMonitorsByProject", MonitorProject.class);
+            q.setParameter("projectID", project.getProjectID());
+            List<Monitor> monList = q.getResultList();
+            project.setMonitorList(new ArrayList());
+            for (Monitor monitor : monList) {
+                project.getMonitorList().add(new MonitorDTO(monitor));
+            }
+            //get all the pictures taken for the project
+            q = em.createNamedQuery("PhotoUpload.findByProject", PhotoUpload.class);
+            q.setParameter("projectID", project.getProjectID());
+            List<PhotoUpload> photoList = q.getResultList();
+            project.setPhotoUploadList(new ArrayList<>());
+            for (PhotoUpload ph : photoList) {
+                project.getPhotoUploadList().add(new PhotoUploadDTO(ph));
+            }
+
+            //get all the tasks assigned to the project
             q = em.createNamedQuery("ProjectTask.findByProject", ProjectTask.class);
             q.setParameter("projectID", project.getProjectID());
             List<ProjectTask> ptList = q.getResultList();
             for (ProjectTask pt : ptList) {
                 ProjectTaskDTO d = new ProjectTaskDTO(pt);
-                q = em.createNamedQuery("ProjectTaskStatus.findByProject", ProjectTaskStatus.class);
-                q.setParameter("projectID", project.getProjectID());
+
+                //get all the status records for the projectTask
+                q = em.createNamedQuery("ProjectTaskStatus.findByTask", ProjectTaskStatus.class);
+                q.setParameter("projectTaskID", d.getProjectTaskID());
                 List<ProjectTaskStatus> ptsList = q.getResultList();
                 for (ProjectTaskStatus ps : ptsList) {
                     d.getProjectTaskStatusList().add(new ProjectTaskStatusDTO(ps));
                 }
-                
-                q = em.createNamedQuery("PhotoUpload.findByProject", PhotoUpload.class);
-                q.setParameter("projectID", project.getProjectID());
-                List<PhotoUpload> photoList = q.getResultList();
-                for (PhotoUpload ph : photoList) {
+
+                //get all the pictures taken for the task
+                q = em.createNamedQuery("PhotoUpload.findByTask", PhotoUpload.class);
+                q.setParameter("projectTaskID", d.getProjectTaskID());
+                List<PhotoUpload> pxList = q.getResultList();
+                for (PhotoUpload ph : pxList) {
                     d.getPhotoUploadList().add(new PhotoUploadDTO(ph));
                 }
+                //add the task to the list 
                 project.getProjectTaskList().add(d);
             }
 
+            //add the project to the response object
             resp.getProjectList().add(project);
             log.log(Level.OFF, "## project found for monitor: {0} - {1} {2}",
                     new Object[]{project.getProjectName(), mon.getFirstName(), mon.getLastName()});
         }
+
         //get TaskTypes for all Programmes that the projects are in
         List<Integer> programmeIDList = new ArrayList<>();
         map.entrySet().stream().map((entry) -> entry.getKey()).forEach((id) -> {
@@ -103,7 +136,6 @@ public class ListUtil {
             });
             resp.getTaskTypeList().add(ttx);
         }
-
     }
 
     public static ResponseDTO getCompanyData(EntityManager em, Integer companyID) throws DataException {
