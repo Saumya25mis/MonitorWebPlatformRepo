@@ -43,6 +43,8 @@ import javax.validation.constraints.Size;
             query = "SELECT m FROM Monitor m WHERE m.email = :email and m.pin = :pin and m.activeFlag = TRUE")
 })
 public class Monitor implements Serializable {
+    @OneToMany(mappedBy = "monitor")
+    private List<VideoUpload> videoUploadList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "monitor")
     private List<MonitorTrade> monitorTradeList;
     @OneToMany(mappedBy = "monitor")
@@ -322,6 +324,14 @@ public class Monitor implements Serializable {
 
     public void setMonitorTradeList(List<MonitorTrade> monitorTradeList) {
         this.monitorTradeList = monitorTradeList;
+    }
+
+    public List<VideoUpload> getVideoUploadList() {
+        return videoUploadList;
+    }
+
+    public void setVideoUploadList(List<VideoUpload> videoUploadList) {
+        this.videoUploadList = videoUploadList;
     }
     
 }

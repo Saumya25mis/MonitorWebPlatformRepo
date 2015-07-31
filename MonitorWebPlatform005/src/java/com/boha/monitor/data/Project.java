@@ -39,6 +39,8 @@ import javax.validation.constraints.Size;
             query = "SELECT p FROM Project p WHERE p.programme.programmeID = :programmeID ORDER BY p.city.cityName ")
 })
 public class Project implements Serializable {
+    @OneToMany(mappedBy = "project")
+    private List<VideoUpload> videoUploadList;
     private static final long serialVersionUID = 1L;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "project", fetch = FetchType.LAZY)
@@ -284,6 +286,14 @@ public class Project implements Serializable {
 
     public void setCity(City city) {
         this.city = city;
+    }
+
+    public List<VideoUpload> getVideoUploadList() {
+        return videoUploadList;
+    }
+
+    public void setVideoUploadList(List<VideoUpload> videoUploadList) {
+        this.videoUploadList = videoUploadList;
     }
 
 }

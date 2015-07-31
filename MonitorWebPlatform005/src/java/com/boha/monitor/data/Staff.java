@@ -38,6 +38,8 @@ import javax.validation.constraints.Size;
             query = "SELECT s FROM Staff s WHERE s.company.companyID = :companyID ORDER BY s.lastName, s.firstName")
 })
 public class Staff implements Serializable {
+    @OneToMany(mappedBy = "staff")
+    private List<VideoUpload> videoUploadList;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -310,6 +312,14 @@ public class Staff implements Serializable {
     @Override
     public String toString() {
         return "com.boha.monitor.data.Staff[ staffID=" + staffID + " ]";
+    }
+
+    public List<VideoUpload> getVideoUploadList() {
+        return videoUploadList;
+    }
+
+    public void setVideoUploadList(List<VideoUpload> videoUploadList) {
+        this.videoUploadList = videoUploadList;
     }
     
 }

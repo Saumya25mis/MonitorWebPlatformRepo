@@ -38,6 +38,8 @@ import javax.validation.constraints.NotNull;
             query = "SELECT p FROM ProjectTask p where p.project.projectID = :projectID")
 })
 public class ProjectTask implements Serializable {
+    @OneToMany(mappedBy = "projectTask")
+    private List<VideoUpload> videoUploadList;
     @JoinColumn(name = "taskID", referencedColumnName = "taskID")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Task task;
@@ -148,6 +150,14 @@ public class ProjectTask implements Serializable {
     @Override
     public String toString() {
         return "com.boha.monitor.data.ProjectTask[ projectTaskID=" + projectTaskID + " ]";
+    }
+
+    public List<VideoUpload> getVideoUploadList() {
+        return videoUploadList;
+    }
+
+    public void setVideoUploadList(List<VideoUpload> videoUploadList) {
+        this.videoUploadList = videoUploadList;
     }
 
   
