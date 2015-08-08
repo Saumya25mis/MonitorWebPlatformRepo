@@ -33,14 +33,18 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(name = "locationTracker")
 @NamedQueries({
-    @NamedQuery(name = "LocationTracker.findAll", query = "SELECT l FROM LocationTracker l"),
-    @NamedQuery(name = "LocationTracker.findByLocationTrackerID", query = "SELECT l FROM LocationTracker l WHERE l.locationTrackerID = :locationTrackerID"),
-    @NamedQuery(name = "LocationTracker.findByDateTracked", query = "SELECT l FROM LocationTracker l WHERE l.dateTracked = :dateTracked"),
-    @NamedQuery(name = "LocationTracker.findByLatitude", query = "SELECT l FROM LocationTracker l WHERE l.latitude = :latitude"),
-    @NamedQuery(name = "LocationTracker.findByLongitude", query = "SELECT l FROM LocationTracker l WHERE l.longitude = :longitude"),
-    @NamedQuery(name = "LocationTracker.findByAccuracy", query = "SELECT l FROM LocationTracker l WHERE l.accuracy = :accuracy"),
-    @NamedQuery(name = "LocationTracker.findByDateAdded", query = "SELECT l FROM LocationTracker l WHERE l.dateAdded = :dateAdded"),
-    @NamedQuery(name = "LocationTracker.findByDateTrackedLong", query = "SELECT l FROM LocationTracker l WHERE l.dateTrackedLong = :dateTrackedLong")})
+    @NamedQuery(name = "LocationTracker.findByMonitorInPeriod", 
+            query = "SELECT m FROM LocationTracker m "
+                    + "where m.monitor.monitorID = :monitorID "
+                    + "and m.dateTracked BETWEEN :dateFrom and :dateTo "
+                    + "order by m.dateTracked"),
+    @NamedQuery(name = "LocationTracker.findByStaffInPeriod", 
+            query = "SELECT m FROM LocationTracker m "
+                    + "where m.staff.staffID = :staffID "
+                    + "and m.dateTracked BETWEEN :dateFrom and :dateTo "
+                    + "order by m.dateTracked"),
+    
+})
 public class LocationTracker implements Serializable {
     @JoinColumn(name = "monitorID", referencedColumnName = "monitorID")
     @ManyToOne

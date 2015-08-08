@@ -14,10 +14,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
@@ -370,7 +368,36 @@ public class ListUtil {
         return resp;
     }
 
-    public static ResponseDTO getLocationTracksByStaffInPeriod(EntityManager em, Integer companyStaffID,
+    public static ResponseDTO getLocationTracksByMonitorInPeriod(EntityManager em, 
+            Integer monitorID,
+            Long df, Long dx) 
+    {
+        Date dateFrom, dateTo;
+        if (df == null) {
+            DateTime dt = new DateTime();
+            DateTime xx = dt.minusDays(7);
+            dateFrom = xx.toDate();
+            dateTo = dt.toDate();
+            log.log(Level.INFO, "Get Location tracks from {0} to {1}",
+                    new Object[]{dateFrom.toString(), dateTo.toString()});
+        } else {
+            dateFrom = new Date(df);
+            dateTo = new Date(dx);
+        }
+        ResponseDTO resp = new ResponseDTO();
+        Query q = em.createNamedQuery("LocationTracker.findByMonitorInPeriod", LocationTracker.class);
+        q.setParameter("companyStaffID", monitorID);
+        q.setParameter("dateFrom", dateFrom);
+        q.setParameter("dateTo", dateTo);
+        List<LocationTracker> list = q.getResultList();
+        resp.setLocationTrackerList(new ArrayList<>());
+        for (LocationTracker t : list) {
+            resp.getLocationTrackerList().add(new LocationTrackerDTO(t));
+        }
+        return resp;
+    }
+    public static ResponseDTO getLocationTracksByStaffInPeriod(EntityManager em, 
+            Integer companyStaffID,
             Long df, Long dx) {
         Date dateFrom, dateTo;
         if (df == null) {
@@ -390,7 +417,7 @@ public class ListUtil {
         q.setParameter("dateFrom", dateFrom);
         q.setParameter("dateTo", dateTo);
         List<LocationTracker> list = q.getResultList();
-        resp.setLocationTrackerList(new ArrayList<LocationTrackerDTO>());
+        resp.setLocationTrackerList(new ArrayList<>());
         for (LocationTracker t : list) {
             resp.getLocationTrackerList().add(new LocationTrackerDTO(t));
         }
@@ -433,7 +460,7 @@ public class ListUtil {
         Query q = em.createNamedQuery("PhotoUpload.findProjectPhotos", PhotoUpload.class);
         q.setParameter("projectID", projectID);
         List<PhotoUpload> list = q.getResultList();
-        resp.setPhotoUploadList(new ArrayList<PhotoUploadDTO>());
+        resp.setPhotoUploadList(new ArrayList<>());
         for (PhotoUpload cp : list) {
             resp.getPhotoUploadList().add(new PhotoUploadDTO(cp));
         }
