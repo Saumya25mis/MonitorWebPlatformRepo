@@ -17,8 +17,8 @@ import java.util.logging.Logger;
  */
 public class TrafficCop {
 
-    public static ResponseDTO processRequest(RequestDTO req, 
-            DataUtil dataUtil, SignInUtil signInUtil) 
+    public static ResponseDTO processRequest(RequestDTO req,
+            DataUtil dataUtil, SignInUtil signInUtil)
             throws DataException, IOException, Exception {
         long start = System.currentTimeMillis();
         ResponseDTO resp = new ResponseDTO();
@@ -31,7 +31,7 @@ public class TrafficCop {
             case RequestDTO.IMPORT_TASK_INFO:
                 resp = dataUtil.importTaskType(req.getTaskType());
                 break;
-                case RequestDTO.IMPORT_PROJECT_INFO:
+            case RequestDTO.IMPORT_PROJECT_INFO:
                 resp = dataUtil.importProject(req.getProject());
                 break;
             case RequestDTO.GET_MESSAGES_BY_PROJECT:
@@ -184,6 +184,9 @@ public class TrafficCop {
                 break;
             case RequestDTO.GET_COMPANY_DATA:
                 resp = ListUtil.getCompanyData(dataUtil.getEntityManager(), req.getCompanyID());
+                break;
+            case RequestDTO.GET_PORTFOLIO_LIST:
+                resp = ListUtil.getPortfolioList(dataUtil.getEntityManager(), req.getCompanyID());
                 break;
             case RequestDTO.GET_TASK_STATUS_LIST:
                 resp = ListUtil.getTaskStatusTypeList(dataUtil.getEntityManager(), req.getCompanyID());

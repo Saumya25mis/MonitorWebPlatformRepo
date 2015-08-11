@@ -201,7 +201,11 @@ public class ListUtil {
             PortfolioDTO dto = new PortfolioDTO(p);
             dto.setProgrammeList(getProgrammeList(em, p.getPortfolioID()));
             resp.getPortfolioList().add(dto);
+            
         }
+        
+        resp.setMonitorList(getMonitorList(em, companyID).getMonitorList());
+        resp.setStaffList(getCompanyStaffList(em, companyID).getStaffList());
         return resp;
     }
 
@@ -275,8 +279,10 @@ public class ListUtil {
                 }
             }
             for (PhotoUpload photoUpload : photoList) {
-                if (Objects.equals(photoUpload.getProjectTask().getProjectTaskID(), dto.getProjectTaskID())) {
-                    dto.getPhotoUploadList().add(new PhotoUploadDTO(photoUpload));
+                if (photoUpload.getProjectTask() != null) {
+                    if (Objects.equals(photoUpload.getProjectTask().getProjectTaskID(), dto.getProjectTaskID())) {
+                        dto.getPhotoUploadList().add(new PhotoUploadDTO(photoUpload));
+                    }
                 }
             }
             list.add(dto);
@@ -368,10 +374,9 @@ public class ListUtil {
         return resp;
     }
 
-    public static ResponseDTO getLocationTracksByMonitorInPeriod(EntityManager em, 
+    public static ResponseDTO getLocationTracksByMonitorInPeriod(EntityManager em,
             Integer monitorID,
-            Long df, Long dx) 
-    {
+            Long df, Long dx) {
         Date dateFrom, dateTo;
         if (df == null) {
             DateTime dt = new DateTime();
@@ -396,7 +401,8 @@ public class ListUtil {
         }
         return resp;
     }
-    public static ResponseDTO getLocationTracksByStaffInPeriod(EntityManager em, 
+
+    public static ResponseDTO getLocationTracksByStaffInPeriod(EntityManager em,
             Integer companyStaffID,
             Long df, Long dx) {
         Date dateFrom, dateTo;

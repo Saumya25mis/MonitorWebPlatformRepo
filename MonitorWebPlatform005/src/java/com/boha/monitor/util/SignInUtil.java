@@ -71,7 +71,7 @@ public class SignInUtil {
                 resp.getProjectList().add(new ProjectDTO(x.getProject()));
             }
             resp.setMonitorList(getCompanyMonitors(company.getCompanyID()));
-            resp.setPortfolioList(getPortfolioList(em, company.getCompanyID()).getPortfolioList());
+            resp.setPortfolioList(ListUtil.getPortfolioList(em, company.getCompanyID()).getPortfolioList());
             
 
         } catch (NoResultException e) {

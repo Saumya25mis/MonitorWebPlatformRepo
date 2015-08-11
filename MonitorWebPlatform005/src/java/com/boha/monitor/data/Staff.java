@@ -35,7 +35,9 @@ import javax.validation.constraints.Size;
 @Table(name = "staff")
 @NamedQueries({
     @NamedQuery(name = "Staff.findByCompany", 
-            query = "SELECT s FROM Staff s WHERE s.company.companyID = :companyID ORDER BY s.lastName, s.firstName")
+            query = "SELECT s FROM Staff s WHERE s.company.companyID = :companyID ORDER BY s.lastName, s.firstName"),
+    @NamedQuery(name = "Staff.login", 
+            query = "SELECT m FROM Staff m WHERE m.email = :email and m.pin = :pin and m.activeFlag = TRUE")
 })
 public class Staff implements Serializable {
     @OneToMany(mappedBy = "staff")
