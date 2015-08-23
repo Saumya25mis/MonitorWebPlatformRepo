@@ -46,6 +46,7 @@ public class SignInUtil {
             String pin) throws DataException {
         ResponseDTO resp = new ResponseDTO();
         resp.setStaffList(new ArrayList<>());
+        resp.setGcmDeviceList(new ArrayList<>());
         Query q = null;
         try {
             q = em.createNamedQuery("Staff.login", Staff.class);
@@ -60,7 +61,7 @@ public class SignInUtil {
             if (device != null) {
                 device.setCompanyID(company.getCompanyID());
                 device.setStaffID(cs.getStaffID());
-                addDevice(device);
+                resp.getGcmDeviceList().add(addDevice(device));
             }
 
             q = em.createNamedQuery("StaffProject.findByStaff", StaffProject.class);
@@ -71,6 +72,7 @@ public class SignInUtil {
                 resp.getProjectList().add(new ProjectDTO(x.getProject()));
             }
             resp.setMonitorList(getCompanyMonitors(company.getCompanyID()));
+            resp.getStaffList().add(new  StaffDTO(cs));
             resp.setPortfolioList(ListUtil.getPortfolioList(em, company.getCompanyID()).getPortfolioList());
             
 
@@ -86,6 +88,7 @@ public class SignInUtil {
             String pin) throws DataException {
         ResponseDTO resp = new ResponseDTO();
         resp.setMonitorList(new ArrayList<>());
+        resp.setGcmDeviceList(new ArrayList<>());
         Query q = null;
         try {
             q = em.createNamedQuery("Monitor.login", Monitor.class);
@@ -100,15 +103,12 @@ public class SignInUtil {
             if (device != null) {
                 device.setCompanyID(company.getCompanyID());
                 device.setMonitorID(cs.getMonitorID());
-                addDevice(device);
+                resp.getGcmDeviceList().add(addDevice(device));
             }
 
             ListUtil.getProjectDataForMonitor(em, resp, cs.getMonitorID());
             resp.setTaskStatusTypeList(ListUtil.getTaskStatusTypeList(em, company.getCompanyID()).getTaskStatusTypeList());
-            List<MonitorDTO> mList = getCompanyMonitors(company.getCompanyID());
-            for (MonitorDTO monitorDTO : mList) {
-                
-            }
+            resp.getMonitorList().add(new MonitorDTO(cs));
             resp.setStaffList(getCompanyStaff(company.getCompanyID()));
 
         } catch (NoResultException e) {
@@ -149,7 +149,8 @@ public class SignInUtil {
         }
         return list;
     }
- public  void addDevice(GcmDeviceDTO d) throws DataException {
+ public  GcmDeviceDTO addDevice(GcmDeviceDTO d) throws DataException {
+     GcmDeviceDTO device = null;
         try {
             GcmDevice g = new GcmDevice();
             g.setCompany(em.find(Company.class, d.getCompanyID()));
@@ -170,12 +171,15 @@ public class SignInUtil {
             g.setAndroidVersion(d.getAndroidVersion());
 
             em.persist(g);
+            em.flush();
+            device = new GcmDeviceDTO(g);
             log.log(Level.WARNING, "New device loaded");
         } catch (Exception e) {
             log.log(Level.SEVERE, "Failed", e);
             throw new DataException("Failed to add device\n" + ListUtil.getErrorString(e));
 
         }
+        return device;
     }
 
 }

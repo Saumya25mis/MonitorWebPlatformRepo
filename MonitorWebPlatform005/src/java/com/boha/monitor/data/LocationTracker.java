@@ -46,6 +46,9 @@ import javax.validation.constraints.Size;
     
 })
 public class LocationTracker implements Serializable {
+    @JoinColumn(name = "gcmDeviceID", referencedColumnName = "gcmDeviceID")
+    @ManyToOne
+    private GcmDevice gcmDevice;
     @JoinColumn(name = "monitorID", referencedColumnName = "monitorID")
     @ManyToOne
     private Monitor monitor;
@@ -205,6 +208,14 @@ public class LocationTracker implements Serializable {
     @Override
     public String toString() {
         return "com.boha.monitor.data.LocationTracker[ locationTrackerID=" + locationTrackerID + " ]";
+    }
+
+    public GcmDevice getGcmDevice() {
+        return gcmDevice;
+    }
+
+    public void setGcmDevice(GcmDevice gcmDevice) {
+        this.gcmDevice = gcmDevice;
     }
 
  

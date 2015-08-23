@@ -51,6 +51,7 @@ public class RequestDTO implements Serializable {
     private ChatMessageDTO chatMessage;
     private ProjectTaskDTO projectTask;
     private TaskTypeDTO taskType;
+    private LocationTrackerDTO locationTracker;
 
     private List<TaskDTO> taskList;
     private List<StaffProjectDTO> staffProjectList;
@@ -152,7 +153,8 @@ public class RequestDTO implements Serializable {
             ADD_PROJECT_TASKS = 326,
             ADD_STAFF = 327,
             ADD_MONITORS = 328,
-            ADD_SUB_TASKS = 329;
+            ADD_SUB_TASKS = 329,
+            ADD_LOCATION_TRACK = 330;
 
     //updates 
     public static final int 
@@ -215,6 +217,14 @@ public class RequestDTO implements Serializable {
 
     public void setProjectTaskList(List<ProjectTaskDTO> projectTaskList) {
         this.projectTaskList = projectTaskList;
+    }
+
+    public LocationTrackerDTO getLocationTracker() {
+        return locationTracker;
+    }
+
+    public void setLocationTracker(LocationTrackerDTO locationTracker) {
+        this.locationTracker = locationTracker;
     }
 
     

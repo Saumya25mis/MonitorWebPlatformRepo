@@ -10,6 +10,7 @@ import com.google.android.gcm.server.Message;
 import com.google.android.gcm.server.Result;
 import com.google.android.gcm.server.Sender;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,23 +23,23 @@ import java.util.logging.Logger;
 
 public class GoogleCloudMessagingRegistrar {
     
-
+ static final SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy HH:MM");
     public static ResponseDTO sendGCMRegistration(String regID) throws IOException {
         logger.log(Level.INFO,
-                "#### RegisterGCM starting comms with Google servers...."
+                "#### sendGCMRegistration starting comms with Google servers...."
                 + "sending registration of mobile device\n{0}", regID);
         ResponseDTO resp = new ResponseDTO();
         resp.setGCMRegistrationID(regID);
         Sender sender = new Sender(API_KEY);
         Message message = new Message.Builder().addData(
                 "message",
-                "SmartCity Mobile device registered to send and receive messages. Completed on "
-                + new Date().toString()).build();
+                "Monitor Platform Mobile device registered to send and receive messages. Completed on "
+                + sdf.format(new Date())).build();
 
         Result result = sender.send(message, regID, 5);
         logger.log(
                 Level.INFO,
-                "#### GCM Registration result, registrationID: {0} messageID: {1} errorCodeName: {2}",
+                "#### Monitor GCM Registration result, registrationID: {0} messageID: {1} errorCodeName: {2}",
                 new Object[]{result.getCanonicalRegistrationId(),
                     result.getMessageId(), result.getErrorCodeName()});
 
@@ -73,7 +74,7 @@ public class GoogleCloudMessagingRegistrar {
             StringBuilder sb = new StringBuilder();
             sb.append(resp.getMessage()).append("\n");
             sb.append("This device can now participate in push messaging");
-//            addErrorStore(em,StatusCode.DEVICE_REGISTERED, sb.toString());
+            logger.log(Level.INFO, sb.toString());
             return resp;
         }
 
@@ -81,7 +82,7 @@ public class GoogleCloudMessagingRegistrar {
         if (result.getMessageId() != null) {
             String canonicalRegId = result.getCanonicalRegistrationId();
             if (canonicalRegId != null) {
-                logger.log(Level.INFO, "### Canonical registration id found, will update yp folks...");
+                logger.log(Level.INFO, "### Canonical registration id found, will update  gcmDevices ???...");
                 resp.setGCMRegistrationID(result.getCanonicalRegistrationId());
 
             }

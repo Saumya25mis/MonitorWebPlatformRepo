@@ -14,7 +14,6 @@ import java.io.Serializable;
  */
 public class PhotoUploadDTO implements Serializable {
 
-    private MonitorDTO monitor;
     private static final long serialVersionUID = 1L;
     private Integer photoUploadID;
     private int pictureType;
@@ -22,7 +21,7 @@ public class PhotoUploadDTO implements Serializable {
     private Double latitude;
     private Double longitude;
     private Float accuracy;
-    private String uri;
+    private String uri, name;
     private Integer thumbFlag;
     private Long dateUploaded;
     private String thumbFilePath;
@@ -66,15 +65,19 @@ public class PhotoUploadDTO implements Serializable {
         
         if (a.getProject() != null) {
             projectID = a.getProject().getProjectID();
+            name = a.getProject().getProjectName();
         }
         if (a.getProjectTask() != null) {
             projectTaskID = a.getProjectTask().getProjectTaskID();
+            name = a.getProjectTask().getProject().getProjectName() + " - " + a.getProjectTask().getTask().getTaskName();
         }
         if (a.getStaff() != null) {
             staffID = a.getStaff().getStaffID();
+            name = a.getStaff().getFirstName() + " " + a.getStaff().getLastName();
         }
         if (a.getMonitor() != null) {
             monitorID = a.getMonitor().getMonitorID();
+            name = a.getMonitor().getFirstName() + " " + a.getMonitor().getLastName();
         }
     }
 
@@ -287,12 +290,5 @@ public class PhotoUploadDTO implements Serializable {
         return "com.boha.monitor.data.PhotoUpload[ photoUploadID=" + photoUploadID + " ]";
     }
 
-    public MonitorDTO getMonitor() {
-        return monitor;
-    }
-
-    public void setMonitor(MonitorDTO monitor) {
-        this.monitor = monitor;
-    }
 
 }

@@ -8,6 +8,7 @@ package com.boha.monitor.data;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -19,6 +20,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -43,6 +45,8 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "GcmDevice.findByAndroidVersion", 
             query = "SELECT g FROM GcmDevice g WHERE g.androidVersion = :androidVersion")})
 public class GcmDevice implements Serializable {
+    @OneToMany(mappedBy = "gcmDevice")
+    private List<LocationTracker> locationTrackerList;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -230,6 +234,14 @@ public class GcmDevice implements Serializable {
     @Override
     public String toString() {
         return "com.boha.monitor.data.GcmDevice[ gcmDeviceID=" + gcmDeviceID + " ]";
+    }
+
+    public List<LocationTracker> getLocationTrackerList() {
+        return locationTrackerList;
+    }
+
+    public void setLocationTrackerList(List<LocationTracker> locationTrackerList) {
+        this.locationTrackerList = locationTrackerList;
     }
     
 }

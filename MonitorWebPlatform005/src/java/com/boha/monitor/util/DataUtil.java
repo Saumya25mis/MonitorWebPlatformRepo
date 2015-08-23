@@ -253,7 +253,7 @@ public class DataUtil {
             }
             p.setProjectName(dto.getProjectName());
             p.setDateRegistered(new Date());
-            
+
             em.persist(p);
             em.flush();
             log.log(Level.INFO, "### Project added: {0}", dto.getProjectName());
@@ -263,7 +263,7 @@ public class DataUtil {
             List<Task> taskList = q0.getResultList();
             ProjectDTO projectDTO = new ProjectDTO(p);
             projectDTO.setProjectTaskList(new ArrayList<>());
-            
+
             for (Task task : taskList) {
                 ProjectTask pt = new ProjectTask();
                 pt.setProject(p);
@@ -289,7 +289,7 @@ public class DataUtil {
 
         ResponseDTO resp = new ResponseDTO();
         log.log(Level.INFO, "#### TaskType import started ....###########");
-        
+
         try {
             Programme c = em.find(Programme.class, taskType.getProgrammeID());
             TaskType a = new TaskType();
@@ -673,10 +673,12 @@ public class DataUtil {
         return em.find(Staff.class, id);
     }
 
-    public void addPhotoUpload(PhotoUploadDTO pu) {
+    public ResponseDTO addPhotoUpload(PhotoUploadDTO pu) {
+        ResponseDTO w = new ResponseDTO();
+        w.setPhotoUploadList(new ArrayList<>());
         try {
             PhotoUpload u = new PhotoUpload();
-            
+
             if (pu.getProjectID()
                     != null) {
                 u.setProject(em.find(Project.class, pu.getProjectID()));
@@ -692,9 +694,9 @@ public class DataUtil {
                 u.setStaff(em.find(Staff.class, pu.getStaffID()));
             }
 
-            if (pu.getMonitor()
+            if (pu.getMonitorID()
                     != null) {
-                u.setMonitor(em.find(Monitor.class, pu.getMonitor()));
+                u.setMonitor(em.find(Monitor.class, pu.getMonitorID()));
             }
 
             u.setPictureType(pu.getPictureType());
@@ -720,8 +722,8 @@ public class DataUtil {
             }
 
             em.persist(u);
-
             em.flush();
+            w.getPhotoUploadList().add(new PhotoUploadDTO(u));
 
             log.log(Level.OFF,
                     "PhotoUpload added to table, date taken: {0}", u.getDateTaken().toString());
@@ -732,7 +734,7 @@ public class DataUtil {
                     + getErrorString(e), "DataUtil");
 
         }
-
+        return w;
     }
 
     public ResponseDTO deleteProjectPhotos(List<PhotoUploadDTO> list) throws DataException {
@@ -756,6 +758,29 @@ public class DataUtil {
 
         }
         return resp;
+    }
+
+    public void addLocationTrack(LocationTrackerDTO dto) throws DataException {
+        try {
+            LocationTracker t = new LocationTracker();
+            t.setStaff(em.find(Staff.class, dto.getStaffID()));
+            t.setDateTracked(
+                    new Date(dto.getDateTracked()));
+            t.setLatitude(dto.getLatitude());
+            t.setLongitude(dto.getLongitude());
+            t.setAccuracy(dto.getAccuracy());
+            t.setDateAdded(
+                    new Date());
+            t.setDateTrackedLong(BigInteger.valueOf(new Date().getTime()));
+            t.setGeocodedAddress(dto.getGeocodedAddress());
+            em.persist(t);
+
+            log.log(Level.WARNING, "LocationTrack added");
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "Failed", e);
+            throw new DataException("Failed to add device\n" + getErrorString(e));
+
+        }
     }
 
     public void addLocationTrackers(List<LocationTrackerDTO> list) throws DataException {
@@ -785,10 +810,10 @@ public class DataUtil {
     }
 
     public void addDevice(GcmDeviceDTO d) throws DataException {
+
         try {
             GcmDevice g = new GcmDevice();
-            g
-                    .setCompany(em.find(Company.class, d.getCompanyID()));
+            g.setCompany(em.find(Company.class, d.getCompanyID()));
             if (d.getStaffID()
                     != null) {
                 g.setStaff(em.find(Staff.class, d.getStaffID()));

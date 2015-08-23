@@ -11,6 +11,7 @@ import com.boha.monitor.dto.CompanyDTO;
 import com.boha.monitor.dto.StaffDTO;
 import com.boha.monitor.dto.ErrorStoreAndroidDTO;
 import com.boha.monitor.dto.ErrorStoreDTO;
+import com.boha.monitor.dto.GcmDeviceDTO;
 import com.boha.monitor.dto.LocationTrackerDTO;
 import com.boha.monitor.dto.MonitorDTO;
 import com.boha.monitor.dto.MonitorProjectDTO;
@@ -70,7 +71,17 @@ public class ResponseDTO {
     private ProjectTaskStatusDTO lastStatus;
     private List<PortfolioDTO> portfolioList;
     private List<ProgrammeDTO> programmeList;
+    private List<GcmDeviceDTO> gcmDeviceList;
 
+    public List<GcmDeviceDTO> getGcmDeviceList() {
+        return gcmDeviceList;
+    }
+
+    public void setGcmDeviceList(List<GcmDeviceDTO> gcmDeviceList) {
+        this.gcmDeviceList = gcmDeviceList;
+    }
+
+    
     public List<SubTaskDTO> getSubTaskList() {
         return subTaskList;
     }

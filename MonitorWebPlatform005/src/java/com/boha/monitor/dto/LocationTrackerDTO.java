@@ -24,6 +24,7 @@ public class LocationTrackerDTO implements Serializable {
     private float accuracy;
     private String geocodedAddress, staffName;
     private Long dateAdded;
+    private GcmDeviceDTO gcmDevice;
 
     public LocationTrackerDTO() {
     }
@@ -42,6 +43,9 @@ public class LocationTrackerDTO implements Serializable {
         this.geocodedAddress = a.getGeocodedAddress();
         if (a.getDateAdded() != null) {
             this.dateAdded = a.getDateAdded().getTime();
+        }
+        if (a.getGcmDevice() != null) {
+            gcmDevice = new GcmDeviceDTO(a.getGcmDevice());
         }
     }
 
