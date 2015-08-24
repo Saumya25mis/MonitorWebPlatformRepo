@@ -34,6 +34,8 @@ import javax.validation.constraints.Size;
 @NamedQueries({
     @NamedQuery(name = "PhotoUpload.findByProject", 
             query = "SELECT p FROM PhotoUpload p WHERE p.project.projectID = :projectID and p.projectTask IS NULL ORDER BY p.dateTaken desc"),
+    @NamedQuery(name = "PhotoUpload.findByMonitor", 
+            query = "SELECT p FROM PhotoUpload p WHERE p.monitor.monitorID = :monitorID and p.project IS NULL ORDER BY p.dateTaken desc"),
     @NamedQuery(name = "PhotoUpload.findByTask", 
             query = "SELECT p FROM PhotoUpload p WHERE p.projectTask.projectTaskID = :projectTaskID ORDER BY p.dateTaken desc")
 })

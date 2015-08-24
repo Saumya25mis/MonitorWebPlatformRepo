@@ -763,7 +763,9 @@ public class DataUtil {
     public void addLocationTrack(LocationTrackerDTO dto) throws DataException {
         try {
             LocationTracker t = new LocationTracker();
+            if (dto.getStaffID() != null) {
             t.setStaff(em.find(Staff.class, dto.getStaffID()));
+            }
             t.setDateTracked(
                     new Date(dto.getDateTracked()));
             t.setLatitude(dto.getLatitude());
@@ -771,8 +773,14 @@ public class DataUtil {
             t.setAccuracy(dto.getAccuracy());
             t.setDateAdded(
                     new Date());
-            t.setDateTrackedLong(BigInteger.valueOf(new Date().getTime()));
+            t.setDateTrackedLong(BigInteger.valueOf(dto.getDateTracked()));
             t.setGeocodedAddress(dto.getGeocodedAddress());
+            if (dto.getGcmDevice() != null) {
+                t.setGcmDevice(em.find(GcmDevice.class, dto.getGcmDevice().getGcmDeviceID()));
+            }
+            if (dto.getMonitorID() != null) {
+                t.setMonitor(em.find(Monitor.class, dto.getMonitorID()));
+            }
             em.persist(t);
 
             log.log(Level.WARNING, "LocationTrack added");

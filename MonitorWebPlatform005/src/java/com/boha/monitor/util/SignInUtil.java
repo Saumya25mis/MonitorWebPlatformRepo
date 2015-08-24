@@ -110,6 +110,7 @@ public class SignInUtil {
             resp.setTaskStatusTypeList(ListUtil.getTaskStatusTypeList(em, company.getCompanyID()).getTaskStatusTypeList());
             resp.getMonitorList().add(new MonitorDTO(cs));
             resp.setStaffList(getCompanyStaff(company.getCompanyID()));
+            resp.setPhotoUploadList(ListUtil.getMonitorPhotos(em, cs.getMonitorID()).getPhotoUploadList());
 
         } catch (NoResultException e) {
             log.log(Level.WARNING, "Invalid monitor login attempt: " + email + " pin: " + pin, e);

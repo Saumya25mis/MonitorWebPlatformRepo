@@ -79,7 +79,7 @@ public class TrafficCop {
                 resp.setStatusCode(0);
                 resp.setMessage("Tracker data written OK");
                 break;
-             case RequestDTO.ADD_LOCATION_TRACK:
+            case RequestDTO.ADD_LOCATION_TRACK:
                 dataUtil.addLocationTrack(req.getLocationTracker());
                 resp.setStatusCode(0);
                 resp.setMessage("Tracker data written OK");
@@ -117,6 +117,9 @@ public class TrafficCop {
                 break;
             case RequestDTO.ADD_PHOTO:
                 resp = dataUtil.addPhotoUpload(req.getPhotoUpload());
+                break;
+            case RequestDTO.GET_MONITOR_PHOTOS:
+                resp = ListUtil.getMonitorPhotos(dataUtil.getEntityManager(), req.getMonitorID());
                 break;
 
             case RequestDTO.ADD_PROJECT_TASKS:

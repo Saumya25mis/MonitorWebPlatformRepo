@@ -28,6 +28,24 @@ import org.joda.time.DateTime;
  */
 public class ListUtil {
 
+    public static ResponseDTO getMonitorPhotos(EntityManager em, Integer monitorID) throws DataException {
+        ResponseDTO resp = new ResponseDTO();
+        resp.setPhotoUploadList(new ArrayList<>());
+        try {
+            Query q = em.createNamedQuery("PhotoUpload.findByMonitor", PhotoUpload.class);
+            q.setParameter("monitorID", monitorID);
+            List<PhotoUpload> list = q.getResultList();
+            for (PhotoUpload photoUpload : list) {
+                resp.getPhotoUploadList().add(new PhotoUploadDTO(photoUpload));
+            }
+            
+        } catch (Exception e) {
+            
+            throw new DataException(null);
+        }
+        return resp;
+    }
+    
     public static ResponseDTO getMonitorProjects(EntityManager em, Integer monitorID) throws DataException {
         ResponseDTO resp = new ResponseDTO();
 
