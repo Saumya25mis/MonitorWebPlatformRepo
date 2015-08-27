@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.boha.monitor.data;
 
 import java.io.Serializable;
@@ -35,14 +34,17 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(name = "monitor")
 @NamedQueries({
-    @NamedQuery(name = "Monitor.findByCompany", 
+    @NamedQuery(name = "Monitor.findByCompany",
             query = "SELECT m FROM Monitor m WHERE m.company.companyID = :companyID and m.activeFlag = TRUE "
-                    + "ORDER BY m.lastName, m.firstName"),
-    
-    @NamedQuery(name = "Monitor.login", 
+            + "ORDER BY m.lastName, m.firstName"),
+
+    @NamedQuery(name = "Monitor.login",
             query = "SELECT m FROM Monitor m WHERE m.email = :email and m.pin = :pin and m.activeFlag = TRUE")
 })
 public class Monitor implements Serializable {
+
+    @Column(name = "gender")
+    private Short gender;
     @OneToMany(mappedBy = "monitor")
     private List<VideoUpload> videoUploadList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "monitor")
@@ -74,7 +76,10 @@ public class Monitor implements Serializable {
     @Size(max = 50)
     @Column(name = "cellphone")
     private String cellphone;
-    // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
+    @Size(max = 512)
+    @Column(name = "address")
+    private String address;
+
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
@@ -147,6 +152,14 @@ public class Monitor implements Serializable {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getCellphone() {
@@ -333,5 +346,13 @@ public class Monitor implements Serializable {
     public void setVideoUploadList(List<VideoUpload> videoUploadList) {
         this.videoUploadList = videoUploadList;
     }
-    
+
+    public Short getGender() {
+        return gender;
+    }
+
+    public void setGender(Short gender) {
+        this.gender = gender;
+    }
+
 }

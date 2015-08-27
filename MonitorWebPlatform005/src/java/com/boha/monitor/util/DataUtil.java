@@ -764,7 +764,7 @@ public class DataUtil {
         try {
             LocationTracker t = new LocationTracker();
             if (dto.getStaffID() != null) {
-            t.setStaff(em.find(Staff.class, dto.getStaffID()));
+                t.setStaff(em.find(Staff.class, dto.getStaffID()));
             }
             t.setDateTracked(
                     new Date(dto.getDateTracked()));
@@ -1267,50 +1267,16 @@ public class DataUtil {
     public ResponseDTO addMonitors(
             List<MonitorDTO> monitorList) throws DataException {
         ResponseDTO resp = new ResponseDTO();
+        resp.setMonitorList(new ArrayList<>());
 
         try {
-            Company c = em.find(Company.class, monitorList.get(0).getCompanyID());
             for (MonitorDTO mon : monitorList) {
-
-                Monitor cs = new Monitor();
-                cs.setCompany(c);
-                cs.setFirstName(mon.getFirstName());
-                cs.setCellphone(mon.getCellphone());
-                cs.setEmail(mon.getEmail());
-                cs.setLastName(mon.getLastName());
-                cs.setPin(getRandomPin());
-                cs.setActiveFlag(mon.getActiveFlag());
-                em.persist(cs);
-
+                ResponseDTO w = addMonitor(mon);
+                if (w.getStatusCode() == 0) {
+                    resp.getMonitorList().add(w.getMonitorList().get(0));
+                }
             }
 
-            em.flush();
-
-            //
-            resp.setCompany(
-                    new CompanyDTO(c));
-            resp.setMonitorList(
-                    new ArrayList<>());
-            Query q = em.createNamedQuery("Monitor.findByCompany", Monitor.class);
-
-            q.setParameter(
-                    "companyID", c.getCompanyID());
-            List<Monitor> sList = q.getResultList();
-
-            resp.setMonitorList(
-                    new ArrayList<>());
-            for (Monitor monx : sList) {
-                resp.getMonitorList().add(new MonitorDTO(monx));
-            }
-
-            log.log(Level.OFF,
-                    "Company Monitors registered for: {0} - {1} ",
-                    new Object[]{c.getCompanyName(), resp.getMonitorList().size()
-                    }
-            );
-        } catch (PersistenceException e) {
-            resp.setStatusCode(ServerStatus.ERROR_DUPLICATE_DATA);
-            resp.setMessage(ServerStatus.getMessage(resp.getStatusCode()));
         } catch (Exception e) {
             log.log(Level.SEVERE, "Failed", e);
             throw new DataException("Failed to register staff\n" + getErrorString(e));
@@ -1320,32 +1286,38 @@ public class DataUtil {
 
     }
 
-    public ResponseDTO registerMonitor(
+    /**
+     * Register company monitor
+     *
+     * @param mon
+     * @return
+     * @throws DataException
+     */
+    public ResponseDTO addMonitor(
             MonitorDTO mon) throws DataException {
         ResponseDTO resp = new ResponseDTO();
 
         try {
             Company c = em.find(Company.class, mon.getCompanyID());
             Monitor cs = new Monitor();
-
             cs.setCompany(c);
-
             cs.setFirstName(mon.getFirstName());
             cs.setCellphone(mon.getCellphone());
             cs.setEmail(mon.getEmail());
             cs.setLastName(mon.getLastName());
             cs.setPin(getRandomPin());
             cs.setActiveFlag(mon.getActiveFlag());
+            cs.setDateRegistered(new Date());
+            cs.setIDNumber(mon.getIDNumber());
+            cs.setAddress(mon.getAddress());
+            cs.setGender(mon.getGender());
             em.persist(cs);
 
             em.flush();
 
-            resp.setCompany(
-                    new CompanyDTO(c));
-            resp.setMonitorList(
-                    new ArrayList<>());
-            resp.getMonitorList()
-                    .add(new MonitorDTO(cs));
+            resp.setCompany(new CompanyDTO(c));
+            resp.setMonitorList(new ArrayList<>());
+            resp.getMonitorList().add(new MonitorDTO(cs));
             try {
                 if (mon.getGcmDevice() != null) {
                     addDevice(mon.getGcmDevice());
@@ -1475,60 +1447,6 @@ public class DataUtil {
         }
     }
 
-//    private void addInitialTasks(Company c) {
-//        //add taskType
-//        TaskType tt = new TaskType();
-//        tt.setCompany(c);
-//        tt.setTaskTypeName("Sample Task Type");
-//        em.persist(tt);
-//        em.flush();
-//        //add tasks in this taskType
-//        String desc = "Sample Monitored Task. Change description";
-//        Task t1 = new Task();
-//        t1.setTaskName("Monitored Task No. 1");
-//        t1.setTaskNumber(1);
-//        t1.setDescription(desc);
-//        t1.setCompany(c);
-//        t1.setTaskType(tt);
-//        em.persist(t1);
-//        Task t2 = new Task();
-//        t2.setTaskName("Monitored Task No. 2");
-//        t2.setDescription(desc);
-//        t2.setTaskNumber(2);
-//        t2.setCompany(c);
-//        t2.setTaskType(tt);
-//        em.persist(t2);
-//        Task t3 = new Task();
-//        t3.setTaskName("Monitored Task No. 3");
-//        t3.setDescription(desc);
-//        t3.setTaskNumber(3);
-//        t3.setCompany(c);
-//        t3.setTaskType(tt);
-//        em.persist(t3);
-//        Task t4 = new Task();
-//        t4.setTaskName("Monitored Task No. 4");
-//        t4.setDescription(desc);
-//        t4.setTaskNumber(4);
-//        t4.setCompany(c);
-//        t4.setTaskType(tt);
-//        em.persist(t4);
-//        Task t5 = new Task();
-//        t5.setTaskName("Monitored Task No. 5");
-//        t5.setDescription(desc);
-//        t5.setTaskNumber(5);
-//        t5.setCompany(c);
-//        t5.setTaskType(tt);
-//        em.persist(t5);
-//        Task t6 = new Task();
-//        t6.setTaskName("Monitored Task No. 6");
-//        t6.setDescription(desc);
-//        t6.setTaskNumber(6);
-//        t6.setCompany(c);
-//        t6.setTaskType(tt);
-//        em.persist(t6);
-//        em.flush();
-//        log.log(Level.INFO, "Initial Tasks added");
-//    }
     private void addinitialProjectStatusType(Company c) {
         ProjectStatusType p1 = new ProjectStatusType();
         p1.setCompany(c);
@@ -1643,6 +1561,44 @@ public class DataUtil {
     }
     final Logger log = Logger.getLogger(DataUtil.class
             .getSimpleName());
+
+    public ResponseDTO updateMonitor(MonitorDTO mon) throws DataException {
+        ResponseDTO w = new ResponseDTO();
+        try {
+            Monitor cs = em.find(Monitor.class, mon.getMonitorID());
+            if (mon.getFirstName() != null) {
+                cs.setFirstName(mon.getFirstName());
+            }
+            if (mon.getCellphone() != null) {
+                cs.setCellphone(mon.getCellphone());
+            }
+            if (mon.getEmail() != null) {
+                cs.setEmail(mon.getEmail());
+            }
+            if (mon.getLastName() != null) {
+                cs.setLastName(mon.getLastName());
+            }
+            if (mon.getActiveFlag() != null) {
+                cs.setActiveFlag(mon.getActiveFlag());
+            }
+            if (mon.getIDNumber() != null) {
+                cs.setIDNumber(mon.getIDNumber());
+            }
+            if (mon.getAddress() != null) {
+                cs.setAddress(mon.getAddress());
+            }
+            if (mon.getGender()!= null) {
+                cs.setGender(mon.getGender());
+            }
+
+            em.merge(cs);
+            w.setMessage("Monitor data updated");
+            log.log(Level.OFF, "Monitor data updated: {0} {1}", new Object[]{cs.getFirstName(), cs.getLastName()});
+        } catch (Exception e) {
+            throw new DataException("Failed to update monitor");
+        }
+        return w;
+    }
 
     public void updateProjectStatusType(ProjectStatusTypeDTO dto) throws DataException {
         try {

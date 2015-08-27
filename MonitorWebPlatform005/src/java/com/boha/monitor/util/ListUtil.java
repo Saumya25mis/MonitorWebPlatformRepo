@@ -86,8 +86,16 @@ public class ListUtil {
             q.setParameter("projectID", project.getProjectID());
             List<Monitor> monList = q.getResultList();
             project.setMonitorList(new ArrayList());
+            q = em.createNamedQuery("PhotoUpload.findByMonitor", PhotoUpload.class);
             for (Monitor monitor : monList) {
-                project.getMonitorList().add(new MonitorDTO(monitor));
+                MonitorDTO dto = new MonitorDTO(monitor);
+                dto.setPhotoUploadList(new ArrayList<>());           
+                q.setParameter("monitorID", dto.getMonitorID());
+                List<PhotoUpload> pList = q.getResultList();
+                for (PhotoUpload photoUpload : pList) {
+                   dto.getPhotoUploadList().add(new PhotoUploadDTO(photoUpload));
+                }
+                project.getMonitorList().add(dto);
             }
             //get all the pictures taken for the project
             q = em.createNamedQuery("PhotoUpload.findByProject", PhotoUpload.class);

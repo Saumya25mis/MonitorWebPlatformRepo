@@ -19,10 +19,11 @@ public class MonitorDTO implements Serializable {
     private Integer monitorID, activeFlag;
     private String firstName;
     private String lastName;
-    private String email, companyName;
+    private String email, companyName, IDNumber, address;
     private String cellphone, pin;
     private Long appInvitationDate;
     private Integer companyID;
+    private Short gender;
     private GcmDeviceDTO gcmDevice;
     private List<PhotoUploadDTO> photoUploadList;
     private List<LocationTrackerDTO> locationTrackerList;
@@ -41,6 +42,9 @@ public class MonitorDTO implements Serializable {
         this.companyID = c.getCompanyID();
         this.companyName = c.getCompanyName();
         this.activeFlag = a.getActiveFlag();
+        this.address = a.getAddress();
+        this.IDNumber = a.getIDNumber();
+        this.gender = a.getGender();
         
         if (a.getAppInvitationDate() != null) {
             this.appInvitationDate = a.getAppInvitationDate().getTime();
@@ -52,6 +56,31 @@ public class MonitorDTO implements Serializable {
         
     }
 
+    public Short getGender() {
+        return gender;
+    }
+
+    public void setGender(Short gender) {
+        this.gender = gender;
+    }
+
+    public String getIDNumber() {
+        return IDNumber;
+    }
+
+    public void setIDNumber(String IDNumber) {
+        this.IDNumber = IDNumber;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    
     public Integer getMonitorID() {
         return monitorID;
     }

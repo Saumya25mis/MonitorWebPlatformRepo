@@ -222,6 +222,12 @@ public class TrafficCop {
             case RequestDTO.SEND_GCM_REGISTRATION:
                 resp = GoogleCloudMessagingRegistrar.sendGCMRegistration(req.getGcmRegistrationID());
                 break;
+                
+            case RequestDTO.UPDATE_MONITOR:
+                resp = dataUtil.updateMonitor(req.getMonitorList().get(0));
+                break;
+                
+                
             default:
                 resp.setStatusCode(ServerStatus.ERROR_UNKNOWN_REQUEST);
                 resp.setMessage(ServerStatus.getMessage(resp.getStatusCode()));

@@ -166,7 +166,8 @@ public class RequestDTO implements Serializable {
             UPDATE_PROJECT = 405,
             UPDATE_COMPANY_STAFF = 407,
             RESET_STAFF_PIN = 408,
-            UPDATE_STAFF_PROJECTS = 409;
+            UPDATE_STAFF_PROJECTS = 409,
+            UPDATE_MONITOR = 410;
    
     //reports
     public static final int REPORT_PROJECT = 601,
