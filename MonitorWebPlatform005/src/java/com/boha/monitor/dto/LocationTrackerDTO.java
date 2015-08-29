@@ -3,11 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.boha.monitor.dto;
 
 import com.boha.monitor.data.*;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  *
@@ -19,11 +19,12 @@ public class LocationTrackerDTO implements Serializable {
     private Integer locationTrackerID;
     private Integer staffID, monitorID;
     private Long dateTracked;
-    private double latitude;
-    private double longitude;
+    private Double latitude;
+    private Double longitude;
     private float accuracy;
-    private String geocodedAddress, staffName;
+    private String geocodedAddress, staffName, monitorName, message;
     private Long dateAdded;
+    private List<Integer> monitorList, staffList;
     private GcmDeviceDTO gcmDevice;
 
     public LocationTrackerDTO() {
@@ -31,22 +32,63 @@ public class LocationTrackerDTO implements Serializable {
 
     public LocationTrackerDTO(LocationTracker a) {
         this.locationTrackerID = a.getLocationTrackerID();
-        Staff cs = a.getStaff();
-        this.staffID = cs.getStaffID();
-        this.staffName = cs.getFirstName() + " " + cs.getLastName();
-        if (a.getDateTracked() != null) {
-            this.dateTracked = a.getDateTracked().getTime();
-        }
         this.latitude = a.getLatitude();
         this.longitude = a.getLongitude();
         this.accuracy = a.getAccuracy();
         this.geocodedAddress = a.getGeocodedAddress();
+        
+        Staff cs = a.getStaff();
+        if (cs != null) {
+            this.staffID = cs.getStaffID();
+            this.staffName = cs.getFirstName() + " " + cs.getLastName();
+        }
+        Monitor m = a.getMonitor();
+        if (m != null) {
+            this.monitorID = m.getMonitorID();
+            this.monitorName = m.getFirstName() + " " + m.getLastName();
+        }
+        if (a.getDateTracked() != null) {
+            this.dateTracked = a.getDateTracked().getTime();
+        }
+        
         if (a.getDateAdded() != null) {
             this.dateAdded = a.getDateAdded().getTime();
         }
         if (a.getGcmDevice() != null) {
             gcmDevice = new GcmDeviceDTO(a.getGcmDevice());
         }
+    }
+
+    public String getMonitorName() {
+        return monitorName;
+    }
+
+    public void setMonitorName(String monitorName) {
+        this.monitorName = monitorName;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public List<Integer> getMonitorList() {
+        return monitorList;
+    }
+
+    public void setMonitorList(List<Integer> monitorList) {
+        this.monitorList = monitorList;
+    }
+
+    public List<Integer> getStaffList() {
+        return staffList;
+    }
+
+    public void setStaffList(List<Integer> staffList) {
+        this.staffList = staffList;
     }
 
     public GcmDeviceDTO getGcmDevice() {
@@ -57,7 +99,6 @@ public class LocationTrackerDTO implements Serializable {
         this.gcmDevice = gcmDevice;
     }
 
-    
     public Integer getLocationTrackerID() {
         return locationTrackerID;
     }
@@ -90,19 +131,19 @@ public class LocationTrackerDTO implements Serializable {
         this.dateTracked = dateTracked;
     }
 
-    public double getLatitude() {
+    public Double getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(double latitude) {
+    public void setLatitude(Double latitude) {
         this.latitude = latitude;
     }
 
-    public double getLongitude() {
+    public Double getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(double longitude) {
+    public void setLongitude(Double longitude) {
         this.longitude = longitude;
     }
 
@@ -137,5 +178,5 @@ public class LocationTrackerDTO implements Serializable {
     public void setDateAdded(Long dateAdded) {
         this.dateAdded = dateAdded;
     }
-    
+
 }

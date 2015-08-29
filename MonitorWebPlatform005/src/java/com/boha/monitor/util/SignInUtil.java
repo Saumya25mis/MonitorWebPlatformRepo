@@ -22,6 +22,7 @@ import static com.boha.monitor.util.ListUtil.log;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
@@ -29,6 +30,7 @@ import javax.ejb.TransactionManagementType;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 
 /**
@@ -42,7 +44,7 @@ public class SignInUtil {
     @PersistenceContext
     EntityManager em;
 
-    public  ResponseDTO loginStaff(EntityManager em, GcmDeviceDTO device, String email,
+    public ResponseDTO loginStaff(EntityManager em, GcmDeviceDTO device, String email,
             String pin) throws DataException {
         ResponseDTO resp = new ResponseDTO();
         resp.setStaffList(new ArrayList<>());
@@ -61,7 +63,7 @@ public class SignInUtil {
             if (device != null) {
                 device.setCompanyID(company.getCompanyID());
                 device.setStaffID(cs.getStaffID());
-                resp.getGcmDeviceList().add(addDevice(device));
+                resp.getGcmDeviceList().add(addStaffDevice(device));
             }
 
             q = em.createNamedQuery("StaffProject.findByStaff", StaffProject.class);
@@ -72,9 +74,8 @@ public class SignInUtil {
                 resp.getProjectList().add(new ProjectDTO(x.getProject()));
             }
             resp.setMonitorList(getCompanyMonitors(company.getCompanyID()));
-            resp.getStaffList().add(new  StaffDTO(cs));
+            resp.getStaffList().add(new StaffDTO(cs));
             resp.setPortfolioList(ListUtil.getPortfolioList(em, company.getCompanyID()).getPortfolioList());
-            
 
         } catch (NoResultException e) {
             log.log(Level.WARNING, "Invalid login attempt: " + email + " pin: " + pin, e);
@@ -84,7 +85,7 @@ public class SignInUtil {
         return resp;
     }
 
-    public  ResponseDTO loginMonitor(EntityManager em, GcmDeviceDTO device, String email,
+    public ResponseDTO loginMonitor(EntityManager em, GcmDeviceDTO device, String email,
             String pin) throws DataException {
         ResponseDTO resp = new ResponseDTO();
         resp.setMonitorList(new ArrayList<>());
@@ -103,7 +104,7 @@ public class SignInUtil {
             if (device != null) {
                 device.setCompanyID(company.getCompanyID());
                 device.setMonitorID(cs.getMonitorID());
-                resp.getGcmDeviceList().add(addDevice(device));
+                resp.getGcmDeviceList().add(addMonitorDevice(device));
             }
 
             ListUtil.getProjectDataForMonitor(em, resp, cs.getMonitorID());
@@ -119,6 +120,7 @@ public class SignInUtil {
         }
         return resp;
     }
+
     public static ResponseDTO getPortfolioList(EntityManager em, Integer companyID) {
         ResponseDTO resp = new ResponseDTO();
         Query q = em.createNamedQuery("Portfolio.findByCompany", Portfolio.class);
@@ -130,6 +132,7 @@ public class SignInUtil {
         }
         return resp;
     }
+
     private List<MonitorDTO> getCompanyMonitors(Integer companyID) {
         List<MonitorDTO> list = new ArrayList<>();
         Query q = em.createNamedQuery("Monitor.findByCompany", Monitor.class);
@@ -140,6 +143,7 @@ public class SignInUtil {
         }
         return list;
     }
+
     public List<StaffDTO> getCompanyStaff(Integer companyID) {
         List<StaffDTO> list = new ArrayList<>();
         Query q = em.createNamedQuery("Staff.findByCompany", Staff.class);
@@ -150,18 +154,26 @@ public class SignInUtil {
         }
         return list;
     }
- public  GcmDeviceDTO addDevice(GcmDeviceDTO d) throws DataException {
-     GcmDeviceDTO device = null;
+
+    public GcmDeviceDTO addMonitorDevice(GcmDeviceDTO d) throws DataException {
+        GcmDeviceDTO device = null;
+        GcmDevice g = null;
+        boolean isUpdate = false;
         try {
-            GcmDevice g = new GcmDevice();
-            g.setCompany(em.find(Company.class, d.getCompanyID()));
-            if (d.getStaffID() != null) {
-                g.setStaff(em.find(Staff.class, d.getStaffID()));
-            }
-            if (d.getMonitorID() != null) {
-                g.setMonitor(em.find(Monitor.class, d.getMonitorID()));
+            Query q = em.createNamedQuery("GcmDevice.findBySerialNumberApp", GcmDevice.class);
+            q.setParameter("serialNumber", d.getSerialNumber());
+            q.setParameter("app", d.getApp());
+            q.setMaxResults(1);
+            try {
+                g = (GcmDevice) q.getSingleResult();
+                isUpdate = true;
+            } catch (NoResultException e) {
+                g = new GcmDevice();
+                g.setCompany(em.find(Company.class, d.getCompanyID()));
             }
 
+            g.setStaff(null);
+            g.setMonitor(em.find(Monitor.class, d.getMonitorID()));
             g.setDateRegistered(new Date());
             g.setManufacturer(d.getManufacturer());
             g.setMessageCount(0);
@@ -170,14 +182,70 @@ public class SignInUtil {
             g.setSerialNumber(d.getSerialNumber());
             g.setProduct(d.getProduct());
             g.setAndroidVersion(d.getAndroidVersion());
+            g.setApp(d.getApp());
 
-            em.persist(g);
+            if (isUpdate) {
+                em.merge(g);
+            } else {
+                em.persist(g);
+            }
             em.flush();
             device = new GcmDeviceDTO(g);
-            log.log(Level.WARNING, "New device loaded");
+            log.log(Level.INFO, "New monitor device loaded: {0} Android Version: {1}", new Object[]{g.getModel(), g.getAndroidVersion()});
+        } catch (PersistenceException e) {
+
+            em.merge(g);
         } catch (Exception e) {
             log.log(Level.SEVERE, "Failed", e);
-            throw new DataException("Failed to add device\n" + ListUtil.getErrorString(e));
+            throw new DataException("Failed to add monitor device\n" + ListUtil.getErrorString(e));
+
+        }
+        return device;
+    }
+
+    public GcmDeviceDTO addStaffDevice(GcmDeviceDTO d) throws DataException {
+        GcmDeviceDTO device = null;
+        GcmDevice g = null;
+        boolean isUpdate = false;
+        try {
+            Query q = em.createNamedQuery("GcmDevice.findBySerialNumberApp", GcmDevice.class);
+            q.setParameter("serialNumber", d.getSerialNumber());
+            q.setParameter("app", d.getApp());
+            q.setMaxResults(1);
+            try {
+                g = (GcmDevice) q.getSingleResult();
+                isUpdate = true;
+            } catch (NoResultException e) {
+                g = new GcmDevice();
+                g.setCompany(em.find(Company.class, d.getCompanyID()));
+            }
+
+            g.setStaff(em.find(Staff.class, d.getStaffID()));
+            g.setMonitor(null);
+            g.setDateRegistered(new Date());
+            g.setManufacturer(d.getManufacturer());
+            g.setMessageCount(0);
+            g.setModel(d.getModel());
+            g.setRegistrationID(d.getRegistrationID());
+            g.setSerialNumber(d.getSerialNumber());
+            g.setProduct(d.getProduct());
+            g.setAndroidVersion(d.getAndroidVersion());
+            g.setApp(d.getApp());
+
+            if (isUpdate) {
+                em.merge(g);
+            } else {
+                em.persist(g);
+            }
+            em.flush();
+            device = new GcmDeviceDTO(g);
+            log.log(Level.INFO, "New staff device loaded: {0}  Android Version: {1}", new Object[]{g.getModel(), g.getAndroidVersion()});
+        } catch (PersistenceException e) {
+
+            em.merge(g);
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "Failed", e);
+            throw new DataException("Failed to add staff device\n" + ListUtil.getErrorString(e));
 
         }
         return device;

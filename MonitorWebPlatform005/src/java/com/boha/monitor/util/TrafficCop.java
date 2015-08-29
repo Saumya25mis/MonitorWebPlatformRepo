@@ -25,6 +25,10 @@ public class TrafficCop {
         resp.setStatusCode(0);
 
         switch (req.getRequestType()) {
+            case RequestDTO.SEND_LOCATION:
+                dataUtil.addLocationTrack(req.getLocationTracker());
+                resp = GoogleCloudMessageUtil.sendLocationMessage(dataUtil.getEntityManager(), req.getLocationTracker());
+                break;
             case RequestDTO.GET_COMPANY_LIST:
                 resp = ListUtil.getCompanyList(dataUtil.getEntityManager());
                 break;
@@ -221,6 +225,10 @@ public class TrafficCop {
                 break;
             case RequestDTO.SEND_GCM_REGISTRATION:
                 resp = GoogleCloudMessagingRegistrar.sendGCMRegistration(req.getGcmRegistrationID());
+                break;
+                case RequestDTO.UPDATE_GCM_REGISTRATION:
+                resp = GoogleCloudMessagingRegistrar.sendGCMRegistration(req.getGcmRegistrationID());
+                dataUtil.updateDevice(req.getGcmDevice());
                 break;
                 
             case RequestDTO.UPDATE_MONITOR:

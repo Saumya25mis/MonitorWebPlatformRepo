@@ -36,12 +36,15 @@ import javax.validation.constraints.Size;
 @NamedQueries({
     @NamedQuery(name = "GcmDevice.findCompanyStaffDevices", 
             query = "SELECT g FROM GcmDevice g WHERE g.company.companyID = :companyID and g.staff IS NOT NULL"),
-    @NamedQuery(name = "GcmDevice.findByManufacturer", 
-            query = "SELECT g FROM GcmDevice g WHERE g.manufacturer = :manufacturer"),
+    
+    @NamedQuery(name = "GcmDevice.findByMonitorIDs", 
+            query = "SELECT g FROM GcmDevice g WHERE g.monitor.monitorID IN :list"),
+    @NamedQuery(name = "GcmDevice.findByStaffIDs", 
+            query = "SELECT g FROM GcmDevice g WHERE g.staff.staffID IN :list"),
     @NamedQuery(name = "GcmDevice.findByModel", 
             query = "SELECT g FROM GcmDevice g WHERE g.model = :model"),
-    @NamedQuery(name = "GcmDevice.findBySerialNumber", 
-            query = "SELECT g FROM GcmDevice g WHERE g.serialNumber = :serialNumber"),
+    @NamedQuery(name = "GcmDevice.findBySerialNumberApp", 
+            query = "SELECT g FROM GcmDevice g WHERE g.serialNumber = :serialNumber AND g.app = :app"),
     @NamedQuery(name = "GcmDevice.findByAndroidVersion", 
             query = "SELECT g FROM GcmDevice g WHERE g.androidVersion = :androidVersion")})
 public class GcmDevice implements Serializable {
@@ -81,6 +84,9 @@ public class GcmDevice implements Serializable {
     @Size(max = 100)
     @Column(name = "androidVersion")
     private String androidVersion;
+    @Size(max = 100)
+    @Column(name = "app")
+    private String app;
     @JoinColumn(name = "staffID", referencedColumnName = "staffID")
     @ManyToOne
     private Staff staff;
@@ -121,6 +127,14 @@ public class GcmDevice implements Serializable {
 
     public void setRegistrationID(String registrationID) {
         this.registrationID = registrationID;
+    }
+
+    public String getApp() {
+        return app;
+    }
+
+    public void setApp(String app) {
+        this.app = app;
     }
 
     public String getManufacturer() {

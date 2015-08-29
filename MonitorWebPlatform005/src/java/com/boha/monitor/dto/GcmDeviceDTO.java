@@ -18,7 +18,7 @@ public class GcmDeviceDTO {
     private String registrationID;
     private String manufacturer;
     private String model;
-    private String product;
+    private String product, app;
     private Integer messageCount;
     private long dateRegistered;
     private String serialNumber, androidVersion;
@@ -30,6 +30,7 @@ public class GcmDeviceDTO {
         manufacturer = a.getManufacturer();
         model = a.getModel();
         product = a.getProduct();
+        app = a.getApp();
         messageCount = a.getMessageCount();
         if (a.getDateRegistered() != null) {
             dateRegistered = a.getDateRegistered().getTime();
@@ -44,6 +45,14 @@ public class GcmDeviceDTO {
         
         androidVersion = a.getAndroidVersion();
 
+    }
+
+    public String getApp() {
+        return app;
+    }
+
+    public void setApp(String app) {
+        this.app = app;
     }
 
     public Integer getGcmDeviceID() {

@@ -51,6 +51,7 @@ import com.boha.monitor.dto.SubTaskDTO;
 import com.boha.monitor.dto.TaskDTO;
 import com.boha.monitor.dto.TaskStatusTypeDTO;
 import com.boha.monitor.dto.TaskTypeDTO;
+import com.boha.monitor.dto.transfer.RequestDTO;
 import com.boha.monitor.dto.transfer.ResponseDTO;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -1587,7 +1588,7 @@ public class DataUtil {
             if (mon.getAddress() != null) {
                 cs.setAddress(mon.getAddress());
             }
-            if (mon.getGender()!= null) {
+            if (mon.getGender() != null) {
                 cs.setGender(mon.getGender());
             }
 
@@ -1715,6 +1716,23 @@ public class DataUtil {
         }
 
         return resp;
+    }
+
+    public void updateDevice(GcmDeviceDTO dto) throws DataException {
+        try {
+
+            GcmDevice device = em.find(GcmDevice.class, dto.getGcmDeviceID());
+            device.setRegistrationID(dto.getRegistrationID());
+            device.setAndroidVersion(dto.getAndroidVersion());
+
+            em.merge(device);
+            log.log(Level.INFO, "Device  updated: " + device.getModel() + " Android: " + device.getAndroidVersion());
+
+        } catch (Exception e) {
+            log.log(Level.OFF, null, e);
+            throw new DataException("Failed to update project\n" + getErrorString(e));
+        }
+
     }
 
     public void updateProject(ProjectDTO dto) throws DataException {
