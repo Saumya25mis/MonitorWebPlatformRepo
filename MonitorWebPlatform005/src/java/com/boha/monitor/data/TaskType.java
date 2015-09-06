@@ -39,8 +39,7 @@ import javax.validation.constraints.Size;
     
 })
 public class TaskType implements Serializable {
-    
-    
+      
     @Column(name = "taskTypeNumber")
     private Integer taskTypeNumber;
     
@@ -167,6 +166,7 @@ public class TaskType implements Serializable {
     public void setTaskTypeNumber(Integer taskTypeNumber) {
         this.taskTypeNumber = taskTypeNumber;
     }
+
 
   
 }

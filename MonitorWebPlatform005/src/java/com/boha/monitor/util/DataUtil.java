@@ -679,6 +679,10 @@ public class DataUtil {
         w.setPhotoUploadList(new ArrayList<>());
         try {
             PhotoUpload u = new PhotoUpload();
+            
+            if (pu.getProjectTaskStatus() != null) {
+                u.setProjectTaskStatus(em.find(ProjectTaskStatus.class, pu.getProjectTaskStatus().getProjectTaskStatusID()));
+            }
 
             if (pu.getProjectID()
                     != null) {

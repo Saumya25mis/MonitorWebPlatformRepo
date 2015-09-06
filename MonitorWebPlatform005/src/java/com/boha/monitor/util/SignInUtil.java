@@ -48,6 +48,40 @@ public class SignInUtil {
             String pin) throws DataException {
         ResponseDTO resp = new ResponseDTO();
         resp.setStaffList(new ArrayList<>());
+        
+        Query q = null;
+        try {
+            q = em.createNamedQuery("Staff.login", Staff.class);
+            q.setParameter("email", email);
+            q.setParameter("pin", pin);
+            q.setMaxResults(1);
+            Staff cs = (Staff) q.getSingleResult();
+            Company company = cs.getCompany();
+            resp = ListUtil.getProjectDataForStaff(em, cs.getStaffID());
+            resp.setStaff(new StaffDTO(cs));
+            resp.setCompany(new CompanyDTO(company));
+            resp.setPhotoUploadList(ListUtil.getStaffPhotos(em, cs.getStaffID()).getPhotoUploadList());
+
+            if (device != null) {
+                device.setCompanyID(company.getCompanyID());
+                device.setStaffID(cs.getStaffID());
+                resp.setGcmDeviceList(new ArrayList<>());
+                resp.getGcmDeviceList().add(addStaffDevice(device));
+            }
+
+            
+        } catch (NoResultException e) {
+            log.log(Level.WARNING, "Invalid login attempt: " + email + " pin: " + pin, e);
+            resp.setStatusCode(ServerStatus.ERROR_LOGGING_IN);
+            resp.setMessage(ServerStatus.getMessage(resp.getStatusCode()));
+        }
+        return resp;
+    }
+
+    public ResponseDTO loginStaffDataSetup(EntityManager em, GcmDeviceDTO device, String email,
+            String pin) throws DataException {
+        ResponseDTO resp = new ResponseDTO();
+        resp.setStaffList(new ArrayList<>());
         resp.setGcmDeviceList(new ArrayList<>());
         Query q = null;
         try {
@@ -91,6 +125,7 @@ public class SignInUtil {
         resp.setMonitorList(new ArrayList<>());
         resp.setGcmDeviceList(new ArrayList<>());
         Query q = null;
+        
         try {
             q = em.createNamedQuery("Monitor.login", Monitor.class);
             q.setParameter("email", email);
@@ -98,7 +133,7 @@ public class SignInUtil {
             q.setMaxResults(1);
             Monitor cs = (Monitor) q.getSingleResult();
             Company company = cs.getCompany();
-            resp.getMonitorList().add(new MonitorDTO(cs));
+            resp.setMonitor(new MonitorDTO(cs));
             resp.setCompany(new CompanyDTO(company));
 
             if (device != null) {
@@ -109,7 +144,6 @@ public class SignInUtil {
 
             ListUtil.getProjectDataForMonitor(em, resp, cs.getMonitorID());
             resp.setTaskStatusTypeList(ListUtil.getTaskStatusTypeList(em, company.getCompanyID()).getTaskStatusTypeList());
-            resp.getMonitorList().add(new MonitorDTO(cs));
             resp.setStaffList(getCompanyStaff(company.getCompanyID()));
             resp.setPhotoUploadList(ListUtil.getMonitorPhotos(em, cs.getMonitorID()).getPhotoUploadList());
 

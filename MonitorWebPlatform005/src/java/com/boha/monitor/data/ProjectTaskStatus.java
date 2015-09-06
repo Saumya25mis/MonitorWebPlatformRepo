@@ -7,6 +7,7 @@ package com.boha.monitor.data;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,6 +19,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -32,10 +34,16 @@ import javax.validation.constraints.NotNull;
 @NamedQueries({
     @NamedQuery(name = "ProjectTaskStatus.findByProject",
             query = "SELECT p FROM ProjectTaskStatus p WHERE p.projectTask.project.projectID = :projectID ORDER BY p.dateUpdated desc"),
+    
+    @NamedQuery(name = "ProjectTaskStatus.findByProjectInPeriod",
+            query = "SELECT p FROM ProjectTaskStatus p WHERE p.projectTask.project.projectID = :projectID and p.statusDate BETWEEN :start AND :end  ORDER BY p.dateUpdated desc"),
+    
     @NamedQuery(name = "ProjectTaskStatus.findByTask",
             query = "SELECT p FROM ProjectTaskStatus p WHERE p.projectTask.projectTaskID = :projectTaskID ORDER BY p.dateUpdated desc")
 })
 public class ProjectTaskStatus implements Serializable {
+    @OneToMany(mappedBy = "projectTaskStatus")
+    private List<PhotoUpload> photoUploadList;
 
     @JoinColumn(name = "projectTaskID", referencedColumnName = "projectTaskID")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
@@ -156,6 +164,14 @@ public class ProjectTaskStatus implements Serializable {
 
     public void setProjectTask(ProjectTask projectTask) {
         this.projectTask = projectTask;
+    }
+
+    public List<PhotoUpload> getPhotoUploadList() {
+        return photoUploadList;
+    }
+
+    public void setPhotoUploadList(List<PhotoUpload> photoUploadList) {
+        this.photoUploadList = photoUploadList;
     }
 
 }

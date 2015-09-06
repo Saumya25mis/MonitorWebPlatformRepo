@@ -44,6 +44,8 @@ public class ResponseDTO {
     private Double elapsedRequestTimeInSeconds;
     private String log;
     private ChatDTO chat;
+    private StaffDTO staff;
+    private MonitorDTO monitor;
     private List<CompanyDTO> companyList;
     private List<ChatDTO> chatList;
     private List<LocationTrackerDTO> locationTrackerList;
@@ -73,6 +75,23 @@ public class ResponseDTO {
     private List<ProgrammeDTO> programmeList;
     private List<GcmDeviceDTO> gcmDeviceList;
 
+    public StaffDTO getStaff() {
+        return staff;
+    }
+
+    public void setStaff(StaffDTO staff) {
+        this.staff = staff;
+    }
+
+    public MonitorDTO getMonitor() {
+        return monitor;
+    }
+
+    public void setMonitor(MonitorDTO monitor) {
+        this.monitor = monitor;
+    }
+
+    
     public List<GcmDeviceDTO> getGcmDeviceList() {
         return gcmDeviceList;
     }

@@ -21,7 +21,7 @@ public class PhotoUploadDTO implements Serializable {
     private Double latitude;
     private Double longitude;
     private Float accuracy;
-    private String uri, name;
+    private String uri, projectName, taskName, staffName, monitorName;
     private Integer thumbFlag;
     private Long dateUploaded;
     private String thumbFilePath;
@@ -29,13 +29,14 @@ public class PhotoUploadDTO implements Serializable {
     private Integer projectID;
     private Integer projectTaskID;
     private Integer staffID, monitorID;
-    
+    private Short statusColor;
     private String secureUrl;
     private String eTag;
     private String signature;
     private Integer width;
     private Integer height;
     private Integer bytes;
+    private ProjectTaskStatusDTO projectTaskStatus;
 
     public PhotoUploadDTO() {
     }
@@ -54,7 +55,12 @@ public class PhotoUploadDTO implements Serializable {
         longitude = a.getLongitude();
         accuracy = a.getAccuracy();
         uri = a.getUri();
+        statusColor = a.getStatusColor();
         dateUploaded = a.getDateUploaded().getTime();
+        
+        if (a.getProjectTaskStatus() != null) {
+            projectTaskStatus = new ProjectTaskStatusDTO(a.getProjectTaskStatus());
+        }
         
         secureUrl = a.getSecureUrl();
         eTag = a.getETag();
@@ -65,20 +71,69 @@ public class PhotoUploadDTO implements Serializable {
         
         if (a.getProject() != null) {
             projectID = a.getProject().getProjectID();
-            name = a.getProject().getProjectName();
+            projectName = a.getProject().getProjectName();
         }
         if (a.getProjectTask() != null) {
             projectTaskID = a.getProjectTask().getProjectTaskID();
-            name = a.getProjectTask().getProject().getProjectName() + " - " + a.getProjectTask().getTask().getTaskName();
+            taskName = a.getProjectTask().getTask().getTaskName();
+            projectName = a.getProjectTask().getProject().getProjectName() + " - " + a.getProjectTask().getTask().getTaskName();
         }
         if (a.getStaff() != null) {
             staffID = a.getStaff().getStaffID();
-            name = a.getStaff().getFirstName() + " " + a.getStaff().getLastName();
+            staffName = a.getStaff().getFirstName() + " " + a.getStaff().getLastName();
         }
         if (a.getMonitor() != null) {
             monitorID = a.getMonitor().getMonitorID();
-            name = a.getMonitor().getFirstName() + " " + a.getMonitor().getLastName();
+            monitorName = a.getMonitor().getFirstName() + " " + a.getMonitor().getLastName();
         }
+    }
+
+    public Short getStatusColor() {
+        return statusColor;
+    }
+
+    public void setStatusColor(Short statusColor) {
+        this.statusColor = statusColor;
+    }
+
+    public ProjectTaskStatusDTO getProjectTaskStatus() {
+        return projectTaskStatus;
+    }
+
+    public void setProjectTaskStatus(ProjectTaskStatusDTO projectTaskStatus) {
+        this.projectTaskStatus = projectTaskStatus;
+    }
+
+    public String getProjectName() {
+        return projectName;
+    }
+
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
+    }
+
+    public String getTaskName() {
+        return taskName;
+    }
+
+    public void setTaskName(String taskName) {
+        this.taskName = taskName;
+    }
+
+    public String getStaffName() {
+        return staffName;
+    }
+
+    public void setStaffName(String staffName) {
+        this.staffName = staffName;
+    }
+
+    public String getMonitorName() {
+        return monitorName;
+    }
+
+    public void setMonitorName(String monitorName) {
+        this.monitorName = monitorName;
     }
 
     public String getSecureUrl() {

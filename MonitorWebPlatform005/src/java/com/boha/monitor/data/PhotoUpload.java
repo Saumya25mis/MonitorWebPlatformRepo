@@ -34,12 +34,28 @@ import javax.validation.constraints.Size;
 @NamedQueries({
     @NamedQuery(name = "PhotoUpload.findByProject", 
             query = "SELECT p FROM PhotoUpload p WHERE p.project.projectID = :projectID and p.projectTask IS NULL ORDER BY p.dateTaken desc"),
+    
+    @NamedQuery(name = "PhotoUpload.findByProjectInPeriod", 
+            query = "SELECT p FROM PhotoUpload p WHERE p.project.projectID = :projectID and p.projectTask IS NULL "
+                    + "AND p.dateTaken BETWEEN :start AND :end ORDER BY p.dateTaken desc"),
+    
     @NamedQuery(name = "PhotoUpload.findByMonitor", 
             query = "SELECT p FROM PhotoUpload p WHERE p.monitor.monitorID = :monitorID and p.project IS NULL ORDER BY p.dateTaken desc"),
+    @NamedQuery(name = "PhotoUpload.findByStaff", 
+            query = "SELECT p FROM PhotoUpload p WHERE p.staff.staffID = :staffID and p.project IS NULL ORDER BY p.dateTaken desc"),
+    @NamedQuery(name = "PhotoUpload.findByTaskInPeriod", 
+            query = "SELECT p FROM PhotoUpload p WHERE p.projectTask.projectTaskID = :projectTaskID "
+                    + "AND p.dateTaken BETWEEN :start AND :end ORDER BY p.dateTaken desc"),
     @NamedQuery(name = "PhotoUpload.findByTask", 
-            query = "SELECT p FROM PhotoUpload p WHERE p.projectTask.projectTaskID = :projectTaskID ORDER BY p.dateTaken desc")
+            query = "SELECT p FROM PhotoUpload p WHERE p.projectTask.projectTaskID = :projectTaskID "
+                    + " ORDER BY p.dateTaken desc")
 })
 public class PhotoUpload implements Serializable {
+    @JoinColumn(name = "projectTaskStatusID", referencedColumnName = "projectTaskStatusID")
+    @ManyToOne
+    private ProjectTaskStatus projectTaskStatus;
+    @Column(name = "statusColor")
+    private Short statusColor;
     @Size(max = 400)
     @Column(name = "secureUrl")
     private String secureUrl;
@@ -143,6 +159,22 @@ public class PhotoUpload implements Serializable {
 
     public void setDateTaken(Date dateTaken) {
         this.dateTaken = dateTaken;
+    }
+
+    public ProjectTaskStatus getProjectTaskStatus() {
+        return projectTaskStatus;
+    }
+
+    public void setProjectTaskStatus(ProjectTaskStatus projectTaskStatus) {
+        this.projectTaskStatus = projectTaskStatus;
+    }
+
+    public String geteTag() {
+        return eTag;
+    }
+
+    public void seteTag(String eTag) {
+        this.eTag = eTag;
     }
 
     public Double getLatitude() {
@@ -315,7 +347,12 @@ public class PhotoUpload implements Serializable {
         this.bytes = bytes;
     }
 
-    
+    public Short getStatusColor() {
+        return statusColor;
+    }
 
+    public void setStatusColor(Short statusColor) {
+        this.statusColor = statusColor;
+    }
     
 }

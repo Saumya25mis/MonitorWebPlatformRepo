@@ -41,6 +41,7 @@ public class RequestDTO implements Serializable {
     private boolean responseRequested;
 
     private String email, pin, gcmRegistrationID;
+    private Integer numberOfDays;
     private Long startDate, endDate;
     private Double latitude, longitude;
     private Float accuracy;
@@ -126,6 +127,7 @@ public class RequestDTO implements Serializable {
     //
     public static final int 
             LOGIN_STAFF = 200,
+            LOGIN_STAFF_DATA_SETUP = 201,
             LOGIN_MONITOR = 202,
             SEND_GCM_REGISTRATION = 204,
             UPDATE_GCM_REGISTRATION = 205;
@@ -191,6 +193,15 @@ public class RequestDTO implements Serializable {
     public static final String PROJECT_DIR = "project";
     public static final String TASK_DIR = "task";
 
+    public Integer getNumberOfDays() {
+        return numberOfDays;
+    }
+
+    public void setNumberOfDays(Integer numberOfDays) {
+        this.numberOfDays = numberOfDays;
+    }
+
+    
     public TaskTypeDTO getTaskType() {
         return taskType;
     }

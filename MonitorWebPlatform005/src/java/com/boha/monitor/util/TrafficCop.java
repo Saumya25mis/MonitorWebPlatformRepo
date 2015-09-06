@@ -8,6 +8,7 @@ package com.boha.monitor.util;
 import com.boha.monitor.dto.transfer.RequestDTO;
 import com.boha.monitor.dto.transfer.ResponseDTO;
 import java.io.IOException;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,6 +32,9 @@ public class TrafficCop {
                 break;
             case RequestDTO.GET_COMPANY_LIST:
                 resp = ListUtil.getCompanyList(dataUtil.getEntityManager());
+                break;
+            case RequestDTO.GET_STAFF_DATA:
+                resp = ListUtil.getProjectDataForStaff(dataUtil.getEntityManager(), req.getStaffID());
                 break;
             case RequestDTO.IMPORT_TASK_INFO:
                 resp = dataUtil.importTaskType(req.getTaskType());
@@ -184,12 +188,9 @@ public class TrafficCop {
             case RequestDTO.GET_COMPANY_STATUS_IN_PERIOD:
 //                    resp = ListUtil.getCompanyTaskStatusinPeriod(req.getCompanyID(), req.getStartDate(), req.getEndDate());
                 break;
-            case RequestDTO.GET_PROJECT_STATUS_IN_PERIOD:
-//                    resp = ListUtil.getProjectTaskStatusinPeriod(req.getProjectID(), req.getStartDate(), req.getEndDate());
-                break;
-
+           
             case RequestDTO.GET_PROJECT_DATA:
-                resp = ListUtil.getProjectData(dataUtil.getEntityManager(), req.getProjectID());
+                resp = ListUtil.getProjectStatusData(dataUtil.getEntityManager(), req.getProjectID(), req.getNumberOfDays());
                 break;
             case RequestDTO.GET_COMPANY_STAFF:
                 resp = ListUtil.getCompanyStaffList(dataUtil.getEntityManager(), req.getCompanyID());
@@ -205,7 +206,8 @@ public class TrafficCop {
                 break;
             //photos
             case RequestDTO.GET_PROJECT_IMAGES:
-                resp = ListUtil.getPhotosByProject(dataUtil.getEntityManager(), req.getProjectID());
+                resp = ListUtil.getPhotosByProject(dataUtil.getEntityManager(), req.getProjectID(), 
+                        new Date(req.getStartDate()), new Date(req.getEndDate()));
                 break;
 
             case RequestDTO.GET_TASK_IMAGES:

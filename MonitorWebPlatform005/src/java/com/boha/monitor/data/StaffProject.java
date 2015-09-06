@@ -31,9 +31,8 @@ import javax.validation.constraints.NotNull;
 @Table(name = "staffProject")
 @NamedQueries({
     @NamedQuery(name = "StaffProject.findByStaff", 
-            query = "SELECT s FROM StaffProject s WHERE s.staff.staffID = :staffID and s.activeFlag = TRUE"),
-    
-   
+            query = "SELECT s.project FROM StaffProject s WHERE s.staff.staffID = :staffID and s.activeFlag = TRUE"),
+       
     @NamedQuery(name = "StaffProject.findByActiveFlag", 
             query = "SELECT s FROM StaffProject s WHERE s.activeFlag = :activeFlag")
 })
