@@ -5,7 +5,6 @@
  */
 package com.boha.monitor.dto.transfer;
 
-
 import com.boha.monitor.dto.ChatDTO;
 import com.boha.monitor.dto.ChatMemberDTO;
 import com.boha.monitor.dto.ChatMessageDTO;
@@ -39,7 +38,7 @@ public class RequestDTO implements Serializable {
     private Integer requestType, companyID, staffID,
             projectID, projectTaskID, loginType, monitorID, taskTypeID;
     private boolean responseRequested;
-
+    private SimpleMessageDTO simpleMessage;
     private String email, pin, gcmRegistrationID;
     private Integer numberOfDays;
     private Long startDate, endDate;
@@ -77,23 +76,20 @@ public class RequestDTO implements Serializable {
     private List<LocationTrackerDTO> locationTrackerList;
     private List<ChatMemberDTO> chatMemberList;
     private List<SubTaskDTO> subTaskList;
-    
+
 //register actors
-    public static final int 
-            REGISTER_COMPANY = 1,
+    public static final int REGISTER_COMPANY = 1,
             IMPORT_TASK_INFO = 2,
             IMPORT_PROJECT_INFO = 3,
             NOTIFY_SUPERVISOR_NO_PROJECTS = 30;
     //add stuff
-    public static final int 
-            ADD_PROJECT_DIARY_RECORD = 12,
+    public static final int ADD_PROJECT_DIARY_RECORD = 12,
             ADD_PROJECT_TASK_STATUS = 13,
             ADD_PROJECT_STATUS = 13,
             ADD_DEVICE = 17,
             ADD_PHOTO = 18;
     //get stuff
-    public static final int 
-            GET_COMPANY_LIST = 100,
+    public static final int GET_COMPANY_LIST = 100,
             GET_PROJECT_DATA = 101,
             GET_PROJECT_SITE_DATA = 102,
             GET_SITE_IMAGE_FILENAMES = 103,
@@ -123,23 +119,21 @@ public class RequestDTO implements Serializable {
             GET_MESSAGES_BY_PROJECT = 128,
             GET_MONITOR_PROJECTS = 129,
             GET_PORTFOLIO_LIST = 130,
-            GET_MONITOR_PHOTOS = 131;
+            GET_MONITOR_PHOTOS = 131,
+            GET_LOCATION_TRACK_BY_MONITOR_IN_PERIOD = 132,
+            GET_STAFF_PHOTOS = 133;
     //
-    public static final int 
-            LOGIN_STAFF = 200,
+    public static final int LOGIN_STAFF = 200,
             LOGIN_STAFF_DATA_SETUP = 201,
             LOGIN_MONITOR = 202,
             SEND_GCM_REGISTRATION = 204,
             UPDATE_GCM_REGISTRATION = 205;
     // 
-    public static final int
-            ADD_COMPANY_TASK_STATUS = 302,
+    public static final int ADD_COMPANY_TASK_STATUS = 302,
             ADD_COMPANY_PROJECT_STATUS_TYPE = 303,
             ADD_COMPANY_CHECKPOINT = 304,
-            
             CONFIRM_LOCATION = 310,
             SYNC_CACHED_REQUESTS = 313,
-            
             ADD_PORTFOLOIOS = 314,
             ADD_PROGRAMMES = 315,
             ADD_PROJECTS = 316,
@@ -150,8 +144,6 @@ public class RequestDTO implements Serializable {
             ADD_MONITOR_PROJECTS = 321,
             ADD_STAFF_PROJECTS = 322,
             ADD_LOCATION_TRACKERS = 323,
-            
-            
             ADD_CHAT = 324,
             ADD_CHAT_MEMBERS = 325,
             ADD_PROJECT_TASKS = 326,
@@ -161,8 +153,7 @@ public class RequestDTO implements Serializable {
             ADD_LOCATION_TRACK = 330;
 
     //updates 
-    public static final int 
-            UPDATE_COMPANY_TASK = 401,
+    public static final int UPDATE_COMPANY_TASK = 401,
             UPDATE_COMPANY_TASK_STATUS = 402,
             UPDATE_COMPANY_PROJECT_STATUS_TYPE = 403,
             UPDATE_COMPANY_CHECKPOINT = 404,
@@ -171,7 +162,7 @@ public class RequestDTO implements Serializable {
             RESET_STAFF_PIN = 408,
             UPDATE_STAFF_PROJECTS = 409,
             UPDATE_MONITOR = 410;
-   
+
     //reports
     public static final int REPORT_PROJECT = 601,
             REPORT_SITE = 602,
@@ -182,16 +173,24 @@ public class RequestDTO implements Serializable {
             DELETE_PROJECT_IMAGES = 607;
 
     //chat
-    public static final int 
-            REQUEST_CHAT = 700,
+    public static final int REQUEST_CHAT = 700,
             REQUEST_LOCATION = 701,
             SEND_CHAT_MESSAGE = 702,
-            SEND_LOCATION = 703;
+            SEND_LOCATION = 703,
+            SEND_SIMPLE_MESSAGE = 704;
 
     public static final String COMPANY_DIR = "company";
     public static final String STAFF_DIR = "staff";
     public static final String PROJECT_DIR = "project";
     public static final String TASK_DIR = "task";
+
+    public SimpleMessageDTO getSimpleMessage() {
+        return simpleMessage;
+    }
+
+    public void setSimpleMessage(SimpleMessageDTO simpleMessage) {
+        this.simpleMessage = simpleMessage;
+    }
 
     public Integer getNumberOfDays() {
         return numberOfDays;
@@ -201,7 +200,6 @@ public class RequestDTO implements Serializable {
         this.numberOfDays = numberOfDays;
     }
 
-    
     public TaskTypeDTO getTaskType() {
         return taskType;
     }
@@ -242,7 +240,6 @@ public class RequestDTO implements Serializable {
         this.locationTracker = locationTracker;
     }
 
-    
     public List<StaffDTO> getStaffList() {
         return staffList;
     }
@@ -259,7 +256,6 @@ public class RequestDTO implements Serializable {
         this.monitorList = monitorList;
     }
 
-    
     public List<ProjectStatusTypeDTO> getProjectStatusTypeList() {
         return projectStatusTypeList;
     }
@@ -268,7 +264,6 @@ public class RequestDTO implements Serializable {
         this.projectStatusTypeList = projectStatusTypeList;
     }
 
-    
     public List<TaskStatusTypeDTO> getTaskStatusTypeList() {
         return taskStatusTypeList;
     }
@@ -333,7 +328,6 @@ public class RequestDTO implements Serializable {
         this.taskTypeList = taskTypeList;
     }
 
-    
     public ProjectTaskDTO getProjectTask() {
         return projectTask;
     }
@@ -542,7 +536,6 @@ public class RequestDTO implements Serializable {
         this.projectTaskStatus = projectTaskStatus;
     }
 
-
     public ProjectStatusTypeDTO getProjectStatusType() {
         return projectStatusType;
     }
@@ -559,7 +552,6 @@ public class RequestDTO implements Serializable {
         this.photoUpload = photoUpload;
     }
 
-   
     public List<LocationTrackerDTO> getLocationTrackerList() {
         return locationTrackerList;
     }
@@ -575,7 +567,5 @@ public class RequestDTO implements Serializable {
     public void setChatMemberList(List<ChatMemberDTO> chatMemberList) {
         this.chatMemberList = chatMemberList;
     }
-
-    
 
 }

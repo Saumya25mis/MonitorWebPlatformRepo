@@ -26,6 +26,9 @@ public class TrafficCop {
         resp.setStatusCode(0);
 
         switch (req.getRequestType()) {
+            case RequestDTO.SEND_SIMPLE_MESSAGE:
+                resp = GoogleCloudMessageUtil.sendSimpleMessage(dataUtil.getEntityManager(), req.getSimpleMessage());
+                break;
             case RequestDTO.SEND_LOCATION:
                 dataUtil.addLocationTrack(req.getLocationTracker());
                 resp = GoogleCloudMessageUtil.sendLocationMessage(dataUtil.getEntityManager(), req.getLocationTracker());
@@ -60,6 +63,9 @@ public class TrafficCop {
                 break;
             case RequestDTO.GET_CHATS_BY_PROJECT:
                 resp = ListUtil.getChatsByProject(dataUtil.getEntityManager(), req.getProjectID());
+                break;
+            case RequestDTO.GET_LOCATION_TRACK_BY_MONITOR_IN_PERIOD:
+                resp = ListUtil.getLocationTracksByMonitorInPeriod(dataUtil.getEntityManager(), req.getMonitorID(), req.getStartDate(), req.getEndDate());
                 break;
 
             case RequestDTO.NOTIFY_SUPERVISOR_NO_PROJECTS:
@@ -129,6 +135,9 @@ public class TrafficCop {
             case RequestDTO.GET_MONITOR_PHOTOS:
                 resp = ListUtil.getMonitorPhotos(dataUtil.getEntityManager(), req.getMonitorID());
                 break;
+            case RequestDTO.GET_STAFF_PHOTOS:
+                resp = ListUtil.getStaffPhotos(dataUtil.getEntityManager(), req.getStaffID());
+                break;
 
             case RequestDTO.ADD_PROJECT_TASKS:
                 resp = dataUtil.addProjectTasksUsingType(req.getProjectID(), req.getTaskTypeID());
@@ -188,7 +197,7 @@ public class TrafficCop {
             case RequestDTO.GET_COMPANY_STATUS_IN_PERIOD:
 //                    resp = ListUtil.getCompanyTaskStatusinPeriod(req.getCompanyID(), req.getStartDate(), req.getEndDate());
                 break;
-           
+
             case RequestDTO.GET_PROJECT_DATA:
                 resp = ListUtil.getProjectStatusData(dataUtil.getEntityManager(), req.getProjectID(), req.getNumberOfDays());
                 break;
@@ -206,7 +215,7 @@ public class TrafficCop {
                 break;
             //photos
             case RequestDTO.GET_PROJECT_IMAGES:
-                resp = ListUtil.getPhotosByProject(dataUtil.getEntityManager(), req.getProjectID(), 
+                resp = ListUtil.getPhotosByProject(dataUtil.getEntityManager(), req.getProjectID(),
                         new Date(req.getStartDate()), new Date(req.getEndDate()));
                 break;
 
@@ -228,16 +237,15 @@ public class TrafficCop {
             case RequestDTO.SEND_GCM_REGISTRATION:
                 resp = GoogleCloudMessagingRegistrar.sendGCMRegistration(req.getGcmRegistrationID());
                 break;
-                case RequestDTO.UPDATE_GCM_REGISTRATION:
+            case RequestDTO.UPDATE_GCM_REGISTRATION:
                 resp = GoogleCloudMessagingRegistrar.sendGCMRegistration(req.getGcmRegistrationID());
                 dataUtil.updateDevice(req.getGcmDevice());
                 break;
-                
+
             case RequestDTO.UPDATE_MONITOR:
                 resp = dataUtil.updateMonitor(req.getMonitorList().get(0));
                 break;
-                
-                
+
             default:
                 resp.setStatusCode(ServerStatus.ERROR_UNKNOWN_REQUEST);
                 resp.setMessage(ServerStatus.getMessage(resp.getStatusCode()));

@@ -21,6 +21,7 @@ public class ProjectTaskDTO implements Serializable {
     private Long dateRegistered;
     private Integer projectID;
     private TaskDTO task;
+    private Double latitude, longitude;
     private String projectName;
     private List<PhotoUploadDTO> photoUploadList;
     private List<ProjectTaskStatusDTO> projectTaskStatusList;
@@ -32,6 +33,8 @@ public class ProjectTaskDTO implements Serializable {
         this.projectTaskID = a.getProjectTaskID();
         this.dateRegistered = a.getDateRegistered().getTime();
         projectID = a.getProject().getProjectID();
+        latitude = a.getProject().getLatitude();
+        longitude = a.getProject().getLongitude();
         task = new TaskDTO(a.getTask());
         projectName = a.getProject().getProjectName();
         photoUploadList = new ArrayList<>();
@@ -40,6 +43,22 @@ public class ProjectTaskDTO implements Serializable {
 
     public TaskDTO getTask() {
         return task;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
     }
 
     public void setTask(TaskDTO task) {

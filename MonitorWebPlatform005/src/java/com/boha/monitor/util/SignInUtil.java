@@ -22,7 +22,6 @@ import static com.boha.monitor.util.ListUtil.log;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.logging.Level;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
@@ -58,9 +57,11 @@ public class SignInUtil {
             Staff cs = (Staff) q.getSingleResult();
             Company company = cs.getCompany();
             resp = ListUtil.getProjectDataForStaff(em, cs.getStaffID());
-            resp.setStaff(new StaffDTO(cs));
+            StaffDTO dto = new StaffDTO(cs);
+            dto.setPhotoUploadList(ListUtil.getStaffPhotos(em, dto.getStaffID()).getPhotoUploadList());
+            resp.setStaff(dto);
             resp.setCompany(new CompanyDTO(company));
-            resp.setPhotoUploadList(ListUtil.getStaffPhotos(em, cs.getStaffID()).getPhotoUploadList());
+//            resp.setPhotoUploadList(ListUtil.getStaffPhotos(em, cs.getStaffID()).getPhotoUploadList());
 
             if (device != null) {
                 device.setCompanyID(company.getCompanyID());
@@ -133,6 +134,8 @@ public class SignInUtil {
             q.setMaxResults(1);
             Monitor cs = (Monitor) q.getSingleResult();
             Company company = cs.getCompany();
+            MonitorDTO dto = new MonitorDTO(cs);
+            dto.setPhotoUploadList(ListUtil.getMonitorPhotos(em, dto.getMonitorID()).getPhotoUploadList());
             resp.setMonitor(new MonitorDTO(cs));
             resp.setCompany(new CompanyDTO(company));
 
@@ -145,7 +148,7 @@ public class SignInUtil {
             ListUtil.getProjectDataForMonitor(em, resp, cs.getMonitorID());
             resp.setTaskStatusTypeList(ListUtil.getTaskStatusTypeList(em, company.getCompanyID()).getTaskStatusTypeList());
             resp.setStaffList(getCompanyStaff(company.getCompanyID()));
-            resp.setPhotoUploadList(ListUtil.getMonitorPhotos(em, cs.getMonitorID()).getPhotoUploadList());
+//            resp.setPhotoUploadList(ListUtil.getMonitorPhotos(em, cs.getMonitorID()).getPhotoUploadList());
 
         } catch (NoResultException e) {
             log.log(Level.WARNING, "Invalid monitor login attempt: " + email + " pin: " + pin, e);

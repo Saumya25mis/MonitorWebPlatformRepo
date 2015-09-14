@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package com.boha.monitor.gate;
+package com.boha.monitor.servlets;
 
 import com.boha.monitor.util.xmpp.CcsClient;
 import java.io.IOException;

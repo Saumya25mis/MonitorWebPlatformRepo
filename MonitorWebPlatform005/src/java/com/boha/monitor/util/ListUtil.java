@@ -540,9 +540,10 @@ public class ListUtil {
         }
         ResponseDTO resp = new ResponseDTO();
         Query q = em.createNamedQuery("LocationTracker.findByMonitorInPeriod", LocationTracker.class);
-        q.setParameter("companyStaffID", monitorID);
+        q.setParameter("monitorID", monitorID);
         q.setParameter("dateFrom", dateFrom);
         q.setParameter("dateTo", dateTo);
+        q.setMaxResults(5);
         List<LocationTracker> list = q.getResultList();
         resp.setLocationTrackerList(new ArrayList<>());
         for (LocationTracker t : list) {
@@ -557,7 +558,7 @@ public class ListUtil {
         Date dateFrom, dateTo;
         if (df == null) {
             DateTime dt = new DateTime();
-            DateTime xx = dt.minusDays(7);
+            DateTime xx = dt.minusDays(1);
             dateFrom = xx.toDate();
             dateTo = dt.toDate();
             log.log(Level.INFO, "Get Location tracks from {0} to {1}",
@@ -744,7 +745,15 @@ public class ListUtil {
             List<Staff> sList = q.getResultList();
             resp.setStaffList(new ArrayList<>());
             for (Staff cs : sList) {
-                resp.getStaffList().add(new StaffDTO(cs));
+                StaffDTO dto = new StaffDTO(cs);
+                dto.setPhotoUploadList(new ArrayList<>());
+                q = em.createNamedQuery("PhotoUpload.findByStaff", PhotoUpload.class);
+                q.setParameter("staffID", cs.getStaffID());
+                List<PhotoUpload> pList = q.getResultList();
+                for (PhotoUpload photoUpload : pList) {
+                    dto.getPhotoUploadList().add(new PhotoUploadDTO(photoUpload));
+                }
+                resp.getStaffList().add(dto);
             }
             //log.log(Level.OFF, "company staff found: {0}", projectList.size());
         } catch (Exception e) {
@@ -764,7 +773,15 @@ public class ListUtil {
             List<Monitor> sList = q.getResultList();
             resp.setMonitorList(new ArrayList<>());
             for (Monitor cs : sList) {
-                resp.getMonitorList().add(new MonitorDTO(cs));
+                MonitorDTO dto = new MonitorDTO(cs);
+                dto.setPhotoUploadList(new ArrayList<>());
+                q = em.createNamedQuery("PhotoUpload.findByMonitor", PhotoUpload.class);
+                q.setParameter("monitorID", cs.getMonitorID());
+                List<PhotoUpload> pList = q.getResultList();
+                for (PhotoUpload photoUpload : pList) {
+                    dto.getPhotoUploadList().add(new PhotoUploadDTO(photoUpload));
+                }
+                resp.getMonitorList().add(dto);
             }
         } catch (Exception e) {
             log.log(Level.SEVERE, "Failed", e);

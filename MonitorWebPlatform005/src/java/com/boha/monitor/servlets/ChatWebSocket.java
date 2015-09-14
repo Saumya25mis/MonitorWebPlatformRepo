@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.boha.monitor.gate;
+package com.boha.monitor.servlets;
 
 import com.boha.monitor.dto.transfer.ResponseDTO;
 import com.google.gson.Gson;
