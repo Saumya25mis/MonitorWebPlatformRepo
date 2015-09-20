@@ -39,6 +39,9 @@ import javax.validation.constraints.Size;
             query = "SELECT p FROM Project p WHERE p.programme.programmeID = :programmeID ORDER BY p.city.cityName ")
 })
 public class Project implements Serializable {
+    @JoinColumn(name = "companyID", referencedColumnName = "companyID")
+    @ManyToOne
+    private Company company;
     @OneToMany(mappedBy = "project")
     private List<VideoUpload> videoUploadList;
     private static final long serialVersionUID = 1L;
@@ -294,6 +297,14 @@ public class Project implements Serializable {
 
     public void setVideoUploadList(List<VideoUpload> videoUploadList) {
         this.videoUploadList = videoUploadList;
+    }
+
+    public Company getCompany() {
+        return company;
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
     }
 
 }

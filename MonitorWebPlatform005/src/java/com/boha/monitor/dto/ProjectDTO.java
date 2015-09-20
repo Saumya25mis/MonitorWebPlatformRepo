@@ -19,7 +19,7 @@ import java.util.List;
 public class ProjectDTO implements Serializable {
     private List<PhotoUploadDTO> photoUploadList;
     private static final long serialVersionUID = 1L;
-    private Integer projectID, cityID;
+    private Integer projectID, cityID, companyID;
     private Integer programmeID, portfolioID, statusCount;
     private String projectName;
     private Double latitude;
@@ -59,6 +59,10 @@ public class ProjectDTO implements Serializable {
             }
         }
         
+        if (a.getCompany() != null) {
+            companyID = a.getCompany().getCompanyID();
+        }
+        
         if (a.getProgramme() != null) {
             programmeName = a.getProgramme().getProgrammeName();
             programmeID = a.getProgramme().getProgrammeID();
@@ -69,6 +73,14 @@ public class ProjectDTO implements Serializable {
             }
         }
         
+    }
+
+    public Integer getCompanyID() {
+        return companyID;
+    }
+
+    public void setCompanyID(Integer companyID) {
+        this.companyID = companyID;
     }
 
     public String getMunicipalityName() {

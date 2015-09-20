@@ -35,6 +35,10 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "Company.findByCompanyName", query = "SELECT c FROM Company c WHERE c.companyName = :companyName")
 })
 public class Company implements Serializable {
+    @OneToMany(mappedBy = "company")
+    private List<Project> projectList;
+    @OneToMany(mappedBy = "company")
+    private List<Task> taskList;
     
     @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
     private List<GcmDevice> gcmDeviceList;
@@ -213,6 +217,22 @@ public class Company implements Serializable {
 
     public void setGcmDeviceList(List<GcmDevice> gcmDeviceList) {
         this.gcmDeviceList = gcmDeviceList;
+    }
+
+    public List<Task> getTaskList() {
+        return taskList;
+    }
+
+    public void setTaskList(List<Task> taskList) {
+        this.taskList = taskList;
+    }
+
+    public List<Project> getProjectList() {
+        return projectList;
+    }
+
+    public void setProjectList(List<Project> projectList) {
+        this.projectList = projectList;
     }
 
 }

@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.boha.monitor.dto;
 
 import com.boha.monitor.data.Task;
@@ -15,14 +14,15 @@ import java.util.List;
  * @author aubreyM
  */
 public class TaskDTO implements Serializable {
+
     private static final long serialVersionUID = 1L;
     private Integer taskID;
-    private String taskName;
+    private String taskName, programmeName, taskTypeName;
     private Integer taskNumber;
     private String description;
     private List<ProjectTaskDTO> projectTaskList;
     private List<SubTaskDTO> subTaskList;
-    private Integer taskTypeID;
+    private Integer taskTypeID, programmeID, companyID;
 
     public TaskDTO() {
     }
@@ -32,7 +32,50 @@ public class TaskDTO implements Serializable {
         this.taskName = a.getTaskName();
         description = a.getDescription();
         taskNumber = a.getTaskNumber();
-        taskTypeID = a.getTaskType().getTaskTypeID();
+        if (a.getCompany() != null) {
+            companyID = a.getCompany().getCompanyID();
+        }
+        if (a.getTaskType() != null) {
+            taskTypeID = a.getTaskType().getTaskTypeID();
+            taskTypeName = a.getTaskType().getTaskTypeName();
+        }
+        if (a.getProgramme() != null) {
+            programmeID = a.getProgramme().getProgrammeID();
+            programmeName = a.getProgramme().getProgrammeName();
+        }
+
+    }
+
+    public Integer getCompanyID() {
+        return companyID;
+    }
+
+    public void setCompanyID(Integer companyID) {
+        this.companyID = companyID;
+    }
+
+    public String getProgrammeName() {
+        return programmeName;
+    }
+
+    public void setProgrammeName(String programmeName) {
+        this.programmeName = programmeName;
+    }
+
+    public String getTaskTypeName() {
+        return taskTypeName;
+    }
+
+    public void setTaskTypeName(String taskTypeName) {
+        this.taskTypeName = taskTypeName;
+    }
+
+    public Integer getProgrammeID() {
+        return programmeID;
+    }
+
+    public void setProgrammeID(Integer programmeID) {
+        this.programmeID = programmeID;
     }
 
     public List<SubTaskDTO> getSubTaskList() {
@@ -50,8 +93,6 @@ public class TaskDTO implements Serializable {
     public void setTaskTypeID(Integer taskTypeID) {
         this.taskTypeID = taskTypeID;
     }
-
-  
 
     public Integer getTaskID() {
         return taskID;
@@ -93,8 +134,6 @@ public class TaskDTO implements Serializable {
         this.projectTaskList = projectTaskList;
     }
 
-
-
     @Override
     public int hashCode() {
         int hash = 0;
@@ -119,5 +158,5 @@ public class TaskDTO implements Serializable {
     public String toString() {
         return "com.boha.monitor.data.Task[ taskID=" + taskID + " ]";
     }
-    
+
 }

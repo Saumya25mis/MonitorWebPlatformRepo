@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.boha.monitor.dto;
 
 import com.boha.monitor.data.*;
@@ -14,6 +13,7 @@ import java.io.Serializable;
  * @author aubreyM
  */
 public class MonitorTradeDTO implements Serializable {
+
     private static final long serialVersionUID = 1L;
     private Integer monitorTradeID;
     private Long dateRegistered;
@@ -25,7 +25,9 @@ public class MonitorTradeDTO implements Serializable {
     public MonitorTradeDTO(MonitorTrade a) {
         this.monitorTradeID = a.getMonitorTradeID();
         this.taskTypeID = a.getTaskType().getTaskTypeID();
-        this.dateRegistered = a.getDateRegistered().getTime();
+        if (a.getDateRegistered() != null) {
+            this.dateRegistered = a.getDateRegistered().getTime();
+        }
         this.monitorID = a.getMonitor().getMonitorID();
     }
 
@@ -61,7 +63,6 @@ public class MonitorTradeDTO implements Serializable {
         this.monitorID = monitorID;
     }
 
- 
     @Override
     public int hashCode() {
         int hash = 0;
@@ -86,5 +87,5 @@ public class MonitorTradeDTO implements Serializable {
     public String toString() {
         return "com.boha.monitor.data.MonitorTrade[ monitorTradeID=" + monitorTradeID + " ]";
     }
-    
+
 }

@@ -35,7 +35,9 @@ public class PortfolioDTO implements Serializable {
     public PortfolioDTO(Portfolio a) {
         this.portfolioID = a.getPortfolioID();
         this.portfolioName = a.getPortfolioName();
-        this.dateRegistered = a.getDateRegistered().getTime();
+        if (a.getDateRegistered() != null) {
+            this.dateRegistered = a.getDateRegistered().getTime();
+        }
         companyID = a.getCompany().getCompanyID();
         if (a.getProgrammeList() != null) {
             programmeList = new ArrayList<>();

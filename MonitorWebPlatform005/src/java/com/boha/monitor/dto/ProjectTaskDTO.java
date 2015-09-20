@@ -31,7 +31,9 @@ public class ProjectTaskDTO implements Serializable {
 
     public ProjectTaskDTO(ProjectTask a) {
         this.projectTaskID = a.getProjectTaskID();
-        this.dateRegistered = a.getDateRegistered().getTime();
+        if (a.getDateRegistered() != null) {
+            this.dateRegistered = a.getDateRegistered().getTime();
+        }
         projectID = a.getProject().getProjectID();
         latitude = a.getProject().getLatitude();
         longitude = a.getProject().getLongitude();

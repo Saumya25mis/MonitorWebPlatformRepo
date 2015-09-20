@@ -24,6 +24,7 @@ public class ProgrammeDTO implements Serializable {
     private List<PhotoUploadDTO> photoUploadList;
     private List<ProjectDTO> projectList;
     private List<TaskTypeDTO> taskTypeList;
+    private List<TaskDTO> taskList;
 
     public ProgrammeDTO() {
     }
@@ -35,10 +36,20 @@ public class ProgrammeDTO implements Serializable {
     public ProgrammeDTO(Programme a) {
         this.programmeID = a.getProgrammeID();
         this.programmeName = a.getProgrammeName();
-        this.dateRegistered = a.getDateRegistered().getTime();
+        if (a.getDateRegistered() != null) {
+            this.dateRegistered = a.getDateRegistered().getTime();
+        }
         completeFlag = a.getCompleteFlag();
         description = a.getDescription();
         portfolioID = a.getPortfolio().getPortfolioID();
+    }
+
+    public List<TaskDTO> getTaskList() {
+        return taskList;
+    }
+
+    public void setTaskList(List<TaskDTO> taskList) {
+        this.taskList = taskList;
     }
 
     public List<TaskTypeDTO> getTaskTypeList() {
