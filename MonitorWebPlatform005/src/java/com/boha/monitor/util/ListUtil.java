@@ -205,6 +205,9 @@ public class ListUtil {
 
     public static ResponseDTO getProjectDataForStaff(EntityManager em, Integer staffID) throws DataException {
         ResponseDTO resp = new ResponseDTO();
+        resp.setTaskList(new ArrayList<>());
+        resp.setProjectList(new ArrayList<>());
+        
         Staff staff = em.find(Staff.class, staffID);
 
         Query q = em.createNamedQuery("StaffProject.findByStaff", Project.class);
