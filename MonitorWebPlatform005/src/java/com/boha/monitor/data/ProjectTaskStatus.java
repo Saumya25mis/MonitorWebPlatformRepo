@@ -34,6 +34,10 @@ import javax.validation.constraints.NotNull;
 @NamedQueries({
     @NamedQuery(name = "ProjectTaskStatus.findByProject",
             query = "SELECT p FROM ProjectTaskStatus p WHERE p.projectTask.project.projectID = :projectID ORDER BY p.dateUpdated desc"),
+    @NamedQuery(name = "ProjectTaskStatus.findByMonitor",
+            query = "SELECT p FROM ProjectTaskStatus p WHERE p.monitor.monitorID = :monitorID ORDER BY p.dateUpdated desc"),
+    @NamedQuery(name = "ProjectTaskStatus.countByMonitor",
+            query = "SELECT count(p) FROM ProjectTaskStatus p WHERE p.monitor.monitorID = :monitorID"),
     
     @NamedQuery(name = "ProjectTaskStatus.findByProjectInPeriod",
             query = "SELECT p FROM ProjectTaskStatus p WHERE p.projectTask.project.projectID = :projectID and p.statusDate BETWEEN :start AND :end  ORDER BY p.dateUpdated desc"),

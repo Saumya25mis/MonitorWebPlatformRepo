@@ -41,6 +41,7 @@ public class GoogleCloudMessageUtil {
     public static ResponseDTO sendSimpleMessage(EntityManager em, SimpleMessageDTO simple) throws
             Exception, DataException {
         ResponseDTO resp = new ResponseDTO();
+        
         simple.setDateSent(new Date().getTime());
         List<String> registrationIDs = new ArrayList<>();
         if (simple.getMonitorList() != null && !simple.getMonitorList().isEmpty()) {
@@ -364,13 +365,11 @@ public class GoogleCloudMessageUtil {
                     Constants.ERROR_NOT_REGISTERED)) {
                 // TODO remove the registration from the database *****
                 LOG.log(Level.SEVERE, "#### GCM device not registered");
-//                addErrorStore(em,StatusCode.ERROR_GCM,"#### GCM device not registered");
                 return gcmr;
             }
             if (result.getErrorCodeName().equals(
                     Constants.ERROR_UNAVAILABLE)) {
                 LOG.log(Level.SEVERE, "#### GCM servers not available");
-//                addErrorStore(em,StatusCode.ERROR_GCM, "#### GCM servers not available");
                 return gcmr;
             }
             LOG.log(Level.SEVERE, "#### GCM message send error : {0}",
@@ -385,7 +384,7 @@ public class GoogleCloudMessageUtil {
             LOG.log(Level.INFO, "Result messageID from GCM: {0}", result.getMessageId());
             if (result.getCanonicalRegistrationId() != null) {
                 LOG.log(Level.INFO,
-                        "### Google GCM - canonical registration id found, updating db ...");
+                        "### Google GCM - canonical registration id found, have to update gcmdevice db ...");
                 //TODO update device registration id with canonical
                 //EntityManager em = EMUtil.getEntityManager();
 

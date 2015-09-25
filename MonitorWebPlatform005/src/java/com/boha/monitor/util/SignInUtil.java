@@ -61,7 +61,6 @@ public class SignInUtil {
             dto.setPhotoUploadList(ListUtil.getStaffPhotos(em, dto.getStaffID()).getPhotoUploadList());
             resp.setStaff(dto);
             resp.setCompany(new CompanyDTO(company));
-//            resp.setPhotoUploadList(ListUtil.getStaffPhotos(em, cs.getStaffID()).getPhotoUploadList());
 
             if (device != null) {
                 device.setCompanyID(company.getCompanyID());

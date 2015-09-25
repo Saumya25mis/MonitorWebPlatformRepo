@@ -16,7 +16,7 @@ import java.util.List;
  */
 public class MonitorDTO implements Serializable {
     private static final long serialVersionUID = 1L;
-    private Integer monitorID, activeFlag;
+    private Integer monitorID, activeFlag, statusCount, photoCount, projectCount;
     private String firstName;
     private String lastName;
     private String email, companyName, IDNumber, address;
@@ -27,7 +27,7 @@ public class MonitorDTO implements Serializable {
     private GcmDeviceDTO gcmDevice;
     private List<PhotoUploadDTO> photoUploadList;
     private List<LocationTrackerDTO> locationTrackerList;
-    private List<StaffProjectDTO> staffProjectList;
+    private List<MonitorProjectDTO> monitorProjectList;
 
     public MonitorDTO() {
     }
@@ -56,6 +56,31 @@ public class MonitorDTO implements Serializable {
         
     }
 
+    public Integer getProjectCount() {
+        return projectCount;
+    }
+
+    public void setProjectCount(Integer projectCount) {
+        this.projectCount = projectCount;
+    }
+
+    public Integer getStatusCount() {
+        return statusCount;
+    }
+
+    public void setStatusCount(Integer statusCount) {
+        this.statusCount = statusCount;
+    }
+
+    public Integer getPhotoCount() {
+        return photoCount;
+    }
+
+    public void setPhotoCount(Integer photoCount) {
+        this.photoCount = photoCount;
+    }
+
+    
     public Short getGender() {
         return gender;
     }
@@ -185,12 +210,14 @@ public class MonitorDTO implements Serializable {
         this.locationTrackerList = locationTrackerList;
     }
 
-    public List<StaffProjectDTO> getStaffProjectList() {
-        return staffProjectList;
+    public List<MonitorProjectDTO> getMonitorProjectList() {
+        return monitorProjectList;
     }
 
-    public void setStaffProjectList(List<StaffProjectDTO> staffProjectList) {
-        this.staffProjectList = staffProjectList;
+    public void setMonitorProjectList(List<MonitorProjectDTO> monitorProjectList) {
+        this.monitorProjectList = monitorProjectList;
     }
+
+   
     
 }

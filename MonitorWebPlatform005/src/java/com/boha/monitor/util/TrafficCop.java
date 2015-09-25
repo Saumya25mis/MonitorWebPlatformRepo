@@ -28,6 +28,9 @@ public class TrafficCop {
         switch (req.getRequestType()) {
             case RequestDTO.SEND_SIMPLE_MESSAGE:
                 resp = GoogleCloudMessageUtil.sendSimpleMessage(dataUtil.getEntityManager(), req.getSimpleMessage());
+                if (req.getSimpleMessage().getLocationTracker() != null) {
+                    dataUtil.addLocationTrack(req.getSimpleMessage().getLocationTracker());
+                }
                 break;
             case RequestDTO.SEND_LOCATION:
                 dataUtil.addLocationTrack(req.getLocationTracker());

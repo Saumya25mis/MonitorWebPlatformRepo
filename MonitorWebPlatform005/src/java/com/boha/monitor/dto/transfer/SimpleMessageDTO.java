@@ -6,6 +6,7 @@
 
 package com.boha.monitor.dto.transfer;
 
+import com.boha.monitor.dto.LocationTrackerDTO;
 import java.util.List;
 
 /**
@@ -17,7 +18,27 @@ public class SimpleMessageDTO {
     private List<Integer> monitorList, staffList;
     private Integer staffID, monitorID;
     private Long dateSent, dateReceived;
+    private Boolean locationRequest;
+    private LocationTrackerDTO locationTracker;
 
+    public LocationTrackerDTO getLocationTracker() {
+        return locationTracker;
+    }
+
+    public void setLocationTracker(LocationTrackerDTO locationTracker) {
+        this.locationTracker = locationTracker;
+    }
+    
+    
+    public Boolean isLocationRequest() {
+        return locationRequest;
+    }
+
+    public void setLocationRequest(Boolean isLocationRequest) {
+        this.locationRequest = isLocationRequest;
+    }
+
+    
     public String getUrl() {
         return url;
     }

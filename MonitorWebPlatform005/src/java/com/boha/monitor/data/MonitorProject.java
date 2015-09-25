@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.boha.monitor.data;
 
 import java.io.Serializable;
@@ -30,13 +29,16 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "monitorProject")
 @NamedQueries({
-    @NamedQuery(name = "MonitorProject.findProjectsByMonitor", 
+    @NamedQuery(name = "MonitorProject.findProjectsByMonitor",
             query = "SELECT m.project FROM MonitorProject m WHERE m.monitor.monitorID = :monitorID "
-                    + "ORDER BY m.project.dateRegistered desc"),
-    @NamedQuery(name = "MonitorProject.findMonitorsByProject", 
-            query = "SELECT m.monitor FROM MonitorProject m WHERE m.project.projectID = :projectID ORDER BY m.monitor.lastName, m.monitor.firstName"),
-    })
+            + "ORDER BY m.project.dateRegistered desc"),
+    @NamedQuery(name = "MonitorProject.countProjectsByMonitor",
+            query = "SELECT count(m) FROM MonitorProject m WHERE m.monitor.monitorID = :monitorID "),
+
+    @NamedQuery(name = "MonitorProject.findMonitorsByProject",
+            query = "SELECT m.monitor FROM MonitorProject m WHERE m.project.projectID = :projectID ORDER BY m.monitor.lastName, m.monitor.firstName"),})
 public class MonitorProject implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -133,5 +135,5 @@ public class MonitorProject implements Serializable {
     public String toString() {
         return "com.boha.monitor.data.MonitorProject[ monitorProjectID=" + monitorProjectID + " ]";
     }
-    
+
 }

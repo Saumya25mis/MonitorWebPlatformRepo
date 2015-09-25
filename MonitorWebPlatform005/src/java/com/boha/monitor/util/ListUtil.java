@@ -107,15 +107,34 @@ public class ListUtil {
             q.setParameter("projectID", project.getProjectID());
             List<Monitor> monList = q.getResultList();
             project.setMonitorList(new ArrayList());
-            q = em.createNamedQuery("PhotoUpload.findByMonitor", PhotoUpload.class);
+            
             for (Monitor monitor : monList) {
                 MonitorDTO dto = new MonitorDTO(monitor);
                 dto.setPhotoUploadList(new ArrayList<>());
+                q = em.createNamedQuery("PhotoUpload.findByMonitor", PhotoUpload.class);
                 q.setParameter("monitorID", dto.getMonitorID());
                 List<PhotoUpload> pList = q.getResultList();
                 for (PhotoUpload photoUpload : pList) {
                     dto.getPhotoUploadList().add(new PhotoUploadDTO(photoUpload));
                 }
+                q = em.createNamedQuery("PhotoUpload.countProjectPhotosByMonitor", PhotoUpload.class);
+                q.setParameter("monitorID", monitor.getMonitorID());
+                Object obj = q.getSingleResult();
+                Long count = (Long) obj;
+                dto.setPhotoCount(count.intValue());
+
+                q = em.createNamedQuery("ProjectTaskStatus.countByMonitor", ProjectTaskStatus.class);
+                q.setParameter("monitorID", monitor.getMonitorID());
+                Object objm = q.getSingleResult();
+                Long countm = (Long) objm;
+                dto.setStatusCount(countm.intValue());
+
+                q = em.createNamedQuery("MonitorProject.countProjectsByMonitor", MonitorProject.class);
+                q.setParameter("monitorID", monitor.getMonitorID());
+                Object objx = q.getSingleResult();
+                Long countx = (Long) objx;
+                dto.setProjectCount(countx.intValue());
+
                 project.getMonitorList().add(dto);
             }
             //get all the pictures taken for the project
@@ -207,7 +226,7 @@ public class ListUtil {
         ResponseDTO resp = new ResponseDTO();
         resp.setTaskList(new ArrayList<>());
         resp.setProjectList(new ArrayList<>());
-        
+
         Staff staff = em.find(Staff.class, staffID);
 
         Query q = em.createNamedQuery("StaffProject.findByStaff", Project.class);
@@ -795,7 +814,7 @@ public class ListUtil {
                 }
                 resp.getStaffList().add(dto);
             }
-            //log.log(Level.OFF, "company staff found: {0}", projectList.size());
+            log.log(Level.OFF, "company staff found: {0}", resp.getStaffList().size());
         } catch (Exception e) {
             log.log(Level.SEVERE, "Failed", e);
             throw new DataException("Failed to get project data\n" + getErrorString(e));
@@ -812,15 +831,28 @@ public class ListUtil {
             q.setParameter("companyID", companyID);
             List<Monitor> sList = q.getResultList();
             resp.setMonitorList(new ArrayList<>());
-            for (Monitor cs : sList) {
-                MonitorDTO dto = new MonitorDTO(cs);
+            for (Monitor monitor : sList) {
+                MonitorDTO dto = new MonitorDTO(monitor);
                 dto.setPhotoUploadList(new ArrayList<>());
-                q = em.createNamedQuery("PhotoUpload.findByMonitor", PhotoUpload.class);
-                q.setParameter("monitorID", cs.getMonitorID());
-                List<PhotoUpload> pList = q.getResultList();
-                for (PhotoUpload photoUpload : pList) {
-                    dto.getPhotoUploadList().add(new PhotoUploadDTO(photoUpload));
-                }
+                q = em.createNamedQuery("PhotoUpload.countProjectPhotosByMonitor", PhotoUpload.class);
+                q.setParameter("monitorID", monitor.getMonitorID());
+                Object obj = q.getSingleResult();
+                Long count = (Long) obj;
+                dto.setPhotoCount(count.intValue());
+
+                q = em.createNamedQuery("ProjectTaskStatus.countByMonitor", ProjectTaskStatus.class);
+                q.setParameter("monitorID", monitor.getMonitorID());
+                Object objm = q.getSingleResult();
+                Long countm = (Long) objm;
+                dto.setStatusCount(countm.intValue());
+                
+                 q = em.createNamedQuery("MonitorProject.countProjectsByMonitor", MonitorProject.class);
+                q.setParameter("monitorID", monitor.getMonitorID());
+                Object objx = q.getSingleResult();
+                Long countx = (Long) objx;
+                dto.setProjectCount(countx.intValue());
+
+
                 resp.getMonitorList().add(dto);
             }
         } catch (Exception e) {

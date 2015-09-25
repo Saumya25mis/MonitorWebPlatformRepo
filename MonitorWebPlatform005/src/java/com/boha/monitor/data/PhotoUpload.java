@@ -33,16 +33,28 @@ import javax.validation.constraints.Size;
 @Table(name = "photoUpload")
 @NamedQueries({
     @NamedQuery(name = "PhotoUpload.findByProject", 
-            query = "SELECT p FROM PhotoUpload p WHERE p.project.projectID = :projectID and p.projectTask IS NULL ORDER BY p.dateTaken desc"),
+            query = "SELECT p FROM PhotoUpload p WHERE p.project.projectID = :projectID and p.projectTask IS NULL "
+                    + "ORDER BY p.dateTaken desc"),
     
     @NamedQuery(name = "PhotoUpload.findByProjectInPeriod", 
             query = "SELECT p FROM PhotoUpload p WHERE p.project.projectID = :projectID and p.projectTask IS NULL "
                     + "AND p.dateTaken BETWEEN :start AND :end ORDER BY p.dateTaken desc"),
     
     @NamedQuery(name = "PhotoUpload.findByMonitor", 
-            query = "SELECT p FROM PhotoUpload p WHERE p.monitor.monitorID = :monitorID and p.project IS NULL ORDER BY p.dateTaken desc"),
+            query = "SELECT p FROM PhotoUpload p WHERE p.monitor.monitorID = :monitorID and p.project IS NULL "
+                    + "ORDER BY p.dateTaken desc"),
+    
+    @NamedQuery(name = "PhotoUpload.countProjectPhotosByMonitor", 
+            query = "SELECT count(p) FROM PhotoUpload p WHERE p.monitor.monitorID = :monitorID and p.project IS NOT NULL"),
+    
+    
+    @NamedQuery(name = "PhotoUpload.countProjectPhotosByStaff", 
+            query = "SELECT count(p) FROM PhotoUpload p WHERE p.staff.staffID = :staffID and p.project IS NOT NULL"),
     @NamedQuery(name = "PhotoUpload.findByStaff", 
-            query = "SELECT p FROM PhotoUpload p WHERE p.staff.staffID = :staffID and p.project IS NULL ORDER BY p.dateTaken desc"),
+            query = "SELECT p FROM PhotoUpload p WHERE p.staff.staffID = :staffID and p.project IS NULL "
+                    + "ORDER BY p.dateTaken desc"),
+    
+    
     @NamedQuery(name = "PhotoUpload.findByTaskInPeriod", 
             query = "SELECT p FROM PhotoUpload p WHERE p.projectTask.projectTaskID = :projectTaskID "
                     + "AND p.dateTaken BETWEEN :start AND :end ORDER BY p.dateTaken desc"),
