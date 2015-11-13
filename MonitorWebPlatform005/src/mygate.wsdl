@@ -1,0 +1,293 @@
+This XML file does not appear to have any style information associated with it. The document tree is shown below.
+<wsdl:definitions xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:impl="tokenizationService" xmlns:intf="tokenizationService" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns1="http://rpc.xml.coldfusion" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="tokenizationService">
+<!-- WSDL created by ColdFusion version 9,0,0,251028 -->
+<wsdl:types>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="tokenizationService">
+<import namespace="http://xml.apache.org/xml-soap"/>
+<import namespace="http://rpc.xml.coldfusion"/>
+<import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+<complexType name="ArrayOf_xsd_anyType">
+<complexContent>
+<restriction base="soapenc:Array">
+<attribute ref="soapenc:arrayType" wsdl:arrayType="xsd:anyType[]"/>
+</restriction>
+</complexContent>
+</complexType>
+<complexType name="ArrayOf_xsd_string">
+<complexContent>
+<restriction base="soapenc:Array">
+<attribute ref="soapenc:arrayType" wsdl:arrayType="xsd:string[]"/>
+</restriction>
+</complexContent>
+</complexType>
+<complexType name="ArrayOfArrayOf_xsd_anyType">
+<complexContent>
+<restriction base="soapenc:Array">
+<attribute ref="soapenc:arrayType" wsdl:arrayType="xsd:anyType[][]"/>
+</restriction>
+</complexContent>
+</complexType>
+</schema>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://rpc.xml.coldfusion">
+<import namespace="http://xml.apache.org/xml-soap"/>
+<import namespace="tokenizationService"/>
+<import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+<complexType name="CFCInvocationException">
+<sequence/>
+</complexType>
+<complexType name="QueryBean">
+<sequence>
+<element name="columnList" nillable="true" type="impl:ArrayOf_xsd_string"/>
+<element name="data" nillable="true" type="impl:ArrayOfArrayOf_xsd_anyType"/>
+</sequence>
+</complexType>
+</schema>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://xml.apache.org/xml-soap">
+<import namespace="http://rpc.xml.coldfusion"/>
+<import namespace="tokenizationService"/>
+<import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+<complexType name="mapItem">
+<sequence>
+<element name="key" nillable="true" type="xsd:anyType"/>
+<element name="value" nillable="true" type="xsd:anyType"/>
+</sequence>
+</complexType>
+<complexType name="Map">
+<sequence>
+<element maxOccurs="unbounded" minOccurs="0" name="item" type="apachesoap:mapItem"/>
+</sequence>
+</complexType>
+</schema>
+</wsdl:types>
+<wsdl:message name="fUpdateTokenCCResponse">
+<wsdl:part name="fUpdateTokenCCReturn" type="impl:ArrayOf_xsd_anyType"/>
+</wsdl:message>
+<wsdl:message name="fValidateExpiryDateRequest">
+<wsdl:part name="MerchantUID" type="xsd:string"/>
+<wsdl:part name="ApplicationUID" type="xsd:string"/>
+<wsdl:part name="ClientToken" type="xsd:string"/>
+</wsdl:message>
+<wsdl:message name="fGetTokenResponse">
+<wsdl:part name="fGetTokenReturn" type="impl:ArrayOf_xsd_anyType"/>
+</wsdl:message>
+<wsdl:message name="fCreateTokenCCRequest">
+<wsdl:part name="MerchantUID" type="xsd:string"/>
+<wsdl:part name="ApplicationUID" type="xsd:string"/>
+<wsdl:part name="ClientToken" type="xsd:string"/>
+<wsdl:part name="CardHolder" type="xsd:string"/>
+<wsdl:part name="CardNumber" type="xsd:string"/>
+<wsdl:part name="ExpiryMonth" type="xsd:string"/>
+<wsdl:part name="ExpiryYear" type="xsd:string"/>
+</wsdl:message>
+<wsdl:message name="fPayNowRequest">
+<wsdl:part name="MerchantUID" type="xsd:string"/>
+<wsdl:part name="ApplicationUID" type="xsd:string"/>
+<wsdl:part name="TransactionIndex" type="xsd:string"/>
+<wsdl:part name="ClientToken" type="xsd:string"/>
+<wsdl:part name="CVV" type="xsd:string"/>
+<wsdl:part name="Amount" type="xsd:string"/>
+<wsdl:part name="Mode" type="xsd:string"/>
+<wsdl:part name="MerchantReference" type="xsd:string"/>
+<wsdl:part name="Budget" type="xsd:string"/>
+<wsdl:part name="BudgetPeriod" type="xsd:string"/>
+<wsdl:part name="UCI" type="xsd:string"/>
+<wsdl:part name="IPAddress" type="xsd:string"/>
+<wsdl:part name="ShippingCountryCode" type="xsd:string"/>
+</wsdl:message>
+<wsdl:message name="fDeregisterTokenCCRequest">
+<wsdl:part name="MerchantUID" type="xsd:string"/>
+<wsdl:part name="ApplicationUID" type="xsd:string"/>
+<wsdl:part name="ClientToken" type="xsd:string"/>
+</wsdl:message>
+<wsdl:message name="fValidateExpiryDateResponse">
+<wsdl:part name="fValidateExpiryDateReturn" type="impl:ArrayOf_xsd_anyType"/>
+</wsdl:message>
+<wsdl:message name="fPayNowResponse">
+<wsdl:part name="fPayNowReturn" type="impl:ArrayOf_xsd_anyType"/>
+</wsdl:message>
+<wsdl:message name="fUpdateTokenCCRequest">
+<wsdl:part name="MerchantUID" type="xsd:string"/>
+<wsdl:part name="ApplicationUID" type="xsd:string"/>
+<wsdl:part name="ClientToken" type="xsd:string"/>
+<wsdl:part name="CardHolder" type="xsd:string"/>
+<wsdl:part name="CardNumber" type="xsd:string"/>
+<wsdl:part name="ExpiryMonth" type="xsd:string"/>
+<wsdl:part name="ExpiryYear" type="xsd:string"/>
+</wsdl:message>
+<wsdl:message name="fGetTokenRequest">
+<wsdl:part name="MerchantUID" type="xsd:string"/>
+<wsdl:part name="ApplicationUID" type="xsd:string"/>
+<wsdl:part name="ClientToken" type="xsd:string"/>
+</wsdl:message>
+<wsdl:message name="fGetHashedCardDetailsResponse">
+<wsdl:part name="fGetHashedCardDetailsReturn" type="impl:ArrayOf_xsd_anyType"/>
+</wsdl:message>
+<wsdl:message name="fGetMaskedCardDetailsRequest">
+<wsdl:part name="MerchantUID" type="xsd:string"/>
+<wsdl:part name="ApplicationUID" type="xsd:string"/>
+<wsdl:part name="ClientToken" type="xsd:string"/>
+</wsdl:message>
+<wsdl:message name="fDeregisterTokenCCResponse">
+<wsdl:part name="fDeregisterTokenCCReturn" type="impl:ArrayOf_xsd_anyType"/>
+</wsdl:message>
+<wsdl:message name="fGetMaskedCardDetailsResponse">
+<wsdl:part name="fGetMaskedCardDetailsReturn" type="impl:ArrayOf_xsd_anyType"/>
+</wsdl:message>
+<wsdl:message name="CFCInvocationException">
+<wsdl:part name="fault" type="tns1:CFCInvocationException"/>
+</wsdl:message>
+<wsdl:message name="fGetHashedCardDetailsRequest">
+<wsdl:part name="MerchantUID" type="xsd:string"/>
+<wsdl:part name="ApplicationUID" type="xsd:string"/>
+<wsdl:part name="ClientToken" type="xsd:string"/>
+</wsdl:message>
+<wsdl:message name="fCreateTokenCCResponse">
+<wsdl:part name="fCreateTokenCCReturn" type="impl:ArrayOf_xsd_anyType"/>
+</wsdl:message>
+<wsdl:portType name="tokenizationService">
+<wsdl:operation name="fGetHashedCardDetails" parameterOrder="MerchantUID ApplicationUID ClientToken">
+<wsdl:input message="impl:fGetHashedCardDetailsRequest" name="fGetHashedCardDetailsRequest"/>
+<wsdl:output message="impl:fGetHashedCardDetailsResponse" name="fGetHashedCardDetailsResponse"/>
+<wsdl:fault message="impl:CFCInvocationException" name="CFCInvocationException"/>
+</wsdl:operation>
+<wsdl:operation name="fUpdateTokenCC" parameterOrder="MerchantUID ApplicationUID ClientToken CardHolder CardNumber ExpiryMonth ExpiryYear">
+<wsdl:input message="impl:fUpdateTokenCCRequest" name="fUpdateTokenCCRequest"/>
+<wsdl:output message="impl:fUpdateTokenCCResponse" name="fUpdateTokenCCResponse"/>
+<wsdl:fault message="impl:CFCInvocationException" name="CFCInvocationException"/>
+</wsdl:operation>
+<wsdl:operation name="fCreateTokenCC" parameterOrder="MerchantUID ApplicationUID ClientToken CardHolder CardNumber ExpiryMonth ExpiryYear">
+<wsdl:input message="impl:fCreateTokenCCRequest" name="fCreateTokenCCRequest"/>
+<wsdl:output message="impl:fCreateTokenCCResponse" name="fCreateTokenCCResponse"/>
+<wsdl:fault message="impl:CFCInvocationException" name="CFCInvocationException"/>
+</wsdl:operation>
+<wsdl:operation name="fGetMaskedCardDetails" parameterOrder="MerchantUID ApplicationUID ClientToken">
+<wsdl:input message="impl:fGetMaskedCardDetailsRequest" name="fGetMaskedCardDetailsRequest"/>
+<wsdl:output message="impl:fGetMaskedCardDetailsResponse" name="fGetMaskedCardDetailsResponse"/>
+<wsdl:fault message="impl:CFCInvocationException" name="CFCInvocationException"/>
+</wsdl:operation>
+<wsdl:operation name="fValidateExpiryDate" parameterOrder="MerchantUID ApplicationUID ClientToken">
+<wsdl:input message="impl:fValidateExpiryDateRequest" name="fValidateExpiryDateRequest"/>
+<wsdl:output message="impl:fValidateExpiryDateResponse" name="fValidateExpiryDateResponse"/>
+<wsdl:fault message="impl:CFCInvocationException" name="CFCInvocationException"/>
+</wsdl:operation>
+<wsdl:operation name="fPayNow" parameterOrder="MerchantUID ApplicationUID TransactionIndex ClientToken CVV Amount Mode MerchantReference Budget BudgetPeriod UCI IPAddress ShippingCountryCode">
+<wsdl:input message="impl:fPayNowRequest" name="fPayNowRequest"/>
+<wsdl:output message="impl:fPayNowResponse" name="fPayNowResponse"/>
+<wsdl:fault message="impl:CFCInvocationException" name="CFCInvocationException"/>
+</wsdl:operation>
+<wsdl:operation name="fDeregisterTokenCC" parameterOrder="MerchantUID ApplicationUID ClientToken">
+<wsdl:input message="impl:fDeregisterTokenCCRequest" name="fDeregisterTokenCCRequest"/>
+<wsdl:output message="impl:fDeregisterTokenCCResponse" name="fDeregisterTokenCCResponse"/>
+<wsdl:fault message="impl:CFCInvocationException" name="CFCInvocationException"/>
+</wsdl:operation>
+<wsdl:operation name="fGetToken" parameterOrder="MerchantUID ApplicationUID ClientToken">
+<wsdl:input message="impl:fGetTokenRequest" name="fGetTokenRequest"/>
+<wsdl:output message="impl:fGetTokenResponse" name="fGetTokenResponse"/>
+<wsdl:fault message="impl:CFCInvocationException" name="CFCInvocationException"/>
+</wsdl:operation>
+</wsdl:portType>
+<wsdl:binding name="tokenizationService.cfcSoapBinding" type="impl:tokenizationService">
+<wsdlsoap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+<wsdl:operation name="fGetHashedCardDetails">
+<wsdlsoap:operation soapAction=""/>
+<wsdl:input name="fGetHashedCardDetailsRequest">
+<wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="tokenizationService" use="encoded"/>
+</wsdl:input>
+<wsdl:output name="fGetHashedCardDetailsResponse">
+<wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="tokenizationService" use="encoded"/>
+</wsdl:output>
+<wsdl:fault name="CFCInvocationException">
+<wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="CFCInvocationException" namespace="tokenizationService" use="encoded"/>
+</wsdl:fault>
+</wsdl:operation>
+<wsdl:operation name="fUpdateTokenCC">
+<wsdlsoap:operation soapAction=""/>
+<wsdl:input name="fUpdateTokenCCRequest">
+<wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="tokenizationService" use="encoded"/>
+</wsdl:input>
+<wsdl:output name="fUpdateTokenCCResponse">
+<wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="tokenizationService" use="encoded"/>
+</wsdl:output>
+<wsdl:fault name="CFCInvocationException">
+<wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="CFCInvocationException" namespace="tokenizationService" use="encoded"/>
+</wsdl:fault>
+</wsdl:operation>
+<wsdl:operation name="fCreateTokenCC">
+<wsdlsoap:operation soapAction=""/>
+<wsdl:input name="fCreateTokenCCRequest">
+<wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="tokenizationService" use="encoded"/>
+</wsdl:input>
+<wsdl:output name="fCreateTokenCCResponse">
+<wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="tokenizationService" use="encoded"/>
+</wsdl:output>
+<wsdl:fault name="CFCInvocationException">
+<wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="CFCInvocationException" namespace="tokenizationService" use="encoded"/>
+</wsdl:fault>
+</wsdl:operation>
+<wsdl:operation name="fGetMaskedCardDetails">
+<wsdlsoap:operation soapAction=""/>
+<wsdl:input name="fGetMaskedCardDetailsRequest">
+<wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="tokenizationService" use="encoded"/>
+</wsdl:input>
+<wsdl:output name="fGetMaskedCardDetailsResponse">
+<wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="tokenizationService" use="encoded"/>
+</wsdl:output>
+<wsdl:fault name="CFCInvocationException">
+<wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="CFCInvocationException" namespace="tokenizationService" use="encoded"/>
+</wsdl:fault>
+</wsdl:operation>
+<wsdl:operation name="fValidateExpiryDate">
+<wsdlsoap:operation soapAction=""/>
+<wsdl:input name="fValidateExpiryDateRequest">
+<wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="tokenizationService" use="encoded"/>
+</wsdl:input>
+<wsdl:output name="fValidateExpiryDateResponse">
+<wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="tokenizationService" use="encoded"/>
+</wsdl:output>
+<wsdl:fault name="CFCInvocationException">
+<wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="CFCInvocationException" namespace="tokenizationService" use="encoded"/>
+</wsdl:fault>
+</wsdl:operation>
+<wsdl:operation name="fPayNow">
+<wsdlsoap:operation soapAction=""/>
+<wsdl:input name="fPayNowRequest">
+<wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="tokenizationService" use="encoded"/>
+</wsdl:input>
+<wsdl:output name="fPayNowResponse">
+<wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="tokenizationService" use="encoded"/>
+</wsdl:output>
+<wsdl:fault name="CFCInvocationException">
+<wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="CFCInvocationException" namespace="tokenizationService" use="encoded"/>
+</wsdl:fault>
+</wsdl:operation>
+<wsdl:operation name="fDeregisterTokenCC">
+<wsdlsoap:operation soapAction=""/>
+<wsdl:input name="fDeregisterTokenCCRequest">
+<wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="tokenizationService" use="encoded"/>
+</wsdl:input>
+<wsdl:output name="fDeregisterTokenCCResponse">
+<wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="tokenizationService" use="encoded"/>
+</wsdl:output>
+<wsdl:fault name="CFCInvocationException">
+<wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="CFCInvocationException" namespace="tokenizationService" use="encoded"/>
+</wsdl:fault>
+</wsdl:operation>
+<wsdl:operation name="fGetToken">
+<wsdlsoap:operation soapAction=""/>
+<wsdl:input name="fGetTokenRequest">
+<wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="tokenizationService" use="encoded"/>
+</wsdl:input>
+<wsdl:output name="fGetTokenResponse">
+<wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="tokenizationService" use="encoded"/>
+</wsdl:output>
+<wsdl:fault name="CFCInvocationException">
+<wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="CFCInvocationException" namespace="tokenizationService" use="encoded"/>
+</wsdl:fault>
+</wsdl:operation>
+</wsdl:binding>
+<wsdl:service name="tokenizationService">
+<wsdl:port binding="impl:tokenizationService.cfcSoapBinding" name="tokenizationService.cfc">
+<wsdlsoap:address location="https://dev-services.mygateglobal.com/tokenizationService.cfc"/>
+</wsdl:port>
+</wsdl:service>
+</wsdl:definitions>

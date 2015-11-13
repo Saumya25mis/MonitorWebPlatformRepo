@@ -233,7 +233,7 @@ public class ListUtil {
         q.setParameter("staffID", staffID);
         List<Project> projectList = q.getResultList();
         resp.setProjectList(new ArrayList<>());
-
+        log.log(Level.OFF, "Staff Projects found: " + projectList.size());
         HashMap<Integer, Programme> map = new HashMap<>();
         for (Project p : projectList) {
             ProjectDTO project = new ProjectDTO(p);
@@ -344,6 +344,7 @@ public class ListUtil {
         return resp;
     }
 
+    
     public static ResponseDTO getCompanyData(EntityManager em, Integer companyID) throws DataException {
         ResponseDTO resp = new ResponseDTO();
 
@@ -834,6 +835,16 @@ public class ListUtil {
             for (Monitor monitor : sList) {
                 MonitorDTO dto = new MonitorDTO(monitor);
                 dto.setPhotoUploadList(new ArrayList<>());
+                
+                q = em.createNamedQuery("PhotoUpload.findByMonitor", PhotoUpload.class);
+            
+                dto.setPhotoUploadList(new ArrayList<>());
+                q.setParameter("monitorID", dto.getMonitorID());
+                List<PhotoUpload> pList = q.getResultList();
+                for (PhotoUpload photoUpload : pList) {
+                    dto.getPhotoUploadList().add(new PhotoUploadDTO(photoUpload));
+                }
+               
                 q = em.createNamedQuery("PhotoUpload.countProjectPhotosByMonitor", PhotoUpload.class);
                 q.setParameter("monitorID", monitor.getMonitorID());
                 Object obj = q.getSingleResult();

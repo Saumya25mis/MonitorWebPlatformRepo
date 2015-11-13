@@ -29,6 +29,7 @@ import com.boha.monitor.data.SubTask;
 import com.boha.monitor.data.Task;
 import com.boha.monitor.data.TaskStatusType;
 import com.boha.monitor.data.TaskType;
+import com.boha.monitor.data.VideoUpload;
 import com.boha.monitor.dto.ChatDTO;
 import com.boha.monitor.dto.ChatMemberDTO;
 import com.boha.monitor.dto.CompanyDTO;
@@ -51,6 +52,7 @@ import com.boha.monitor.dto.SubTaskDTO;
 import com.boha.monitor.dto.TaskDTO;
 import com.boha.monitor.dto.TaskStatusTypeDTO;
 import com.boha.monitor.dto.TaskTypeDTO;
+import com.boha.monitor.dto.VideoUploadDTO;
 import com.boha.monitor.dto.transfer.RequestDTO;
 import com.boha.monitor.dto.transfer.ResponseDTO;
 import java.math.BigInteger;
@@ -741,6 +743,63 @@ public class DataUtil {
         }
         return w;
     }
+    public ResponseDTO addVideoUpload(VideoUploadDTO pu) {
+        ResponseDTO w = new ResponseDTO();
+        w.setPhotoUploadList(new ArrayList<>());
+        try {
+            VideoUpload u = new VideoUpload();
+            if (pu.getProjectID()
+                    != null) {
+                u.setProject(em.find(Project.class, pu.getProjectID()));
+            }
+
+            if (pu.getProjectTaskID()
+                    != null) {
+                u.setProjectTask(em.find(ProjectTask.class, pu.getProjectTaskID()));
+            }
+
+            if (pu.getStaffID()
+                    != null) {
+                u.setStaff(em.find(Staff.class, pu.getStaffID()));
+            }
+
+            if (pu.getMonitorID()
+                    != null) {
+                u.setMonitor(em.find(Monitor.class, pu.getMonitorID()));
+            }
+
+            u.setLatitude(pu.getLatitude());
+            u.setLongitude(pu.getLongitude());
+            u.setUrl(pu.getUrl());
+            u.setDateTaken(
+                    new Date(pu.getDateTaken()));
+            u.setDateUploaded(
+                    new Date(pu.getDateUploaded()));
+            u.setAccuracy(pu.getAccuracy());
+
+            u.setSecureUrl(pu.getSecureUrl());
+            u.setETag(pu.geteTag());
+            u.setBytes(pu.getBytes());
+            u.setSignature(pu.getSignature());
+            u.setHeight(pu.getHeight());
+            u.setWidth(pu.getWidth());
+
+          
+            em.persist(u);
+            em.flush();
+            w.getVideoUploadList().add(new VideoUploadDTO(u));
+
+            log.log(Level.OFF,
+                    "VideoUpload added to table, date taken: {0}", u.getDateTaken().toString());
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "VideoUpload failed", e);
+            addErrorStore(StatusCode.ERROR_DATABASE,
+                    "VideoUpload database add failed\n"
+                    + getErrorString(e), "DataUtil");
+
+        }
+        return w;
+    }
 
     public ResponseDTO deleteProjectPhotos(List<PhotoUploadDTO> list) throws DataException {
         ResponseDTO resp = new ResponseDTO();
@@ -898,8 +957,7 @@ public class DataUtil {
             resp.setProjectTaskStatusList(
                     new ArrayList<>());
             resp.getProjectTaskStatusList()
-                    .add(
-                            new ProjectTaskStatusDTO(t));
+                    .add(new ProjectTaskStatusDTO(t));
             log.log(Level.OFF,
                     "ProjectTaskStatus added");
 

@@ -135,6 +135,9 @@ public class TrafficCop {
             case RequestDTO.ADD_PHOTO:
                 resp = dataUtil.addPhotoUpload(req.getPhotoUpload());
                 break;
+            case RequestDTO.ADD_VIDEO:
+                resp = dataUtil.addVideoUpload(req.getVideoUpload());
+                break;
             case RequestDTO.GET_MONITOR_PHOTOS:
                 resp = ListUtil.getMonitorPhotos(dataUtil.getEntityManager(), req.getMonitorID());
                 break;

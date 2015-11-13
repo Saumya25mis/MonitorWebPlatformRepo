@@ -28,6 +28,8 @@ import com.boha.monitor.dto.SubTaskDTO;
 import com.boha.monitor.dto.TaskDTO;
 import com.boha.monitor.dto.TaskStatusTypeDTO;
 import com.boha.monitor.dto.TaskTypeDTO;
+import com.boha.monitor.dto.VideoUploadDTO;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -74,7 +76,20 @@ public class ResponseDTO {
     private List<PortfolioDTO> portfolioList;
     private List<ProgrammeDTO> programmeList;
     private List<GcmDeviceDTO> gcmDeviceList;
+    private List<VideoUploadDTO> videoUploadList;
 
+    public List<VideoUploadDTO> getVideoUploadList() {
+        if (videoUploadList == null) {
+            videoUploadList = new ArrayList<>();
+        }
+        return videoUploadList;
+    }
+
+    public void setVideoUploadList(List<VideoUploadDTO> videoUploadList) {
+        this.videoUploadList = videoUploadList;
+    }
+
+    
     public StaffDTO getStaff() {
         return staff;
     }

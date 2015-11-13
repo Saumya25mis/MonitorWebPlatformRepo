@@ -18,7 +18,7 @@ public class SubTaskDTO implements Serializable {
     private Integer subTaskID;
     private String subTaskName;
     private Integer subTaskNumber;
-    private String description;
+    private String desc;
     private Integer taskID;
 
     public SubTaskDTO() {
@@ -31,7 +31,7 @@ public class SubTaskDTO implements Serializable {
     public SubTaskDTO(SubTask a) {
         this.subTaskID = a.getSubTaskID();
         this.subTaskName = a.getSubTaskName();
-        description = a.getDescription();
+        desc = a.getDescription();
         taskID = a.getTask().getTaskID();
         subTaskNumber = a.getSubTaskNumber();
     }
@@ -69,11 +69,11 @@ public class SubTaskDTO implements Serializable {
     }
 
     public String getDescription() {
-        return description;
+        return desc;
     }
 
     public void setDescription(String description) {
-        this.description = description;
+        this.desc = description;
     }
 
    

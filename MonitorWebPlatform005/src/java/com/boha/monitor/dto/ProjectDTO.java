@@ -28,7 +28,7 @@ public class ProjectDTO implements Serializable {
     private Boolean activeFlag;
     private Boolean locationConfirmed;
     private String address, cityName, municipalityName;
-    private String description, programmeName, portfolioName;
+    private String desc, programmeName, portfolioName;
     private List<ProjectTaskDTO> projectTaskList = new ArrayList<>();
     private List<ProjectStatusDTO> projectStatusList = new ArrayList<>();
     private List<GcmDeviceDTO> gcmDeviceList;
@@ -49,7 +49,7 @@ public class ProjectDTO implements Serializable {
         activeFlag = a.getActiveFlag();
         locationConfirmed = a.getLocationConfirmed();
         address = a.getAddress();
-        description = a.getDescription();
+        desc = a.getDescription();
       
         if (a.getCity() != null) {
             cityID = a.getCity().getCityID();
@@ -231,11 +231,11 @@ public class ProjectDTO implements Serializable {
     }
 
     public String getDescription() {
-        return description;
+        return desc;
     }
 
     public void setDescription(String description) {
-        this.description = description;
+        this.desc = description;
     }
 
     public List<ProjectTaskDTO> getProjectTaskList() {

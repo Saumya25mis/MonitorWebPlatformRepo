@@ -26,6 +26,7 @@ import com.boha.monitor.dto.SubTaskDTO;
 import com.boha.monitor.dto.TaskDTO;
 import com.boha.monitor.dto.TaskStatusTypeDTO;
 import com.boha.monitor.dto.TaskTypeDTO;
+import com.boha.monitor.dto.VideoUploadDTO;
 import java.io.Serializable;
 import java.util.List;
 
@@ -37,7 +38,7 @@ public class RequestDTO implements Serializable {
 
     private Integer requestType, companyID, staffID,
             projectID, projectTaskID, loginType, monitorID, taskTypeID;
-    private boolean responseRequested;
+    private boolean responseRequested, zipResponse;
     private SimpleMessageDTO simpleMessage;
     private String email, pin, gcmRegistrationID;
     private Integer numberOfDays;
@@ -73,6 +74,7 @@ public class RequestDTO implements Serializable {
     private ProjectTaskStatusDTO projectTaskStatus;
     private ProjectStatusTypeDTO projectStatusType;
     private PhotoUploadDTO photoUpload;
+    private VideoUploadDTO videoUpload;
     private List<LocationTrackerDTO> locationTrackerList;
     private List<ChatMemberDTO> chatMemberList;
     private List<SubTaskDTO> subTaskList;
@@ -87,7 +89,8 @@ public class RequestDTO implements Serializable {
             ADD_PROJECT_TASK_STATUS = 13,
             ADD_PROJECT_STATUS = 13,
             ADD_DEVICE = 17,
-            ADD_PHOTO = 18;
+            ADD_PHOTO = 18,
+            ADD_VIDEO = 19;
     //get stuff
     public static final int GET_COMPANY_LIST = 100,
             GET_PROJECT_DATA = 101,
@@ -109,7 +112,7 @@ public class RequestDTO implements Serializable {
             GET_PROJECT_STATUS_IN_PERIOD = 118,
             GET_SITE_STATUS_IN_PERIOD = 119,
             GET_PROJECT_SITES = 120,
-            GET_ERROR_REPORTS = 121,
+            GET_ERROR_REPORTS = 9999,
             GET_LOCATION_TRACK_BY_STAFF = 122,
             GET_LOCATION_TRACK_BY_STAFF_IN_PERIOD = 123,
             GET_LOCATION_TRACK_BY_COMPANY_IN_PERIOD = 124,
@@ -184,6 +187,24 @@ public class RequestDTO implements Serializable {
     public static final String PROJECT_DIR = "project";
     public static final String TASK_DIR = "task";
 
+    public boolean isZipResponse() {
+        return zipResponse;
+    }
+
+    public void setZipResponse(boolean zipResponse) {
+        this.zipResponse = zipResponse;
+    }
+
+    
+    public VideoUploadDTO getVideoUpload() {
+        return videoUpload;
+    }
+
+    public void setVideoUpload(VideoUploadDTO videoUpload) {
+        this.videoUpload = videoUpload;
+    }
+
+    
     public SimpleMessageDTO getSimpleMessage() {
         return simpleMessage;
     }

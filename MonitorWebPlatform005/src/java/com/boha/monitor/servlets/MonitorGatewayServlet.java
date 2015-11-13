@@ -17,6 +17,7 @@ import com.google.gson.JsonSyntaxException;
 import com.oreilly.servlet.ServletUtils;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,14 +35,13 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet(name = "MonitorGatewayServlet", urlPatterns = {"/gate"})
 public class MonitorGatewayServlet extends HttpServlet {
 
-   
-   
     @EJB
-    DataUtil dataUtil; 
+    DataUtil dataUtil;
     @EJB
     SignInUtil signInUtil;
-    
+
     static final String SOURCE = "MonitorGatewayServlet";
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         long start = System.currentTimeMillis();
@@ -64,18 +64,26 @@ public class MonitorGatewayServlet extends HttpServlet {
             log.log(Level.SEVERE, "Failed request", e);
             resp.setStatusCode(ServerStatus.ERROR_SERVER);
             resp.setMessage(ServerStatus.getMessage(resp.getStatusCode()));
-        } finally {         
-            response.setContentType("application/zip;charset=UTF-8");
-            File zipped;
-            String json = gson.toJson(resp);
-            try {
-                zipped = GZipUtility.getZipped(json);
-                ServletUtils.returnFile(zipped.getAbsolutePath(), response.getOutputStream());
-                response.getOutputStream().close();
-                log.log(Level.OFF, "### Zipped Length of Response: {0} -  "
-                        + "unzipped length: {1}", new Object[]{zipped.length(), json.length()});
-            } catch (IOException e) {
-                log.log(Level.SEVERE, "Zipping problem - probably the zipper cannot find the zipped file", e);
+        } finally {
+            if (dto.isZipResponse()) {
+                response.setContentType("application/zip;charset=UTF-8");
+                File zipped;
+                String json = gson.toJson(resp);
+                try {
+                    zipped = GZipUtility.getZipped(json);
+                    ServletUtils.returnFile(zipped.getAbsolutePath(), response.getOutputStream());
+                    response.getOutputStream().close();
+                    log.log(Level.OFF, "### Zipped Length of Response: {0} -  "
+                            + "unzipped length: {1}", new Object[]{zipped.length(), json.length()});
+                } catch (IOException e) {
+                    log.log(Level.SEVERE, "Zipping problem - probably the zipper cannot find the zipped file", e);
+                }
+            } else {
+                response.setContentType("application/json;charset=UTF-8");
+                try (PrintWriter out = response.getWriter()) {
+                    String json = gson.toJson(resp);
+                    out.println(json);
+                }
             }
 
             long end = System.currentTimeMillis();
@@ -104,6 +112,7 @@ public class MonitorGatewayServlet extends HttpServlet {
     }
     private static final Logger log = Logger.getLogger(MonitorGatewayServlet.class
             .getSimpleName());
+
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
