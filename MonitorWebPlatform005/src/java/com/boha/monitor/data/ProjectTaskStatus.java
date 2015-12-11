@@ -43,7 +43,10 @@ import javax.validation.constraints.NotNull;
             query = "SELECT p FROM ProjectTaskStatus p WHERE p.projectTask.project.projectID = :projectID and p.statusDate BETWEEN :start AND :end  ORDER BY p.dateUpdated desc"),
     
     @NamedQuery(name = "ProjectTaskStatus.findByTask",
-            query = "SELECT p FROM ProjectTaskStatus p WHERE p.projectTask.projectTaskID = :projectTaskID ORDER BY p.dateUpdated desc")
+            query = "SELECT p FROM ProjectTaskStatus p WHERE p.projectTask.projectTaskID = :projectTaskID ORDER BY p.dateUpdated desc"),
+    
+    @NamedQuery(name = "ProjectTaskStatus.findByTaskMonitor",
+            query = "SELECT p FROM ProjectTaskStatus p WHERE p.projectTask.projectTaskID = :projectTaskID and p.monitor.monitorID = :monitorID ORDER BY p.dateUpdated desc")
 })
 public class ProjectTaskStatus implements Serializable {
     @OneToMany(mappedBy = "projectTaskStatus")

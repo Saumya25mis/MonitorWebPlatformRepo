@@ -60,6 +60,9 @@ import javax.validation.constraints.Size;
                     + "AND p.dateTaken BETWEEN :start AND :end ORDER BY p.dateTaken desc"),
     @NamedQuery(name = "PhotoUpload.findByTask", 
             query = "SELECT p FROM PhotoUpload p WHERE p.projectTask.projectTaskID = :projectTaskID "
+                    + " ORDER BY p.dateTaken desc"),
+    @NamedQuery(name = "PhotoUpload.findByTaskMonitor", 
+            query = "SELECT p FROM PhotoUpload p WHERE p.projectTask.projectTaskID = :projectTaskID and p.monitor.monitorID = :monitorID "
                     + " ORDER BY p.dateTaken desc")
 })
 public class PhotoUpload implements Serializable {
@@ -108,7 +111,6 @@ public class PhotoUpload implements Serializable {
     @Column(name = "dateTaken")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateTaken;
-    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "latitude")
     private Double latitude;
     @Column(name = "longitude")

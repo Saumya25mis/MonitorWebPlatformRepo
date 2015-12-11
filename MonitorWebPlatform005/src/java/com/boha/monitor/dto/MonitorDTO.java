@@ -24,6 +24,8 @@ public class MonitorDTO implements Serializable {
     private Long appInvitationDate;
     private Integer companyID;
     private Short gender;
+    private ProjectTaskStatusDTO lastStatus;
+    
     private GcmDeviceDTO gcmDevice;
     private List<PhotoUploadDTO> photoUploadList;
     private List<LocationTrackerDTO> locationTrackerList;
@@ -54,6 +56,14 @@ public class MonitorDTO implements Serializable {
         }
         
         
+    }
+
+    public ProjectTaskStatusDTO getLastStatus() {
+        return lastStatus;
+    }
+
+    public void setLastStatus(ProjectTaskStatusDTO lastStatus) {
+        this.lastStatus = lastStatus;
     }
 
     public Integer getProjectCount() {

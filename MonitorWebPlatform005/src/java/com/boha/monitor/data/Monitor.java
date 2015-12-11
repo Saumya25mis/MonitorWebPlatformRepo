@@ -42,6 +42,10 @@ import javax.validation.constraints.Size;
             query = "SELECT m FROM Monitor m WHERE m.email = :email and m.pin = :pin and m.activeFlag = TRUE")
 })
 public class Monitor implements Serializable {
+    @OneToMany(mappedBy = "monitorID")
+    private List<SimpleMessageDestination> simpleMessageDestinationList;
+    @OneToMany(mappedBy = "monitor")
+    private List<SimpleMessage> simpleMessageList;
 
     @Column(name = "gender")
     private Short gender;
@@ -353,6 +357,22 @@ public class Monitor implements Serializable {
 
     public void setGender(Short gender) {
         this.gender = gender;
+    }
+
+    public List<SimpleMessage> getSimpleMessageList() {
+        return simpleMessageList;
+    }
+
+    public void setSimpleMessageList(List<SimpleMessage> simpleMessageList) {
+        this.simpleMessageList = simpleMessageList;
+    }
+
+    public List<SimpleMessageDestination> getSimpleMessageDestinationList() {
+        return simpleMessageDestinationList;
+    }
+
+    public void setSimpleMessageDestinationList(List<SimpleMessageDestination> simpleMessageDestinationList) {
+        this.simpleMessageDestinationList = simpleMessageDestinationList;
     }
 
 }

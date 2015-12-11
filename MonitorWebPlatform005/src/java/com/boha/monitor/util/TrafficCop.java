@@ -67,6 +67,9 @@ public class TrafficCop {
             case RequestDTO.GET_CHATS_BY_PROJECT:
                 resp = ListUtil.getChatsByProject(dataUtil.getEntityManager(), req.getProjectID());
                 break;
+            case RequestDTO.GET_MONITOR_SUMMARY:
+                resp = ListUtil.getMonitorSummary(dataUtil.getEntityManager(), req.getMonitorID());
+                break;
             case RequestDTO.GET_LOCATION_TRACK_BY_MONITOR_IN_PERIOD:
                 resp = ListUtil.getLocationTracksByMonitorInPeriod(dataUtil.getEntityManager(), req.getMonitorID(), req.getStartDate(), req.getEndDate());
                 break;

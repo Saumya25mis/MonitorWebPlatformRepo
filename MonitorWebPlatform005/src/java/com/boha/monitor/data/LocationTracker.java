@@ -38,6 +38,10 @@ import javax.validation.constraints.Size;
                     + "where m.monitor.monitorID = :monitorID "
                     + "and m.dateTracked BETWEEN :dateFrom and :dateTo "
                     + "order by m.dateTracked"),
+    @NamedQuery(name = "LocationTracker.findByMonitor", 
+            query = "SELECT m FROM LocationTracker m "
+                    + "where m.monitor.monitorID = :monitorID "
+                    + "order by m.dateTracked"),
     @NamedQuery(name = "LocationTracker.findByStaffInPeriod", 
             query = "SELECT m FROM LocationTracker m "
                     + "where m.staff.staffID = :staffID "

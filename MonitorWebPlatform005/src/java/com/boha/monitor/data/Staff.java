@@ -40,6 +40,10 @@ import javax.validation.constraints.Size;
             query = "SELECT m FROM Staff m WHERE m.email = :email and m.pin = :pin and m.activeFlag = TRUE")
 })
 public class Staff implements Serializable {
+    @OneToMany(mappedBy = "staffID")
+    private List<SimpleMessageDestination> simpleMessageDestinationList;
+    @OneToMany(mappedBy = "staffID")
+    private List<SimpleMessage> simpleMessageList;
     @OneToMany(mappedBy = "staff")
     private List<VideoUpload> videoUploadList;
     private static final long serialVersionUID = 1L;
@@ -322,6 +326,22 @@ public class Staff implements Serializable {
 
     public void setVideoUploadList(List<VideoUpload> videoUploadList) {
         this.videoUploadList = videoUploadList;
+    }
+
+    public List<SimpleMessage> getSimpleMessageList() {
+        return simpleMessageList;
+    }
+
+    public void setSimpleMessageList(List<SimpleMessage> simpleMessageList) {
+        this.simpleMessageList = simpleMessageList;
+    }
+
+    public List<SimpleMessageDestination> getSimpleMessageDestinationList() {
+        return simpleMessageDestinationList;
+    }
+
+    public void setSimpleMessageDestinationList(List<SimpleMessageDestination> simpleMessageDestinationList) {
+        this.simpleMessageDestinationList = simpleMessageDestinationList;
     }
     
 }

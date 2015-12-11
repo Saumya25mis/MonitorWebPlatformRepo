@@ -20,6 +20,7 @@ import com.boha.monitor.dto.ProjectDTO;
 import com.boha.monitor.dto.ProjectStatusTypeDTO;
 import com.boha.monitor.dto.ProjectTaskDTO;
 import com.boha.monitor.dto.ProjectTaskStatusDTO;
+import com.boha.monitor.dto.SimpleMessageDTO;
 import com.boha.monitor.dto.StaffDTO;
 import com.boha.monitor.dto.StaffProjectDTO;
 import com.boha.monitor.dto.SubTaskDTO;
@@ -124,7 +125,8 @@ public class RequestDTO implements Serializable {
             GET_PORTFOLIO_LIST = 130,
             GET_MONITOR_PHOTOS = 131,
             GET_LOCATION_TRACK_BY_MONITOR_IN_PERIOD = 132,
-            GET_STAFF_PHOTOS = 133;
+            GET_STAFF_PHOTOS = 133,
+            GET_MONITOR_SUMMARY = 134;
     //
     public static final int LOGIN_STAFF = 200,
             LOGIN_STAFF_DATA_SETUP = 201,

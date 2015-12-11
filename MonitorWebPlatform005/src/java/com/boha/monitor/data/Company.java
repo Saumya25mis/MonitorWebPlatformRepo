@@ -36,6 +36,8 @@ import javax.validation.constraints.Size;
 })
 public class Company implements Serializable {
     @OneToMany(mappedBy = "company")
+    private List<SimpleMessage> simpleMessageList;
+    @OneToMany(mappedBy = "company")
     private List<Project> projectList;
     @OneToMany(mappedBy = "company")
     private List<Task> taskList;
@@ -233,6 +235,14 @@ public class Company implements Serializable {
 
     public void setProjectList(List<Project> projectList) {
         this.projectList = projectList;
+    }
+
+    public List<SimpleMessage> getSimpleMessageList() {
+        return simpleMessageList;
+    }
+
+    public void setSimpleMessageList(List<SimpleMessage> simpleMessageList) {
+        this.simpleMessageList = simpleMessageList;
     }
 
 }

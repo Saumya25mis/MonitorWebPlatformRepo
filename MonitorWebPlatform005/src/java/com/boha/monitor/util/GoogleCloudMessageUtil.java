@@ -6,15 +6,16 @@ package com.boha.monitor.util;
 
 import com.boha.monitor.data.GcmDevice;
 import com.boha.monitor.dto.LocationTrackerDTO;
-import com.boha.monitor.dto.transfer.RequestDTO;
+import com.boha.monitor.dto.SimpleMessageDTO;
+import com.boha.monitor.dto.SimpleMessageDestinationDTO;
 import com.boha.monitor.dto.transfer.ResponseDTO;
-import com.boha.monitor.dto.transfer.SimpleMessageDTO;
 import com.google.android.gcm.server.Constants;
 import com.google.android.gcm.server.Message;
 import com.google.android.gcm.server.MulticastResult;
 import com.google.android.gcm.server.Result;
 import com.google.android.gcm.server.Sender;
 import com.google.gson.Gson;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -38,28 +39,22 @@ public class GoogleCloudMessageUtil {
     static Gson gson = new Gson();
     static SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy HH:mm:ss");
 
+    //TODO - think some more about messaging and notifications .... persist in database
+    /**
+     * Send a SimpleMessage to list of devices via Google Cloud Message servers
+     *
+     * @param em
+     * @param simple
+     * @return
+     * @throws Exception
+     * @throws DataException
+     */
     public static ResponseDTO sendSimpleMessage(EntityManager em, SimpleMessageDTO simple) throws
             Exception, DataException {
         ResponseDTO resp = new ResponseDTO();
-        
-        simple.setDateSent(new Date().getTime());
-        List<String> registrationIDs = new ArrayList<>();
-        if (simple.getMonitorList() != null && !simple.getMonitorList().isEmpty()) {
-            Query q = em.createNamedQuery("GcmDevice.findByMonitorIDs", GcmDevice.class);
-            q.setParameter("list", simple.getMonitorList());
-            List<GcmDevice> gList = q.getResultList();
-            gList.stream().forEach((m) -> {
-                registrationIDs.add(m.getRegistrationID());
-            });
-        }
-        if (simple.getStaffList() != null && !simple.getStaffList().isEmpty()) {
-            Query q = em.createNamedQuery("GcmDevice.findByStaffIDs", GcmDevice.class);
-            q.setParameter("list", simple.getStaffList());
-            List<GcmDevice> gList = q.getResultList();
-            gList.stream().forEach((m) -> {
-                registrationIDs.add(m.getRegistrationID());
-            });
-        }
+
+        simple.setMessageDate(new Date().getTime());
+        List<String> registrationIDs = buildList(em, simple);
 
         if (registrationIDs.isEmpty()) {
             LOG.log(Level.SEVERE, "#### No gcm registrationIDs found ");
@@ -69,12 +64,10 @@ public class GoogleCloudMessageUtil {
         }
 
         String date = sdf.format(new Date());
-        simple.setMonitorList(null);
-        simple.setStaffList(null);
+        simple.setSimpleMessageDestinationList(null);
         String gcmMessage = gson.toJson(simple);
 
         List<GCMResult> gCMResults;
-        //send message to Google servers
         Sender sender = new Sender(GoogleCloudMessagingRegistrar.API_KEY);
         Message message = new Message.Builder()
                 .addData("simpleMessage", gcmMessage)
@@ -96,44 +89,7 @@ public class GoogleCloudMessageUtil {
             resp.setMessage(rMsg);
             return resp;
         } else {
-            gCMResults = new ArrayList<>();
-            if (registrationIDs.size() < MAX_MESSAGES_IN_BATCH) {
-                MulticastResult multiCastResult = sender.send(
-                        message, registrationIDs, RETRIES);
-                gcmr = handleMultiCastResult(em, multiCastResult, 1);
-                gCMResults.add(gcmr);
-            } else {
-                int batches = registrationIDs.size() / MAX_MESSAGES_IN_BATCH;
-                int rem = registrationIDs.size() % MAX_MESSAGES_IN_BATCH;
-                if (rem > 0) {
-                    batches++;
-                }
-                LOG.log(Level.OFF, "multiCast message batches: {0}", batches);
-                int mainIndex = 0;
-                for (int i = 0; i < batches; i++) {
-                    List<String> batch = new ArrayList<>();
-                    for (int j = 0; j < MAX_MESSAGES_IN_BATCH; j++) {
-                        try {
-                            batch.add(registrationIDs.get(mainIndex));
-                            mainIndex++;
-                        } catch (IndexOutOfBoundsException e) {
-                        }
-
-                    }
-                    if (!batch.isEmpty()) {
-                        MulticastResult multiCastResult = sender.send(
-                                message, batch, RETRIES);
-                        GCMResult xx = handleMultiCastResult(em, multiCastResult, (i + 1));
-                        gCMResults.add(xx);
-                        if (!xx.isOK) {
-                            LOG.log(Level.OFF, "multiCast failed at batch: {0}", i);
-                        } else {
-                            LOG.log(Level.OFF, "multiCast batch sent OK: {0}", i);
-                        }
-                    }
-
-                }
-            }
+            gCMResults = sendBatches(em, sender, message, registrationIDs);
         }
         int errors = 0, kool = 0;
         for (GCMResult res : gCMResults) {
@@ -149,6 +105,15 @@ public class GoogleCloudMessageUtil {
         return resp;
     }
 
+    /**
+     * Send LocationTracker message to list of devices via Google Cloud Message
+     *
+     * @param em
+     * @param track
+     * @return
+     * @throws Exception
+     * @throws DataException
+     */
     public static ResponseDTO sendLocationMessage(EntityManager em, LocationTrackerDTO track) throws
             Exception, DataException {
         ResponseDTO resp = new ResponseDTO();
@@ -203,44 +168,8 @@ public class GoogleCloudMessageUtil {
             resp.setMessage(rMsg);
             return resp;
         } else {
-            gCMResults = new ArrayList<>();
-            if (registrationIDs.size() < MAX_MESSAGES_IN_BATCH) {
-                MulticastResult multiCastResult = sender.send(
-                        message, registrationIDs, RETRIES);
-                gcmr = handleMultiCastResult(em, multiCastResult, 1);
-                gCMResults.add(gcmr);
-            } else {
-                int batches = registrationIDs.size() / MAX_MESSAGES_IN_BATCH;
-                int rem = registrationIDs.size() % MAX_MESSAGES_IN_BATCH;
-                if (rem > 0) {
-                    batches++;
-                }
-                LOG.log(Level.OFF, "multiCast message batches: {0}", batches);
-                int mainIndex = 0;
-                for (int i = 0; i < batches; i++) {
-                    List<String> batch = new ArrayList<>();
-                    for (int j = 0; j < MAX_MESSAGES_IN_BATCH; j++) {
-                        try {
-                            batch.add(registrationIDs.get(mainIndex));
-                            mainIndex++;
-                        } catch (IndexOutOfBoundsException e) {
-                        }
-
-                    }
-                    if (!batch.isEmpty()) {
-                        MulticastResult multiCastResult = sender.send(
-                                message, batch, RETRIES);
-                        GCMResult xx = handleMultiCastResult(em, multiCastResult, (i + 1));
-                        gCMResults.add(xx);
-                        if (!xx.isOK) {
-                            LOG.log(Level.OFF, "multiCast failed at batch: {0}", i);
-                        } else {
-                            LOG.log(Level.OFF, "multiCast batch sent OK: {0}", i);
-                        }
-                    }
-
-                }
-            }
+            gCMResults = sendBatches(em, sender, message, registrationIDs);
+           
         }
         int errors = 0, kool = 0;
         for (GCMResult res : gCMResults) {
@@ -255,7 +184,15 @@ public class GoogleCloudMessageUtil {
         resp.setMessage("GCM FindMe messages sent: " + kool + " errors: " + errors);
         return resp;
     }
-
+/**
+ * Message sent to Staff to alert them that a monitor has no projects assigned to them
+ * @param em
+ * @param companyID
+ * @param monitorID
+ * @return
+ * @throws Exception
+ * @throws DataException 
+ */
     public static ResponseDTO sendNoProjectsAssignedMessage(EntityManager em, Integer companyID, Integer monitorID) throws
             Exception, DataException {
         ResponseDTO resp = new ResponseDTO();
@@ -300,44 +237,8 @@ public class GoogleCloudMessageUtil {
             resp.setMessage(rMsg);
             return resp;
         } else {
-            gCMResults = new ArrayList<>();
-            if (registrationIDs.size() < MAX_MESSAGES_IN_BATCH) {
-                MulticastResult multiCastResult = sender.send(
-                        message, registrationIDs, RETRIES);
-                gcmr = handleMultiCastResult(em, multiCastResult, 1);
-                gCMResults.add(gcmr);
-            } else {
-                int batches = registrationIDs.size() / MAX_MESSAGES_IN_BATCH;
-                int rem = registrationIDs.size() % MAX_MESSAGES_IN_BATCH;
-                if (rem > 0) {
-                    batches++;
-                }
-                LOG.log(Level.OFF, "multiCast message batches: {0}", batches);
-                int mainIndex = 0;
-                for (int i = 0; i < batches; i++) {
-                    List<String> batch = new ArrayList<>();
-                    for (int j = 0; j < MAX_MESSAGES_IN_BATCH; j++) {
-                        try {
-                            batch.add(registrationIDs.get(mainIndex));
-                            mainIndex++;
-                        } catch (IndexOutOfBoundsException e) {
-                        }
-
-                    }
-                    if (!batch.isEmpty()) {
-                        MulticastResult multiCastResult = sender.send(
-                                message, batch, RETRIES);
-                        GCMResult xx = handleMultiCastResult(em, multiCastResult, (i + 1));
-                        gCMResults.add(xx);
-                        if (!xx.isOK) {
-                            LOG.log(Level.OFF, "multiCast failed at batch: {0}", i);
-                        } else {
-                            LOG.log(Level.OFF, "multiCast batch sent OK: {0}", i);
-                        }
-                    }
-
-                }
-            }
+            gCMResults = sendBatches(em, sender, message, registrationIDs);
+            
         }
         int errors = 0, kool = 0;
         for (GCMResult res : gCMResults) {
@@ -448,6 +349,92 @@ public class GoogleCloudMessageUtil {
             }
         }
         return gcmr;
+    }
+
+    private static List<GCMResult> sendBatches(EntityManager em, Sender sender, Message message, List<String> registrationIDs) throws IOException, Exception {
+        GCMResult gcmr = null;
+        List<GCMResult> gCMResults = new ArrayList<>();
+        if (registrationIDs.size() < MAX_MESSAGES_IN_BATCH) {
+            MulticastResult multiCastResult = sender.send(
+                    message, registrationIDs, RETRIES);
+            gcmr = handleMultiCastResult(em, multiCastResult, 1);
+            gCMResults.add(gcmr);
+        } else {
+            int batches = registrationIDs.size() / MAX_MESSAGES_IN_BATCH;
+            int rem = registrationIDs.size() % MAX_MESSAGES_IN_BATCH;
+            if (rem > 0) {
+                batches++;
+            }
+            LOG.log(Level.OFF, "multiCast message batches: {0}", batches);
+            int mainIndex = 0;
+            for (int i = 0; i < batches; i++) {
+                List<String> batch = new ArrayList<>();
+                for (int j = 0; j < MAX_MESSAGES_IN_BATCH; j++) {
+                    try {
+                        batch.add(registrationIDs.get(mainIndex));
+                        mainIndex++;
+                    } catch (IndexOutOfBoundsException e) {
+                    }
+
+                }
+                if (!batch.isEmpty()) {
+                    MulticastResult multiCastResult = sender.send(
+                            message, batch, RETRIES);
+                    GCMResult xx = handleMultiCastResult(em, multiCastResult, (i + 1));
+                    gCMResults.add(xx);
+                    if (!xx.isOK) {
+                        LOG.log(Level.OFF, "multiCast failed at batch: {0}", i);
+                    } else {
+                        LOG.log(Level.OFF, "multiCast batch sent OK: {0}", i);
+                    }
+                }
+            }           
+        }
+        return gCMResults;
+    }
+        /**
+         * Build list of GCMRegistration ID's from list of staffID's and
+         * monitorID's. Each monitor or staff has a list of GCMDevice's which
+         * contain the registration id
+         *
+         * @param em
+         * @param simple
+         * @return
+         */
+    private static List<String> buildList(EntityManager em, SimpleMessageDTO simple) {
+        List<String> registrationIDs = new ArrayList<>();
+        if (simple.getSimpleMessageDestinationList() != null
+                && !simple.getSimpleMessageDestinationList().isEmpty()) {
+            Query q = em.createNamedQuery("GcmDevice.findByMonitorIDs", GcmDevice.class);
+            List<Integer> mList = new ArrayList<>();
+            for (SimpleMessageDestinationDTO dest : simple.getSimpleMessageDestinationList()) {
+                if (dest.getMonitorID() != null) {
+                    mList.add(dest.getMonitorID());
+                }
+            }
+            q.setParameter("list", mList);
+            List<GcmDevice> gList = q.getResultList();
+            gList.stream().forEach((m) -> {
+                registrationIDs.add(m.getRegistrationID());
+            });
+        }
+        if (simple.getSimpleMessageDestinationList() != null
+                && !simple.getSimpleMessageDestinationList().isEmpty()) {
+            Query q = em.createNamedQuery("GcmDevice.findByStaffIDs", GcmDevice.class);
+            List<Integer> mList = new ArrayList<>();
+            for (SimpleMessageDestinationDTO dest : simple.getSimpleMessageDestinationList()) {
+                if (dest.getStaffID() != null) {
+                    mList.add(dest.getStaffID());
+                }
+            }
+            q.setParameter("list", mList);
+            List<GcmDevice> gList = q.getResultList();
+            gList.stream().forEach((m) -> {
+                registrationIDs.add(m.getRegistrationID());
+            });
+        }
+
+        return registrationIDs;
     }
     static final Logger LOG = Logger.getLogger("CloudMsgUtil");
 
