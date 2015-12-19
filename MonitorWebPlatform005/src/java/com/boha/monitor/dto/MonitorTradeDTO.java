@@ -17,14 +17,13 @@ public class MonitorTradeDTO implements Serializable {
     private static final long serialVersionUID = 1L;
     private Integer monitorTradeID;
     private Long dateRegistered;
-    private Integer taskTypeID, monitorID;
+    private Integer monitorID;
 
     public MonitorTradeDTO() {
     }
 
     public MonitorTradeDTO(MonitorTrade a) {
         this.monitorTradeID = a.getMonitorTradeID();
-        this.taskTypeID = a.getTaskType().getTaskTypeID();
         if (a.getDateRegistered() != null) {
             this.dateRegistered = a.getDateRegistered().getTime();
         }
@@ -47,13 +46,7 @@ public class MonitorTradeDTO implements Serializable {
         this.dateRegistered = dateRegistered;
     }
 
-    public Integer getTaskTypeID() {
-        return taskTypeID;
-    }
-
-    public void setTaskTypeID(Integer taskTypeID) {
-        this.taskTypeID = taskTypeID;
-    }
+  
 
     public Integer getMonitorID() {
         return monitorID;

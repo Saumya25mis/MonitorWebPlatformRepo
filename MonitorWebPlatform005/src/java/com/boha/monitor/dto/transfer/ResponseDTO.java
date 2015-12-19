@@ -27,13 +27,14 @@ import com.boha.monitor.dto.StaffProjectDTO;
 import com.boha.monitor.dto.SubTaskDTO;
 import com.boha.monitor.dto.TaskDTO;
 import com.boha.monitor.dto.TaskStatusTypeDTO;
-import com.boha.monitor.dto.TaskTypeDTO;
 import com.boha.monitor.dto.VideoUploadDTO;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
+ * This class contains properties to handle every kind of expected response.
+ * Used by servlets and web socket endpoints to return data to caller
+ * 
  * @author aubreyM
  */
 public class ResponseDTO {
@@ -65,7 +66,6 @@ public class ResponseDTO {
     private List<TaskStatusTypeDTO> taskStatusTypeList;
     private List<ProjectTaskDTO> projectTaskList;
     private List<PhotoUploadDTO> photoUploadList;
-    private List<TaskTypeDTO> taskTypeList;
     private List<SubTaskDTO> subTaskList;
     private List<MonitorTradeDTO> monitorTradeList;
     //
@@ -160,11 +160,7 @@ public class ResponseDTO {
         this.monitorProjectList = monitorProjectList;
     }
 
-    
-    
-    public List<TaskTypeDTO> getTaskTypeList() {
-        return taskTypeList;
-    }
+ 
 
     public List<PortfolioDTO> getPortfolioList() {
         return portfolioList;
@@ -174,9 +170,6 @@ public class ResponseDTO {
         this.portfolioList = portfolioList;
     }
 
-    public void setTaskTypeList(List<TaskTypeDTO> taskTypeList) {
-        this.taskTypeList = taskTypeList;
-    }
 
     public List<PhotoUploadDTO> getPhotoUploadList() {
         return photoUploadList;

@@ -20,10 +20,16 @@ import java.util.logging.Logger;
  *
  * @author Aubrey Malabie
  */
-
 public class GoogleCloudMessagingRegistrar {
-    
- static final SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy HH:MM");
+
+    static final SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy HH:MM");
+
+    /**
+     * Register a device to Google Cloud Message
+     * @param regID
+     * @return
+     * @throws IOException 
+     */
     public static ResponseDTO sendGCMRegistration(String regID) throws IOException {
         logger.log(Level.INFO,
                 "#### sendGCMRegistration starting comms with Google servers...."
@@ -44,8 +50,7 @@ public class GoogleCloudMessagingRegistrar {
                     result.getMessageId(), result.getErrorCodeName()});
 
         String error = result.getErrorCodeName();
-        
-        
+
         if (error != null && !error.equalsIgnoreCase("")) {
             if (error.equals(Constants.ERROR_NOT_REGISTERED)) {
                 resp.setStatusCode(8);

@@ -22,7 +22,7 @@ public class TaskDTO implements Serializable {
     private String desc;
     private List<ProjectTaskDTO> projectTaskList;
     private List<SubTaskDTO> subTaskList;
-    private Integer taskTypeID, programmeID, companyID;
+    private Integer companyID;
 
     public TaskDTO() {
     }
@@ -35,15 +35,7 @@ public class TaskDTO implements Serializable {
         if (a.getCompany() != null) {
             companyID = a.getCompany().getCompanyID();
         }
-        if (a.getTaskType() != null) {
-            taskTypeID = a.getTaskType().getTaskTypeID();
-            taskTypeName = a.getTaskType().getTaskTypeName();
-        }
-        if (a.getProgramme() != null) {
-            programmeID = a.getProgramme().getProgrammeID();
-            programmeName = a.getProgramme().getProgrammeName();
-        }
-
+       
     }
 
     public Integer getCompanyID() {
@@ -70,13 +62,7 @@ public class TaskDTO implements Serializable {
         this.taskTypeName = taskTypeName;
     }
 
-    public Integer getProgrammeID() {
-        return programmeID;
-    }
-
-    public void setProgrammeID(Integer programmeID) {
-        this.programmeID = programmeID;
-    }
+ 
 
     public List<SubTaskDTO> getSubTaskList() {
         return subTaskList;
@@ -86,14 +72,7 @@ public class TaskDTO implements Serializable {
         this.subTaskList = subTaskList;
     }
 
-    public Integer getTaskTypeID() {
-        return taskTypeID;
-    }
-
-    public void setTaskTypeID(Integer taskTypeID) {
-        this.taskTypeID = taskTypeID;
-    }
-
+  
     public Integer getTaskID() {
         return taskID;
     }

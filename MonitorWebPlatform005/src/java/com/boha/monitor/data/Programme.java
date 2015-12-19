@@ -41,10 +41,7 @@ import javax.validation.constraints.Size;
                     + "order by p.dateRegistered desc, p.programmeName"),
     })
 public class Programme implements Serializable {
-    @OneToMany(mappedBy = "programme")
-    private List<Task> taskList;
-    @OneToMany(mappedBy = "programme", fetch = FetchType.LAZY)
-    private List<TaskType> taskTypeList;
+    
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -169,20 +166,6 @@ public class Programme implements Serializable {
         return "com.boha.monitor.data.Programme[ programmeID=" + programmeID + " ]";
     }
 
-    public List<TaskType> getTaskTypeList() {
-        return taskTypeList;
-    }
-
-    public void setTaskTypeList(List<TaskType> taskTypeList) {
-        this.taskTypeList = taskTypeList;
-    }
-
-    public List<Task> getTaskList() {
-        return taskList;
-    }
-
-    public void setTaskList(List<Task> taskList) {
-        this.taskList = taskList;
-    }
+  
     
 }

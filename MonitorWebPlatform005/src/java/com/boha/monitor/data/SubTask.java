@@ -31,8 +31,7 @@ import javax.validation.constraints.Size;
 @NamedQueries({
     @NamedQuery(name = "SubTask.findByTask", 
             query = "SELECT s FROM SubTask s where s.task.taskID = :taskID"),
-    @NamedQuery(name = "SubTask.findByProgramme", 
-            query = "SELECT s FROM SubTask s where s.task.taskType.programme.programmeID = :programmeID")
+    
 })
 public class SubTask implements Serializable {
     private static final long serialVersionUID = 1L;

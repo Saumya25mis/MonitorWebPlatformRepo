@@ -40,9 +40,9 @@ import javax.validation.constraints.Size;
             query = "SELECT m FROM Staff m WHERE m.email = :email and m.pin = :pin and m.activeFlag = TRUE")
 })
 public class Staff implements Serializable {
-    @OneToMany(mappedBy = "staffID")
+    @OneToMany(mappedBy = "staff")
     private List<SimpleMessageDestination> simpleMessageDestinationList;
-    @OneToMany(mappedBy = "staffID")
+    @OneToMany(mappedBy = "staff")
     private List<SimpleMessage> simpleMessageList;
     @OneToMany(mappedBy = "staff")
     private List<VideoUpload> videoUploadList;

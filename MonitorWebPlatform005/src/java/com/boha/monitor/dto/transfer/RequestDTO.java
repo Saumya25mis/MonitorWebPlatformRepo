@@ -26,13 +26,14 @@ import com.boha.monitor.dto.StaffProjectDTO;
 import com.boha.monitor.dto.SubTaskDTO;
 import com.boha.monitor.dto.TaskDTO;
 import com.boha.monitor.dto.TaskStatusTypeDTO;
-import com.boha.monitor.dto.TaskTypeDTO;
 import com.boha.monitor.dto.VideoUploadDTO;
 import java.io.Serializable;
 import java.util.List;
 
 /**
- *
+ * This class contains properties to handle all expected requests
+ * It also sets up the list of expected request types
+ * 
  * @author aubreyM
  */
 public class RequestDTO implements Serializable {
@@ -52,7 +53,6 @@ public class RequestDTO implements Serializable {
     private GcmDeviceDTO gcmDevice;
     private ChatMessageDTO chatMessage;
     private ProjectTaskDTO projectTask;
-    private TaskTypeDTO taskType;
     private LocationTrackerDTO locationTracker;
 
     private List<TaskDTO> taskList;
@@ -61,7 +61,6 @@ public class RequestDTO implements Serializable {
     private List<PortfolioDTO> portfolioList;
     private List<ProgrammeDTO> programmeList;
     private List<ProjectDTO> projectList;
-    private List<TaskTypeDTO> taskTypeList;
     private List<TaskStatusTypeDTO> taskStatusTypeList;
     private List<ProjectStatusTypeDTO> projectStatusTypeList;
     private List<StaffDTO> staffList;
@@ -223,13 +222,6 @@ public class RequestDTO implements Serializable {
         this.numberOfDays = numberOfDays;
     }
 
-    public TaskTypeDTO getTaskType() {
-        return taskType;
-    }
-
-    public void setTaskType(TaskTypeDTO taskType) {
-        this.taskType = taskType;
-    }
 
     public List<SubTaskDTO> getSubTaskList() {
         return subTaskList;
@@ -341,14 +333,6 @@ public class RequestDTO implements Serializable {
 
     public void setProjectList(List<ProjectDTO> projectList) {
         this.projectList = projectList;
-    }
-
-    public List<TaskTypeDTO> getTaskTypeList() {
-        return taskTypeList;
-    }
-
-    public void setTaskTypeList(List<TaskTypeDTO> taskTypeList) {
-        this.taskTypeList = taskTypeList;
     }
 
     public ProjectTaskDTO getProjectTask() {

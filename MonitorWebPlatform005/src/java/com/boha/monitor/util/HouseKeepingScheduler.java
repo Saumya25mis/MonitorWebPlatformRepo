@@ -20,7 +20,9 @@ public class HouseKeepingScheduler {
     }
 
 
-    
+    /**
+     * Delete temporary files created by the zip process when compressing responses
+     */
     private void startDiskCleanup() {
         
         printMessageHead();

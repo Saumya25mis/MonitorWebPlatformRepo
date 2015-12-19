@@ -25,6 +25,7 @@ import com.boha.monitor.data.ProjectTask;
 import com.boha.monitor.data.ProjectTaskStatus;
 import com.boha.monitor.data.Staff;
 import com.boha.monitor.data.StaffProject;
+import com.boha.monitor.data.StaffType;
 import com.boha.monitor.data.SubTask;
 import com.boha.monitor.data.Task;
 import com.boha.monitor.data.TaskStatusType;
@@ -51,15 +52,12 @@ import com.boha.monitor.dto.StaffProjectDTO;
 import com.boha.monitor.dto.SubTaskDTO;
 import com.boha.monitor.dto.TaskDTO;
 import com.boha.monitor.dto.TaskStatusTypeDTO;
-import com.boha.monitor.dto.TaskTypeDTO;
 import com.boha.monitor.dto.VideoUploadDTO;
-import com.boha.monitor.dto.transfer.RequestDTO;
 import com.boha.monitor.dto.transfer.ResponseDTO;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -73,6 +71,7 @@ import javax.persistence.Query;
 import org.joda.time.DateTime;
 
 /**
+ * Data utility class contains methods to add data to the database
  *
  * @author aubreyM
  */
@@ -101,13 +100,13 @@ public class DataUtil {
      * @return
      * @throws DataException
      */
-    public ResponseDTO addProjectTasksUsingType(Integer projectID, Integer taskTypeID) throws DataException {
+    public ResponseDTO addProjectTasksUsingCompany(Integer projectID, Integer companyID) throws DataException {
         ResponseDTO resp = new ResponseDTO();
         try {
-            TaskType taskType = em.find(TaskType.class, taskTypeID);
+            Company c = em.find(Company.class, companyID);
             Project p = em.find(Project.class, projectID);
-            Query q = em.createNamedQuery("Task.findByType", Task.class);
-            q.setParameter("taskTypeID", taskType.getTaskTypeID());
+            Query q = em.createNamedQuery("Task.findByCompany", Task.class);
+            q.setParameter("companyID", companyID);
             List<Task> taskList = q.getResultList();
             for (Task t : taskList) {
                 ProjectTask pt = new ProjectTask();
@@ -180,27 +179,25 @@ public class DataUtil {
      */
     public ResponseDTO addTasks(List<TaskDTO> list) throws DataException {
         ResponseDTO resp = new ResponseDTO();
+        Company company = em.find(Company.class, list.get(0).getCompanyID());
+        List<Task> taskList = new ArrayList<>(20);
         try {
-            TaskType tt = em.find(TaskType.class, list.get(0).getTaskTypeID());
             for (TaskDTO taskDTO : list) {
                 Task t = new Task();
-                t.setTaskType(tt);
+                t.setCompany(company);
                 t.setDescription(taskDTO.getDescription());
                 t.setTaskName(taskDTO.getTaskName());
                 t.setTaskNumber(taskDTO.getTaskNumber());
-
                 em.persist(t);
+                em.flush();
+                taskList.add(t);
 
             }
-            em.flush();
-            Query q = em.createNamedQuery("Task.findByType", Task.class);
-            q.setParameter("taskTypeID", tt.getTaskTypeID());
-            List<Task> taskList = q.getResultList();
             resp.setTaskList(new ArrayList<>());
             for (Task task : taskList) {
                 resp.getTaskList().add(new TaskDTO(task));
             }
-            log.log(Level.INFO, "Tasks added: {0} - {1}", new Object[]{tt.getTaskTypeName(),
+            log.log(Level.INFO, "Tasks added: {0}", new Object[]{
                 resp.getTaskList().size()});
 
         } catch (Exception e) {
@@ -261,8 +258,8 @@ public class DataUtil {
             em.flush();
             log.log(Level.INFO, "### Project added: {0}", dto.getProjectName());
             //assign all programme tasks to projects
-            Query q0 = em.createNamedQuery("Task.findByProgramme", Task.class);
-            q0.setParameter("programmeID", dto.getProgrammeID());
+            Query q0 = em.createNamedQuery("Task.findByCompany", Task.class);
+            q0.setParameter("companyID", dto.getCompanyID());
             List<Task> taskList = q0.getResultList();
             ProjectDTO projectDTO = new ProjectDTO(p);
             projectDTO.setProjectTaskList(new ArrayList<>());
@@ -288,154 +285,6 @@ public class DataUtil {
         return resp;
     }
 
-    public ResponseDTO importTaskType(TaskTypeDTO taskType) throws DataException {
-
-        ResponseDTO resp = new ResponseDTO();
-        log.log(Level.INFO, "#### TaskType import started ....###########");
-
-        try {
-            Programme c = em.find(Programme.class, taskType.getProgrammeID());
-            TaskType a = new TaskType();
-            a.setProgramme(c);
-            a.setTaskTypeName(taskType.getTaskTypeName());
-            a.setSectionName(taskType.getSectionName());
-            a.setTaskTypeNumber(taskType.getTaskTypeNumber());
-            try {
-                em.persist(a);
-                em.flush();
-            } catch (PersistenceException e) {
-                log.log(Level.OFF, "-------- Duplicate taskType: {0}", a.getTaskTypeName());
-                resp.setStatusCode(StatusCode.ERROR_SERVER);
-                resp.setMessage("Duplicate TaskType attempted");
-                return resp;
-            }
-            log.log(Level.INFO, "## taskType added: {0}", a.getTaskTypeName());
-            if (taskType.getTaskList() != null) {
-                for (TaskDTO t : taskType.getTaskList()) {
-                    Task b = new Task();
-                    b.setTaskType(a);
-                    b.setTaskName(t.getTaskName());
-                    b.setDescription(t.getDescription());
-                    b.setTaskNumber(t.getTaskNumber());
-                    try {
-                        em.persist(b);
-                        em.flush();
-                        log.log(Level.INFO, "## task added for {0} - {1}",
-                                new Object[]{a.getTaskTypeName(), b.getTaskName()});
-                    } catch (PersistenceException e) {
-                        log.log(Level.OFF, "------- Duplicate task: {0}", b.getTaskName());
-                        continue;
-                    }
-
-                    if (t.getSubTaskList() != null) {
-                        for (SubTaskDTO sb : t.getSubTaskList()) {
-                            SubTask s = new SubTask();
-                            s.setTask(b);
-                            s.setSubTaskName(sb.getSubTaskName());
-                            s.setDescription(sb.getDescription());
-                            try {
-                                em.persist(s);
-                                log.log(Level.INFO, "## subTask added for {0} - {1}",
-                                        new Object[]{b.getTaskName(), s.getSubTaskName()});
-
-                            } catch (PersistenceException e) {
-                                log.log(Level.OFF, "----- Duplicate SubTask: {0}", s.getSubTaskName());
-                                continue;
-                            }
-
-                        }
-                    }
-
-                }
-            }
-
-            resp = getTaskTypeList(c.getProgrammeID());
-
-        } catch (Exception e) {
-            log.log(Level.SEVERE, "", e);
-            throw new DataException("Failed to set subtasks ");
-        }
-        return resp;
-    }
-
-    public ResponseDTO getTaskTypeList(Integer programmeID) throws DataException {
-        ResponseDTO resp = new ResponseDTO();
-
-        try {
-            Query q = em.createNamedQuery("Task.findByProgramme", Task.class);
-            q.setParameter(
-                    "programmeID", programmeID);
-            List<Task> taskList = q.getResultList();
-
-            Query q2 = em.createNamedQuery("TaskType.findByProgramme", TaskType.class);
-            q2.setParameter("programmeID", programmeID);
-            List<TaskType> taskTypeList = q2.getResultList();
-
-            q2 = em.createNamedQuery("SubTask.findByProgramme", SubTask.class);
-            q2.setParameter("programmeID", programmeID);
-            List<SubTask> subTaskList = q2.getResultList();
-
-            resp.setTaskTypeList(
-                    new ArrayList<>());
-            for (TaskType taskType : taskTypeList) {
-                TaskTypeDTO dto = new TaskTypeDTO(taskType);
-                dto.setTaskList(new ArrayList<>());
-                for (Task task : taskList) {
-                    if (Objects.equals(dto.getTaskTypeID(), task.getTaskType().getTaskTypeID())) {
-                        TaskDTO td = new TaskDTO(task);
-                        td.setSubTaskList(new ArrayList<>());
-                        for (SubTask subTask : subTaskList) {
-                            if (Objects.equals(td.getTaskID(), subTask.getTask().getTaskID())) {
-                                td.getSubTaskList().add(new SubTaskDTO(subTask));
-                            }
-                        }
-                        dto.getTaskList().add(td);
-                    }
-                }
-                resp.getTaskTypeList().add(dto);
-            }
-
-            log.log(Level.INFO, "TaskTypes added: {0}", resp.getTaskTypeList().size());
-        } catch (Exception e) {
-            log.log(Level.SEVERE, "", e);
-            throw new DataException("Failed to import tasks");
-        }
-
-        return resp;
-    }
-
-    public ResponseDTO addTaskTypes(List<TaskTypeDTO> list) throws DataException {
-        ResponseDTO resp = new ResponseDTO();
-
-        try {
-            Programme p = em.find(Programme.class, list.get(0).getProgrammeID());
-            for (TaskTypeDTO d : list) {
-                TaskType t = new TaskType();
-                t.setProgramme(p);
-                t.setTaskTypeName(d.getTaskTypeName());
-                em.persist(t);
-                log.log(Level.INFO, "TaskType added: {0} - {1}", new Object[]{p.getProgrammeName(),
-                    t.getTaskTypeName()});
-            }
-
-            Query q = em.createNamedQuery("TaskType.findByProgramme", TaskType.class);
-            q.setParameter(
-                    "programmeID", p.getProgrammeID());
-            List<TaskType> ttList = q.getResultList();
-
-            resp.setTaskTypeList(
-                    new ArrayList<>());
-            for (TaskType taskType : ttList) {
-                resp.getTaskTypeList().add(new TaskTypeDTO(taskType));
-            }
-
-        } catch (Exception e) {
-            log.log(Level.SEVERE, "", e);
-            throw new DataException("Failed to add taskTypes");
-        }
-        return resp;
-    }
-
     public ResponseDTO addMonitorTrades(List<MonitorTradeDTO> list) throws DataException {
         ResponseDTO resp = new ResponseDTO();
 
@@ -445,11 +294,10 @@ public class DataUtil {
                 MonitorTrade t = new MonitorTrade();
                 t.setDateRegistered(new Date());
                 t.setMonitor(p);
-                t.setTaskType(em.find(TaskType.class, d.getTaskTypeID()));
+//                t.setTaskType(em.find(TaskType.class, d.getTaskTypeID()));
 
                 em.persist(t);
-                log.log(Level.INFO, "MonitorTrade added: {0} - {1}", new Object[]{p.getFirstName(),
-                    t.getTaskType().getTaskTypeName()});
+
             }
 
             Query q = em.createNamedQuery("MonitorTrade.findByMonitor", MonitorTrade.class);
@@ -681,7 +529,7 @@ public class DataUtil {
         w.setPhotoUploadList(new ArrayList<>());
         try {
             PhotoUpload u = new PhotoUpload();
-            
+
             if (pu.getProjectTaskStatus() != null) {
                 u.setProjectTaskStatus(em.find(ProjectTaskStatus.class, pu.getProjectTaskStatus().getProjectTaskStatusID()));
             }
@@ -743,6 +591,7 @@ public class DataUtil {
         }
         return w;
     }
+
     public ResponseDTO addVideoUpload(VideoUploadDTO pu) {
         ResponseDTO w = new ResponseDTO();
         w.setPhotoUploadList(new ArrayList<>());
@@ -784,7 +633,6 @@ public class DataUtil {
             u.setHeight(pu.getHeight());
             u.setWidth(pu.getWidth());
 
-          
             em.persist(u);
             em.flush();
             w.getVideoUploadList().add(new VideoUploadDTO(u));
@@ -1869,5 +1717,150 @@ public class DataUtil {
         } catch (Exception e) {
             log.log(Level.SEVERE, "####### Failed to add errorStore from " + origin + "\n" + message, e);
         }
+    }
+
+    public void fixData() {
+
+        Company c = em.find(Company.class, 30);
+        Query q = em.createNamedQuery("TaskType.findAll", TaskType.class);
+        List<TaskType> ttList = q.getResultList();
+        int number = 1;
+        List<Task> taskList = new ArrayList<>(ttList.size());
+        for (TaskType tt : ttList) {
+            Task task = new Task();
+            task.setCompany(c);
+            task.setTaskName(tt.getTaskTypeName());
+            task.setTaskNumber(number);
+            try {
+                em.persist(task);
+                em.flush();
+                taskList.add(task);
+                number++;
+                System.out.println("Task: " + task.getTaskName());
+            } catch (Exception e) {
+                number++;
+            }
+
+        }
+
+       
+        
+
+
+    }
+    
+    public void fixProjectTasks() {
+        Query q = em.createNamedQuery("Task.findByCompany",Task.class);
+        q.setParameter("companyID", 30);
+        List<Task> taskList = q.getResultList();
+        
+        writeProjectTasks(63, taskList);
+        writeProjectTasks(67, taskList);
+        
+    }
+
+    private void writeProjectTasks(Integer programmeID, List<Task> taskList) {
+        Query q = em.createNamedQuery("Project.findByProgramme", Project.class);
+        q.setParameter("programmeID", programmeID);
+        List<Project> pList = q.getResultList();
+        for (Project proj : pList) {
+            for (Task task : taskList) {
+                ProjectTask pt = new ProjectTask();
+                pt.setProject(proj);
+                pt.setTask(task);
+                pt.setDateRegistered(new Date());
+                try {
+                    em.persist(pt);
+                    System.out.println("Project: " + proj.getProjectName() + "\tTask: " + task.getTaskName());
+                } catch (Exception e) {
+
+                }
+            }
+            System.out.println("\n#########################\n");
+        }
+    }
+
+    public void writeStaffProjects() {
+        Company c = em.find(Company.class, 30);
+        Query q = em.createNamedQuery("Staff.findByCompany", Staff.class);
+        q.setParameter("companyID", 32);
+        List<Staff> pList = q.getResultList();
+        List<Staff> staffList = new ArrayList<>(pList.size());
+        q = em.createNamedQuery("Project.findByProgramme", Project.class);
+        q.setParameter("programmeID", 67);
+        List<Project> projList = q.getResultList();
+        StaffType type = em.find(StaffType.class, 1);
+        for (Staff s : pList) {
+            Staff st = new Staff();
+            st.setActiveFlag(1);
+            st.setFirstName(s.getFirstName());
+            st.setLastName(s.getLastName());
+            st.setCellphone(s.getCellphone());
+            st.setCompany(c);
+            st.setEmail(s.getEmail());
+            st.setPin(s.getPin());
+            st.setDateRegistered(new Date());
+            st.setStaffType(type);
+            em.persist(st);
+            em.flush();
+            staffList.add(st);
+        }
+        System.out.println("\n######### STAFF ###################\n");
+        for (Staff s : staffList) {
+            for (Project p : projList) {
+                StaffProject sp = new StaffProject();
+                sp.setProject(p);
+                sp.setStaff(s);
+                sp.setDateAssigned(new Date());
+                sp.setActiveFlag(Boolean.TRUE);
+                em.persist(sp);
+                System.out.println("Staff: " + s.getFirstName() + " " + s.getLastName()
+                        + " Project: " + p.getProjectName());
+
+            }
+
+        }
+
+    }
+
+    public void writeMonitorProjects() {
+        Company c = em.find(Company.class, 30);
+        Query q = em.createNamedQuery("Monitor.findByCompany", Monitor.class);
+        q.setParameter("companyID", 32);
+        List<Monitor> pList = q.getResultList();
+        List<Monitor> monList = new ArrayList<>(pList.size());
+        q = em.createNamedQuery("Project.findByProgramme", Project.class);
+        q.setParameter("programmeID", 67);
+        List<Project> projList = q.getResultList();
+        for (Monitor s : pList) {
+            Monitor st = new Monitor();
+            st.setActiveFlag(1);
+            st.setFirstName(s.getFirstName());
+            st.setLastName(s.getLastName());
+            st.setCellphone(s.getCellphone());
+            st.setCompany(c);
+            st.setEmail(s.getEmail());
+            st.setPin(s.getPin());
+            st.setDateRegistered(new Date());
+            em.persist(st);
+            em.flush();
+            monList.add(st);
+        }
+        System.out.println("\n########## MONITORS ##################\n");
+        for (Monitor s : monList) {
+            for (Project p : projList) {
+                MonitorProject sp = new MonitorProject();
+                sp.setProject(p);
+                sp.setMonitor(s);
+                sp.setDateAssigned(new Date());
+                sp.setActiveFlag(Boolean.TRUE);
+                em.persist(sp);
+                System.out.println("Monitor: " + s.getFirstName() + " " + s.getLastName()
+                        + " Project: " + p.getProjectName());
+
+            }
+
+        }
+
     }
 }

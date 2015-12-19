@@ -31,11 +31,13 @@ import javax.validation.constraints.NotNull;
  *
  * @author aubreyM
  */
+//
 @Entity
 @Table(name = "projectTask")
 @NamedQueries({
     @NamedQuery(name = "ProjectTask.findByProject", 
-            query = "SELECT p FROM ProjectTask p where p.project.projectID = :projectID")
+            query = "SELECT p FROM ProjectTask p where p.project.projectID = :projectID order by p.task.taskName")
+    
 })
 public class ProjectTask implements Serializable {
     @OneToMany(mappedBy = "projectTask")

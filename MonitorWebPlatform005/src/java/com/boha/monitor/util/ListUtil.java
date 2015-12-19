@@ -88,9 +88,9 @@ public class ListUtil {
         MonitorDTO dto = new MonitorDTO(monitor);
         dto.setPhotoUploadList(new ArrayList<>());
         q = em.createNamedQuery("PhotoUpload.findByMonitor", PhotoUpload.class);
-        q.setParameter("monitorID", dto.getMonitorID());       
+        q.setParameter("monitorID", dto.getMonitorID());
         List<PhotoUpload> pList = q.getResultList();
-        
+
         dto.setPhotoCount(pList.size());
         dto.setProjectCount(projectList.size());
 
@@ -101,7 +101,7 @@ public class ListUtil {
             dto.setLastStatus(new ProjectTaskStatusDTO(pts.get(0)));
         }
         dto.setStatusCount(pts.size());
-        
+
         q = em.createNamedQuery("LocationTracker.findByMonitor", LocationTracker.class);
         q.setParameter("monitorID", monitor.getMonitorID());
         q.setMaxResults(3);
@@ -110,8 +110,7 @@ public class ListUtil {
         for (LocationTracker t : ltList) {
             dto.getLocationTrackerList().add(new LocationTrackerDTO(t));
         }
-        
-        
+
         for (Project p : projectList) {
             ProjectDTO project = new ProjectDTO(p);
             resp.getProjectList().add(project);
@@ -229,38 +228,9 @@ public class ListUtil {
         Query qCompany = em.createNamedQuery("Task.findByCompany", Task.class);
         qCompany.setParameter("companyID", mon.getCompany().getCompanyID());
         List<Task> txList = qCompany.getResultList();
-        if (txList.isEmpty()) {
-            //get tasks by programme
-            qCompany = em.createNamedQuery("Task.findByProgrammeList", Task.class);
-            qCompany.setParameter("list", programmeIDList);
-            txList = qCompany.getResultList();
-            if (txList.isEmpty()) {
-                //get tasks by taskType
-                q = em.createNamedQuery("TaskType.findByProgrammeList", TaskType.class);
-                q.setParameter("list", programmeIDList);
-                List<TaskType> ttList = q.getResultList();
-                resp.setTaskTypeList(new ArrayList<>());
-                log.log(Level.OFF, "TaskTypes found: {0}", ttList.size());
-                for (Iterator<TaskType> it = ttList.iterator(); it.hasNext();) {
-                    TaskType taskType = it.next();
-                    TaskTypeDTO ttx = new TaskTypeDTO(taskType);
-                    q = em.createNamedQuery("Task.findByType", Task.class);
-                    q.setParameter("taskTypeID", taskType.getTaskTypeID());
-                    List<Task> tList = q.getResultList();
-                    tList.stream().forEach((task) -> {
-                        ttx.getTaskList().add(new TaskDTO(task));
-                    });
-                    resp.getTaskTypeList().add(ttx);
-                }
-            } else {
-                for (Task task : txList) {
-                    resp.getTaskList().add(new TaskDTO(task));
-                }
-            }
-        } else {
-            for (Task task : txList) {
-                resp.getTaskList().add(new TaskDTO(task));
-            }
+
+        for (Task task : txList) {
+            resp.getTaskList().add(new TaskDTO(task));
         }
 
         resp.setTaskStatusTypeList(getTaskStatusTypeList(em, mon.getCompany().getCompanyID()).getTaskStatusTypeList());
@@ -315,7 +285,6 @@ public class ListUtil {
             List<ProjectTask> ptList = q.getResultList();
             for (ProjectTask pt : ptList) {
                 ProjectTaskDTO d = new ProjectTaskDTO(pt);
-
                 //get all the status records for the projectTask
                 q = em.createNamedQuery("ProjectTaskStatus.findByTask", ProjectTaskStatus.class);
                 q.setParameter("projectTaskID", d.getProjectTaskID());
@@ -348,38 +317,9 @@ public class ListUtil {
         Query qCompany = em.createNamedQuery("Task.findByCompany", Task.class);
         qCompany.setParameter("companyID", staff.getCompany().getCompanyID());
         List<Task> txList = qCompany.getResultList();
-        if (txList.isEmpty()) {
-            //get tasks by programme
-            qCompany = em.createNamedQuery("Task.findByProgrammeList", Task.class);
-            qCompany.setParameter("list", programmeIDList);
-            txList = qCompany.getResultList();
-            if (txList.isEmpty()) {
-                //get tasks by taskType
-                q = em.createNamedQuery("TaskType.findByProgrammeList", TaskType.class);
-                q.setParameter("list", programmeIDList);
-                List<TaskType> ttList = q.getResultList();
-                resp.setTaskTypeList(new ArrayList<>());
-                log.log(Level.OFF, "TaskTypes found: {0}", ttList.size());
-                for (Iterator<TaskType> it = ttList.iterator(); it.hasNext();) {
-                    TaskType taskType = it.next();
-                    TaskTypeDTO ttx = new TaskTypeDTO(taskType);
-                    q = em.createNamedQuery("Task.findByType", Task.class);
-                    q.setParameter("taskTypeID", taskType.getTaskTypeID());
-                    List<Task> tList = q.getResultList();
-                    tList.stream().forEach((task) -> {
-                        ttx.getTaskList().add(new TaskDTO(task));
-                    });
-                    resp.getTaskTypeList().add(ttx);
-                }
-            } else {
-                for (Task task : txList) {
-                    resp.getTaskList().add(new TaskDTO(task));
-                }
-            }
-        } else {
-            for (Task task : txList) {
-                resp.getTaskList().add(new TaskDTO(task));
-            }
+
+        for (Task task : txList) {
+            resp.getTaskList().add(new TaskDTO(task));
         }
 
         resp.setStaffList(getCompanyStaffList(em, staff.getCompany().getCompanyID()).getStaffList());
@@ -400,48 +340,47 @@ public class ListUtil {
         return resp;
     }
 
-    public static ResponseDTO getProgrammeTaskTypeList(EntityManager em, Integer programmeID) throws DataException {
-        ResponseDTO resp = new ResponseDTO();
-        try {
-            Query q = em.createNamedQuery("Task.findByProgramme", Task.class);
-            q.setParameter("programmeID", programmeID);
-            List<Task> taskList = q.getResultList();
-
-            Query q2 = em.createNamedQuery("TaskType.findByProgramme", TaskType.class);
-            q2.setParameter("programmeID", programmeID);
-            List<TaskType> taskTypeList = q2.getResultList();
-
-            q2 = em.createNamedQuery("SubTask.findByProgramme", SubTask.class);
-            q2.setParameter("programmeID", programmeID);
-            List<SubTask> subTaskList = q2.getResultList();
-
-            resp.setTaskTypeList(new ArrayList<>());
-            for (TaskType taskType : taskTypeList) {
-                TaskTypeDTO dto = new TaskTypeDTO(taskType);
-                dto.setTaskList(new ArrayList<>());
-                for (Task task : taskList) {
-                    if (Objects.equals(dto.getTaskTypeID(), task.getTaskType().getTaskTypeID())) {
-                        TaskDTO td = new TaskDTO(task);
-                        td.setSubTaskList(new ArrayList<>());
-                        for (SubTask subTask : subTaskList) {
-                            if (Objects.equals(td.getTaskID(), subTask.getTask().getTaskID())) {
-                                td.getSubTaskList().add(new SubTaskDTO(subTask));
-                            }
-                        }
-                        dto.getTaskList().add(td);
-                    }
-                }
-                resp.getTaskTypeList().add(dto);
-            }
-            log.log(Level.INFO, "TaskTypes found: {0}", resp.getTaskTypeList().size());
-        } catch (Exception e) {
-            log.log(Level.SEVERE, "", e);
-            throw new DataException("Failed to import tasks");
-        }
-
-        return resp;
-    }
-
+//    public static ResponseDTO getProgrammeTaskTypeList(EntityManager em, Integer programmeID) throws DataException {
+//        ResponseDTO resp = new ResponseDTO();
+//        try {
+//            Query q = em.createNamedQuery("Task.findByProgramme", Task.class);
+//            q.setParameter("programmeID", programmeID);
+//            List<Task> taskList = q.getResultList();
+//
+//            Query q2 = em.createNamedQuery("TaskType.findByProgramme", TaskType.class);
+//            q2.setParameter("programmeID", programmeID);
+//            List<TaskType> taskTypeList = q2.getResultList();
+//
+//            q2 = em.createNamedQuery("SubTask.findByProgramme", SubTask.class);
+//            q2.setParameter("programmeID", programmeID);
+//            List<SubTask> subTaskList = q2.getResultList();
+//
+//            resp.setTaskTypeList(new ArrayList<>());
+//            for (TaskType taskType : taskTypeList) {
+//                TaskTypeDTO dto = new TaskTypeDTO(taskType);
+//                dto.setTaskList(new ArrayList<>());
+//                for (Task task : taskList) {
+//                    if (Objects.equals(dto.getTaskTypeID(), task.getTaskType().getTaskTypeID())) {
+//                        TaskDTO td = new TaskDTO(task);
+//                        td.setSubTaskList(new ArrayList<>());
+//                        for (SubTask subTask : subTaskList) {
+//                            if (Objects.equals(td.getTaskID(), subTask.getTask().getTaskID())) {
+//                                td.getSubTaskList().add(new SubTaskDTO(subTask));
+//                            }
+//                        }
+//                        dto.getTaskList().add(td);
+//                    }
+//                }
+//                resp.getTaskTypeList().add(dto);
+//            }
+//            log.log(Level.INFO, "TaskTypes found: {0}", resp.getTaskTypeList().size());
+//        } catch (Exception e) {
+//            log.log(Level.SEVERE, "", e);
+//            throw new DataException("Failed to import tasks");
+//        }
+//
+//        return resp;
+//    }
     public static ResponseDTO getPortfolioList(EntityManager em, Integer companyID) throws DataException {
         ResponseDTO resp = new ResponseDTO();
         Query q = em.createNamedQuery("Portfolio.findByCompany", Portfolio.class);
@@ -489,7 +428,7 @@ public class ListUtil {
         for (Programme programme : tList) {
             ProgrammeDTO dto = new ProgrammeDTO(programme);
             dto.setProjectList(getProjectList(em, programme.getProgrammeID()));
-            dto.setTaskTypeList(getProgrammeTaskTypeList(em, dto.getProgrammeID()).getTaskTypeList());
+//            dto.setTaskTypeList(getProgrammeTaskTypeList(em, dto.getProgrammeID()).getTaskTypeList());
             list.add(dto);
         }
 

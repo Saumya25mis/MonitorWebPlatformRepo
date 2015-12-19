@@ -69,9 +69,9 @@ public class SimpleMessage implements Serializable {
     @JoinColumn(name = "projectID", referencedColumnName = "projectID")
     @ManyToOne
     private Project project;
-    @OneToMany(mappedBy = "simpleMessageID")
+    @OneToMany(mappedBy = "simpleMessage")
     private List<SimpleMessageDestination> simpleMessageDestinationList;
-    @OneToMany(mappedBy = "simpleMessageID")
+    @OneToMany(mappedBy = "simpleMessage")
     private List<SimpleMessageImage> simpleMessageImageList;
 
     public SimpleMessage() {

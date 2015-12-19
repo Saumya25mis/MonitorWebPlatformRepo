@@ -23,7 +23,6 @@ public class ProgrammeDTO implements Serializable {
     private Integer completeFlag, portfolioID;
     private List<PhotoUploadDTO> photoUploadList;
     private List<ProjectDTO> projectList;
-    private List<TaskTypeDTO> taskTypeList;
     private List<TaskDTO> taskList;
 
     public ProgrammeDTO() {
@@ -52,14 +51,7 @@ public class ProgrammeDTO implements Serializable {
         this.taskList = taskList;
     }
 
-    public List<TaskTypeDTO> getTaskTypeList() {
-        return taskTypeList;
-    }
-
-    public void setTaskTypeList(List<TaskTypeDTO> taskTypeList) {
-        this.taskTypeList = taskTypeList;
-    }
-
+  
     
     public Long getDateRegistered() {
         return dateRegistered;

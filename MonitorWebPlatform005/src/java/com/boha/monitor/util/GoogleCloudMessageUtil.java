@@ -153,7 +153,7 @@ public class GoogleCloudMessageUtil {
         }
 
         LOG.log(Level.INFO, "sendLocationMessage: About to send tracks via GCM: {0}", registrationIDs.size());
-        GCMResult gcmr = null;
+        GCMResult gcmr;
         String rMsg;
         if (registrationIDs.size() == 1) {
             Result result = sender.send(message, registrationIDs.get(0), RETRIES);

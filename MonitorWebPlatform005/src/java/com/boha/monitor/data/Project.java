@@ -36,7 +36,7 @@ import javax.validation.constraints.Size;
 @Table(name = "project")
 @NamedQueries({
     @NamedQuery(name = "Project.findByProgramme",
-            query = "SELECT p FROM Project p WHERE p.programme.programmeID = :programmeID ORDER BY p.city.cityName ")
+            query = "SELECT p FROM Project p WHERE p.programme.programmeID = :programmeID ORDER BY p.projectName ")
 })
 public class Project implements Serializable {
     @OneToMany(mappedBy = "project")

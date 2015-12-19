@@ -42,7 +42,7 @@ import javax.validation.constraints.Size;
             query = "SELECT m FROM Monitor m WHERE m.email = :email and m.pin = :pin and m.activeFlag = TRUE")
 })
 public class Monitor implements Serializable {
-    @OneToMany(mappedBy = "monitorID")
+    @OneToMany(mappedBy = "monitor")
     private List<SimpleMessageDestination> simpleMessageDestinationList;
     @OneToMany(mappedBy = "monitor")
     private List<SimpleMessage> simpleMessageList;

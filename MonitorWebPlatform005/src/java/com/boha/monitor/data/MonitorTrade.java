@@ -46,9 +46,7 @@ public class MonitorTrade implements Serializable {
     @Column(name = "dateRegistered")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateRegistered;
-    @JoinColumn(name = "taskTypeID", referencedColumnName = "taskTypeID")
-    @ManyToOne(optional = false)
-    private TaskType taskType;
+    
     @JoinColumn(name = "monitorID", referencedColumnName = "monitorID")
     @ManyToOne(optional = false)
     private Monitor monitor;
@@ -82,13 +80,6 @@ public class MonitorTrade implements Serializable {
         this.dateRegistered = dateRegistered;
     }
 
-    public TaskType getTaskType() {
-        return taskType;
-    }
-
-    public void setTaskType(TaskType taskType) {
-        this.taskType = taskType;
-    }
 
     public Monitor getMonitor() {
         return monitor;

@@ -3,24 +3,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.boha.monitor.data;
 
 import java.io.Serializable;
-import java.util.List;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -32,46 +25,31 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(name = "taskType")
 @NamedQueries({
-    @NamedQuery(name = "TaskType.findByProgramme", 
-           query = "SELECT t FROM TaskType t WHERE t.programme.programmeID = :programmeID order by t.taskTypeNumber"),
-    @NamedQuery(name = "TaskType.findByProgrammeList", 
-           query = "SELECT distinct t FROM TaskType t WHERE t.programme.programmeID in :list order by t.taskTypeNumber")
-    
-})
+    @NamedQuery(name = "TaskType.findAll", query = "SELECT t FROM TaskType t"),
+    @NamedQuery(name = "TaskType.findByTaskTypeID", query = "SELECT t FROM TaskType t WHERE t.taskTypeID = :taskTypeID"),
+    @NamedQuery(name = "TaskType.findByTaskTypeName", query = "SELECT t FROM TaskType t WHERE t.taskTypeName = :taskTypeName"),
+    @NamedQuery(name = "TaskType.findByProgrammeID", query = "SELECT t FROM TaskType t WHERE t.programmeID = :programmeID"),
+    @NamedQuery(name = "TaskType.findBySectionName", query = "SELECT t FROM TaskType t WHERE t.sectionName = :sectionName"),
+    @NamedQuery(name = "TaskType.findByTaskTypeNumber", query = "SELECT t FROM TaskType t WHERE t.taskTypeNumber = :taskTypeNumber")})
 public class TaskType implements Serializable {
-      
-    @Column(name = "taskTypeNumber")
-    private Integer taskTypeNumber;
-    
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "taskType")
-    private List<MonitorTrade> monitorTradeList;
-    
-    
-    @JoinColumn(name = "programmeID", referencedColumnName = "programmeID")
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Programme programme;
-       
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "taskTypeID")
     private Integer taskTypeID;
-    
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 512)
     @Column(name = "taskTypeName")
     private String taskTypeName;
-    
-    @Basic(optional = true)
-    @NotNull
-    @Size(min = 1, max = 512)
+    @Column(name = "programmeID")
+    private Integer programmeID;
+    @Size(max = 512)
     @Column(name = "sectionName")
     private String sectionName;
-    
-    @OneToMany(mappedBy = "taskType")
-    private List<Task> taskList;
+    @Column(name = "taskTypeNumber")
+    private Integer taskTypeNumber;
 
     public TaskType() {
     }
@@ -101,12 +79,28 @@ public class TaskType implements Serializable {
         this.taskTypeName = taskTypeName;
     }
 
-    public List<Task> getTaskList() {
-        return taskList;
+    public Integer getProgrammeID() {
+        return programmeID;
     }
 
-    public void setTaskList(List<Task> taskList) {
-        this.taskList = taskList;
+    public void setProgrammeID(Integer programmeID) {
+        this.programmeID = programmeID;
+    }
+
+    public String getSectionName() {
+        return sectionName;
+    }
+
+    public void setSectionName(String sectionName) {
+        this.sectionName = sectionName;
+    }
+
+    public Integer getTaskTypeNumber() {
+        return taskTypeNumber;
+    }
+
+    public void setTaskTypeNumber(Integer taskTypeNumber) {
+        this.taskTypeNumber = taskTypeNumber;
     }
 
     @Override
@@ -133,40 +127,5 @@ public class TaskType implements Serializable {
     public String toString() {
         return "com.boha.monitor.data.TaskType[ taskTypeID=" + taskTypeID + " ]";
     }
-
-    public Programme getProgramme() {
-        return programme;
-    }
-
-    public void setProgramme(Programme programme) {
-        this.programme = programme;
-    }
-
-    public String getSectionName() {
-        return sectionName;
-    }
-
-    public void setSectionName(String sectionName) {
-        this.sectionName = sectionName;
-    }
-
-    public List<MonitorTrade> getMonitorTradeList() {
-        return monitorTradeList;
-    }
-
-    public void setMonitorTradeList(List<MonitorTrade> monitorTradeList) {
-        this.monitorTradeList = monitorTradeList;
-    }
-
-
-    public Integer getTaskTypeNumber() {
-        return taskTypeNumber;
-    }
-
-    public void setTaskTypeNumber(Integer taskTypeNumber) {
-        this.taskTypeNumber = taskTypeNumber;
-    }
-
-
-  
+    
 }

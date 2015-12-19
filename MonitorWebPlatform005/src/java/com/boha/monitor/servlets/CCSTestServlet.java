@@ -6,11 +6,13 @@
 
 package com.boha.monitor.servlets;
 
+import com.boha.monitor.util.DataUtil;
 import com.boha.monitor.util.xmpp.CcsClient;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ejb.EJB;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -25,6 +27,8 @@ import org.jivesoftware.smack.XMPPException;
 @WebServlet(name = "CCSTestServlet", urlPatterns = {"/ccs"})
 public class CCSTestServlet extends HttpServlet {
 
+    @EJB
+    DataUtil dataUtil;
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -39,14 +43,19 @@ public class CCSTestServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             
-            CcsClient client = CcsClient.prepareClient(true);
+            dataUtil.fixProjectTasks();
+            //dataUtil.fixData();
+            //dataUtil.writeMonitorProjects();
+            //dataUtil.writeStaffProjects();
             
-            try {
-                client.connect();
-                client.send("");
-            } catch (XMPPException ex) {
-                Logger.getLogger(CCSTestServlet.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            //CcsClient client = CcsClient.prepareClient(true);
+            
+//            try {
+//                client.connect();
+//                client.send("");
+//            } catch (XMPPException ex) {
+//                Logger.getLogger(CCSTestServlet.class.getName()).log(Level.SEVERE, null, ex);
+//            }
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");

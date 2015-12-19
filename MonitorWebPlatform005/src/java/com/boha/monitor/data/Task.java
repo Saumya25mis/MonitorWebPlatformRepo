@@ -35,20 +35,12 @@ import javax.validation.constraints.Size;
 @NamedQueries({
     @NamedQuery(name = "Task.findByCompany", 
             query = "SELECT t FROM Task t where t.company.companyID = :companyID"),
-    @NamedQuery(name = "Task.findByProgramme", 
-            query = "SELECT t FROM Task t where t.programme.programmeID = :programmeID "),
-    @NamedQuery(name = "Task.findByProgrammeList", 
-            query = "SELECT t FROM Task t where t.programme.programmeID in :list order by t.programme.programmeName" ),
-    @NamedQuery(name = "Task.findByType", 
-            query = "SELECT t FROM Task t where t.taskType.taskTypeID = :taskTypeID order by t.taskType.taskTypeName")
     })
 public class Task implements Serializable {
     @JoinColumn(name = "companyID", referencedColumnName = "companyID")
     @ManyToOne
     private Company company;
-    @JoinColumn(name = "programmeID", referencedColumnName = "programmeID")
-    @ManyToOne
-    private Programme programme;
+    
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "task")
     private List<SubTask> subTaskList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "task", fetch = FetchType.LAZY)
@@ -71,22 +63,9 @@ public class Task implements Serializable {
     @Column(name = "description")
     private String description;
     
-    
-    @JoinColumn(name = "taskTypeID", referencedColumnName = "taskTypeID")
-    @ManyToOne
-    private TaskType taskType;
-
     public Task() {
     }
 
-
-    public TaskType getTaskType() {
-        return taskType;
-    }
-
-    public void setTaskType(TaskType taskType) {
-        this.taskType = taskType;
-    }
 
     public Task(Integer taskID) {
         this.taskID = taskID;
@@ -168,14 +147,6 @@ public class Task implements Serializable {
 
     public void setSubTaskList(List<SubTask> subTaskList) {
         this.subTaskList = subTaskList;
-    }
-
-    public Programme getProgramme() {
-        return programme;
-    }
-
-    public void setProgramme(Programme programme) {
-        this.programme = programme;
     }
 
     public Company getCompany() {
