@@ -37,19 +37,39 @@ import javax.validation.constraints.Size;
             query = "SELECT m FROM LocationTracker m "
                     + "where m.monitor.monitorID = :monitorID "
                     + "and m.dateTracked BETWEEN :dateFrom and :dateTo "
-                    + "order by m.dateTracked"),
+                    + "order by m.dateTracked desc"),
+    
+    @NamedQuery(name = "LocationTracker.findByProjectMonitorInPeriod", 
+            query = "SELECT m FROM LocationTracker m, MonitorProject p where m.monitor = p.monitor AND p.project.projectID = :projectID "
+                    + "and m.dateTracked BETWEEN :dateFrom and :dateTo "
+                    + "order by m.dateTracked desc"),
+    
+    @NamedQuery(name = "LocationTracker.findByProjectStaffInPeriod", 
+            query = "SELECT m FROM LocationTracker m, StaffProject p where m.staff = p.staff AND p.project.projectID = :projectID "
+                    + "and m.dateTracked BETWEEN :dateFrom and :dateTo "
+                    + "order by m.dateTracked desc"),
+    
+    @NamedQuery(name = "LocationTracker.findByCompanyInPeriod", 
+            query = "SELECT m FROM LocationTracker m where m.company.companyID = :companyID "
+                    + "and m.dateTracked BETWEEN :dateFrom and :dateTo "
+                    + "order by m.dateTracked desc"),
+    
     @NamedQuery(name = "LocationTracker.findByMonitor", 
             query = "SELECT m FROM LocationTracker m "
                     + "where m.monitor.monitorID = :monitorID "
-                    + "order by m.dateTracked"),
+                    + "order by m.dateTracked desc"),
+    
     @NamedQuery(name = "LocationTracker.findByStaffInPeriod", 
             query = "SELECT m FROM LocationTracker m "
                     + "where m.staff.staffID = :staffID "
                     + "and m.dateTracked BETWEEN :dateFrom and :dateTo "
-                    + "order by m.dateTracked"),
+                    + "order by m.dateTracked desc"),
     
 })
 public class LocationTracker implements Serializable {
+    @JoinColumn(name = "companyID", referencedColumnName = "companyID")
+    @ManyToOne
+    private Company company;
     @JoinColumn(name = "gcmDeviceID", referencedColumnName = "gcmDeviceID")
     @ManyToOne
     private GcmDevice gcmDevice;
@@ -222,6 +242,15 @@ public class LocationTracker implements Serializable {
         this.gcmDevice = gcmDevice;
     }
 
+    public Company getCompany() {
+        return company;
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
+    }
+
+   
  
     
 }

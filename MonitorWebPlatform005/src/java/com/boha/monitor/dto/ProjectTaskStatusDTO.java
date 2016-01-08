@@ -8,6 +8,7 @@ package com.boha.monitor.dto;
 
 import com.boha.monitor.data.ProjectTaskStatus;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  *
@@ -23,6 +24,7 @@ public class ProjectTaskStatusDTO implements Serializable {
     private Integer staffID;
     private Integer monitorID;
     private String staffName, monitorName;
+    private List<PhotoUploadDTO> photoUploadList;
 
     public ProjectTaskStatusDTO() {
     }
@@ -43,6 +45,14 @@ public class ProjectTaskStatusDTO implements Serializable {
             monitorID = a.getMonitor().getMonitorID();
             monitorName = a.getMonitor().getFirstName() + " " + a.getMonitor().getLastName();
         }
+    }
+
+    public List<PhotoUploadDTO> getPhotoUploadList() {
+        return photoUploadList;
+    }
+
+    public void setPhotoUploadList(List<PhotoUploadDTO> photoUploadList) {
+        this.photoUploadList = photoUploadList;
     }
 
     public String getStaffName() {

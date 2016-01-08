@@ -8,17 +8,15 @@ package com.boha.monitor.servlets;
 import com.boha.monitor.dto.transfer.RequestDTO;
 import com.boha.monitor.dto.transfer.ResponseDTO;
 import com.boha.monitor.util.DataUtil;
-import com.boha.monitor.util.GZipUtility;
 import com.boha.monitor.util.ServerStatus;
 import com.boha.monitor.util.SignInUtil;
 import com.boha.monitor.util.TrafficCop;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import com.oreilly.servlet.ServletUtils;
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.util.Enumeration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
@@ -46,6 +44,11 @@ public class MonitorGatewayServlet extends HttpServlet {
             throws ServletException, IOException {
         long start = System.currentTimeMillis();
 
+        Enumeration<String> m = request.getHeaderNames();
+        while (m.hasMoreElements()) {
+            String nextElement = m.nextElement();
+            System.out.println(nextElement + ": " + request.getHeader(nextElement));
+        }
         Gson gson = new Gson();
         RequestDTO dto = getRequest(gson, request);
         ResponseDTO resp = new ResponseDTO();
@@ -65,26 +68,12 @@ public class MonitorGatewayServlet extends HttpServlet {
             resp.setStatusCode(ServerStatus.ERROR_SERVER);
             resp.setMessage(ServerStatus.getMessage(resp.getStatusCode()));
         } finally {
-            if (dto.isZipResponse()) {
-                response.setContentType("application/zip;charset=UTF-8");
-                File zipped;
-                String json = gson.toJson(resp);
-                try {
-                    zipped = GZipUtility.getZipped(json);
-                    ServletUtils.returnFile(zipped.getAbsolutePath(), response.getOutputStream());
-                    response.getOutputStream().close();
-                    log.log(Level.OFF, "### Zipped Length of Response: {0} -  "
-                            + "unzipped length: {1}", new Object[]{zipped.length(), json.length()});
-                } catch (IOException e) {
-                    log.log(Level.SEVERE, "Zipping problem - probably the zipper cannot find the zipped file", e);
-                }
-            } else {
                 response.setContentType("application/json;charset=UTF-8");
                 try (PrintWriter out = response.getWriter()) {
                     String json = gson.toJson(resp);
                     out.println(json);
                 }
-            }
+            
 
             long end = System.currentTimeMillis();
             log.log(Level.INFO, "---> MonitorGatewayServlet completed in {0} seconds", getElapsed(start, end));

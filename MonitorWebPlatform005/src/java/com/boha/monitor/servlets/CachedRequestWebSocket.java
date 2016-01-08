@@ -9,7 +9,6 @@ import com.boha.monitor.dto.transfer.RequestDTO;
 import com.boha.monitor.dto.transfer.RequestList;
 import com.boha.monitor.dto.transfer.ResponseDTO;
 import com.boha.monitor.util.Elapsed;
-import com.boha.monitor.util.GZipUtility;
 import com.boha.monitor.util.TrafficCop;
 import com.google.gson.Gson;
 import java.io.IOException;
@@ -74,15 +73,10 @@ public class CachedRequestWebSocket {
             long end = System.currentTimeMillis();
             response.setElapsedRequestTimeInSeconds(Elapsed.getElapsed(start, end));
             log.log(Level.INFO, "Total elapsed time: {0}", response.getElapsedRequestTimeInSeconds());
-            bb = GZipUtility.getZippedResponse(response);
         } catch (IOException ex) {
             response.setMessage("Unable to process cached requests");
             response.setStatusCode(777);
-            try {
-                bb = GZipUtility.getZippedResponse(response);
-            } catch (IOException ex1) {
-                log.log(Level.SEVERE, null, ex1);
-            }
+            
         } catch (Exception ex) {
             response.setStatusCode(StatusCode.ERROR_SERVER);
             response.setMessage(ServerStatus.getMessage(response.getStatusCode()));
@@ -90,6 +84,7 @@ public class CachedRequestWebSocket {
             dataUtil.addErrorStore(StatusCode.ERROR_SERVER, response.getMessage(), SOURCE);
 
         }
+        bb = ByteBuffer.wrap(gson.toJson(response).getBytes());
         return bb;
     }
 

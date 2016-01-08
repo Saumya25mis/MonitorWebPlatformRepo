@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
@@ -279,7 +278,7 @@ public class ListUtil {
                 project.getPhotoUploadList().add(new PhotoUploadDTO(ph));
             }
 
-            //get all the tasks assigned to the project
+//            //get all the tasks assigned to the project
             q = em.createNamedQuery("ProjectTask.findByProject", ProjectTask.class);
             q.setParameter("projectID", project.getProjectID());
             List<ProjectTask> ptList = q.getResultList();
@@ -300,20 +299,13 @@ public class ListUtil {
                 for (PhotoUpload ph : pxList) {
                     d.getPhotoUploadList().add(new PhotoUploadDTO(ph));
                 }
+                
                 //add the task to the list 
                 project.getProjectTaskList().add(d);
             }
-
-            //add the project to the response object
+            
             resp.getProjectList().add(project);
-            log.log(Level.OFF, "## project found for monitor: {0} - {1} {2}",
-                    new Object[]{project.getProjectName(), staff.getFirstName(), staff.getLastName()});
         }
-
-        List<Integer> programmeIDList = new ArrayList<>();
-        map.entrySet().stream().map((entry) -> entry.getKey()).forEach((id) -> {
-            programmeIDList.add(id);
-        });
         Query qCompany = em.createNamedQuery("Task.findByCompany", Task.class);
         qCompany.setParameter("companyID", staff.getCompany().getCompanyID());
         List<Task> txList = qCompany.getResultList();
@@ -328,6 +320,25 @@ public class ListUtil {
         return resp;
     }
 
+    private static List<ProjectTaskDTO> getProjectTasks(EntityManager em, Project project) {
+        List<ProjectTask> ptList = project.getProjectTaskList();
+        List<ProjectTaskDTO> projectTaskDTOs = new ArrayList<>(ptList.size());
+        for (ProjectTask pt : ptList) {
+            ProjectTaskDTO dto = new ProjectTaskDTO(pt);
+            dto.setProjectTaskStatusList(new ArrayList<>());
+            for (ProjectTaskStatus s: pt.getProjectTaskStatusList()) {
+                ProjectTaskStatusDTO status = new ProjectTaskStatusDTO(s);
+                status.setPhotoUploadList(new ArrayList<>());
+                for (PhotoUpload ph: s.getPhotoUploadList()) {
+                    status.getPhotoUploadList().add(new PhotoUploadDTO(ph));
+                }
+                dto.getProjectTaskStatusList().add(status);
+            }
+            projectTaskDTOs.add(dto);
+        }
+        
+       return projectTaskDTOs;
+    }
     public static ResponseDTO getCompanyData(EntityManager em, Integer companyID) throws DataException {
         ResponseDTO resp = new ResponseDTO();
 
@@ -571,7 +582,7 @@ public class ListUtil {
         Date dateFrom, dateTo;
         if (df == null) {
             DateTime dt = new DateTime();
-            DateTime xx = dt.minusDays(7);
+            DateTime xx = dt.minusDays(1);
             dateFrom = xx.toDate();
             dateTo = dt.toDate();
             log.log(Level.INFO, "Get Location tracks from {0} to {1}",
@@ -622,7 +633,7 @@ public class ListUtil {
         return resp;
     }
 
-    public static ResponseDTO getLocationTracksByCompanyLastMonth(EntityManager em, Integer companyID,
+    public static ResponseDTO getLocationTracksByCompany(EntityManager em, Integer companyID,
             Long df, Long dx) {
 
         Date dateFrom, dateTo;
@@ -639,15 +650,15 @@ public class ListUtil {
         }
         ResponseDTO resp = new ResponseDTO();
         Query q = em.createNamedQuery("LocationTracker.findByCompanyInPeriod", LocationTracker.class);
-        q.setParameter("company", em.find(Company.class, companyID));
-        q.setParameter("dateFrom", dateFrom.getTime());
-        q.setParameter("dateTo", dateTo.getTime());
+        q.setParameter("companyID", companyID);
+        q.setParameter("dateFrom", dateFrom);
+        q.setParameter("dateTo", dateTo);
 
         List<LocationTracker> list = q.getResultList();
         resp.setLocationTrackerList(new ArrayList<>());
-        for (LocationTracker t : list) {
+        list.stream().forEach((t) -> {
             resp.getLocationTrackerList().add(new LocationTrackerDTO(t));
-        }
+        });
         log.log(Level.INFO, "LocationTrackers found, db: {0} out: {1}",
                 new Object[]{list.size(), resp.getLocationTrackerList().size()});
         return resp;

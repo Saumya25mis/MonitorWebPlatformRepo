@@ -20,6 +20,7 @@ import java.util.logging.Logger;
 import java.util.zip.*;
 import org.apache.commons.io.IOUtils;
 
+@Deprecated
 public class GZipUtility {
 
     static final Gson gson = new Gson();
@@ -86,7 +87,6 @@ public class GZipUtility {
         File zip = null;
         try {
             File dir = MonitorProperties.getTemporaryDir();
-            //logger.log(Level.INFO, "###Zip directory: {0}", dir.getAbsolutePath());
             if (!dir.exists()) {
                 dir.mkdir();
             }
@@ -94,7 +94,6 @@ public class GZipUtility {
             gzipFileName = "golf" + System.currentTimeMillis()
                     + "_" + rand.nextInt(99999999) + ".data.gz";
             zip = new File(dir, gzipFileName);
-            //logger.log(Level.INFO, "### new zip file to be filled: {0}", zip.getAbsolutePath());
             ZipOutputStream out = null;
             try {
                 try {

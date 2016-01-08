@@ -180,7 +180,7 @@ public class TrafficCop {
 
             //lists
             case RequestDTO.GET_LOCATION_TRACK_BY_COMPANY_IN_PERIOD:
-                resp = ListUtil.getLocationTracksByCompanyLastMonth(dataUtil.getEntityManager(),
+                resp = ListUtil.getLocationTracksByCompany(dataUtil.getEntityManager(),
                         req.getCompanyID(), req.getStartDate(), req.getEndDate());
                 break;
             case RequestDTO.GET_LOCATION_TRACK_BY_STAFF_IN_PERIOD:

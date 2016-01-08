@@ -23,16 +23,9 @@ public class JSONGrabber {
 
         //create the object you want in the servlet
         RequestDTO req = new RequestDTO();
-        req.setRequestType(1);
+        req.setRequestType(RequestDTO.GET_STAFF_PHOTOS);
+        req.setStaffID(15);
 
-        CompanyDTO c = new CompanyDTO();
-        c.setCompanyName("Eastern Cape Economic Development");
-        c.setCellphone("099 990 9990");
-        c.setAddress("377 Majola Avenue, Park Estate, East London 8097");
-        c.setEmail("ecape.info@gmail.com");
-        
-        req.setCompany(c);
-        
         //turn the REquestDTO object into a JSON string
         Gson gson = new Gson();
         String json = gson.toJson(req);

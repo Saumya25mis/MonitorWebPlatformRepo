@@ -40,7 +40,6 @@ public class RequestDTO implements Serializable {
 
     private Integer requestType, companyID, staffID,
             projectID, projectTaskID, loginType, monitorID, taskTypeID;
-    private boolean responseRequested, zipResponse;
     private SimpleMessageDTO simpleMessage;
     private String email, pin, gcmRegistrationID;
     private Integer numberOfDays;
@@ -188,14 +187,7 @@ public class RequestDTO implements Serializable {
     public static final String PROJECT_DIR = "project";
     public static final String TASK_DIR = "task";
 
-    public boolean isZipResponse() {
-        return zipResponse;
-    }
-
-    public void setZipResponse(boolean zipResponse) {
-        this.zipResponse = zipResponse;
-    }
-
+   
     
     public VideoUploadDTO getVideoUpload() {
         return videoUpload;
@@ -397,14 +389,6 @@ public class RequestDTO implements Serializable {
 
     public void setLoginType(Integer loginType) {
         this.loginType = loginType;
-    }
-
-    public boolean isResponseRequested() {
-        return responseRequested;
-    }
-
-    public void setResponseRequested(boolean responseRequested) {
-        this.responseRequested = responseRequested;
     }
 
     public String getEmail() {

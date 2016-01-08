@@ -691,7 +691,14 @@ public class DataUtil {
                 t.setGcmDevice(em.find(GcmDevice.class, dto.getGcmDevice().getGcmDeviceID()));
             }
             if (dto.getMonitorID() != null) {
-                t.setMonitor(em.find(Monitor.class, dto.getMonitorID()));
+                Monitor m = em.find(Monitor.class, dto.getMonitorID());
+                t.setMonitor(m);
+                t.setCompany(em.find(Company.class, m.getCompany().getCompanyID()));
+            }
+            if (dto.getStaffID()!= null) {
+                Staff m = em.find(Staff.class, dto.getStaffID());
+                t.setStaff(m);
+                t.setCompany(em.find(Company.class, m.getCompany().getCompanyID()));
             }
             em.persist(t);
 
@@ -706,19 +713,7 @@ public class DataUtil {
     public void addLocationTrackers(List<LocationTrackerDTO> list) throws DataException {
         try {
             for (LocationTrackerDTO dto : list) {
-                LocationTracker t = new LocationTracker();
-                t
-                        .setStaff(em.find(Staff.class, dto.getStaffID()));
-                t.setDateTracked(
-                        new Date(dto.getDateTracked()));
-                t.setLatitude(dto.getLatitude());
-                t.setLongitude(dto.getLongitude());
-                t.setAccuracy(dto.getAccuracy());
-                t.setDateAdded(
-                        new Date());
-                t.setDateTrackedLong(BigInteger.valueOf(new Date().getTime()));
-                t.setGeocodedAddress(dto.getGeocodedAddress());
-                em.persist(t);
+                addLocationTrack(dto);
             }
 
             log.log(Level.WARNING, "LocationTrackers added: {0}", list.size());

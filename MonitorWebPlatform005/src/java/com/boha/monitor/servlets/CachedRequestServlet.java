@@ -9,11 +9,8 @@ import com.boha.monitor.dto.transfer.RequestDTO;
 import com.boha.monitor.dto.transfer.RequestList;
 import com.boha.monitor.dto.transfer.ResponseDTO;
 import com.boha.monitor.util.Elapsed;
-import com.boha.monitor.util.GZipUtility;
 import com.boha.monitor.util.TrafficCop;
 import com.google.gson.Gson;
-import com.oreilly.servlet.ServletUtils;
-import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.logging.Level;
@@ -26,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.boha.monitor.util.DataUtil;
 import com.boha.monitor.util.SignInUtil;
+import java.io.PrintWriter;
 
 /**
  *
@@ -83,18 +81,12 @@ public class CachedRequestServlet extends HttpServlet {
            
         } finally {
             
-            response.setContentType("application/zip;charset=UTF-8");
-            File zipped;
-            String json = gson.toJson(resp);
-            try {
-                zipped = GZipUtility.getZipped(json);
-                ServletUtils.returnFile(zipped.getAbsolutePath(), response.getOutputStream());
-                response.getOutputStream().close();
-                log.log(Level.OFF, "### Zipped Length of Response: {0} -  "
-                        + "unzipped length: {1}", new Object[]{zipped.length(), json.length()});
-            } catch (IOException e) {
-                log.log(Level.SEVERE, "Zipping problem - probably the zipper cannot find the zipped file", e);
-            }
+            response.setContentType("application/json;charset=UTF-8");
+                try (PrintWriter out = response.getWriter()) {
+                    String json = gson.toJson(resp);
+                    out.println(json);
+                }
+            
 
             long end = System.currentTimeMillis();
             log.log(Level.INFO, "---> MonitorGatewayServlet completed in {0} seconds", getElapsed(start, end));

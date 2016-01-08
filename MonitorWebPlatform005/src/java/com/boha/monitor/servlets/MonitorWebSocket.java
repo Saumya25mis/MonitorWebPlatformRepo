@@ -9,13 +9,11 @@ import com.boha.monitor.dto.transfer.RequestDTO;
 import com.boha.monitor.dto.transfer.ResponseDTO;
 import com.boha.monitor.util.DataException;
 import com.boha.monitor.util.DataUtil;
-import com.boha.monitor.util.GZipUtility;
 import com.boha.monitor.util.ServerStatus;
 import com.boha.monitor.util.SignInUtil;
 import com.boha.monitor.util.StatusCode;
 import com.boha.monitor.util.TrafficCop;
 import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Collections;
@@ -60,21 +58,8 @@ public class MonitorWebSocket {
 
         try {
             RequestDTO dto = gson.fromJson(message, RequestDTO.class);
-            resp = TrafficCop.processRequest(dto, dataUtil, signInUtil);
-            bb = GZipUtility.getZippedResponse(resp);
-        } catch (JsonSyntaxException | IOException ex) {
-            log.log(Level.SEVERE, "Failed...", ex);
-            resp.setStatusCode(ServerStatus.ERROR_SERVER);
-            resp.setMessage(ServerStatus.getMessage(resp.getStatusCode()));
-            dataUtil.addErrorStore(StatusCode.ERROR_JSON_SYNTAX, "JSON Syntax Error", SOURCE);
-            
-            try {
-                bb = GZipUtility.getZippedResponse(resp);
-            } catch (IOException ex1) {
-                log.log(Level.SEVERE, "Failed to zip error response! What???", ex1);
-                resp.setStatusCode(ServerStatus.ERROR_DATA_COMPRESSION);
-                resp.setMessage(ServerStatus.getMessage(resp.getStatusCode()));
-            }
+            resp = TrafficCop.processRequest(dto, dataUtil, signInUtil);                      
+        
         } catch (DataException e) {
             resp.setStatusCode(ServerStatus.ERROR_DATABASE);
             resp.setMessage(ServerStatus.getMessage(resp.getStatusCode()));
@@ -89,6 +74,7 @@ public class MonitorWebSocket {
             dataUtil.addErrorStore(StatusCode.ERROR_SERVER, resp.getMessage(), SOURCE);
 
         }
+        bb = ByteBuffer.wrap(gson.toJson(resp).getBytes());
         return bb;
     }
 
