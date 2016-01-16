@@ -688,14 +688,16 @@ public class DataUtil {
             t.setDateTrackedLong(BigInteger.valueOf(dto.getDateTracked()));
             t.setGeocodedAddress(dto.getGeocodedAddress());
             if (dto.getGcmDevice() != null) {
-                t.setGcmDevice(em.find(GcmDevice.class, dto.getGcmDevice().getGcmDeviceID()));
+                if (dto.getGcmDevice().getGcmDeviceID() != null) {
+                    t.setGcmDevice(em.find(GcmDevice.class, dto.getGcmDevice().getGcmDeviceID()));
+                }
             }
             if (dto.getMonitorID() != null) {
                 Monitor m = em.find(Monitor.class, dto.getMonitorID());
                 t.setMonitor(m);
                 t.setCompany(em.find(Company.class, m.getCompany().getCompanyID()));
             }
-            if (dto.getStaffID()!= null) {
+            if (dto.getStaffID() != null) {
                 Staff m = em.find(Staff.class, dto.getStaffID());
                 t.setStaff(m);
                 t.setCompany(em.find(Company.class, m.getCompany().getCompanyID()));
@@ -1738,20 +1740,16 @@ public class DataUtil {
 
         }
 
-       
-        
-
-
     }
-    
+
     public void fixProjectTasks() {
-        Query q = em.createNamedQuery("Task.findByCompany",Task.class);
+        Query q = em.createNamedQuery("Task.findByCompany", Task.class);
         q.setParameter("companyID", 30);
         List<Task> taskList = q.getResultList();
-        
+
         writeProjectTasks(63, taskList);
         writeProjectTasks(67, taskList);
-        
+
     }
 
     private void writeProjectTasks(Integer programmeID, List<Task> taskList) {

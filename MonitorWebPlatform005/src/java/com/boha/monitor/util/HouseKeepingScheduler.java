@@ -4,19 +4,27 @@ import java.io.File;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.annotation.Resource;
 import javax.ejb.Schedule;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
 import javax.ejb.Stateless;
+import javax.ejb.Timeout;
+import javax.ejb.TimerService;
 
 /**
  *
  * @author aubreyM
  */
 @Stateless
+@Singleton
+@Startup
 public class HouseKeepingScheduler {
 
     @Schedule(minute = "*/30", hour = "*")
     public void cleanUp() {
         startDiskCleanup();
+        System.out.println("###### HousekeepingScheduler fired. Do something --> ");
     }
 
 
@@ -30,13 +38,11 @@ public class HouseKeepingScheduler {
         File dir = MonitorProperties.getTemporaryDir();
         if (dir.exists()) {
             File[] files = dir.listFiles();
-            log.log(Level.INFO, "### startDiskCleanup - temporary files found: {0}", files.length);
             for (File file : files) {
                 long now = new Date().getTime();
-                long cutOff = now - FIVE_MINUTES;
+                long cutOff = now - ONE_MINUTE;
                 if (file.lastModified() < cutOff) {
-                    boolean OK = file.delete();
-                    if (OK) {
+                    if (file.delete()) {
                         count++;
                     }
                 }
@@ -53,6 +59,20 @@ public class HouseKeepingScheduler {
         sb.append("### ##########################################################################\n\n");
         log.log(Level.INFO, sb.toString());
     }
-    private final static int FIVE_MINUTES = 1000 * 60 * 5;
+    private final static int ONE_MINUTE = 1000 * 60;
     static final Logger log = Logger.getLogger(HouseKeepingScheduler.class.getName());
+//    @Resource
+//    TimerService ts;
+//    
+//
+//    //@Schedule(hour = "*", minute = "*", second = "*/10", info = "Every 10 second timer")
+//    public void printSchedule() {
+//        log.log(Level.OFF, "ProgrammaticTimer Schedule Fired .... ");
+//        ts.createTimer(5000, null);
+//    }
+//    
+//    @Timeout
+//    public void timeOut() {
+//        log.log(Level.OFF, "Programmatic timeout fired ");
+//    }
 }

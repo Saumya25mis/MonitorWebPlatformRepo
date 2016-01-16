@@ -40,6 +40,16 @@ public class RequestDTO implements Serializable {
 
     private Integer requestType, companyID, staffID,
             projectID, projectTaskID, loginType, monitorID, taskTypeID;
+    private boolean zipResponse;
+
+    public boolean isZipResponse() {
+        return zipResponse;
+    }
+
+    public void setZipResponse(boolean zipResponse) {
+        this.zipResponse = zipResponse;
+    }
+    
     private SimpleMessageDTO simpleMessage;
     private String email, pin, gcmRegistrationID;
     private Integer numberOfDays;
@@ -164,7 +174,9 @@ public class RequestDTO implements Serializable {
             UPDATE_COMPANY_STAFF = 407,
             RESET_STAFF_PIN = 408,
             UPDATE_STAFF_PROJECTS = 409,
-            UPDATE_MONITOR = 410;
+            UPDATE_MONITOR = 410,
+            UPDATE_STAFF_DEVICE = 411,
+            UPDATE_MONITOR_DEVICE = 412;
 
     //reports
     public static final int REPORT_PROJECT = 601,

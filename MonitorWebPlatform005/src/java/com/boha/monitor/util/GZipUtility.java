@@ -20,7 +20,6 @@ import java.util.logging.Logger;
 import java.util.zip.*;
 import org.apache.commons.io.IOUtils;
 
-@Deprecated
 public class GZipUtility {
 
     static final Gson gson = new Gson();

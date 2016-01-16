@@ -5,9 +5,11 @@
  */
 package com.boha.monitor.util;
 
+import com.boha.monitor.dto.GcmDeviceDTO;
 import com.boha.monitor.dto.transfer.RequestDTO;
 import com.boha.monitor.dto.transfer.ResponseDTO;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -31,6 +33,16 @@ public class TrafficCop {
                 if (req.getSimpleMessage().getLocationTracker() != null) {
                     dataUtil.addLocationTrack(req.getSimpleMessage().getLocationTracker());
                 }
+                break;
+            case RequestDTO.UPDATE_STAFF_DEVICE:
+                GcmDeviceDTO dev = signInUtil.addStaffDevice(req.getGcmDevice());
+                resp.setGcmDeviceList(new ArrayList<>());
+                resp.getGcmDeviceList().add(dev);
+                break;
+            case RequestDTO.UPDATE_MONITOR_DEVICE:
+                GcmDeviceDTO devMon = signInUtil.addMonitorDevice(req.getGcmDevice());
+                resp.setGcmDeviceList(new ArrayList<>());
+                resp.getGcmDeviceList().add(devMon);
                 break;
             case RequestDTO.SEND_LOCATION:
                 dataUtil.addLocationTrack(req.getLocationTracker());
@@ -260,7 +272,7 @@ public class TrafficCop {
         long end = System.currentTimeMillis();
         double elapsed = Elapsed.getElapsed(start, end);
         resp.setElapsedRequestTimeInSeconds(elapsed);
-        logger.log(Level.INFO, "******* request elapsed time: {0} seconds", elapsed);
+        //logger.log(Level.INFO, "******* request elapsed time: {0} seconds", elapsed);
         return resp;
     }
 

@@ -47,7 +47,7 @@ public class SignInUtil {
             String pin) throws DataException {
         ResponseDTO resp = new ResponseDTO();
         resp.setStaffList(new ArrayList<>());
-        
+
         Query q = null;
         try {
             q = em.createNamedQuery("Staff.login", Staff.class);
@@ -69,7 +69,6 @@ public class SignInUtil {
                 resp.getGcmDeviceList().add(addStaffDevice(device));
             }
 
-            
         } catch (NoResultException e) {
             log.log(Level.WARNING, "Invalid login attempt: " + email + " pin: " + pin, e);
             resp.setStatusCode(ServerStatus.ERROR_LOGGING_IN);
@@ -125,7 +124,7 @@ public class SignInUtil {
         resp.setMonitorList(new ArrayList<>());
         resp.setGcmDeviceList(new ArrayList<>());
         Query q = null;
-        
+
         try {
             q = em.createNamedQuery("Monitor.login", Monitor.class);
             q.setParameter("email", email);
@@ -270,12 +269,14 @@ public class SignInUtil {
 
             if (isUpdate) {
                 em.merge(g);
+                log.log(Level.INFO, "Staff device updated: {0}  Android Version: {1}", new Object[]{g.getModel(), g.getAndroidVersion()});
             } else {
                 em.persist(g);
+                log.log(Level.INFO, "New staff device loaded: {0}  Android Version: {1}", new Object[]{g.getModel(), g.getAndroidVersion()});
             }
             em.flush();
             device = new GcmDeviceDTO(g);
-            log.log(Level.INFO, "New staff device loaded: {0}  Android Version: {1}", new Object[]{g.getModel(), g.getAndroidVersion()});
+
         } catch (PersistenceException e) {
 
             em.merge(g);

@@ -8,36 +8,40 @@ package com.boha.monitor.servlets;
 import com.boha.monitor.dto.transfer.RequestDTO;
 import com.boha.monitor.dto.transfer.ResponseDTO;
 import com.boha.monitor.util.DataUtil;
+import com.boha.monitor.util.GZipUtility;
 import com.boha.monitor.util.ServerStatus;
 import com.boha.monitor.util.SignInUtil;
 import com.boha.monitor.util.TrafficCop;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.zip.GZIPOutputStream;
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.io.FileUtils;
 
 /**
  *
  * @author aubreyM
  */
-@WebServlet(name = "MonitorGatewayServlet", urlPatterns = {"/gate"})
-public class MonitorGatewayServlet extends HttpServlet {
+@WebServlet(name = "MonitorGatewayServletX", urlPatterns = {"/gatex"})
+public class MonitorGatewayServletX extends HttpServlet {
 
     @EJB
     DataUtil dataUtil;
     @EJB
     SignInUtil signInUtil;
 
-    static final String SOURCE = "MonitorGatewayServlet";
+    static final String SOURCE = "MonitorGatewayServletX";
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -56,7 +60,7 @@ public class MonitorGatewayServlet extends HttpServlet {
         try {
             if (dto != null && dto.getRequestType() != null) {
                 log.log(Level.INFO, "{0} started .....requestType: {1}",
-                        new Object[]{MonitorGatewayServlet.class.getSimpleName(), dto.getRequestType()});
+                        new Object[]{MonitorGatewayServletX.class.getSimpleName(), dto.getRequestType()});
                 resp = TrafficCop.processRequest(dto, dataUtil, signInUtil);
             } else {
                 resp.setStatusCode(ServerStatus.ERROR_JSON_SYNTAX);
@@ -67,13 +71,29 @@ public class MonitorGatewayServlet extends HttpServlet {
             resp.setStatusCode(ServerStatus.ERROR_SERVER);
             resp.setMessage(ServerStatus.getMessage(resp.getStatusCode()));
         } finally {
-            response.setContentType("application/json;charset=UTF-8");
-            try (PrintWriter out = response.getWriter()) {
-                out.println(gson.toJson(resp));
+            String json = gson.toJson(resp);
+            if (dto != null) {
+                if (dto.isZipResponse()) {
+                    File file = GZipUtility.getZipped(json);
+                    response.setContentType("application/octet-stream");
+                    response.setHeader("Content-Disposition", "fileName=monitordata.zip");
+                    response.setHeader("Accept-Encoding", "gzip");
+                    FileUtils.copyFile(file, response.getOutputStream());
+                    file.deleteOnExit();
+
+                } else {
+                    response.setContentType("application/json;charset=UTF-8");
+                    try (PrintWriter out = response.getWriter()) {
+                        out.println(json);
+                    }
+                }
+            } else {
+                log.log(Level.SEVERE, "Illegal contact, request ignored");
+                return;
             }
 
             long end = System.currentTimeMillis();
-            log.log(Level.INFO, "---> MonitorGatewayServlet completed in {0} seconds", getElapsed(start, end));
+            log.log(Level.INFO, "---> MonitorGatewayServletX completed in {0} seconds", getElapsed(start, end));
         }
     }
 
@@ -96,7 +116,7 @@ public class MonitorGatewayServlet extends HttpServlet {
         }
         return cr;
     }
-    private static final Logger log = Logger.getLogger(MonitorGatewayServlet.class
+    private static final Logger log = Logger.getLogger(MonitorGatewayServletX.class
             .getSimpleName());
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
