@@ -7,6 +7,9 @@
 package com.boha.monitor.util;
 
 import com.google.gson.Gson;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 /**
  *
@@ -19,6 +22,14 @@ public class TestJSON {
         if (obj == null) {
             
         }
+        Calendar cal = GregorianCalendar.getInstance();
+        cal.set(Calendar.YEAR, 1990);
+        cal.set(Calendar.MONTH, 1);
+        cal.set(Calendar.DAY_OF_MONTH, 26);
+        
+        Date date = cal.getTime();
+        System.out.println("The date is: " + date.toString());
+                
     }
     static final Gson gson = new Gson();
     static final String json = "{\n" +

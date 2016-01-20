@@ -543,6 +543,39 @@ public class ListUtil {
         return resp;
     }
 
+    public static ResponseDTO getProjectStatusPhotos(EntityManager em, Integer projectID) {
+        ResponseDTO resp = new ResponseDTO();
+        Query q = em.createNamedQuery("PhotoUpload.findByProject", PhotoUpload.class);
+        q.setParameter("projectID", projectID);
+        List<PhotoUpload> list = q.getResultList();
+        resp.setPhotoUploadList(new ArrayList<>());
+        for (PhotoUpload p : list) {
+            resp.getPhotoUploadList().add(new PhotoUploadDTO(p));
+        }
+
+        q = em.createNamedQuery("ProjectTask.findByProject", ProjectTask.class);
+        q.setParameter("projectID", projectID);
+        List<ProjectTask> listp = q.getResultList();
+        resp.setProjectTaskList(new ArrayList<>());
+
+        Query q1 = em.createNamedQuery("ProjectTaskStatus.findByProject", ProjectTaskStatus.class);
+        q1.setParameter("projectID", projectID);
+        List<ProjectTaskStatus> tsList = q1.getResultList();
+        for (ProjectTask p : listp) {
+            ProjectTaskDTO pt = new ProjectTaskDTO(p);
+            pt.setProjectTaskStatusList(new ArrayList<>());
+            for (ProjectTaskStatus tts : tsList) {
+                if (Objects.equals(tts.getProjectTask().getProjectTaskID(), pt.getProjectTaskID())) {
+                    pt.getProjectTaskStatusList().add(new ProjectTaskStatusDTO(tts));
+                }
+            }
+
+            resp.getProjectTaskList().add(pt);
+        }
+
+        return resp;
+    }
+
     public static ResponseDTO getChatsByProject(EntityManager em, Integer projectID) {
         ResponseDTO resp = new ResponseDTO();
         Query q = em.createNamedQuery("Chat.findByProject", Chat.class);
@@ -952,7 +985,7 @@ public class ListUtil {
             then = then.withMinuteOfHour(0);
             then = then.withSecondOfMinute(0);
 
-            project.setProjectTaskList(getProjectStatus(em, projectID, then.toDate(), now.toDate()).getProjectTaskList());
+            project.setProjectTaskList(ListUtil.getProjectStatus(em, projectID, then.toDate(), now.toDate()).getProjectTaskList());
             project.setPhotoUploadList(getPhotosByProject(em, projectID, then.toDate(), now.toDate()).getPhotoUploadList());
 
             resp.setProjectList(new ArrayList<>());

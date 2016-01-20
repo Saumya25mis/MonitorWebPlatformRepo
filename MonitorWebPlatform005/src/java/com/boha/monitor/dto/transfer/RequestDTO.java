@@ -134,7 +134,8 @@ public class RequestDTO implements Serializable {
             GET_MONITOR_PHOTOS = 131,
             GET_LOCATION_TRACK_BY_MONITOR_IN_PERIOD = 132,
             GET_STAFF_PHOTOS = 133,
-            GET_MONITOR_SUMMARY = 134;
+            GET_MONITOR_SUMMARY = 134,
+            GET_PROJECT_STATUS_PHOTOS = 135;
     //
     public static final int LOGIN_STAFF = 200,
             LOGIN_STAFF_DATA_SETUP = 201,

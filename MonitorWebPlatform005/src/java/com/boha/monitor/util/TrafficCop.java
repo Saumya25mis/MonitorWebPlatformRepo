@@ -11,7 +11,6 @@ import com.boha.monitor.dto.transfer.ResponseDTO;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -53,6 +52,9 @@ public class TrafficCop {
                 break;
             case RequestDTO.GET_STAFF_DATA:
                 resp = ListUtil.getProjectDataForStaff(dataUtil.getEntityManager(), req.getStaffID());
+                break;
+                case RequestDTO.GET_PROJECT_STATUS_PHOTOS:
+                resp = ListUtil.getProjectStatusPhotos(dataUtil.getEntityManager(), req.getProjectID());
                 break;
            
             case RequestDTO.IMPORT_PROJECT_INFO:
