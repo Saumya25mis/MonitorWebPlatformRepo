@@ -34,8 +34,8 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(name = "gcmDevice")
 @NamedQueries({
-    @NamedQuery(name = "GcmDevice.findCompanyStaffDevices", 
-            query = "SELECT g FROM GcmDevice g WHERE g.company.companyID = :companyID and g.staff IS NOT NULL"),
+    @NamedQuery(name = "GcmDevice.findCompanyDevices", 
+            query = "SELECT g FROM GcmDevice g WHERE g.company.companyID = :companyID"),
     
     @NamedQuery(name = "GcmDevice.findByMonitorIDs", 
             query = "SELECT g FROM GcmDevice g WHERE g.monitor.monitorID IN :list"),

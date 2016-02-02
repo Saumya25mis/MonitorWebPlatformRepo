@@ -731,14 +731,14 @@ public class DataUtil {
         try {
             GcmDevice g = new GcmDevice();
             g.setCompany(em.find(Company.class, d.getCompanyID()));
-            if (d.getStaffID()
+            if (d.getStaff()
                     != null) {
-                g.setStaff(em.find(Staff.class, d.getStaffID()));
+                g.setStaff(em.find(Staff.class, d.getStaff().getStaffID()));
             }
 
-            if (d.getMonitorID()
+            if (d.getMonitor()
                     != null) {
-                g.setMonitor(em.find(Monitor.class, d.getMonitorID()));
+                g.setMonitor(em.find(Monitor.class, d.getMonitor().getMonitorID()));
             }
 
             g.setDateRegistered(

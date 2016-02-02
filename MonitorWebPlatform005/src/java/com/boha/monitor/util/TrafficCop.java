@@ -50,13 +50,19 @@ public class TrafficCop {
             case RequestDTO.GET_COMPANY_LIST:
                 resp = ListUtil.getCompanyList(dataUtil.getEntityManager());
                 break;
+            case RequestDTO.GET_COMPANY_DEVICES:
+                resp = ListUtil.getDeviceList(dataUtil.getEntityManager(), req.getCompanyID());
+                break;
+            case RequestDTO.GET_LOCATION_TRACK_BY_DEVICE:
+                resp = ListUtil.getLocationTracksByDevice(dataUtil.getEntityManager(), req.getGcmDevice().getGcmDeviceID());
+                break;
             case RequestDTO.GET_STAFF_DATA:
                 resp = ListUtil.getProjectDataForStaff(dataUtil.getEntityManager(), req.getStaffID());
                 break;
-                case RequestDTO.GET_PROJECT_STATUS_PHOTOS:
+            case RequestDTO.GET_PROJECT_STATUS_PHOTOS:
                 resp = ListUtil.getProjectStatusPhotos(dataUtil.getEntityManager(), req.getProjectID());
                 break;
-           
+
             case RequestDTO.IMPORT_PROJECT_INFO:
                 resp = dataUtil.importProject(req.getProject());
                 break;
@@ -172,7 +178,7 @@ public class TrafficCop {
             case RequestDTO.ADD_SUB_TASKS:
                 resp = dataUtil.addSubTasks(req.getSubTaskList());
                 break;
-           
+
             case RequestDTO.ADD_MONITOR_PROJECTS:
                 resp = dataUtil.addMonitorProjects(req.getMonitorProjectList());
                 break;

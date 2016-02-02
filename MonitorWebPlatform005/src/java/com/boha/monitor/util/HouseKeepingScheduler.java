@@ -4,13 +4,10 @@ import java.io.File;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.Resource;
 import javax.ejb.Schedule;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.ejb.Stateless;
-import javax.ejb.Timeout;
-import javax.ejb.TimerService;
 
 /**
  *
@@ -24,7 +21,6 @@ public class HouseKeepingScheduler {
     @Schedule(minute = "*/30", hour = "*")
     public void cleanUp() {
         startDiskCleanup();
-        System.out.println("###### HousekeepingScheduler fired. Do something --> ");
     }
 
 
@@ -33,7 +29,7 @@ public class HouseKeepingScheduler {
      */
     private void startDiskCleanup() {
         
-        printMessageHead();
+        //printMessageHead();
         int count = 0;
         File dir = MonitorProperties.getTemporaryDir();
         if (dir.exists()) {

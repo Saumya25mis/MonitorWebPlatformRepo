@@ -53,6 +53,9 @@ import javax.validation.constraints.Size;
             query = "SELECT m FROM LocationTracker m where m.company.companyID = :companyID "
                     + "and m.dateTracked BETWEEN :dateFrom and :dateTo "
                     + "order by m.dateTracked desc"),
+    @NamedQuery(name = "LocationTracker.findByDevice", 
+            query = "SELECT m FROM LocationTracker m where m.gcmDevice.gcmDeviceID = :gcmDeviceID "
+                    + "order by m.dateTracked desc"),
     
     @NamedQuery(name = "LocationTracker.findByMonitor", 
             query = "SELECT m FROM LocationTracker m "

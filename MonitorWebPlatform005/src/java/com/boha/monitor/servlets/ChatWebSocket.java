@@ -25,6 +25,7 @@ import javax.websocket.server.ServerEndpoint;
  *
  * @author aubreyM
  */
+@Deprecated
 @ServerEndpoint("/wschat")
 @Stateless
 public class ChatWebSocket {

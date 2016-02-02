@@ -35,6 +35,7 @@ import javax.websocket.server.ServerEndpoint;
  *
  * @author aubreyM
  */
+@Deprecated
 @ServerEndpoint("/wsmonitor")
 @Stateless
 public class MonitorWebSocket {

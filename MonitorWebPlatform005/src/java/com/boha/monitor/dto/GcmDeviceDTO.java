@@ -22,7 +22,9 @@ public class GcmDeviceDTO {
     private Integer messageCount;
     private long dateRegistered;
     private String serialNumber, androidVersion;
-    private Integer staffID, companyID, monitorID;
+    private Integer companyID;
+    private StaffDTO staff;
+    private MonitorDTO monitor;
 
     public GcmDeviceDTO(GcmDevice a) {
         gcmDeviceID = a.getGcmDeviceID();
@@ -37,7 +39,10 @@ public class GcmDeviceDTO {
         }
         serialNumber = a.getSerialNumber();
         if (a.getStaff() != null) {
-            staffID = a.getStaff().getStaffID();
+            staff = new StaffDTO(a.getStaff());
+        }
+        if (a.getMonitor()!= null) {
+            monitor = new MonitorDTO(a.getMonitor());
         }
         if (a.getCompany() != null) {
             companyID = a.getCompany().getCompanyID();
@@ -45,6 +50,22 @@ public class GcmDeviceDTO {
         
         androidVersion = a.getAndroidVersion();
 
+    }
+
+    public StaffDTO getStaff() {
+        return staff;
+    }
+
+    public void setStaff(StaffDTO staff) {
+        this.staff = staff;
+    }
+
+    public MonitorDTO getMonitor() {
+        return monitor;
+    }
+
+    public void setMonitor(MonitorDTO monitor) {
+        this.monitor = monitor;
     }
 
     public String getApp() {
@@ -127,28 +148,13 @@ public class GcmDeviceDTO {
         this.androidVersion = androidVersion;
     }
 
-    public Integer getStaffID() {
-        return staffID;
-    }
-
-    public void setStaffID(Integer staffID) {
-        this.staffID = staffID;
-    }
-
+ 
     public Integer getCompanyID() {
         return companyID;
     }
 
     public void setCompanyID(Integer companyID) {
         this.companyID = companyID;
-    }
-
-    public Integer getMonitorID() {
-        return monitorID;
-    }
-
-    public void setMonitorID(Integer monitorID) {
-        this.monitorID = monitorID;
     }
 
 }

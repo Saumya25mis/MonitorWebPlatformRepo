@@ -64,7 +64,7 @@ public class SignInUtil {
 
             if (device != null) {
                 device.setCompanyID(company.getCompanyID());
-                device.setStaffID(cs.getStaffID());
+                device.setStaff(dto);
                 resp.setGcmDeviceList(new ArrayList<>());
                 resp.getGcmDeviceList().add(addStaffDevice(device));
             }
@@ -95,7 +95,7 @@ public class SignInUtil {
 
             if (device != null) {
                 device.setCompanyID(company.getCompanyID());
-                device.setStaffID(cs.getStaffID());
+                device.setStaff(new StaffDTO(cs));
                 resp.getGcmDeviceList().add(addStaffDevice(device));
             }
 
@@ -139,7 +139,7 @@ public class SignInUtil {
 
             if (device != null) {
                 device.setCompanyID(company.getCompanyID());
-                device.setMonitorID(cs.getMonitorID());
+                device.setMonitor(dto);
                 resp.getGcmDeviceList().add(addMonitorDevice(device));
             }
 
@@ -198,17 +198,20 @@ public class SignInUtil {
             Query q = em.createNamedQuery("GcmDevice.findBySerialNumberApp", GcmDevice.class);
             q.setParameter("serialNumber", d.getSerialNumber());
             q.setParameter("app", d.getApp());
-            q.setMaxResults(1);
-            try {
-                g = (GcmDevice) q.getSingleResult();
-                isUpdate = true;
-            } catch (NoResultException e) {
-                g = new GcmDevice();
-                g.setCompany(em.find(Company.class, d.getCompanyID()));
+            List<GcmDevice> list = q.getResultList();
+            //delete device registered for this app
+            for (GcmDevice dev : list) {
+                log.log(Level.OFF, "removing Monitor Device: {0} {1}", 
+                        new Object[]{dev.getModel(), dev.getApp()});
+                em.remove(dev);
             }
 
+            //add device
+            g = new GcmDevice();
+            g.setCompany(em.find(Company.class, d.getCompanyID()));
+
             g.setStaff(null);
-            g.setMonitor(em.find(Monitor.class, d.getMonitorID()));
+            g.setMonitor(em.find(Monitor.class, d.getMonitor().getMonitorID()));
             g.setDateRegistered(new Date());
             g.setManufacturer(d.getManufacturer());
             g.setMessageCount(0);
@@ -241,21 +244,23 @@ public class SignInUtil {
     public GcmDeviceDTO addStaffDevice(GcmDeviceDTO d) throws DataException {
         GcmDeviceDTO device = null;
         GcmDevice g = null;
-        boolean isUpdate = false;
         try {
             Query q = em.createNamedQuery("GcmDevice.findBySerialNumberApp", GcmDevice.class);
             q.setParameter("serialNumber", d.getSerialNumber());
             q.setParameter("app", d.getApp());
-            q.setMaxResults(1);
-            try {
-                g = (GcmDevice) q.getSingleResult();
-                isUpdate = true;
-            } catch (NoResultException e) {
-                g = new GcmDevice();
-                g.setCompany(em.find(Company.class, d.getCompanyID()));
+            List<GcmDevice> list = q.getResultList();
+            //delete device registered for this app
+            for (GcmDevice dev : list) {
+                log.log(Level.OFF, "removing staff Device: {0} {1}", 
+                        new Object[]{dev.getModel(), dev.getApp()});
+                em.remove(dev);
             }
-
-            g.setStaff(em.find(Staff.class, d.getStaffID()));
+            em.flush();
+            
+            //add device
+            g = new GcmDevice();
+            g.setCompany(em.find(Company.class, d.getCompanyID()));
+            g.setStaff(em.find(Staff.class, d.getStaff().getStaffID()));
             g.setMonitor(null);
             g.setDateRegistered(new Date());
             g.setManufacturer(d.getManufacturer());
@@ -267,18 +272,13 @@ public class SignInUtil {
             g.setAndroidVersion(d.getAndroidVersion());
             g.setApp(d.getApp());
 
-            if (isUpdate) {
-                em.merge(g);
-                log.log(Level.INFO, "Staff device updated: {0}  Android Version: {1}", new Object[]{g.getModel(), g.getAndroidVersion()});
-            } else {
-                em.persist(g);
-                log.log(Level.INFO, "New staff device loaded: {0}  Android Version: {1}", new Object[]{g.getModel(), g.getAndroidVersion()});
-            }
+            em.persist(g);
+            log.log(Level.INFO, "New staff device loaded: {0}  Android Version: {1}", new Object[]{g.getModel(), g.getAndroidVersion()});
+
             em.flush();
             device = new GcmDeviceDTO(g);
 
         } catch (PersistenceException e) {
-
             em.merge(g);
         } catch (Exception e) {
             log.log(Level.SEVERE, "Failed", e);

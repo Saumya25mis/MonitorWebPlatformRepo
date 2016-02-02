@@ -458,6 +458,30 @@ public class ListUtil {
         return list;
     }
 
+    public static ResponseDTO getLocationTracksByDevice(EntityManager em, Integer deviceID) {
+        ResponseDTO resp = new ResponseDTO();
+        resp.setLocationTrackerList(new ArrayList<>());
+        Query q = em.createNamedQuery("LocationTracker.findByDevice", LocationTracker.class);
+        q.setParameter("gcmDeviceID", deviceID);
+        List<LocationTracker> tList = q.getResultList();
+        for (LocationTracker gcm : tList) {
+            resp.getLocationTrackerList().add(new LocationTrackerDTO(gcm));
+        }
+        log.log(Level.OFF, "Device locations found: {0}", resp.getLocationTrackerList().size());
+        return resp;
+    }
+    public static ResponseDTO getDeviceList(EntityManager em, Integer companyID) {
+        ResponseDTO resp = new ResponseDTO();
+        resp.setGcmDeviceList(new ArrayList<>());
+        Query q = em.createNamedQuery("GcmDevice.findCompanyDevices", GcmDeviceDTO.class);
+        q.setParameter("companyID", companyID);
+        List<GcmDevice> tList = q.getResultList();
+        for (GcmDevice gcm : tList) {
+            resp.getGcmDeviceList().add(new GcmDeviceDTO(gcm));
+        }
+        log.log(Level.OFF, "Company devices found: {0}", resp.getGcmDeviceList().size());
+        return resp;
+    }
     public static List<ProjectDTO> getProjectList(EntityManager em, Integer programmeID) {
         List<ProjectDTO> list = new ArrayList<>();
         Query q = em.createNamedQuery("Project.findByProgramme", Project.class);
@@ -704,6 +728,7 @@ public class ListUtil {
         list.stream().forEach((t) -> {
             resp.getLocationTrackerList().add(new LocationTrackerDTO(t));
         });
+        
         log.log(Level.INFO, "LocationTrackers found, db: {0} out: {1}",
                 new Object[]{list.size(), resp.getLocationTrackerList().size()});
         return resp;
