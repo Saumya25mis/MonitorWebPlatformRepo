@@ -21,7 +21,6 @@ import java.util.List;
 
     private List<ProjectStatusTypeDTO> projectStatusTypeList;
     private List<StaffDTO> staffList;
-    private List<StaffTypeDTO> staffTypeList;
     private List<TaskStatusTypeDTO> taskStatusTypeList;
     private List<MonitorDTO> monitorList;
     private List<PortfolioDTO> portfolioList;
@@ -35,6 +34,7 @@ import java.util.List;
         address = a.getAddress();
         email = a.getEmail();
         cellphone = a.getCellphone();
+        
 
     }  
 
@@ -94,14 +94,6 @@ import java.util.List;
 
     public void setStaffList(List<StaffDTO> staffList) {
         this.staffList = staffList;
-    }
-
-    public List<StaffTypeDTO> getStaffTypeList() {
-        return staffTypeList;
-    }
-
-    public void setStaffTypeList(List<StaffTypeDTO> staffTypeList) {
-        this.staffTypeList = staffTypeList;
     }
 
     public List<TaskStatusTypeDTO> getTaskStatusTypeList() {

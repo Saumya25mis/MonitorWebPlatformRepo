@@ -22,6 +22,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -35,6 +36,8 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(name = "project")
 @NamedQueries({
+	@NamedQuery(name = "Project.findByCompany",
+            query = "SELECT p FROM Project p WHERE p.company.companyID = :companyID order by p.projectName"),
     @NamedQuery(name = "Project.findByProgramme",
             query = "SELECT p FROM Project p WHERE p.programme.programmeID = :programmeID ORDER BY p.projectName ")
 })
@@ -44,14 +47,15 @@ public class Project implements Serializable {
     @JoinColumn(name = "companyID", referencedColumnName = "companyID")
     @ManyToOne
     private Company company;
-    @OneToMany(mappedBy = "project")
+    @OneToMany(mappedBy = "project", fetch = FetchType.EAGER)
     private List<VideoUpload> videoUploadList;
     private static final long serialVersionUID = 1L;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "project", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "project", fetch = FetchType.EAGER)
     private List<ProjectTask> projectTaskList;
 
-    @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "project", fetch = FetchType.EAGER)
+    @OrderBy("dateTaken desc")
     private List<PhotoUpload> photoUploadList;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -87,21 +91,21 @@ public class Project implements Serializable {
     private String description;
 
     @JoinColumn(name = "programmeID", referencedColumnName = "programmeID")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Programme programme;
     @JoinColumn(name = "cityID", referencedColumnName = "cityID")
     @ManyToOne(optional = false)
     private City city;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "project")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "project", fetch = FetchType.EAGER)
     private List<ProjectStatus> projectStatusList;
-    @OneToMany(mappedBy = "project")
+    @OneToMany(mappedBy = "project", fetch = FetchType.EAGER)
     private List<GcmDevice> gcmDeviceList;
     @OneToMany(mappedBy = "project")
     private List<Chat> chatList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "project")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "project", fetch = FetchType.EAGER)
     private List<MonitorProject> monitorProjectList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "project")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "project", fetch = FetchType.EAGER)
     private List<StaffProject> staffProjectList;
 
     public Project() {

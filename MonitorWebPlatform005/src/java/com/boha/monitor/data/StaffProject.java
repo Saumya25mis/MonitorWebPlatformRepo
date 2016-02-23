@@ -11,6 +11,7 @@ import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -31,7 +32,9 @@ import javax.validation.constraints.NotNull;
 @Table(name = "staffProject")
 @NamedQueries({
     @NamedQuery(name = "StaffProject.findByStaff", 
-            query = "SELECT s.project FROM StaffProject s WHERE s.staff.staffID = :staffID and s.activeFlag = TRUE order by s.project.projectName"),
+            query = "SELECT s FROM StaffProject s WHERE s.staff.staffID = :staffID and s.activeFlag = TRUE order by s.project.projectName"),
+    @NamedQuery(name = "StaffProject.findStaffProjects", 
+            query = "SELECT s FROM StaffProject s WHERE s.staff.staffID = :staffID and s.activeFlag = TRUE order by s.project.projectName"),
        
     @NamedQuery(name = "StaffProject.findByActiveFlag", 
             query = "SELECT s FROM StaffProject s WHERE s.activeFlag = :activeFlag")
@@ -51,10 +54,10 @@ public class StaffProject implements Serializable {
     @Column(name = "activeFlag")
     private Boolean activeFlag;
     @JoinColumn(name = "staffID", referencedColumnName = "staffID")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Staff staff;
     @JoinColumn(name = "projectID", referencedColumnName = "projectID")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Project project;
 
     public StaffProject() {

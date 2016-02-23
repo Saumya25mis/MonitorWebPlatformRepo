@@ -7,27 +7,27 @@ package com.boha.monitor.servlets;
 
 import com.boha.monitor.dto.transfer.RequestDTO;
 import com.boha.monitor.dto.transfer.ResponseDTO;
-import com.boha.monitor.util.DataUtil;
-import com.boha.monitor.util.GZipUtility;
-import com.boha.monitor.util.ServerStatus;
-import com.boha.monitor.util.SignInUtil;
-import com.boha.monitor.util.TrafficCop;
+import com.boha.monitor.utilx.DataUtil;
+import com.boha.monitor.utilx.GZipUtility;
+import com.boha.monitor.utilx.ProjectTaskGen;
+import com.boha.monitor.utilx.ServerStatus;
+import com.boha.monitor.utilx.SignInUtil;
+import com.boha.monitor.utilx.TrafficCop;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import com.oreilly.servlet.ServletUtils;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.zip.GZIPOutputStream;
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.io.FileUtils;
 
 /**
  *
@@ -36,10 +36,15 @@ import org.apache.commons.io.FileUtils;
 @WebServlet(name = "MonitorGatewayServletX", urlPatterns = {"/gatex"})
 public class MonitorGatewayServletX extends HttpServlet {
 
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
     @EJB
     DataUtil dataUtil;
     @EJB
     SignInUtil signInUtil;
+    
 
     static final String SOURCE = "MonitorGatewayServletX";
 
@@ -52,6 +57,7 @@ public class MonitorGatewayServletX extends HttpServlet {
 //            String nextElement = m.nextElement();
 //            System.out.println(nextElement + ": " + request.getHeader(nextElement));
 //        }
+        
         Gson gson = new Gson();
         RequestDTO dto = getRequest(gson, request);
         ResponseDTO resp = new ResponseDTO();
@@ -72,14 +78,29 @@ public class MonitorGatewayServletX extends HttpServlet {
             resp.setMessage(ServerStatus.getMessage(resp.getStatusCode()));
         } finally {
             String json = gson.toJson(resp);
+            System.out.println("Length of JSON returned: " + json.length());
             if (dto != null) {
                 if (dto.isZipResponse()) {
-                    File file = GZipUtility.getZipped(json);
-                    response.setContentType("application/octet-stream");
-                    response.setHeader("Content-Disposition", "fileName=monitordata.zip");
-                    response.setHeader("Accept-Encoding", "gzip");
-                    FileUtils.copyFile(file, response.getOutputStream());
-                    file.deleteOnExit();
+//                    File file = GZipUtility.getZipped(json);
+//                    
+//                    
+//                    response.setContentType("application/octet-stream");
+//                    response.setHeader("Content-Disposition", "fileName=monitordata.zip");
+//                    response.setHeader("Accept-Encoding", "gzip");
+//                    FileUtils.copyFile(file, response.getOutputStream());
+//                    file.deleteOnExit();
+                    try {
+                        response.setContentType("application/zip;charset=UTF-8");
+                        File zipped = GZipUtility.getZipped(json);
+                        ServletUtils.returnFile(zipped.getAbsolutePath(), response.getOutputStream());
+                        response.getOutputStream().close();
+                    } catch (IOException e) {
+                        response.setContentType("application/json;charset=UTF-8");
+                        try (PrintWriter out = response.getWriter()) {
+                            out.println(json);
+                        }
+                        log.log(Level.SEVERE, "Zipping problem - probably the zipper cannot find the zipped file", e);
+                    }
 
                 } else {
                     response.setContentType("application/json;charset=UTF-8");

@@ -39,8 +39,10 @@ import javax.validation.constraints.Size;
     
     @NamedQuery(name = "GcmDevice.findByMonitorIDs", 
             query = "SELECT g FROM GcmDevice g WHERE g.monitor.monitorID IN :list"),
+    
     @NamedQuery(name = "GcmDevice.findByStaffIDs", 
             query = "SELECT g FROM GcmDevice g WHERE g.staff.staffID IN :list"),
+    
     @NamedQuery(name = "GcmDevice.findByModel", 
             query = "SELECT g FROM GcmDevice g WHERE g.model = :model"),
     @NamedQuery(name = "GcmDevice.findBySerialNumberApp", 

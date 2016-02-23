@@ -20,6 +20,7 @@ import javax.persistence.Lob;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -35,16 +36,20 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "Company.findByCompanyName", query = "SELECT c FROM Company c WHERE c.companyName = :companyName")
 })
 public class Company implements Serializable {
-    @OneToMany(mappedBy = "company")
+    @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
     private List<LocationTracker> locationTrackerList;
-    @OneToMany(mappedBy = "company")
+    @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
     private List<SimpleMessage> simpleMessageList;
-    @OneToMany(mappedBy = "company")
+    
+    @OneToMany(mappedBy = "company", fetch = FetchType.EAGER)
+    @OrderBy("projectName")
     private List<Project> projectList;
-    @OneToMany(mappedBy = "company")
+    
+    @OneToMany(mappedBy = "company", fetch = FetchType.EAGER)
+    @OrderBy("taskName")
     private List<Task> taskList;
     
-    @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "company", fetch = FetchType.EAGER)
     private List<GcmDevice> gcmDeviceList;
     @Size(max = 255)
     @Column(name = "email")
@@ -70,19 +75,19 @@ public class Company implements Serializable {
     
     @OneToMany(mappedBy = "company")
     private List<ErrorStoreAndroid> errorStoreAndroidList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "company", fetch = FetchType.EAGER)
     
     
     private List<Monitor> monitorList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "company", fetch = FetchType.EAGER)
     private List<Staff> staffList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "company", fetch = FetchType.EAGER)
     private List<TaskStatusType> taskStatusTypeList;
     
     
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "company", fetch = FetchType.EAGER)
     private List<Portfolio> portfolioList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "company", fetch = FetchType.EAGER)
     private List<ProjectStatusType> projectStatusTypeList;
 
     public Company() {

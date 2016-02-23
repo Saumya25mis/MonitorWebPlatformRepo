@@ -18,13 +18,13 @@ public class GcmDeviceDTO {
     private String registrationID;
     private String manufacturer;
     private String model;
-    private String product, app;
+    private String product, app, name;
     private Integer messageCount;
     private long dateRegistered;
     private String serialNumber, androidVersion;
     private Integer companyID;
-    private StaffDTO staff;
-    private MonitorDTO monitor;
+    private Integer staffID;
+    private Integer monitorID;
 
     public GcmDeviceDTO(GcmDevice a) {
         gcmDeviceID = a.getGcmDeviceID();
@@ -38,11 +38,15 @@ public class GcmDeviceDTO {
             dateRegistered = a.getDateRegistered().getTime();
         }
         serialNumber = a.getSerialNumber();
-        if (a.getStaff() != null) {
-            staff = new StaffDTO(a.getStaff());
+        Staff s = a.getStaff();
+        if (s != null) {
+            staffID = s.getStaffID();
+            name = s.getFirstName() + " " + s.getLastName();
         }
-        if (a.getMonitor()!= null) {
-            monitor = new MonitorDTO(a.getMonitor());
+        Monitor m = a.getMonitor();
+        if (m != null) {
+            monitorID = m.getMonitorID();
+            name = m.getFirstName() + " " + m.getLastName();
         }
         if (a.getCompany() != null) {
             companyID = a.getCompany().getCompanyID();
@@ -52,21 +56,31 @@ public class GcmDeviceDTO {
 
     }
 
-    public StaffDTO getStaff() {
-        return staff;
+    public String getName() {
+        return name;
     }
 
-    public void setStaff(StaffDTO staff) {
-        this.staff = staff;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public MonitorDTO getMonitor() {
-        return monitor;
+    public Integer getStaffID() {
+        return staffID;
     }
 
-    public void setMonitor(MonitorDTO monitor) {
-        this.monitor = monitor;
+    public void setStaffID(Integer staffID) {
+        this.staffID = staffID;
     }
+
+    public Integer getMonitorID() {
+        return monitorID;
+    }
+
+    public void setMonitorID(Integer monitorID) {
+        this.monitorID = monitorID;
+    }
+
+  
 
     public String getApp() {
         return app;

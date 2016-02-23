@@ -70,6 +70,7 @@ import javax.validation.constraints.Size;
     
 })
 public class LocationTracker implements Serializable {
+
     @JoinColumn(name = "companyID", referencedColumnName = "companyID")
     @ManyToOne
     private Company company;
@@ -252,8 +253,5 @@ public class LocationTracker implements Serializable {
     public void setCompany(Company company) {
         this.company = company;
     }
-
-   
- 
     
 }

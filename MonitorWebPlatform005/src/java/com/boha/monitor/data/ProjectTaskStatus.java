@@ -20,6 +20,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -49,11 +50,12 @@ import javax.validation.constraints.NotNull;
             query = "SELECT p FROM ProjectTaskStatus p WHERE p.projectTask.projectTaskID = :projectTaskID and p.monitor.monitorID = :monitorID ORDER BY p.dateUpdated desc")
 })
 public class ProjectTaskStatus implements Serializable {
-    @OneToMany(mappedBy = "projectTaskStatus")
+    @OneToMany(mappedBy = "projectTaskStatus", fetch = FetchType.EAGER)
+    @OrderBy("dateTaken desc")
     private List<PhotoUpload> photoUploadList;
 
     @JoinColumn(name = "projectTaskID", referencedColumnName = "projectTaskID")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private ProjectTask projectTask;
     private static final long serialVersionUID = 1L;
     @Id
@@ -71,13 +73,13 @@ public class ProjectTaskStatus implements Serializable {
     private Date dateUpdated;
 
     @JoinColumn(name = "taskStatusTypeID", referencedColumnName = "taskStatusTypeID")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private TaskStatusType taskStatusType;
     @JoinColumn(name = "staffID", referencedColumnName = "staffID")
-    @ManyToOne
+    @ManyToOne(optional = true, fetch = FetchType.EAGER)
     private Staff staff;
     @JoinColumn(name = "monitorID", referencedColumnName = "monitorID")
-    @ManyToOne
+    @ManyToOne(optional = true, fetch = FetchType.EAGER)
     private Monitor monitor;
 
     public ProjectTaskStatus() {

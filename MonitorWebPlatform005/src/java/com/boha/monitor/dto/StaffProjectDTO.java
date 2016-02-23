@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.boha.monitor.dto;
 
 import com.boha.monitor.data.StaffProject;
@@ -14,6 +13,7 @@ import java.io.Serializable;
  * @author aubreyM
  */
 public class StaffProjectDTO implements Serializable {
+
     private static final long serialVersionUID = 1L;
     private Integer staffProjectID;
     private Long dateAssigned;
@@ -25,15 +25,17 @@ public class StaffProjectDTO implements Serializable {
     public StaffProjectDTO() {
     }
 
-   
-
     public StaffProjectDTO(StaffProject a) {
         this.staffProjectID = a.getStaffProjectID();
         this.dateAssigned = a.getDateAssigned().getTime();
         activeFlag = a.getActiveFlag();
-        staffID = a.getStaff().getStaffID();
-        projectID = a.getProject().getProjectID();
-        projectName = a.getProject().getProjectName();
+        if (a.getStaff() != null) {
+            staffID = a.getStaff().getStaffID();
+        }
+        if (a.getProject() != null) {
+            projectID = a.getProject().getProjectID();
+            projectName = a.getProject().getProjectName();
+        }
     }
 
     public Integer getStaffProjectID() {
@@ -43,8 +45,6 @@ public class StaffProjectDTO implements Serializable {
     public void setStaffProjectID(Integer staffProjectID) {
         this.staffProjectID = staffProjectID;
     }
-
-
 
     public Boolean getActiveFlag() {
         return activeFlag;
@@ -86,9 +86,6 @@ public class StaffProjectDTO implements Serializable {
         this.projectName = projectName;
     }
 
-   
-   
-
     @Override
     public int hashCode() {
         int hash = 0;
@@ -113,5 +110,5 @@ public class StaffProjectDTO implements Serializable {
     public String toString() {
         return "com.boha.monitor.data.StaffProject[ staffProjectID=" + staffProjectID + " ]";
     }
-    
+
 }

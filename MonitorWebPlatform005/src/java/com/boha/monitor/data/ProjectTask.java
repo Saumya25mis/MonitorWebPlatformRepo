@@ -22,6 +22,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -35,15 +36,20 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "projectTask")
 @NamedQueries({
+    @NamedQuery(name = "ProjectTask.findByCompany", 
+            query = "SELECT p FROM ProjectTask p where p.project.company.companyID = :companyID"),
+    @NamedQuery(name = "ProjectTask.deleteByCompany", 
+            query = "DELETE FROM ProjectTask p where p.project.company.companyID = :companyID"),
     @NamedQuery(name = "ProjectTask.findByProject", 
             query = "SELECT p FROM ProjectTask p where p.project.projectID = :projectID order by p.task.taskName")
     
 })
 public class ProjectTask implements Serializable {
-    @OneToMany(mappedBy = "projectTask")
+    @OneToMany(mappedBy = "projectTask", fetch = FetchType.EAGER)
+    @OrderBy("dateTaken desc")
     private List<VideoUpload> videoUploadList;
     @JoinColumn(name = "taskID", referencedColumnName = "taskID")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Task task;
    
     private static final long serialVersionUID = 1L;
@@ -58,12 +64,14 @@ public class ProjectTask implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateRegistered;
     @JoinColumn(name = "projectID", referencedColumnName = "projectID")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Project project;
     
-    @OneToMany(mappedBy = "projectTask", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "projectTask", fetch = FetchType.EAGER)
+    @OrderBy("dateTaken desc")
     private List<PhotoUpload> photoUploadList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "projectTask", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "projectTask", fetch = FetchType.EAGER)
+    @OrderBy("statusDate desc")
     private List<ProjectTaskStatus> projectTaskStatusList;
 
     

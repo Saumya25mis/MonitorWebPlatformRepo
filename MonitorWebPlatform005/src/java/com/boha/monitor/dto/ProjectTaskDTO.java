@@ -5,7 +5,9 @@
  */
 package com.boha.monitor.dto;
 
+import com.boha.monitor.data.PhotoUpload;
 import com.boha.monitor.data.ProjectTask;
+import com.boha.monitor.data.ProjectTaskStatus;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,13 +36,31 @@ public class ProjectTaskDTO implements Serializable {
         if (a.getDateRegistered() != null) {
             this.dateRegistered = a.getDateRegistered().getTime();
         }
-        projectID = a.getProject().getProjectID();
-        latitude = a.getProject().getLatitude();
-        longitude = a.getProject().getLongitude();
-        task = new TaskDTO(a.getTask());
-        projectName = a.getProject().getProjectName();
-        photoUploadList = new ArrayList<>();
-        projectTaskStatusList = new ArrayList<>();
+        if (a.getProject() != null) {
+            projectID = a.getProject().getProjectID();
+//            projectName = a.getProject().getProjectName();
+            latitude = a.getProject().getLatitude();
+            longitude = a.getProject().getLongitude();
+        }
+
+        if (a.getTask() != null) {
+            task = new TaskDTO(a.getTask());
+        }
+
+        
+        if (a.getProjectTaskStatusList() != null) {
+            projectTaskStatusList = new ArrayList<>();
+            for (ProjectTaskStatus ps : a.getProjectTaskStatusList()) {
+                projectTaskStatusList.add(new ProjectTaskStatusDTO(ps));
+            }
+        }
+        if (a.getPhotoUploadList() != null) {
+            photoUploadList = new ArrayList<>();
+            for (PhotoUpload p : a.getPhotoUploadList()) {
+                photoUploadList.add(new PhotoUploadDTO(p));
+            }
+        }
+
     }
 
     public TaskDTO getTask() {

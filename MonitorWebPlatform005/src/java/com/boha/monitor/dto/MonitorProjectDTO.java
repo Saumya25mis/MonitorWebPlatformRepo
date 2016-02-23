@@ -3,21 +3,20 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.boha.monitor.dto;
 
 import com.boha.monitor.data.MonitorProject;
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  *
  * @author aubreyM
  */
 public class MonitorProjectDTO implements Serializable {
+
     private static final long serialVersionUID = 1L;
     private Integer monitorProjectID;
-    private Date dateAssigned;
+    private Long dateAssigned;
     private Boolean activeFlag;
     private Integer monitorID, projectID;
 
@@ -26,10 +25,14 @@ public class MonitorProjectDTO implements Serializable {
 
     public MonitorProjectDTO(MonitorProject a) {
         this.monitorProjectID = a.getMonitorProjectID();
-        this.dateAssigned = a.getDateAssigned();
+        this.dateAssigned = a.getDateAssigned().getTime();
         activeFlag = a.getActiveFlag();
-        monitorID = a.getMonitor().getMonitorID();
-        projectID = a.getProject().getProjectID();
+        if (a.getMonitor() != null) {
+            monitorID = a.getMonitor().getMonitorID();
+        }
+        if (a.getProject() != null) {
+            projectID = a.getProject().getProjectID();
+        }
     }
 
     public Integer getMonitorProjectID() {
@@ -40,11 +43,11 @@ public class MonitorProjectDTO implements Serializable {
         this.monitorProjectID = monitorProjectID;
     }
 
-    public Date getDateAssigned() {
+    public Long getDateAssigned() {
         return dateAssigned;
     }
 
-    public void setDateAssigned(Date dateAssigned) {
+    public void setDateAssigned(Long dateAssigned) {
         this.dateAssigned = dateAssigned;
     }
 
@@ -72,7 +75,6 @@ public class MonitorProjectDTO implements Serializable {
         this.projectID = projectID;
     }
 
-
     @Override
     public int hashCode() {
         int hash = 0;
@@ -97,5 +99,5 @@ public class MonitorProjectDTO implements Serializable {
     public String toString() {
         return "com.boha.monitor.data.MonitorProject[ monitorProjectID=" + monitorProjectID + " ]";
     }
-    
+
 }

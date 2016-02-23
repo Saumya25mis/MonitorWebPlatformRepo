@@ -31,8 +31,7 @@ public class PhotoUploadDTO implements Serializable {
     private Integer staffID, monitorID;
     private Short statusColor;
     private String secureUrl;
-    private String eTag;
-    private String signature;
+    
     private Integer width;
     private Integer height;
     private Integer bytes;
@@ -41,7 +40,6 @@ public class PhotoUploadDTO implements Serializable {
     public PhotoUploadDTO() {
     }
     public static final int TASK_IMAGE = 2, PROJECT_IMAGE = 3, STAFF_IMAGE = 4, MONITOR_IMAGE = 5;
-    private boolean isFullPicture, isStaffPicture;
 
     public PhotoUploadDTO(Integer photoUploadID) {
         this.photoUploadID = photoUploadID;
@@ -63,8 +61,7 @@ public class PhotoUploadDTO implements Serializable {
         }
         
         secureUrl = a.getSecureUrl();
-        eTag = a.getETag();
-        signature = a.getSignature();
+        
         width = a.getWidth();
         height = a.getHeight();
         bytes = a.getBytes();
@@ -86,8 +83,9 @@ public class PhotoUploadDTO implements Serializable {
             monitorID = a.getMonitor().getMonitorID();
             monitorName = a.getMonitor().getFirstName() + " " + a.getMonitor().getLastName();
         }
+        
     }
-
+  
     public Short getStatusColor() {
         return statusColor;
     }
@@ -144,21 +142,7 @@ public class PhotoUploadDTO implements Serializable {
         this.secureUrl = secureUrl;
     }
 
-    public String geteTag() {
-        return eTag;
-    }
-
-    public void seteTag(String eTag) {
-        this.eTag = eTag;
-    }
-
-    public String getSignature() {
-        return signature;
-    }
-
-    public void setSignature(String signature) {
-        this.signature = signature;
-    }
+    
 
     public Integer getWidth() {
         return width;
@@ -184,10 +168,7 @@ public class PhotoUploadDTO implements Serializable {
         this.bytes = bytes;
     }
 
-    public boolean isIsFullPicture() {
-        return isFullPicture;
-    }
-
+  
     public Integer getMonitorID() {
         return monitorID;
     }
@@ -196,17 +177,7 @@ public class PhotoUploadDTO implements Serializable {
         this.monitorID = monitorID;
     }
 
-    public void setIsFullPicture(boolean isFullPicture) {
-        this.isFullPicture = isFullPicture;
-    }
-
-    public boolean isIsStaffPicture() {
-        return isStaffPicture;
-    }
-
-    public void setIsStaffPicture(boolean isStaffPicture) {
-        this.isStaffPicture = isStaffPicture;
-    }
+   
 
     public Long getDateTaken() {
         return dateTaken;

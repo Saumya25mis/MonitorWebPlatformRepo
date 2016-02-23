@@ -34,6 +34,10 @@ import javax.validation.constraints.NotNull;
             query = "SELECT m FROM MonitorTrade m where m.monitor.monitorID = :monitorID order by m.dateRegistered")
 })
 public class MonitorTrade implements Serializable {
+
+    @JoinColumn(name = "taskTypeID", referencedColumnName = "taskTypeID")
+    @ManyToOne(optional = false)
+    private TaskType taskTypeID;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -112,6 +116,14 @@ public class MonitorTrade implements Serializable {
     @Override
     public String toString() {
         return "com.boha.monitor.data.MonitorTrade[ monitorTradeID=" + monitorTradeID + " ]";
+    }
+
+    public TaskType getTaskTypeID() {
+        return taskTypeID;
+    }
+
+    public void setTaskTypeID(TaskType taskTypeID) {
+        this.taskTypeID = taskTypeID;
     }
     
 }

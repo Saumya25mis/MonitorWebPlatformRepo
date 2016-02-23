@@ -7,12 +7,15 @@ package com.boha.monitor.servlets;
 
 import com.boha.monitor.dto.transfer.RequestDTO;
 import com.boha.monitor.dto.transfer.ResponseDTO;
-import com.boha.monitor.util.DataUtil;
-import com.boha.monitor.util.ServerStatus;
-import com.boha.monitor.util.SignInUtil;
-import com.boha.monitor.util.TrafficCop;
+import com.boha.monitor.utilx.DataUtil;
+import com.boha.monitor.utilx.GZipUtility;
+import com.boha.monitor.utilx.ServerStatus;
+import com.boha.monitor.utilx.SignInUtil;
+import com.boha.monitor.utilx.TrafficCop;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import com.oreilly.servlet.ServletUtils;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
@@ -32,12 +35,16 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet(name = "MonitorGatewayServlet", urlPatterns = {"/gate"})
 public class MonitorGatewayServlet extends HttpServlet {
 
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
     @EJB
     DataUtil dataUtil;
     @EJB
     SignInUtil signInUtil;
 
-    static final String SOURCE = "MonitorGatewayServlet";
+    static final String SOURCE = "MonitorGatewayServletX";
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -67,13 +74,36 @@ public class MonitorGatewayServlet extends HttpServlet {
             resp.setStatusCode(ServerStatus.ERROR_SERVER);
             resp.setMessage(ServerStatus.getMessage(resp.getStatusCode()));
         } finally {
-            response.setContentType("application/json;charset=UTF-8");
-            try (PrintWriter out = response.getWriter()) {
-                out.println(gson.toJson(resp));
+            String json = gson.toJson(resp);
+            System.out.println("Length of JSON returned: " + json.length());
+            if (dto != null) {
+                if (dto.isZipResponse()) {
+                    try {
+                        response.setContentType("application/zip;charset=UTF-8");
+                        File zipped = GZipUtility.getZipped(json);
+                        ServletUtils.returnFile(zipped.getAbsolutePath(), response.getOutputStream());
+                        response.getOutputStream().close();
+                    } catch (IOException e) {
+                        response.setContentType("application/json;charset=UTF-8");
+                        try (PrintWriter out = response.getWriter()) {
+                            out.println(json);
+                        }
+                        log.log(Level.SEVERE, "Zipping problem - probably the zipper cannot find the zipped file", e);
+                    }
+
+                } else {
+                    response.setContentType("application/json;charset=UTF-8");
+                    try (PrintWriter out = response.getWriter()) {
+                        out.println(json);
+                    }
+                }
+            } else {
+                log.log(Level.SEVERE, "Illegal contact, request ignored");
+                return;
             }
 
             long end = System.currentTimeMillis();
-            log.log(Level.INFO, "---> MonitorGatewayServlet completed in {0} seconds", getElapsed(start, end));
+            log.log(Level.INFO, "---> MonitorGatewayServletX completed in {0} seconds", getElapsed(start, end));
         }
     }
 

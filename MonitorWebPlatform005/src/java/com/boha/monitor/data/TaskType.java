@@ -6,7 +6,9 @@
 package com.boha.monitor.data;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,9 +16,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -32,6 +36,9 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "TaskType.findBySectionName", query = "SELECT t FROM TaskType t WHERE t.sectionName = :sectionName"),
     @NamedQuery(name = "TaskType.findByTaskTypeNumber", query = "SELECT t FROM TaskType t WHERE t.taskTypeNumber = :taskTypeNumber")})
 public class TaskType implements Serializable {
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "taskTypeID")
+    private List<MonitorTrade> monitorTradeList;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -126,6 +133,15 @@ public class TaskType implements Serializable {
     @Override
     public String toString() {
         return "com.boha.monitor.data.TaskType[ taskTypeID=" + taskTypeID + " ]";
+    }
+
+    @XmlTransient
+    public List<MonitorTrade> getMonitorTradeList() {
+        return monitorTradeList;
+    }
+
+    public void setMonitorTradeList(List<MonitorTrade> monitorTradeList) {
+        this.monitorTradeList = monitorTradeList;
     }
     
 }

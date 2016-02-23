@@ -39,7 +39,7 @@ public class VideoUpload implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "videoUpload ID")
+    @Column(name = "videoUploadID")
     private Integer videoUploadID;
     @Basic(optional = false)
     @NotNull

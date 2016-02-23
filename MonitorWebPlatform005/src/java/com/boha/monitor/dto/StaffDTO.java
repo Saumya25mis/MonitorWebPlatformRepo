@@ -3,11 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.boha.monitor.dto;
 
 import com.boha.monitor.data.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,6 +15,7 @@ import java.util.List;
  * @author aubreyM
  */
 public class StaffDTO implements Serializable {
+
     private static final long serialVersionUID = 1L;
     private Integer staffID, activeFlag;
     private String firstName;
@@ -22,11 +23,14 @@ public class StaffDTO implements Serializable {
     private String email, companyName;
     private String cellphone, pin;
     private Long appInvitationDate;
+
     private Integer companyID;
     private GcmDeviceDTO gcmDevice;
+    private List<GcmDeviceDTO> gcmDeviceList;
     private List<PhotoUploadDTO> photoUploadList;
     private List<LocationTrackerDTO> locationTrackerList;
     private List<StaffProjectDTO> staffProjectList;
+    private Integer photoCount, statusCount, projectCount, profilePhotoCount;
 
     public StaffDTO() {
     }
@@ -41,15 +45,85 @@ public class StaffDTO implements Serializable {
         this.companyID = c.getCompanyID();
         this.companyName = c.getCompanyName();
         this.activeFlag = a.getActiveFlag();
-        
+
         if (a.getAppInvitationDate() != null) {
             this.appInvitationDate = a.getAppInvitationDate().getTime();
         }
         if (a.getPin() != null) {
-        this.pin = a.getPin();
+            this.pin = a.getPin();
         }
-        
-        
+        try {
+            if (a.getPhotoUploadList() != null) {
+                photoCount = a.getPhotoUploadList().size();
+                photoUploadList = new ArrayList<>();
+                //filter for just profile photos
+                for (PhotoUpload p : a.getPhotoUploadList()) {
+                    PhotoUploadDTO dto = new PhotoUploadDTO(p);
+                    if (dto.getPictureType() == PhotoUploadDTO.STAFF_IMAGE) {
+                        photoUploadList.add(new PhotoUploadDTO(p));
+                    }
+
+                }
+                profilePhotoCount = photoUploadList.size();
+            }
+
+            if (a.getGcmDeviceList() != null) {
+                gcmDeviceList = new ArrayList<>();
+                for (GcmDevice g : a.getGcmDeviceList()) {
+                    gcmDeviceList.add(new GcmDeviceDTO(g));
+                }
+            }
+            if (a.getStaffProjectList() != null) {
+                projectCount = a.getStaffProjectList().size();
+            }
+            if (a.getProjectTaskStatusList() != null) {
+                statusCount = a.getProjectTaskStatusList().size();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public Integer getProfilePhotoCount() {
+        return profilePhotoCount;
+    }
+
+    public void setProfilePhotoCount(Integer profilePhotoCount) {
+        this.profilePhotoCount = profilePhotoCount;
+    }
+
+    public Integer getPhotoCount() {
+        return photoCount;
+    }
+
+    public void setPhotoCount(Integer photoCount) {
+        this.photoCount = photoCount;
+    }
+
+    public Integer getStatusCount() {
+        return statusCount;
+    }
+
+    public void setStatusCount(Integer statusCount) {
+        this.statusCount = statusCount;
+    }
+
+    public Integer getProjectCount() {
+        return projectCount;
+    }
+
+    public void setProjectCount(Integer projectCount) {
+        this.projectCount = projectCount;
+    }
+
+    public List<GcmDeviceDTO> getGcmDeviceList() {
+        return gcmDeviceList;
+    }
+
+    public void setGcmDeviceList(List<GcmDeviceDTO> gcmDeviceList) {
+        this.gcmDeviceList = gcmDeviceList;
     }
 
     public Integer getStaffID() {
@@ -164,5 +238,4 @@ public class StaffDTO implements Serializable {
         this.staffProjectList = staffProjectList;
     }
 
-    
 }

@@ -6,29 +6,26 @@
 
 package com.boha.monitor.servlets;
 
-import com.boha.monitor.util.DataUtil;
-import com.boha.monitor.util.xmpp.CcsClient;
+import com.boha.monitor.utilx.DataUtil;
+import com.boha.monitor.utilx.ProjectTaskGen;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.jivesoftware.smack.XMPPException;
 
 /**
  *
  * @author aubreyM
  */
-@WebServlet(name = "CCSTestServlet", urlPatterns = {"/ccs"})
+@WebServlet(name = "CCSTestServlet", urlPatterns = {"/task"})
 public class CCSTestServlet extends HttpServlet {
 
     @EJB
-    DataUtil dataUtil;
+    ProjectTaskGen task;
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -41,9 +38,14 @@ public class CCSTestServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+        String id = request.getParameter("TASK");
+        if (id == null) {
+            id = "30";
+        }
+        Integer companyID = Integer.parseInt(id);
         try (PrintWriter out = response.getWriter()) {
             
-            dataUtil.fixProjectTasks();
+            String res = task.generate(companyID          );
             //dataUtil.fixData();
             //dataUtil.writeMonitorProjects();
             //dataUtil.writeStaffProjects();
@@ -59,10 +61,10 @@ public class CCSTestServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet CCSTestServlet</title>");            
+            out.println("<title>Project Tasks</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet CCSTestServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h2>Servlet`: " + res + "</h2>");
             out.println("</body>");
             out.println("</html>");
         }

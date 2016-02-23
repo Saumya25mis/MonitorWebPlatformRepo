@@ -3,11 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.boha.monitor.dto;
 
 import com.boha.monitor.data.Programme;
+import com.boha.monitor.data.Project;
+import com.boha.monitor.data.Task;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,6 +17,7 @@ import java.util.List;
  * @author aubreyM
  */
 public class ProgrammeDTO implements Serializable {
+
     private static final long serialVersionUID = 1L;
     private Integer programmeID;
     private String programmeName;
@@ -40,7 +43,14 @@ public class ProgrammeDTO implements Serializable {
         }
         completeFlag = a.getCompleteFlag();
         description = a.getDescription();
-        portfolioID = a.getPortfolio().getPortfolioID();
+        if (a.getPortfolio() != null) {
+            portfolioID = a.getPortfolio().getPortfolioID();
+        }
+        projectList = new ArrayList<>();
+        for (Project p: a.getProjectList()) {
+            projectList.add(new ProjectDTO(p));
+        }
+        
     }
 
     public List<TaskDTO> getTaskList() {
@@ -51,8 +61,6 @@ public class ProgrammeDTO implements Serializable {
         this.taskList = taskList;
     }
 
-  
-    
     public Long getDateRegistered() {
         return dateRegistered;
     }
@@ -117,7 +125,6 @@ public class ProgrammeDTO implements Serializable {
         this.portfolioID = portfolioID;
     }
 
-
     @Override
     public int hashCode() {
         int hash = 0;
@@ -142,5 +149,5 @@ public class ProgrammeDTO implements Serializable {
     public String toString() {
         return "com.boha.monitor.data.Programme[ programmeID=" + programmeID + " ]";
     }
-    
+
 }

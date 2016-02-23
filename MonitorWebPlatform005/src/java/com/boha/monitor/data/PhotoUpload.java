@@ -35,6 +35,9 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "PhotoUpload.findByProject", 
             query = "SELECT p FROM PhotoUpload p WHERE p.project.projectID = :projectID and p.projectTask IS NULL "
                     + "ORDER BY p.dateTaken desc"),
+    @NamedQuery(name = "PhotoUpload.findByProjectList", 
+            query = "SELECT p FROM PhotoUpload p WHERE p.project.projectID IN :projectList and p.projectTask IS NULL "
+                    + "ORDER BY p.dateTaken desc"),
     
     @NamedQuery(name = "PhotoUpload.findByProjectInPeriod", 
             query = "SELECT p FROM PhotoUpload p WHERE p.project.projectID = :projectID and p.projectTask IS NULL "
@@ -42,6 +45,9 @@ import javax.validation.constraints.Size;
     
     @NamedQuery(name = "PhotoUpload.findByMonitor", 
             query = "SELECT p FROM PhotoUpload p WHERE p.monitor.monitorID = :monitorID and p.project IS NULL "
+                    + "ORDER BY p.dateTaken desc"),
+    @NamedQuery(name = "PhotoUpload.findByMonitorList", 
+            query = "SELECT p FROM PhotoUpload p WHERE p.monitor.monitorID IN :monitorList and p.project IS NULL "
                     + "ORDER BY p.dateTaken desc"),
     
     @NamedQuery(name = "PhotoUpload.countProjectPhotosByMonitor", 
@@ -74,12 +80,7 @@ public class PhotoUpload implements Serializable {
     @Size(max = 400)
     @Column(name = "secureUrl")
     private String secureUrl;
-    @Size(max = 400)
-    @Column(name = "eTag")
-    private String eTag;
-    @Size(max = 400)
-    @Column(name = "signature")
-    private String signature;
+    
     @Column(name = "width")
     private Integer width;
     @Column(name = "height")
@@ -87,13 +88,13 @@ public class PhotoUpload implements Serializable {
     @Column(name = "bytes")
     private Integer bytes;
     @JoinColumn(name = "projectTaskID", referencedColumnName = "projectTaskID")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private ProjectTask projectTask;
     @JoinColumn(name = "staffID", referencedColumnName = "staffID")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Staff staff;
     @JoinColumn(name = "monitorID", referencedColumnName = "monitorID")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private Monitor monitor;
     private static final long serialVersionUID = 1L;
     @Id
@@ -132,7 +133,7 @@ public class PhotoUpload implements Serializable {
     private Integer staffPicture;
 
     @JoinColumn(name = "projectID", referencedColumnName = "projectID")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private Project project;
     
 
@@ -183,14 +184,7 @@ public class PhotoUpload implements Serializable {
         this.projectTaskStatus = projectTaskStatus;
     }
 
-    public String geteTag() {
-        return eTag;
-    }
-
-    public void seteTag(String eTag) {
-        this.eTag = eTag;
-    }
-
+    
     public Double getLatitude() {
         return latitude;
     }
@@ -321,21 +315,7 @@ public class PhotoUpload implements Serializable {
         this.secureUrl = secureUrl;
     }
 
-    public String getETag() {
-        return eTag;
-    }
-
-    public void setETag(String eTag) {
-        this.eTag = eTag;
-    }
-
-    public String getSignature() {
-        return signature;
-    }
-
-    public void setSignature(String signature) {
-        this.signature = signature;
-    }
+    
 
     public Integer getWidth() {
         return width;

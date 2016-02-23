@@ -8,8 +8,8 @@ package com.boha.monitor.servlets;
 import com.boha.monitor.dto.transfer.RequestDTO;
 import com.boha.monitor.dto.transfer.RequestList;
 import com.boha.monitor.dto.transfer.ResponseDTO;
-import com.boha.monitor.util.Elapsed;
-import com.boha.monitor.util.TrafficCop;
+import com.boha.monitor.utilx.Elapsed;
+import com.boha.monitor.utilx.TrafficCop;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -21,8 +21,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import com.boha.monitor.util.DataUtil;
-import com.boha.monitor.util.SignInUtil;
+import com.boha.monitor.utilx.DataUtil;
+import com.boha.monitor.utilx.SignInUtil;
 import java.io.PrintWriter;
 
 /**

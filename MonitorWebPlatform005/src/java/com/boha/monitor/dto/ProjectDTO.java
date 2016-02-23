@@ -3,11 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.boha.monitor.dto;
 
+import com.boha.monitor.data.MonitorProject;
+import com.boha.monitor.data.PhotoUpload;
 import com.boha.monitor.data.Portfolio;
 import com.boha.monitor.data.Project;
+import com.boha.monitor.data.ProjectStatus;
+import com.boha.monitor.data.ProjectTask;
+import com.boha.monitor.data.StaffProject;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +20,8 @@ import java.util.List;
  *
  * @author aubreyM
  */
-public class ProjectDTO implements Serializable {
+public class ProjectDTO implements Serializable, Comparable<ProjectDTO> {
+
     private List<PhotoUploadDTO> photoUploadList;
     private static final long serialVersionUID = 1L;
     private Integer projectID, cityID, companyID;
@@ -50,7 +55,40 @@ public class ProjectDTO implements Serializable {
         locationConfirmed = a.getLocationConfirmed();
         address = a.getAddress();
         desc = a.getDescription();
-      
+
+        projectTaskList = new ArrayList<>();
+        if (a.getProjectTaskList() != null) {
+            for (ProjectTask pt : a.getProjectTaskList()) {
+                projectTaskList.add(new ProjectTaskDTO(pt));
+            }
+        }
+
+        photoUploadList = new ArrayList<>();
+        if (a.getPhotoUploadList() != null) {
+            for (PhotoUpload p : a.getPhotoUploadList()) {
+                photoUploadList.add(new PhotoUploadDTO(p));
+            }
+        }
+        monitorList = new ArrayList<>();
+        if (a.getMonitorProjectList() != null) {
+            for (MonitorProject mp : a.getMonitorProjectList()) {
+                monitorList.add(new MonitorDTO(mp.getMonitor()));
+            }
+        }
+
+        staffList = new ArrayList<>();
+        if (a.getStaffProjectList() != null) {
+            for (StaffProject sp : a.getStaffProjectList()) {
+                staffList.add(new StaffDTO(sp.getStaff()));
+            }
+        }
+        projectStatusList = new ArrayList<>();
+        if (a.getProjectStatusList() != null) {
+            for (ProjectStatus ps : a.getProjectStatusList()) {
+                projectStatusList.add(new ProjectStatusDTO(ps));
+            }
+        }
+
         if (a.getCity() != null) {
             cityID = a.getCity().getCityID();
             cityName = a.getCity().getCityName();
@@ -58,11 +96,11 @@ public class ProjectDTO implements Serializable {
                 municipalityName = a.getCity().getMunicipality().getMunicipalityName();
             }
         }
-        
+
         if (a.getCompany() != null) {
             companyID = a.getCompany().getCompanyID();
         }
-        
+
         if (a.getProgramme() != null) {
             programmeName = a.getProgramme().getProgrammeName();
             programmeID = a.getProgramme().getProgrammeID();
@@ -72,7 +110,7 @@ public class ProjectDTO implements Serializable {
                 portfolioName = p.getPortfolioName();
             }
         }
-        
+
     }
 
     public Integer getCompanyID() {
@@ -123,7 +161,6 @@ public class ProjectDTO implements Serializable {
         this.portfolioName = portfolioName;
     }
 
-    
     public String getProgrammeName() {
         return programmeName;
     }
@@ -140,7 +177,6 @@ public class ProjectDTO implements Serializable {
         this.lastStatus = lastStatus;
     }
 
-    
     public Integer getStatusCount() {
         return statusCount;
     }
@@ -149,7 +185,6 @@ public class ProjectDTO implements Serializable {
         this.statusCount = statusCount;
     }
 
-    
     public List<PhotoUploadDTO> getPhotoUploadList() {
         return photoUploadList;
     }
@@ -246,7 +281,6 @@ public class ProjectDTO implements Serializable {
         this.projectTaskList = projectTaskList;
     }
 
-
     public List<ProjectStatusDTO> getProjectStatusList() {
         return projectStatusList;
     }
@@ -312,6 +346,10 @@ public class ProjectDTO implements Serializable {
         return "com.boha.monitor.data.Project[ projectID=" + projectID + " ]";
     }
 
-   
-    
+    @Override
+    public int compareTo(ProjectDTO o) {
+
+        return this.projectName.compareTo(o.projectName);
+    }
+
 }

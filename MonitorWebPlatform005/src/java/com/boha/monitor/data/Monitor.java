@@ -13,6 +13,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -21,6 +22,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -34,12 +36,14 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(name = "monitor")
 @NamedQueries({
+    @NamedQuery(name = "Monitor.findByEmail",
+            query = "SELECT m FROM Monitor m WHERE m.email = :email"),
     @NamedQuery(name = "Monitor.findByCompany",
-            query = "SELECT m FROM Monitor m WHERE m.company.companyID = :companyID and m.activeFlag = TRUE "
+            query = "SELECT m FROM Monitor m WHERE m.company.companyID = :companyID and m.activeFlag = 1 "
             + "ORDER BY m.lastName, m.firstName"),
 
     @NamedQuery(name = "Monitor.login",
-            query = "SELECT m FROM Monitor m WHERE m.email = :email and m.pin = :pin and m.activeFlag = TRUE")
+            query = "SELECT m FROM Monitor m WHERE m.email = :email and m.pin = :pin and m.activeFlag = 1")
 })
 public class Monitor implements Serializable {
     @OneToMany(mappedBy = "monitor")
@@ -49,15 +53,18 @@ public class Monitor implements Serializable {
 
     @Column(name = "gender")
     private Short gender;
-    @OneToMany(mappedBy = "monitor")
+    @OneToMany(mappedBy = "monitor", fetch = FetchType.EAGER)
     private List<VideoUpload> videoUploadList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "monitor")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "monitor", fetch = FetchType.EAGER)
     private List<MonitorTrade> monitorTradeList;
-    @OneToMany(mappedBy = "monitor")
+    @OneToMany(mappedBy = "monitor", fetch = FetchType.EAGER)
+    @OrderBy("dateTaken desc")
     private List<PhotoUpload> photoUploadList;
-    @OneToMany(mappedBy = "monitor")
+    
+    @OneToMany(mappedBy = "monitor", fetch = FetchType.EAGER)
+    @OrderBy("dateTracked desc")
     private List<LocationTracker> locationTrackerList;
-    @OneToMany(mappedBy = "monitor")
+    @OneToMany(mappedBy = "monitor", fetch = FetchType.EAGER)
     private List<ErrorStoreAndroid> errorStoreAndroidList;
     @OneToMany(mappedBy = "monitor")
     private Collection<ChatMessage> chatMessageCollection;
@@ -112,11 +119,11 @@ public class Monitor implements Serializable {
     private List<ProjectTaskStatus> projectTaskStatusList;
     @OneToMany(mappedBy = "monitor")
     private List<ChatMember> chatMemberList;
-    @OneToMany(mappedBy = "monitor")
+    @OneToMany(mappedBy = "monitor", fetch = FetchType.EAGER)
     private List<GcmDevice> gcmDeviceList;
     @OneToMany(mappedBy = "monitor")
     private List<Chat> chatList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "monitor")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "monitor", fetch = FetchType.EAGER)
     private List<MonitorProject> monitorProjectList;
 
     public Monitor() {

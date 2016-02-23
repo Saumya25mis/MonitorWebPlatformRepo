@@ -3,11 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.boha.monitor.dto;
 
+import com.boha.monitor.data.PhotoUpload;
 import com.boha.monitor.data.ProjectTaskStatus;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,15 +16,16 @@ import java.util.List;
  * @author aubreyM
  */
 public class ProjectTaskStatusDTO implements Serializable {
+
     private static final long serialVersionUID = 1L;
     private Integer projectTaskStatusID;
     private Long statusDate;
     private Long dateUpdated;
-    private ProjectTaskDTO projectTask;
+    private Integer projectTaskID;
     private TaskStatusTypeDTO taskStatusType;
     private Integer staffID;
     private Integer monitorID;
-    private String staffName, monitorName;
+    private String staffName, monitorName, taskName;
     private List<PhotoUploadDTO> photoUploadList;
 
     public ProjectTaskStatusDTO() {
@@ -31,12 +33,19 @@ public class ProjectTaskStatusDTO implements Serializable {
 
     public ProjectTaskStatusDTO(ProjectTaskStatus a) {
         this.projectTaskStatusID = a.getProjectTaskStatusID();
-        this.dateUpdated = a.getDateUpdated().getTime();
+        if (a.getDateUpdated() != null) {
+            this.dateUpdated = a.getDateUpdated().getTime();
+        }
         if (a.getStatusDate() != null) {
             statusDate = a.getStatusDate().getTime();
         }
-        projectTask = new ProjectTaskDTO(a.getProjectTask());
-        taskStatusType = new TaskStatusTypeDTO(a.getTaskStatusType());
+        if (a.getProjectTask() != null) {
+            projectTaskID = a.getProjectTask().getProjectTaskID();
+            taskName = a.getProjectTask().getTask().getTaskName();
+        }
+        if (a.getTaskStatusType() != null) {
+            taskStatusType = new TaskStatusTypeDTO(a.getTaskStatusType());
+        }
         if (a.getStaff() != null) {
             staffID = a.getStaff().getStaffID();
             staffName = a.getStaff().getFirstName() + " " + a.getStaff().getLastName();
@@ -45,6 +54,20 @@ public class ProjectTaskStatusDTO implements Serializable {
             monitorID = a.getMonitor().getMonitorID();
             monitorName = a.getMonitor().getFirstName() + " " + a.getMonitor().getLastName();
         }
+        photoUploadList = new ArrayList<>();
+        if (a.getPhotoUploadList() != null) {
+            for (PhotoUpload p : a.getPhotoUploadList()) {
+                photoUploadList.add(new PhotoUploadDTO(p));
+            }
+        }
+    }
+
+    public String getTaskName() {
+        return taskName;
+    }
+
+    public void setTaskName(String taskName) {
+        this.taskName = taskName;
     }
 
     public List<PhotoUploadDTO> getPhotoUploadList() {
@@ -71,7 +94,6 @@ public class ProjectTaskStatusDTO implements Serializable {
         this.monitorName = monitorName;
     }
 
-    
     public Integer getProjectTaskStatusID() {
         return projectTaskStatusID;
     }
@@ -80,14 +102,12 @@ public class ProjectTaskStatusDTO implements Serializable {
         this.projectTaskStatusID = projectTaskStatusID;
     }
 
-
-
-    public ProjectTaskDTO getProjectTask() {
-        return projectTask;
+    public Integer getProjectTaskID() {
+        return projectTaskID;
     }
 
-    public void setProjectTask(ProjectTaskDTO projectTask) {
-        this.projectTask = projectTask;
+    public void setProjectTaskID(Integer projectTaskID) {
+        this.projectTaskID = projectTaskID;
     }
 
     public TaskStatusTypeDTO getTaskStatusType() {
@@ -130,7 +150,6 @@ public class ProjectTaskStatusDTO implements Serializable {
         this.monitorID = monitorID;
     }
 
-
     @Override
     public int hashCode() {
         int hash = 0;
@@ -155,5 +174,5 @@ public class ProjectTaskStatusDTO implements Serializable {
     public String toString() {
         return "com.boha.monitor.data.ProjectTaskStatus[ projectTaskStatusID=" + projectTaskStatusID + " ]";
     }
-    
+
 }

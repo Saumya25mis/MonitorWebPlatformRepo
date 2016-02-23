@@ -3,11 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.boha.monitor.dto;
 
 import com.boha.monitor.data.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,6 +15,7 @@ import java.util.List;
  * @author aubreyM
  */
 public class MonitorDTO implements Serializable {
+
     private static final long serialVersionUID = 1L;
     private Integer monitorID, activeFlag, statusCount, photoCount, projectCount;
     private String firstName;
@@ -25,11 +26,13 @@ public class MonitorDTO implements Serializable {
     private Integer companyID;
     private Short gender;
     private ProjectTaskStatusDTO lastStatus;
-    
+
     private GcmDeviceDTO gcmDevice;
+    private List<GcmDeviceDTO> gcmDeviceList;
     private List<PhotoUploadDTO> photoUploadList;
     private List<LocationTrackerDTO> locationTrackerList;
     private List<MonitorProjectDTO> monitorProjectList;
+    private Integer profilePhotoCount;
 
     public MonitorDTO() {
     }
@@ -47,15 +50,38 @@ public class MonitorDTO implements Serializable {
         this.address = a.getAddress();
         this.IDNumber = a.getIDNumber();
         this.gender = a.getGender();
-        
+
         if (a.getAppInvitationDate() != null) {
             this.appInvitationDate = a.getAppInvitationDate().getTime();
         }
         if (a.getPin() != null) {
-        this.pin = a.getPin();
+            this.pin = a.getPin();
         }
-        
-        
+        if (a.getPhotoUploadList() != null) {
+            photoCount = a.getPhotoUploadList().size();
+            photoUploadList = new ArrayList<>();
+            for (PhotoUpload p : a.getPhotoUploadList()) {
+                PhotoUploadDTO dto = new PhotoUploadDTO(p);
+                if (dto.getPictureType() == PhotoUploadDTO.MONITOR_IMAGE) {
+                    photoUploadList.add(new PhotoUploadDTO(p));
+                }
+
+            }
+            profilePhotoCount = photoUploadList.size();
+        }
+        if (a.getGcmDeviceList() != null) {
+            gcmDeviceList = new ArrayList<>();
+            for (GcmDevice g : a.getGcmDeviceList()) {
+                gcmDeviceList.add(new GcmDeviceDTO(g));
+            }
+        }
+        if (a.getMonitorProjectList() != null) {
+            projectCount = a.getMonitorProjectList().size();
+        }
+        if (a.getProjectTaskStatusList() != null) {
+            statusCount = a.getProjectTaskStatusList().size();
+        }
+
     }
 
     public ProjectTaskStatusDTO getLastStatus() {
@@ -90,7 +116,6 @@ public class MonitorDTO implements Serializable {
         this.photoCount = photoCount;
     }
 
-    
     public Short getGender() {
         return gender;
     }
@@ -115,7 +140,6 @@ public class MonitorDTO implements Serializable {
         this.address = address;
     }
 
-    
     public Integer getMonitorID() {
         return monitorID;
     }
@@ -228,6 +252,4 @@ public class MonitorDTO implements Serializable {
         this.monitorProjectList = monitorProjectList;
     }
 
-   
-    
 }
