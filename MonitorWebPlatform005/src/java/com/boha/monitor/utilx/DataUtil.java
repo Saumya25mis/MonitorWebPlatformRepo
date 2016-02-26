@@ -851,31 +851,34 @@ public class DataUtil {
         ResponseDTO resp = new ResponseDTO();
 
         try {
+            Query q = em.createNamedQuery("ProjectTaskStatus.findByTaskStatusDate", ProjectTaskStatus.class);
+            q.setParameter("projectTaskID", status.getProjectTaskID());
+            q.setParameter("statusDate", new Date(status.getStatusDate()));
+            List<ProjectTaskStatus> list = q.getResultList();
+            if (!list.isEmpty()) {
+                resp.setStatusCode(StatusCode.ERROR_DATABASE);
+                resp.setMessage("This project status is a duplicate of another already on the system");
+                log.log(Level.WARNING, "ProjectTaskStatus is a DUPLICATE, ignored");
+                return resp;
+            }
             ProjectTask c = em.find(ProjectTask.class,
                     status.getProjectTaskID());
             ProjectTaskStatus t = new ProjectTaskStatus();
-
-            t.setDateUpdated(
-                    new Date());
-            if (status.getStatusDate()
-                    != null) {
+            t.setDateUpdated(new Date());
+            if (status.getStatusDate() != null) {
                 t.setStatusDate(new Date(status.getStatusDate()));
             } else {
                 t.setStatusDate(new Date());
             }
 
             t.setProjectTask(c);
-
             t.setTaskStatusType(em.find(TaskStatusType.class,
                     status.getTaskStatusType().getTaskStatusTypeID()));
-
-            if (status.getStaffID()
-                    != null) {
+            if (status.getStaffID() != null) {
                 t.setStaff(em.find(Staff.class, status.getStaffID()));
             }
 
-            if (status.getMonitorID()
-                    != null) {
+            if (status.getMonitorID() != null) {
                 t.setMonitor(em.find(Monitor.class, status.getMonitorID()));
             }
 
@@ -886,9 +889,10 @@ public class DataUtil {
                     new ArrayList<>());
             resp.getProjectTaskStatusList()
                     .add(new ProjectTaskStatusDTO(t));
-            log.log(Level.OFF,
-                    "ProjectTaskStatus added");
-
+            log.log(Level.OFF, "ProjectTaskStatus added: {0} type: {1}", new Object[]{c.getTask().getTaskName(), t.getTaskStatusType().getTaskStatusTypeName()});
+        } catch (PersistenceException e) {
+            resp.setStatusCode(StatusCode.ERROR_DATABASE);
+            resp.setMessage("This project status is a duplicate of another already on the system");
         } catch (Exception e) {
             log.log(Level.SEVERE, "Failed", e);
             throw new DataException("Failed\n" + getErrorString(e));
@@ -1216,7 +1220,7 @@ public class DataUtil {
 
     private StaffDTO addStaff(StaffDTO staff, Company c) throws DataException {
         StaffDTO s = new StaffDTO();
-        
+
         try {
             Staff staffX = new Staff();
             staffX.setCompany(c);
@@ -1227,7 +1231,6 @@ public class DataUtil {
             staffX.setPin(getRandomPin());
             staffX.setActiveFlag(staff.getActiveFlag());
             staffX.setDateRegistered(new Date());
-            
 
             Query q = em.createNamedQuery("Staff.findByEmail", Staff.class);
             q.setParameter("email", staff.getEmail());
@@ -1237,15 +1240,13 @@ public class DataUtil {
                 em.flush();
                 s = new StaffDTO(staffX);
                 log.log(Level.OFF,
-                    "Staff registered for: {0} - {1} ",
-                    new Object[]{c.getCompanyName(), s.getFirstName()
-                    });
+                        "Staff registered for: {0} - {1} ",
+                        new Object[]{c.getCompanyName(), s.getFirstName()
+                        });
             } else {
                 throw new DataException("Email account already exists");
             }
 
-            
-            
         } catch (Exception e) {
             log.log(Level.SEVERE, "Staff add failed", e);
             throw new DataException("Staff add failed");

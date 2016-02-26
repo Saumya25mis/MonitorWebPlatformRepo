@@ -206,7 +206,7 @@ public class ListUtil {
         }
 //        Collections.sort(resp.getProjectList());
         for (Project p : projectList) {
-            ProjectDTO project = new ProjectDTO(p);
+            ProjectDTO project = new ProjectDTO(em,p);
             resp.getProjectList().add(project);
             log.log(Level.OFF, "## project found for monitor: {0} - {1} {2}",
                     new Object[]{project.getProjectName(), mon.getFirstName(), mon.getLastName()});
@@ -244,7 +244,7 @@ public class ListUtil {
         }
 
         for (StaffProject p : staff.getStaffProjectList()) {
-            ProjectDTO project = new ProjectDTO(p.getProject());
+            ProjectDTO project = new ProjectDTO(em,p.getProject());
             resp.getProjectList().add(project);
         }
         Collections.sort(resp.getProjectList());
@@ -365,7 +365,7 @@ public class ListUtil {
         q.setParameter("programmeID", programmeID);
         List<Project> tList = q.getResultList();
         for (Project proj : tList) {
-            ProjectDTO dto = new ProjectDTO(proj);
+            ProjectDTO dto = new ProjectDTO(em,proj);
             dto.setProjectTaskList(getProjectTaskList(em, proj.getProjectID()));
             list.add(dto);
         }

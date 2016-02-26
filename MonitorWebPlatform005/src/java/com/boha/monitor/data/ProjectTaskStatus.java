@@ -45,6 +45,8 @@ import javax.validation.constraints.NotNull;
     
     @NamedQuery(name = "ProjectTaskStatus.findByTask",
             query = "SELECT p FROM ProjectTaskStatus p WHERE p.projectTask.projectTaskID = :projectTaskID ORDER BY p.dateUpdated desc"),
+    @NamedQuery(name = "ProjectTaskStatus.findByTaskStatusDate",
+            query = "SELECT p FROM ProjectTaskStatus p WHERE p.projectTask.projectTaskID = :projectTaskID AND p.statusDate = :statusDate order BY p.dateUpdated desc"),
     
     @NamedQuery(name = "ProjectTaskStatus.findByTaskMonitor",
             query = "SELECT p FROM ProjectTaskStatus p WHERE p.projectTask.projectTaskID = :projectTaskID and p.monitor.monitorID = :monitorID ORDER BY p.dateUpdated desc")
