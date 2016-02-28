@@ -7,7 +7,6 @@ package com.boha.monitor.dto;
 
 import com.boha.monitor.data.PhotoUpload;
 import com.boha.monitor.data.ProjectTask;
-import com.boha.monitor.data.ProjectTaskStatus;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,12 +20,14 @@ public class ProjectTaskDTO implements Serializable {
     private static final long serialVersionUID = 1L;
     private Integer projectTaskID;
     private Long dateRegistered;
-    private Integer projectID;
+    private Integer projectID, statusCount = 0, photoCount = 0;
     private TaskDTO task;
     private Double latitude, longitude;
     private String projectName;
     private List<PhotoUploadDTO> photoUploadList;
     private List<ProjectTaskStatusDTO> projectTaskStatusList;
+    private ProjectTaskStatusDTO lastStatus;
+    private PhotoUploadDTO lastPhoto;
 
     public ProjectTaskDTO() {
     }
@@ -48,19 +49,55 @@ public class ProjectTaskDTO implements Serializable {
         }
 
         
-        if (a.getProjectTaskStatusList() != null) {
+        if (a.getProjectTaskStatusList() != null && !a.getProjectTaskStatusList().isEmpty()) {
+            statusCount = a.getProjectTaskStatusList().size();
             projectTaskStatusList = new ArrayList<>();
-            for (ProjectTaskStatus ps : a.getProjectTaskStatusList()) {
-                projectTaskStatusList.add(new ProjectTaskStatusDTO(ps));
-            }
+            lastStatus = new ProjectTaskStatusDTO(a.getProjectTaskStatusList().get(0));
+//            for (ProjectTaskStatus ps : a.getProjectTaskStatusList()) {
+//                projectTaskStatusList.add(new ProjectTaskStatusDTO(ps));
+//            }
         }
-        if (a.getPhotoUploadList() != null) {
+        if (a.getPhotoUploadList() != null && !a.getPhotoUploadList().isEmpty()) {
+            photoCount = a.getPhotoUploadList().size();
+            lastPhoto = new PhotoUploadDTO(a.getPhotoUploadList().get(0));
             photoUploadList = new ArrayList<>();
-            for (PhotoUpload p : a.getPhotoUploadList()) {
-                photoUploadList.add(new PhotoUploadDTO(p));
-            }
+//            for (PhotoUpload p : a.getPhotoUploadList()) {
+//                photoUploadList.add(new PhotoUploadDTO(p));
+//            }
         }
 
+    }
+
+    public PhotoUploadDTO getLastPhoto() {
+        return lastPhoto;
+    }
+
+    public void setLastPhoto(PhotoUploadDTO lastPhoto) {
+        this.lastPhoto = lastPhoto;
+    }
+
+    public Integer getPhotoCount() {
+        return photoCount;
+    }
+
+    public void setPhotoCount(Integer photoCount) {
+        this.photoCount = photoCount;
+    }
+
+    public ProjectTaskStatusDTO getLastStatus() {
+        return lastStatus;
+    }
+
+    public void setLastStatus(ProjectTaskStatusDTO lastStatus) {
+        this.lastStatus = lastStatus;
+    }
+
+    public Integer getStatusCount() {
+        return statusCount;
+    }
+
+    public void setStatusCount(Integer statusCount) {
+        this.statusCount = statusCount;
     }
 
     public TaskDTO getTask() {

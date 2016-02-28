@@ -23,6 +23,7 @@ public class TaskDTO implements Serializable {
     private List<ProjectTaskDTO> projectTaskList;
     private List<SubTaskDTO> subTaskList;
     private Integer companyID;
+    private Boolean selected;
 
     public TaskDTO() {
     }
@@ -38,6 +39,15 @@ public class TaskDTO implements Serializable {
        
     }
 
+    public Boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(Boolean selected) {
+        this.selected = selected;
+    }
+
+    
     public Integer getCompanyID() {
         return companyID;
     }

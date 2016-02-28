@@ -36,6 +36,8 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "projectTask")
 @NamedQueries({
+    @NamedQuery(name = "ProjectTask.findByProjectTask", 
+            query = "SELECT p FROM ProjectTask p where p.project.projectID = :projectID and p.task.taskID = :taskID"),
     @NamedQuery(name = "ProjectTask.findByCompany", 
             query = "SELECT p FROM ProjectTask p where p.project.company.companyID = :companyID"),
     @NamedQuery(name = "ProjectTask.deleteByCompany", 

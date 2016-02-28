@@ -63,7 +63,7 @@ public class ListUtil {
         return resp;
     }
 
-    public static ResponseDTO getProjectsForMonitorAssignment(EntityManager em, 
+    public static ResponseDTO getProjectsForMonitorAssignment(EntityManager em,
             Integer companyID, Integer monitorID) throws DataException {
         ResponseDTO resp = new ResponseDTO();
 
@@ -84,11 +84,11 @@ public class ListUtil {
                     d.setLatitude(p.getLatitude());
                     d.setLongitude(p.getLongitude());
                     resp.getProjectList().add(d);
-                }                
+                }
             }
             q = em.createNamedQuery("MonitorProject.findMonitorProjects", MonitorProject.class);
             q.setParameter("monitorID", monitorID);
-            List<MonitorProject> mpList = q.getResultList();           
+            List<MonitorProject> mpList = q.getResultList();
             resp.setMonitorProjectList(new ArrayList<>());
             for (MonitorProject mp : mpList) {
                 resp.getMonitorProjectList().add(new MonitorProjectDTO(mp));
@@ -100,7 +100,8 @@ public class ListUtil {
 
         return resp;
     }
-    public static ResponseDTO getProjectsForStaffAssignment(EntityManager em, 
+
+    public static ResponseDTO getProjectsForStaffAssignment(EntityManager em,
             Integer companyID, Integer staffID) throws DataException {
         ResponseDTO resp = new ResponseDTO();
         try {
@@ -120,7 +121,7 @@ public class ListUtil {
                     d.setLatitude(p.getLatitude());
                     d.setLongitude(p.getLongitude());
                     resp.getProjectList().add(d);
-                }                
+                }
             }
             q = em.createNamedQuery("StaffProject.findStaffProjects", StaffProject.class);
             q.setParameter("staffID", staffID);
@@ -186,8 +187,9 @@ public class ListUtil {
      * to the same projects as the requesting monitor.
      *
      * @param em
-     * @param resp
      * @param monitorID
+     * @return 
+     * @throws com.boha.monitor.utilx.DataException
      */
     public static ResponseDTO getProjectDataForMonitor(EntityManager em, Integer monitorID)
             throws DataException {
@@ -198,15 +200,16 @@ public class ListUtil {
             resp.setMessage("Monitor not found");
             return resp;
         }
-
+        Query q = em.createNamedQuery("MonitorProject.findMonitorProjects", MonitorProject.class);
+        q.setParameter("monitorID", monitorID);
+        List<MonitorProject> sList = q.getResultList();
         resp.setProjectList(new ArrayList<>());
         List<Project> projectList = new ArrayList<>();
-        for (MonitorProject mp : mon.getMonitorProjectList()) {
+        for (MonitorProject mp : sList) {
             projectList.add(mp.getProject());
         }
-//        Collections.sort(resp.getProjectList());
         for (Project p : projectList) {
-            ProjectDTO project = new ProjectDTO(em,p);
+            ProjectDTO project = new ProjectDTO(em, p);
             resp.getProjectList().add(project);
             log.log(Level.OFF, "## project found for monitor: {0} - {1} {2}",
                     new Object[]{project.getProjectName(), mon.getFirstName(), mon.getLastName()});
@@ -227,8 +230,7 @@ public class ListUtil {
                 getCompanyStaffList(em, c.getCompanyID()).getStaffList());
         resp.setMonitorList(
                 getCompanyMonitorList(em, c.getCompanyID()).getMonitorList());
-        resp.setTaskStatusTypeList(
-                getTaskStatusTypeList(em, c.getCompanyID()).getTaskStatusTypeList());
+        
         return resp;
     }
 
@@ -242,9 +244,11 @@ public class ListUtil {
             resp.setMessage("Staff not found");
             return resp;
         }
-
-        for (StaffProject p : staff.getStaffProjectList()) {
-            ProjectDTO project = new ProjectDTO(em,p.getProject());
+        Query q = em.createNamedQuery("StaffProject.findByStaff", StaffProject.class);
+        q.setParameter("staffID", staffID);
+        List<StaffProject> sList = q.getResultList();
+        for (StaffProject p : sList) {
+            ProjectDTO project = new ProjectDTO(em, p.getProject());
             resp.getProjectList().add(project);
         }
         Collections.sort(resp.getProjectList());
@@ -266,6 +270,16 @@ public class ListUtil {
         return resp;
     }
 
+    public static ResponseDTO getCompanyTasks(EntityManager em, Integer companyID) throws DataException {
+        ResponseDTO r = new ResponseDTO();
+        Query q = em.createNamedQuery("Task.findByCompany",Task.class);
+        q.setParameter("companyID", companyID);
+        List<Task> list = q.getResultList();
+        for (Task task : list) {
+            r.getTaskList().add(new TaskDTO(task));
+        }
+        return r;
+    }
     public static ResponseDTO getCompanyData(EntityManager em, Integer companyID) throws DataException {
         ResponseDTO resp = new ResponseDTO();
 
@@ -365,7 +379,7 @@ public class ListUtil {
         q.setParameter("programmeID", programmeID);
         List<Project> tList = q.getResultList();
         for (Project proj : tList) {
-            ProjectDTO dto = new ProjectDTO(em,proj);
+            ProjectDTO dto = new ProjectDTO(em, proj);
             dto.setProjectTaskList(getProjectTaskList(em, proj.getProjectID()));
             list.add(dto);
         }

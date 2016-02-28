@@ -129,21 +129,18 @@ public class SignInUtil {
             q.setParameter("email", email);
             q.setParameter("pin", pin);
             q.setMaxResults(1);
-            Monitor cs = (Monitor) q.getSingleResult();
-            Company company = cs.getCompany();
-            MonitorDTO dto = new MonitorDTO(cs);
-            resp.setMonitor(new MonitorDTO(cs));
+            Monitor mon = (Monitor) q.getSingleResult();
+            Company company = mon.getCompany();
+            
+            resp = ListUtil.getProjectDataForMonitor(em, mon.getMonitorID());
             resp.setCompany(new CompanyDTO(company));
-
+            resp.setMonitor(new MonitorDTO(mon));
+            
             if (device != null) {
                 device.setCompanyID(company.getCompanyID());
-                device.setMonitorID(dto.getMonitorID());
+                device.setMonitorID(mon.getMonitorID());
                 resp.getGcmDeviceList().add(addMonitorDevice(device));
             }
-
-            resp = ListUtil.getProjectDataForMonitor(em, cs.getMonitorID());
-            resp.setTaskStatusTypeList(ListUtil.getTaskStatusTypeList(em, company.getCompanyID()).getTaskStatusTypeList());
-            resp.setStaffList(getCompanyStaff(company.getCompanyID()));
 
         } catch (NoResultException e) {
             log.log(Level.WARNING, "Invalid monitor login attempt: " + email + " pin: " + pin, e);

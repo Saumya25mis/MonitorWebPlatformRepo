@@ -59,7 +59,7 @@ public class CachedRequestServlet extends HttpServlet {
         try {
 
             String message = request.getParameter("JSON");
-            System.out.println("incoming request list:\n" + message);
+            log.log(Level.INFO, "incoming request list JSON:\n{0}", message);
             RequestList dto = gson.fromJson(message, RequestList.class);
             for (RequestDTO req : dto.getRequests()) {
                 resp = TrafficCop.processRequest(req, dataUtil, signInUtil);

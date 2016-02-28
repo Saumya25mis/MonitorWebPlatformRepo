@@ -29,8 +29,8 @@ public class ProjectDTO implements Serializable, Comparable<ProjectDTO> {
     private List<PhotoUploadDTO> photoUploadList;
     private static final long serialVersionUID = 1L;
     private Integer projectID, cityID, companyID;
-    private Integer programmeID, portfolioID, 
-            statusCount,photoCount, projectTaskCount, monitorCount, staffCount;
+    private Integer programmeID, portfolioID,
+            statusCount, photoCount, projectTaskCount, monitorCount, staffCount;
     private String projectName;
     private Double latitude;
     private Double longitude;
@@ -52,31 +52,31 @@ public class ProjectDTO implements Serializable, Comparable<ProjectDTO> {
 
     public ProjectDTO(EntityManager em, Project a) {
         setUp(a);
-        //Get last status
+        //Get last status and count
         try {
-        Query q = em.createNamedQuery("ProjectTaskStatus.findByProject", ProjectTaskStatus.class);
-        q.setParameter("projectID", a.getProjectID());
-        q.setMaxResults(1);
-        List<ProjectTaskStatus> statList = q.getResultList();
-        if (!statList.isEmpty()) {
-            lastStatus = new ProjectTaskStatusDTO(statList.get(0));
-            Logger.getLogger("ProjectDTO").log(Level.INFO, "Last status found:{0} {1}", new Object[]{lastStatus.getProjectTaskID(), lastStatus.getTaskName()});
-        }
+            Query q = em.createNamedQuery("ProjectTaskStatus.findByProject", ProjectTaskStatus.class);
+            q.setParameter("projectID", a.getProjectID());
+            List<ProjectTaskStatus> statList = q.getResultList();
+            if (!statList.isEmpty()) {
+                lastStatus = new ProjectTaskStatusDTO(statList.get(0));
+                statusCount = statList.size();
+                Logger.getLogger("ProjectDTO").log(Level.INFO, "Last status found:{0} {1} statusCount: {2} - {3}", 
+                        new Object[]{lastStatus.getProjectTaskID(), lastStatus.getTaskName(), statusCount, a.getProjectName()});
+            }
         } catch (Exception e) {
-            Logger.getLogger("ProjectDTO").log(Level.SEVERE,"Failed",e);
+            Logger.getLogger("ProjectDTO").log(Level.SEVERE, "Failed", e);
         }
-       
 
     }
+
     public ProjectDTO(Project a) {
         setUp(a);
         //Get last status
-       
 
     }
 
     private void setUp(Project a) {
-      this.projectID = a.getProjectID();
+        this.projectID = a.getProjectID();
         this.projectName = a.getProjectName();
         latitude = a.getLatitude();
         longitude = a.getLongitude();
@@ -87,16 +87,11 @@ public class ProjectDTO implements Serializable, Comparable<ProjectDTO> {
         desc = a.getDescription();
 
         projectTaskList = new ArrayList<>();
-        int count = 0;
         if (a.getProjectTaskList() != null) {
             for (ProjectTask pt : a.getProjectTaskList()) {
                 projectTaskList.add(new ProjectTaskDTO(pt));
-                if (pt.getProjectTaskStatusList() != null) {
-                    count += pt.getProjectTaskStatusList().size();
-                }
             }
             projectTaskCount = projectTaskList.size();
-            statusCount = count;
         }
 
         photoUploadList = new ArrayList<>();
@@ -121,7 +116,6 @@ public class ProjectDTO implements Serializable, Comparable<ProjectDTO> {
             }
             staffCount = staffList.size();
         }
-        
 
         if (a.getCity() != null) {
             cityID = a.getCity().getCityID();
@@ -143,8 +137,9 @@ public class ProjectDTO implements Serializable, Comparable<ProjectDTO> {
                 portfolioID = p.getPortfolioID();
                 portfolioName = p.getPortfolioName();
             }
-        }  
+        }
     }
+
     public Integer getMonitorCount() {
         return monitorCount;
     }

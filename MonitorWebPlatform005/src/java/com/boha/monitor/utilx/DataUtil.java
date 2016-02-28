@@ -100,15 +100,16 @@ public class DataUtil {
      * @return
      * @throws DataException
      */
-    public ResponseDTO addProjectTasksUsingCompany(Integer projectID, Integer companyID) throws DataException {
+    public ResponseDTO addProjectTasksUsingCompany(Integer projectID) throws DataException {
         ResponseDTO resp = new ResponseDTO();
         try {
-            Company c = em.find(Company.class, companyID);
+
             Project p = em.find(Project.class, projectID);
             Query q = em.createNamedQuery("Task.findByCompany", Task.class);
-            q.setParameter("companyID", companyID);
+            q.setParameter("companyID", p.getCompany().getCompanyID());
             List<Task> taskList = q.getResultList();
             for (Task t : taskList) {
+
                 ProjectTask pt = new ProjectTask();
                 pt.setDateRegistered(new Date());
                 pt.setProject(p);
@@ -145,14 +146,37 @@ public class DataUtil {
         try {
             Project p = em.find(Project.class, list.get(0).getProjectID());
             for (ProjectTaskDTO dto : list) {
-                Task t = em.find(Task.class, dto.getTask().getTaskID());
-                ProjectTask pt = new ProjectTask();
-                pt.setDateRegistered(new Date());
-                pt.setProject(p);
-                pt.setTask(t);
-                em.persist(pt);
-                log.log(Level.INFO, "ProjectTask added: {0} - {1}", new Object[]{p.getProjectName(), t.getTaskName()});
+                if (dto.getProjectTaskID() != null) {
+                    ProjectTask pt = em.find(ProjectTask.class, dto.getProjectTaskID());
+                    if (!dto.getTask().isSelected()) {
+                        em.remove(pt);
+                        em.flush();
+                        log.log(Level.INFO, "Removed ProjectTask: {0} from {1}",
+                                new Object[]{dto.getTask().getTaskName(), p.getProjectName()});
+                    }
+
+                } else {
+                    if (dto.getTask().isSelected()) {
+                        Query q = em.createNamedQuery("ProjectTask.findByProjectTask", ProjectTask.class);
+                        q.setParameter("projectID", p.getProjectID());
+                        q.setParameter("taskID", dto.getTask().getTaskID());
+                        List<ProjectTask> ptList = q.getResultList();
+                        if (ptList.isEmpty()) {
+
+                            Task t = em.find(Task.class, dto.getTask().getTaskID());
+                            ProjectTask pt = new ProjectTask();
+                            pt.setDateRegistered(new Date());
+                            pt.setProject(p);
+                            pt.setTask(t);
+                            em.persist(pt);
+                            log.log(Level.INFO, "ProjectTask added: {0} - {1}",
+                                    new Object[]{p.getProjectName(), t.getTaskName()});
+                        }
+                    }
+                }
+
             }
+
             em.flush();
             Query q = em.createNamedQuery("ProjectTask.findByProject", ProjectTask.class);
             q.setParameter("projectID", p.getProjectID());
@@ -209,6 +233,7 @@ public class DataUtil {
 
     public ResponseDTO addSubTasks(List<SubTaskDTO> list) throws DataException {
         ResponseDTO resp = new ResponseDTO();
+
         try {
             Task tt = em.find(Task.class, list.get(0).getTaskID());
             for (SubTaskDTO taskDTO : list) {
@@ -222,7 +247,8 @@ public class DataUtil {
 
             }
             em.flush();
-            Query q = em.createNamedQuery("SubTask.findByTask", SubTask.class);
+            Query q = em.createNamedQuery("SubTask.findByTask", SubTask.class
+            );
             q.setParameter("taskID", tt.getTaskID());
             List<SubTask> taskList = q.getResultList();
             resp.setSubTaskList(new ArrayList<>());
@@ -245,8 +271,10 @@ public class DataUtil {
         log.log(Level.INFO, "#### Projects import started ....########");
         try {
             Project p = new Project();
+
             if (dto.getProgrammeID() != null) {
                 p.setProgramme(em.find(Programme.class, dto.getProgrammeID()));
+
             }
             if (dto.getCityID() != null) {
                 p.setCity(em.find(City.class, dto.getCityID()));
@@ -258,7 +286,8 @@ public class DataUtil {
             em.flush();
             log.log(Level.INFO, "### Project added: {0}", dto.getProjectName());
             //assign all programme tasks to projects
-            Query q0 = em.createNamedQuery("Task.findByCompany", Task.class);
+            Query q0 = em.createNamedQuery("Task.findByCompany", Task.class
+            );
             q0.setParameter("companyID", dto.getCompanyID());
             List<Task> taskList = q0.getResultList();
             ProjectDTO projectDTO = new ProjectDTO(p);
@@ -300,7 +329,8 @@ public class DataUtil {
 
             }
 
-            Query q = em.createNamedQuery("MonitorTrade.findByMonitor", MonitorTrade.class);
+            Query q = em.createNamedQuery("MonitorTrade.findByMonitor", MonitorTrade.class
+            );
             q.setParameter(
                     "monitorID", p.getMonitorID());
             List<MonitorTrade> ttList = q.getResultList();
@@ -328,7 +358,8 @@ public class DataUtil {
         ResponseDTO resp = new ResponseDTO();
         Staff cs = em.find(Staff.class, list.get(0).getStaffID());
 
-        Query q = em.createNamedQuery("StaffProject.findStaffProjects", StaffProject.class);
+        Query q = em.createNamedQuery("StaffProject.findStaffProjects", StaffProject.class
+        );
         q.setParameter("staffID", list.get(0).getStaffID());
         List<StaffProject> spList = q.getResultList();
         for (StaffProject sp : spList) {
@@ -340,14 +371,17 @@ public class DataUtil {
             for (StaffProjectDTO sp : list) {
                 StaffProject d = new StaffProject();
                 d.setStaff(cs);
-                d.setProject(em.find(Project.class, sp.getProjectID()));
+                d
+                        .setProject(em.find(Project.class, sp.getProjectID()));
                 d.setActiveFlag(true);
                 d.setDateAssigned(new Date());
                 em.persist(d);
             }
             em.flush();
 
-            q = em.createNamedQuery("StaffProject.findByStaff", StaffProject.class);
+            q
+                    = em.createNamedQuery("StaffProject.findByStaff", StaffProject.class
+                    );
             q.setParameter("staffID", list.get(0).getStaffID());
             List<StaffProject> sList = q.getResultList();
             resp.setStaffProjectList(new ArrayList<>());
@@ -373,7 +407,8 @@ public class DataUtil {
     public ResponseDTO addMonitorProjects(List<MonitorProjectDTO> list) throws DataException {
         ResponseDTO resp = new ResponseDTO();
         Monitor cs = em.find(Monitor.class, list.get(0).getMonitorID());
-        Query q = em.createNamedQuery("MonitorProject.findMonitorProjects", MonitorProject.class);
+        Query q = em.createNamedQuery("MonitorProject.findMonitorProjects", MonitorProject.class
+        );
         q.setParameter("monitorID", list.get(0).getMonitorID());
         List<MonitorProject> spList = q.getResultList();
         for (MonitorProject sp : spList) {
@@ -385,13 +420,16 @@ public class DataUtil {
             for (MonitorProjectDTO sp : list) {
                 MonitorProject d = new MonitorProject();
                 d.setMonitor(cs);
-                d.setProject(em.find(Project.class, sp.getProjectID()));
+                d
+                        .setProject(em.find(Project.class, sp.getProjectID()));
                 d.setActiveFlag(true);
                 d.setDateAssigned(new Date());
                 em.persist(d);
             }
             em.flush();
-            q = em.createNamedQuery("MonitorProject.findMonitorProjects", MonitorProject.class);
+            q
+                    = em.createNamedQuery("MonitorProject.findMonitorProjects", MonitorProject.class
+                    );
             q.setParameter("monitorID", list.get(0).getMonitorID());
             List<MonitorProject> sList = q.getResultList();
             resp.setMonitorProjectList(new ArrayList<>());
@@ -414,9 +452,11 @@ public class DataUtil {
                 ChatMember chatMember = new ChatMember();
                 chatMember
                         .setChat(em.find(Chat.class, cm.getChatID()));
+
                 if (cm.getStaff()
                         != null) {
                     chatMember.setStaff(em.find(Staff.class, cm.getStaff().getStaffID()));
+
                 }
 
                 if (cm.getMonitor()
@@ -447,6 +487,7 @@ public class DataUtil {
         try {
             if (chat.getStaff() != null) {
                 cs = em.find(Staff.class, chat.getStaff().getStaffID());
+
             }
 
             if (chat.getMonitor() != null) {
@@ -462,6 +503,7 @@ public class DataUtil {
 
             if (chat.getProjectID() != null) {
                 c.setProject(em.find(Project.class, chat.getProjectID()));
+
             }
 
             if (chat.getProjectID() != null) {
@@ -546,21 +588,25 @@ public class DataUtil {
 
             if (pu.getProjectTaskStatus() != null) {
                 u.setProjectTaskStatus(em.find(ProjectTaskStatus.class, pu.getProjectTaskStatus().getProjectTaskStatusID()));
+
             }
 
             if (pu.getProjectID()
                     != null) {
                 u.setProject(em.find(Project.class, pu.getProjectID()));
+
             }
 
             if (pu.getProjectTaskID()
                     != null) {
                 u.setProjectTask(em.find(ProjectTask.class, pu.getProjectTaskID()));
+
             }
 
             if (pu.getStaffID()
                     != null) {
                 u.setStaff(em.find(Staff.class, pu.getStaffID()));
+
             }
 
             if (pu.getMonitorID()
@@ -602,6 +648,7 @@ public class DataUtil {
 
     public ResponseDTO generateMonitorPin(Integer monitorID) throws DataException {
         ResponseDTO resp = new ResponseDTO();
+
         try {
             Monitor mon = em.find(Monitor.class, monitorID);
             if (mon != null) {
@@ -621,6 +668,7 @@ public class DataUtil {
 
     public ResponseDTO generateStaffPin(Integer staffID) throws DataException {
         ResponseDTO resp = new ResponseDTO();
+
         try {
             Staff staff = em.find(Staff.class, staffID);
             if (staff != null) {
@@ -640,6 +688,7 @@ public class DataUtil {
 
     public ResponseDTO updateStaff(StaffDTO dto) throws DataException {
         ResponseDTO resp = new ResponseDTO();
+
         try {
             Staff ps = em.find(Staff.class, dto.getStaffID());
             if (ps != null) {
@@ -680,19 +729,23 @@ public class DataUtil {
         w.setPhotoUploadList(new ArrayList<>());
         try {
             VideoUpload u = new VideoUpload();
+
             if (pu.getProjectID()
                     != null) {
                 u.setProject(em.find(Project.class, pu.getProjectID()));
+
             }
 
             if (pu.getProjectTaskID()
                     != null) {
                 u.setProjectTask(em.find(ProjectTask.class, pu.getProjectTaskID()));
+
             }
 
             if (pu.getStaffID()
                     != null) {
                 u.setStaff(em.find(Staff.class, pu.getStaffID()));
+
             }
 
             if (pu.getMonitorID()
@@ -758,6 +811,7 @@ public class DataUtil {
     public void addLocationTrack(LocationTrackerDTO dto) throws DataException {
         try {
             LocationTracker t = new LocationTracker();
+
             if (dto.getStaffID() != null) {
                 t.setStaff(em.find(Staff.class, dto.getStaffID()));
             }
@@ -770,20 +824,25 @@ public class DataUtil {
                     new Date());
             t.setDateTrackedLong(BigInteger.valueOf(dto.getDateTracked()));
             t.setGeocodedAddress(dto.getGeocodedAddress());
+
             if (dto.getGcmDevice() != null) {
                 if (dto.getGcmDevice().getGcmDeviceID() != null) {
                     t.setGcmDevice(em.find(GcmDevice.class, dto.getGcmDevice().getGcmDeviceID()));
+
                 }
             }
             if (dto.getMonitorID() != null) {
                 Monitor m = em.find(Monitor.class, dto.getMonitorID());
                 t.setMonitor(m);
-                t.setCompany(em.find(Company.class, m.getCompany().getCompanyID()));
+                t
+                        .setCompany(em.find(Company.class, m.getCompany().getCompanyID()));
+
             }
             if (dto.getStaffID() != null) {
                 Staff m = em.find(Staff.class, dto.getStaffID());
                 t.setStaff(m);
-                t.setCompany(em.find(Company.class, m.getCompany().getCompanyID()));
+                t
+                        .setCompany(em.find(Company.class, m.getCompany().getCompanyID()));
             }
             em.persist(t);
 
@@ -813,10 +872,13 @@ public class DataUtil {
 
         try {
             GcmDevice g = new GcmDevice();
-            g.setCompany(em.find(Company.class, d.getCompanyID()));
+            g
+                    .setCompany(em.find(Company.class, d.getCompanyID()));
+
             if (d.getStaffID()
                     != null) {
                 g.setStaff(em.find(Staff.class, d.getStaffID()));
+
             }
 
             if (d.getMonitorID()
@@ -851,7 +913,8 @@ public class DataUtil {
         ResponseDTO resp = new ResponseDTO();
 
         try {
-            Query q = em.createNamedQuery("ProjectTaskStatus.findByTaskStatusDate", ProjectTaskStatus.class);
+            Query q = em.createNamedQuery("ProjectTaskStatus.findByTaskStatusDate", ProjectTaskStatus.class
+            );
             q.setParameter("projectTaskID", status.getProjectTaskID());
             q.setParameter("statusDate", new Date(status.getStatusDate()));
             List<ProjectTaskStatus> list = q.getResultList();
@@ -860,6 +923,7 @@ public class DataUtil {
                 resp.setMessage("This project status is a duplicate of another already on the system");
                 log.log(Level.WARNING, "ProjectTaskStatus is a DUPLICATE, ignored");
                 return resp;
+
             }
             ProjectTask c = em.find(ProjectTask.class,
                     status.getProjectTaskID());
@@ -872,10 +936,13 @@ public class DataUtil {
             }
 
             t.setProjectTask(c);
-            t.setTaskStatusType(em.find(TaskStatusType.class,
-                    status.getTaskStatusType().getTaskStatusTypeID()));
+            t
+                    .setTaskStatusType(em.find(TaskStatusType.class,
+                            status.getTaskStatusType().getTaskStatusTypeID()));
+
             if (status.getStaffID() != null) {
                 t.setStaff(em.find(Staff.class, status.getStaffID()));
+
             }
 
             if (status.getMonitorID() != null) {
@@ -925,7 +992,8 @@ public class DataUtil {
             }
 
             em.flush();
-            Query q = em.createNamedQuery("TaskStatusType.findByCompany", TaskStatusType.class);
+            Query q = em.createNamedQuery("TaskStatusType.findByCompany", TaskStatusType.class
+            );
             q.setParameter("companyID", c.getCompanyID());
             List<TaskStatusType> mList = q.getResultList();
 
@@ -961,7 +1029,8 @@ public class DataUtil {
             }
 
             em.flush();
-            Query q = em.createNamedQuery("ProjectStatusType.findByCompany", ProjectStatusType.class);
+            Query q = em.createNamedQuery("ProjectStatusType.findByCompany", ProjectStatusType.class
+            );
 
             q.setParameter(
                     "companyID", c.getCompanyID());
@@ -1051,6 +1120,7 @@ public class DataUtil {
         Programme p = null;
 
         try {
+            c = em.find(Company.class, projectList.get(0).getCompanyID());
 
             if (projectList.get(0).getProgrammeID() != null) {
                 p = em.find(Programme.class, projectList.get(0).getProgrammeID());
@@ -1060,6 +1130,7 @@ public class DataUtil {
 
                 Project ps = new Project();
                 ps.setProgramme(p);
+                ps.setCompany(c);
                 ps.setDescription(dto.getDescription());
                 ps.setAccuracy(dto.getAccuracy());
                 ps.setAddress(dto.getAddress());
@@ -1067,11 +1138,25 @@ public class DataUtil {
                 ps.setLatitude(dto.getLatitude());
                 ps.setLongitude(dto.getLongitude());
                 ps.setProjectName(dto.getProjectName());
+                ps.setDateRegistered(new Date());
 
                 em.persist(ps);
             }
-//            em.flush();
-            resp = ListUtil.getCompanyData(em, c.getCompanyID());
+            em.flush();
+
+            List<String> sList = new ArrayList<>();
+            for (ProjectDTO pr : projectList) {
+                sList.add(pr.getProjectName());
+
+            }
+            Query q = em.createNamedQuery("Project.findByCompanyProjectNames", Project.class
+            );
+            q.setParameter("companyID", c.getCompanyID());
+            q.setParameter("list", sList);
+            List<Project> prList = q.getResultList();
+            for (Project project : prList) {
+                resp.getProjectList().add(new ProjectDTO(project));
+            }
             log.log(Level.OFF,
                     "Projects  registered for: {0} - {1} ",
                     new Object[]{c.getCompanyName(), resp.getProjectList().size()
@@ -1200,6 +1285,7 @@ public class DataUtil {
             List<StaffDTO> staffList) throws DataException {
         ResponseDTO resp = new ResponseDTO();
         resp.setStaffList(new ArrayList<>());
+
         try {
             Company c = em.find(Company.class, staffList.get(0).getCompanyID());
             resp.setCompany(new CompanyDTO(c));
@@ -1232,7 +1318,8 @@ public class DataUtil {
             staffX.setActiveFlag(staff.getActiveFlag());
             staffX.setDateRegistered(new Date());
 
-            Query q = em.createNamedQuery("Staff.findByEmail", Staff.class);
+            Query q = em.createNamedQuery("Staff.findByEmail", Staff.class
+            );
             q.setParameter("email", staff.getEmail());
             List<Staff> stx = q.getResultList();
             if (stx.isEmpty()) {
@@ -1286,7 +1373,8 @@ public class DataUtil {
     private MonitorDTO addMonitor(
             MonitorDTO mon, Company c) throws DataException {
         ResponseDTO resp = new ResponseDTO();
-        Query q = em.createNamedQuery("Monitor.findByEmail", Monitor.class);
+        Query q = em.createNamedQuery("Monitor.findByEmail", Monitor.class
+        );
 
         MonitorDTO mx = new MonitorDTO();
         try {
@@ -1558,6 +1646,7 @@ public class DataUtil {
 
     public ResponseDTO updateMonitor(MonitorDTO mon) throws DataException {
         ResponseDTO w = new ResponseDTO();
+
         try {
             Monitor monitor = em.find(Monitor.class, mon.getMonitorID());
             if (mon.getFirstName() != null) {
@@ -1663,6 +1752,7 @@ public class DataUtil {
 
     public ResponseDTO setNewPin(Integer staffID) throws DataException {
         ResponseDTO resp = new ResponseDTO();
+
         try {
             Staff cs = em.find(Staff.class, staffID);
             cs.setPin(getRandomPin());
@@ -1772,7 +1862,8 @@ public class DataUtil {
     public void fixData() {
 
         Company c = em.find(Company.class, 30);
-        Query q = em.createNamedQuery("TaskType.findAll", TaskType.class);
+        Query q = em.createNamedQuery("TaskType.findAll", TaskType.class
+        );
         List<TaskType> ttList = q.getResultList();
         int number = 1;
         List<Task> taskList = new ArrayList<>(ttList.size());
@@ -1796,7 +1887,8 @@ public class DataUtil {
     }
 
     public void fixProjectTasks() {
-        Query q = em.createNamedQuery("Task.findByCompany", Task.class);
+        Query q = em.createNamedQuery("Task.findByCompany", Task.class
+        );
         q.setParameter("companyID", 30);
         List<Task> taskList = q.getResultList();
 
@@ -1806,7 +1898,8 @@ public class DataUtil {
     }
 
     private void writeProjectTasks(Integer programmeID, List<Task> taskList) {
-        Query q = em.createNamedQuery("Project.findByProgramme", Project.class);
+        Query q = em.createNamedQuery("Project.findByProgramme", Project.class
+        );
         q.setParameter("programmeID", programmeID);
         List<Project> pList = q.getResultList();
         for (Project proj : pList) {
@@ -1828,11 +1921,14 @@ public class DataUtil {
 
     public void writeStaffProjects() {
         Company c = em.find(Company.class, 30);
-        Query q = em.createNamedQuery("Staff.findByCompany", Staff.class);
+        Query q = em.createNamedQuery("Staff.findByCompany", Staff.class
+        );
         q.setParameter("companyID", 32);
         List<Staff> pList = q.getResultList();
         List<Staff> staffList = new ArrayList<>(pList.size());
-        q = em.createNamedQuery("Project.findByProgramme", Project.class);
+        q
+                = em.createNamedQuery("Project.findByProgramme", Project.class
+                );
         q.setParameter("programmeID", 67);
         List<Project> projList = q.getResultList();
         for (Staff s : pList) {
@@ -1869,11 +1965,14 @@ public class DataUtil {
 
     public void writeMonitorProjects() {
         Company c = em.find(Company.class, 30);
-        Query q = em.createNamedQuery("Monitor.findByCompany", Monitor.class);
+        Query q = em.createNamedQuery("Monitor.findByCompany", Monitor.class
+        );
         q.setParameter("companyID", 32);
         List<Monitor> pList = q.getResultList();
         List<Monitor> monList = new ArrayList<>(pList.size());
-        q = em.createNamedQuery("Project.findByProgramme", Project.class);
+        q
+                = em.createNamedQuery("Project.findByProgramme", Project.class
+                );
         q.setParameter("programmeID", 67);
         List<Project> projList = q.getResultList();
         for (Monitor s : pList) {

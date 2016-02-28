@@ -38,6 +38,8 @@ import javax.validation.constraints.Size;
 @NamedQueries({
 	@NamedQuery(name = "Project.findByCompany",
             query = "SELECT p FROM Project p WHERE p.company.companyID = :companyID order by p.projectName"),
+    @NamedQuery(name = "Project.findByCompanyProjectNames",
+            query = "SELECT p FROM Project p WHERE p.company.companyID = :companyID and p.projectName in :list order by p.projectName"),
     @NamedQuery(name = "Project.findByProgramme",
             query = "SELECT p FROM Project p WHERE p.programme.programmeID = :programmeID ORDER BY p.projectName ")
 })

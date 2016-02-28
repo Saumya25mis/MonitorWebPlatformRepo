@@ -89,21 +89,24 @@ public class RequestDTO implements Serializable {
     private List<SubTaskDTO> subTaskList;
 
 //register actors
-    public static final int REGISTER_COMPANY = 1,
+    public static final int 
+            REGISTER_COMPANY = 1,
             IMPORT_TASK_INFO = 2,
             IMPORT_PROJECT_INFO = 3,
             GENERATE_STAFF_PIN = 4,
             GENERATE_MONITOR_PIN = 5,
             NOTIFY_SUPERVISOR_NO_PROJECTS = 30;
     //add stuff
-    public static final int ADD_PROJECT_DIARY_RECORD = 12,
+    public static final int 
+            ADD_PROJECT_DIARY_RECORD = 12,
             ADD_PROJECT_TASK_STATUS = 13,
             ADD_PROJECT_STATUS = 13,
             ADD_DEVICE = 17,
             ADD_PHOTO = 18,
             ADD_VIDEO = 19;
     //get stuff
-    public static final int GET_COMPANY_LIST = 100,
+    public static final int 
+            GET_COMPANY_LIST = 100,
             GET_PROJECT_DATA = 101,
             GET_PROJECT_SITE_DATA = 102,
             GET_SITE_IMAGE_FILENAMES = 103,
@@ -167,11 +170,12 @@ public class RequestDTO implements Serializable {
             ADD_LOCATION_TRACKERS = 323,
             ADD_CHAT = 324,
             ADD_CHAT_MEMBERS = 325,
-            ADD_PROJECT_TASKS = 326,
+            ADD_PROJECT_TASKS_USING_COMPANY = 326,
             ADD_STAFF = 327,
             ADD_MONITORS = 328,
             ADD_SUB_TASKS = 329,
-            ADD_LOCATION_TRACK = 330;
+            ADD_LOCATION_TRACK = 330,
+            ADD_PROJECT_TASKS = 331;
 
     //updates 
     public static final int UPDATE_COMPANY_TASK = 401,

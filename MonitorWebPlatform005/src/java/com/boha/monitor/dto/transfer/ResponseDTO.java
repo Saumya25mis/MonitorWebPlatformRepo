@@ -108,6 +108,9 @@ public class ResponseDTO {
 
     
     public List<GcmDeviceDTO> getGcmDeviceList() {
+        if (gcmDeviceList == null) {
+            gcmDeviceList = new ArrayList<>();
+        }
         return gcmDeviceList;
     }
 
@@ -388,6 +391,8 @@ public class ResponseDTO {
     }
 
     public List<ProjectDTO> getProjectList() {
+        if (projectList == null) 
+            projectList = new ArrayList<>();
         return projectList;
     }
 
@@ -412,6 +417,9 @@ public class ResponseDTO {
     }
 
     public List<TaskDTO> getTaskList() {
+        if (taskList == null) {
+            taskList = new ArrayList<>();
+        }
         return taskList;
     }
 

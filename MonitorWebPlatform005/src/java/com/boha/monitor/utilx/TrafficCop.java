@@ -185,8 +185,11 @@ public class TrafficCop {
                 resp = ListUtil.getStaffPhotos(dataUtil.getEntityManager(), req.getStaffID());
                 break;
 
+            case RequestDTO.ADD_PROJECT_TASKS_USING_COMPANY:
+                resp = dataUtil.addProjectTasksUsingCompany(req.getProjectID());
+                break;
             case RequestDTO.ADD_PROJECT_TASKS:
-                resp = dataUtil.addProjectTasksUsingCompany(req.getProjectID(), req.getCompanyID());
+                resp = dataUtil.addProjectTasks(req.getProjectTaskList());
                 break;
             case RequestDTO.ADD_PROJECT_TASK_STATUS:
                 resp = dataUtil.addProjectTaskStatus(req.getProjectTaskStatus());
