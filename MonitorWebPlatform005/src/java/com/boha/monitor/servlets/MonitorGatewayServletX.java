@@ -9,7 +9,6 @@ import com.boha.monitor.dto.transfer.RequestDTO;
 import com.boha.monitor.dto.transfer.ResponseDTO;
 import com.boha.monitor.utilx.DataUtil;
 import com.boha.monitor.utilx.GZipUtility;
-import com.boha.monitor.utilx.ProjectTaskGen;
 import com.boha.monitor.utilx.ServerStatus;
 import com.boha.monitor.utilx.SignInUtil;
 import com.boha.monitor.utilx.TrafficCop;

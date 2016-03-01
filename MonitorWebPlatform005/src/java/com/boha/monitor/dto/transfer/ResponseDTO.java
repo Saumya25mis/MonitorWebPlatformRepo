@@ -146,6 +146,9 @@ public class ResponseDTO {
 
     
     public List<ProgrammeDTO> getProgrammeList() {
+        if (programmeList == null) {
+            programmeList = new ArrayList<>();
+        }
         return programmeList;
     }
 
@@ -156,6 +159,9 @@ public class ResponseDTO {
     
 
     public List<MonitorProjectDTO> getMonitorProjectList() {
+        if (monitorProjectList == null) {
+            monitorProjectList = new ArrayList<>();
+        }
         return monitorProjectList;
     }
 
@@ -175,6 +181,9 @@ public class ResponseDTO {
 
 
     public List<PhotoUploadDTO> getPhotoUploadList() {
+        if (photoUploadList == null) {
+            photoUploadList = new ArrayList<>();
+        }
         return photoUploadList;
     }
 
@@ -183,6 +192,9 @@ public class ResponseDTO {
     }
 
     public List<ProjectTaskDTO> getProjectTaskList() {
+        if (projectTaskList == null) {
+            projectTaskList = new ArrayList<>();
+        }
         return projectTaskList;
     }
 
@@ -191,6 +203,9 @@ public class ResponseDTO {
     }
 
     public List<TaskStatusTypeDTO> getTaskStatusTypeList() {
+        if (taskStatusTypeList == null) {
+            taskStatusTypeList = new ArrayList<>();
+        }
         return taskStatusTypeList;
     }
 
@@ -207,6 +222,9 @@ public class ResponseDTO {
     }
 
     public List<MonitorDTO> getMonitorList() {
+        if (monitorList == null) {
+            monitorList = new ArrayList<>();
+        }
         return monitorList;
     }
 
@@ -215,6 +233,9 @@ public class ResponseDTO {
     }
 
     public List<StaffDTO> getStaffList() {
+        if (staffList == null) {
+            staffList = new ArrayList<>();
+        }
         return staffList;
     }
 

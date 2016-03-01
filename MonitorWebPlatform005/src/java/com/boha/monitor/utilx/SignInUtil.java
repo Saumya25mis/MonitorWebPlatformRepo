@@ -56,7 +56,7 @@ public class SignInUtil {
             q.setMaxResults(1);
             Staff cs = (Staff) q.getSingleResult();
             Company company = cs.getCompany();
-            resp = ListUtil.getProjectDataForStaff(em, cs.getStaffID());
+            resp = ListUtil.getProjectsForStaff(em, cs.getStaffID());
             StaffDTO dto = new StaffDTO(cs);
             resp.setStaff(dto);
             resp.setCompany(new CompanyDTO(company));
@@ -67,6 +67,11 @@ public class SignInUtil {
                 resp.setGcmDeviceList(new ArrayList<>());
                 resp.getGcmDeviceList().add(addStaffDevice(device));
             }
+            ResponseDTO aa = ListUtil.getLookups(em, company.getCompanyID());
+            resp.setStaffList(aa.getStaffList());
+            resp.setMonitorList(aa.getMonitorList());
+            resp.setTaskList(aa.getTaskList());
+            resp.setTaskStatusTypeList(aa.getTaskStatusTypeList());
 
         } catch (NoResultException e) {
             log.log(Level.WARNING, "Invalid login attempt: " + email + " pin: " + pin, e);
@@ -132,7 +137,7 @@ public class SignInUtil {
             Monitor mon = (Monitor) q.getSingleResult();
             Company company = mon.getCompany();
             
-            resp = ListUtil.getProjectDataForMonitor(em, mon.getMonitorID());
+            resp = ListUtil.getProjectsForMonitor(em, mon.getMonitorID());
             resp.setCompany(new CompanyDTO(company));
             resp.setMonitor(new MonitorDTO(mon));
             
@@ -141,6 +146,11 @@ public class SignInUtil {
                 device.setMonitorID(mon.getMonitorID());
                 resp.getGcmDeviceList().add(addMonitorDevice(device));
             }
+            ResponseDTO aa = ListUtil.getLookups(em, company.getCompanyID());
+            resp.setStaffList(aa.getStaffList());
+            resp.setMonitorList(aa.getMonitorList());
+            resp.setTaskList(aa.getTaskList());
+            resp.setTaskStatusTypeList(aa.getTaskStatusTypeList());
 
         } catch (NoResultException e) {
             log.log(Level.WARNING, "Invalid monitor login attempt: " + email + " pin: " + pin, e);

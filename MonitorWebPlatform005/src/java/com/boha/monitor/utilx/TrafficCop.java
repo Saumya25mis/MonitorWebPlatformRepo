@@ -71,14 +71,16 @@ public class TrafficCop {
                 resp = ListUtil.getLocationTracksByDevice(dataUtil.getEntityManager(), req.getGcmDevice().getGcmDeviceID());
                 break;
             case RequestDTO.GET_STAFF_DATA:
-                resp = ListUtil.getProjectDataForStaff(dataUtil.getEntityManager(), req.getStaffID());
+                resp = ListUtil.getProjectsForStaff(dataUtil.getEntityManager(), req.getStaffID());
+                break;
+            case RequestDTO.GET_LOOKUPS:
+                resp = ListUtil.getLookups(dataUtil.getEntityManager(), req.getCompanyID());
                 break;
             case RequestDTO.GET_PROJECT_STATUS_PHOTOS:
                 resp = ListUtil.getProjectStatusPhotos(dataUtil.getEntityManager(), req.getProjectID());
                 break;
             case RequestDTO.GET_PROJECT_TASKS:
-                List<ProjectTaskDTO> list = ListUtil.getProjectTaskList(dataUtil.getEntityManager(), req.getProjectID());
-                resp.setProjectTaskList(list);
+                resp = ListUtil.getProjectTasks(dataUtil.getEntityManager(), req.getProjectID());
                 break;
 
             case RequestDTO.IMPORT_PROJECT_INFO:
@@ -233,7 +235,7 @@ public class TrafficCop {
                 resp = ListUtil.getLocationTracksByStaff(dataUtil.getEntityManager(), req.getStaffID());
                 break;
             case RequestDTO.GET_MONITOR_PROJECTS:
-                resp = ListUtil.getProjectDataForMonitor(dataUtil.getEntityManager(), req.getMonitorID());
+                resp = ListUtil.getProjectsForMonitor(dataUtil.getEntityManager(), req.getMonitorID());
                 break;
             case RequestDTO.GET_ERROR_REPORTS:
                 resp = ListUtil.getServerEvents(dataUtil.getEntityManager(), req.getStartDate(), req.getEndDate());

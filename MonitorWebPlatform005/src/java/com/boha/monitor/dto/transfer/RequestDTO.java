@@ -145,7 +145,8 @@ public class RequestDTO implements Serializable {
             GET_LOCATION_TRACK_BY_DEVICE = 137,
             GET_PROJECT_TASKS = 138,
             GET_PROJECTS_FOR_MONITOR_ASSIGNMENTS = 139,
-            GET_PROJECTS_FOR_STAFF_ASSIGNMENTS = 140;
+            GET_PROJECTS_FOR_STAFF_ASSIGNMENTS = 140,
+            GET_LOOKUPS = 141;
     //
     public static final int LOGIN_STAFF = 200,
             LOGIN_STAFF_DATA_SETUP = 201,

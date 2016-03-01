@@ -50,6 +50,7 @@ public class Company implements Serializable {
     private List<Task> taskList;
     
     @OneToMany(mappedBy = "company", fetch = FetchType.EAGER)
+    @OrderBy("dateRegistered desc")
     private List<GcmDevice> gcmDeviceList;
     @Size(max = 255)
     @Column(name = "email")
@@ -73,15 +74,21 @@ public class Company implements Serializable {
     @Column(name = "address")
     private String address;
     
-    @OneToMany(mappedBy = "company")
+    @OneToMany(mappedBy = "company", fetch = FetchType.EAGER)
+    @OrderBy("errorDate desc")
     private List<ErrorStoreAndroid> errorStoreAndroidList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "company", fetch = FetchType.EAGER)
     
-    
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "company", fetch = FetchType.EAGER)   
+    @OrderBy("lastName, firstName")
     private List<Monitor> monitorList;
+    
+    
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "company", fetch = FetchType.EAGER)
+    @OrderBy("lastName, firstName")
     private List<Staff> staffList;
+    
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "company", fetch = FetchType.EAGER)
+    @OrderBy("taskStatusTypeName")
     private List<TaskStatusType> taskStatusTypeList;
     
     

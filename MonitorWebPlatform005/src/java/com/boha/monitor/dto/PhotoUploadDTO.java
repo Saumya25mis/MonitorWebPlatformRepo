@@ -53,6 +53,7 @@ public class PhotoUploadDTO implements Serializable {
         longitude = a.getLongitude();
         accuracy = a.getAccuracy();
         uri = a.getUri();
+        secureUrl = a.getSecureUrl();
         statusColor = a.getStatusColor();
         dateUploaded = a.getDateUploaded().getTime();
         

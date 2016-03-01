@@ -50,6 +50,7 @@ public class ProjectTask implements Serializable {
     @OneToMany(mappedBy = "projectTask", fetch = FetchType.EAGER)
     @OrderBy("dateTaken desc")
     private List<VideoUpload> videoUploadList;
+    
     @JoinColumn(name = "taskID", referencedColumnName = "taskID")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Task task;
@@ -65,6 +66,7 @@ public class ProjectTask implements Serializable {
     @Column(name = "dateRegistered")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateRegistered;
+    
     @JoinColumn(name = "projectID", referencedColumnName = "projectID")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Project project;
@@ -72,8 +74,9 @@ public class ProjectTask implements Serializable {
     @OneToMany(mappedBy = "projectTask", fetch = FetchType.EAGER)
     @OrderBy("dateTaken desc")
     private List<PhotoUpload> photoUploadList;
+    
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "projectTask", fetch = FetchType.EAGER)
-    @OrderBy("statusDate desc")
+    @OrderBy("dateUpdated desc")
     private List<ProjectTaskStatus> projectTaskStatusList;
 
     

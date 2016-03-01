@@ -913,8 +913,8 @@ public class DataUtil {
         ResponseDTO resp = new ResponseDTO();
 
         try {
-            Query q = em.createNamedQuery("ProjectTaskStatus.findByTaskStatusDate", ProjectTaskStatus.class
-            );
+            Query q = em.createNamedQuery("ProjectTaskStatus.findByTaskStatusDate", 
+                    ProjectTaskStatus.class);
             q.setParameter("projectTaskID", status.getProjectTaskID());
             q.setParameter("statusDate", new Date(status.getStatusDate()));
             List<ProjectTaskStatus> list = q.getResultList();
@@ -936,8 +936,7 @@ public class DataUtil {
             }
 
             t.setProjectTask(c);
-            t
-                    .setTaskStatusType(em.find(TaskStatusType.class,
+            t.setTaskStatusType(em.find(TaskStatusType.class,
                             status.getTaskStatusType().getTaskStatusTypeID()));
 
             if (status.getStaffID() != null) {

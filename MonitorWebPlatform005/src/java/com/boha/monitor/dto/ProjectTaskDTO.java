@@ -7,15 +7,18 @@ package com.boha.monitor.dto;
 
 import com.boha.monitor.data.PhotoUpload;
 import com.boha.monitor.data.ProjectTask;
+import com.boha.monitor.data.ProjectTaskStatus;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 
 /**
  *
  * @author aubreyM
  */
-public class ProjectTaskDTO implements Serializable {
+public class ProjectTaskDTO implements Serializable, Comparable<ProjectTaskDTO> {
 
     private static final long serialVersionUID = 1L;
     private Integer projectTaskID;
@@ -33,13 +36,34 @@ public class ProjectTaskDTO implements Serializable {
     }
 
     public ProjectTaskDTO(ProjectTask a) {
+        setup(a);
+
+    }
+    public ProjectTaskDTO(EntityManager em, ProjectTask a) {
+        setup(a);
+//        Query q = em.createNamedQuery("ProjectTaskStatus.findByTask", ProjectTaskStatus.class);
+//        q.setParameter("projectTaskID", a.getProjectTaskID());
+//        List<ProjectTaskStatus> list = q.getResultList();
+//        statusCount = list.size();
+//        if (!list.isEmpty()) {
+//            lastStatus = new ProjectTaskStatusDTO(list.get(0));           
+//        }
+//         q = em.createNamedQuery("PhotoUpload.findByTask", PhotoUpload.class);
+//        q.setParameter("projectTaskID", a.getProjectTaskID());
+//        List<PhotoUpload> plist = q.getResultList();
+//        photoCount = plist.size();
+//        if (!plist.isEmpty()) {
+//            lastPhoto = new PhotoUploadDTO(plist.get(0));           
+//        }
+
+    }
+    private void setup(ProjectTask a) {
         this.projectTaskID = a.getProjectTaskID();
         if (a.getDateRegistered() != null) {
             this.dateRegistered = a.getDateRegistered().getTime();
         }
         if (a.getProject() != null) {
             projectID = a.getProject().getProjectID();
-//            projectName = a.getProject().getProjectName();
             latitude = a.getProject().getLatitude();
             longitude = a.getProject().getLongitude();
         }
@@ -48,26 +72,19 @@ public class ProjectTaskDTO implements Serializable {
             task = new TaskDTO(a.getTask());
         }
 
-        
-        if (a.getProjectTaskStatusList() != null && !a.getProjectTaskStatusList().isEmpty()) {
+        if (a.getProjectTaskStatusList() != null) {
             statusCount = a.getProjectTaskStatusList().size();
-            projectTaskStatusList = new ArrayList<>();
-            lastStatus = new ProjectTaskStatusDTO(a.getProjectTaskStatusList().get(0));
-//            for (ProjectTaskStatus ps : a.getProjectTaskStatusList()) {
-//                projectTaskStatusList.add(new ProjectTaskStatusDTO(ps));
-//            }
+            if (!a.getProjectTaskStatusList().isEmpty()) {
+                lastStatus = new ProjectTaskStatusDTO(a.getProjectTaskStatusList().get(0));
+            }
         }
-        if (a.getPhotoUploadList() != null && !a.getPhotoUploadList().isEmpty()) {
+        if (a.getPhotoUploadList() != null) {
             photoCount = a.getPhotoUploadList().size();
-            lastPhoto = new PhotoUploadDTO(a.getPhotoUploadList().get(0));
-            photoUploadList = new ArrayList<>();
-//            for (PhotoUpload p : a.getPhotoUploadList()) {
-//                photoUploadList.add(new PhotoUploadDTO(p));
-//            }
+            if (!a.getPhotoUploadList().isEmpty()) {
+                lastPhoto = new PhotoUploadDTO(a.getPhotoUploadList().get(0));
+            }
         }
-
     }
-
     public PhotoUploadDTO getLastPhoto() {
         return lastPhoto;
     }
@@ -157,6 +174,9 @@ public class ProjectTaskDTO implements Serializable {
     }
 
     public List<PhotoUploadDTO> getPhotoUploadList() {
+        if (photoUploadList == null) {
+            photoUploadList = new ArrayList<>();
+        }
         return photoUploadList;
     }
 
@@ -165,6 +185,9 @@ public class ProjectTaskDTO implements Serializable {
     }
 
     public List<ProjectTaskStatusDTO> getProjectTaskStatusList() {
+        if (projectTaskStatusList == null) {
+            projectTaskStatusList = new ArrayList<>();
+        }
         return projectTaskStatusList;
     }
 
@@ -195,6 +218,11 @@ public class ProjectTaskDTO implements Serializable {
     @Override
     public String toString() {
         return "com.boha.monitor.data.ProjectTask[ projectTaskID=" + projectTaskID + " ]";
+    }
+
+    @Override
+    public int compareTo(ProjectTaskDTO o) {
+        return this.task.getTaskName().compareTo(o.getTask().getTaskName());
     }
 
 }
