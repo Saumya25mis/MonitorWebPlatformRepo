@@ -6,6 +6,7 @@
 package com.boha.monitor.data;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Basic;
@@ -21,6 +22,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -42,7 +44,7 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "Staff.findByEmail", 
             query = "SELECT s FROM Staff s where s.email = :email"),
 @NamedQuery(name = "Staff.findByCompany", 
-            query = "SELECT s FROM Staff s where s.company.companyID = :companyID order by s.lastName, s.firstName")
+            query = "SELECT s FROM Staff s where s.company.companyID = :companyID and s.activeFlag = 1  order by s.lastName, s.firstName")
 })
 public class Staff implements Serializable {
 
@@ -50,8 +52,11 @@ public class Staff implements Serializable {
     private List<ErrorStoreAndroid> errorStoreAndroidList;
     @OneToMany(mappedBy = "staff")
     private List<VideoUpload> videoUploadList;
+    
     @OneToMany(mappedBy = "staff", fetch = FetchType.EAGER)
+    @OrderBy("dateTaken desc")
     private List<PhotoUpload> photoUploadList;
+    
     @OneToMany(mappedBy = "staff", fetch = FetchType.EAGER)
     private List<ProjectTaskStatus> projectTaskStatusList;
     @OneToMany(mappedBy = "staff")
@@ -249,6 +254,9 @@ public class Staff implements Serializable {
     }
 
     public List<PhotoUpload> getPhotoUploadList() {
+        if (photoUploadList == null) {
+            photoUploadList = new ArrayList<>();
+        }
         return photoUploadList;
     }
 

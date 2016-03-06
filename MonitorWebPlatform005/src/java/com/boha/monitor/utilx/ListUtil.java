@@ -32,28 +32,61 @@ public class ListUtil {
         resp.setPhotoUploadList(new ArrayList<>());
         try {
             Company c = em.find(Company.class, companyID);
-            List<Staff> staffList = c.getStaffList();
+            //find profile photos
+            Query a = em.createNamedQuery("PhotoUpload.findCompanyPhotosByPictureType", PhotoUpload.class);
+            a.setParameter("companyID", companyID);
+            List<Integer> types = new ArrayList<>(2);
+            types.add(PhotoUploadDTO.STAFF_IMAGE);
+            types.add(PhotoUploadDTO.MONITOR_IMAGE);
+
+            a.setParameter("pictureTypes", types);
+            List<PhotoUpload> phList = a.getResultList();
+
+            Query q = em.createNamedQuery("Staff.findByCompany", Staff.class);
+            q.setParameter("companyID", companyID);
+            List<Staff> staffList = q.getResultList();
             for (Staff staff : staffList) {
                 if (staff.getActiveFlag() == 1) {
-                    resp.getStaffList().add(new StaffDTO(staff));
+                    StaffDTO s = new StaffDTO(staff);
+                    for (PhotoUpload x : phList) {
+                        Staff staffFromPhoto = x.getStaff();
+                        if (staffFromPhoto != null) {
+                            if (Objects.equals(staff.getStaffID(), staffFromPhoto.getStaffID())) {
+                                s.getPhotoUploadList().add(new PhotoUploadDTO(x));
+                            }
+                        }
+                    }
+                    resp.getStaffList().add(s);
                 }
             }
-            List<Monitor> monList = c.getMonitorList();
+            q = em.createNamedQuery("Monitor.findByCompany", Monitor.class);
+            q.setParameter("companyID", companyID);
+            List<Monitor> monList = q.getResultList();
             for (Monitor mon : monList) {
                 if (mon.getActiveFlag() == 1) {
-                    resp.getMonitorList().add(new MonitorDTO(mon));
+                    MonitorDTO s = new MonitorDTO(mon);
+                    for (PhotoUpload x : phList) {
+                        if (Objects.equals(s.getMonitorID(), x.getMonitor().getMonitorID())) {
+                            s.getPhotoUploadList().add(new PhotoUploadDTO(x));
+                        }
+                    }
+                    resp.getMonitorList().add(s);
                 }
             }
-            List<Task> taskList = c.getTaskList();
+            q = em.createNamedQuery("Task.findByCompany", Monitor.class);
+            q.setParameter("companyID", companyID);
+            List<Task> taskList = q.getResultList();
             for (Task task : taskList) {
                 resp.getTaskList().add(new TaskDTO(task));
             }
-            List<TaskStatusType> tstList = c.getTaskStatusTypeList();
+            q = em.createNamedQuery("TaskStatusType.findByCompany", TaskStatusType.class);
+            q.setParameter("companyID", companyID);
+            List<TaskStatusType> tstList = q.getResultList();
             for (TaskStatusType type : tstList) {
                 resp.getTaskStatusTypeList().add(new TaskStatusTypeDTO(type));
             }
-            log.log(Level.OFF, "Company lookup data: tasks: {0} statusTypes: {1} staff: {2} monitors: {3}", 
-                    new Object[]{resp.getTaskList().size(), resp.getTaskStatusTypeList().size(), 
+            log.log(Level.OFF, "Company lookup data: tasks: {0} statusTypes: {1} staff: {2} monitors: {3}",
+                    new Object[]{resp.getTaskList().size(), resp.getTaskStatusTypeList().size(),
                         resp.getStaffList().size(), resp.getMonitorList().size()});
         } catch (Exception e) {
             throw new DataException(e.getMessage());
@@ -225,37 +258,221 @@ public class ListUtil {
      * @return
      * @throws com.boha.monitor.utilx.DataException
      */
-    public static ResponseDTO getProjectsForMonitor(EntityManager em, Integer monitorID)
-            throws DataException {
+    public static ResponseDTO getProjectsForMonitor(EntityManager em, Integer monitorID) throws DataException {
         ResponseDTO resp = new ResponseDTO();
-        Monitor mon = em.find(Monitor.class, monitorID);
-        List<MonitorProject> sList = mon.getMonitorProjectList();
-        for (MonitorProject mp : sList) {
-            if (Objects.equals(mp.getActiveFlag(), Boolean.TRUE)) {
-                resp.getProjectList().add(new ProjectDTO(em, mp.getProject()));
+        Query q = em.createNamedQuery("ProjectTask.findByMonitor", ProjectTask.class);
+        q.setParameter("monitorID", monitorID);
+        q.setParameter("activeFlag", Boolean.TRUE);
+        List<ProjectTask> ptList = q.getResultList();
+
+        q = em.createNamedQuery("PhotoUpload.findByMonitorProject", PhotoUpload.class);
+        q.setParameter("monitorID", monitorID);
+        List<PhotoUpload> phList = q.getResultList();
+
+        q = em.createNamedQuery("ProjectTaskStatus.countByMonitorProjectTask");
+        q.setParameter("monitorID", monitorID);
+        List<Object> objList = q.getResultList();
+
+        q = em.createNamedQuery("MonitorProject.findMonitorProjects", MonitorProject.class);
+        q.setParameter("monitorID", monitorID);
+        List<MonitorProject> sList = q.getResultList();
+
+        List<Integer> ids = new ArrayList<>();
+        for (MonitorProject sp : sList) {
+            ids.add(sp.getProject().getProjectID());
+        }
+        q = em.createNamedQuery("MonitorProject.countMonitorsByProject");
+        q.setParameter("list", ids);
+        List<Object> monCountList = q.getResultList();
+
+        q = em.createNamedQuery("MonitorProject.countMonitorsByProject");
+        q.setParameter("list", ids);
+        List<Object> monitorCountList = q.getResultList();
+
+        for (MonitorProject p : sList) {
+            if (Objects.equals(p.getActiveFlag(), Boolean.TRUE)) {
+                ProjectDTO project = new ProjectDTO(p.getProject());
+                for (ProjectTask pt : ptList) {
+                    if (Objects.equals(pt.getProject().getProjectID(), project.getProjectID())) {
+                        ProjectTaskDTO dto = new ProjectTaskDTO(pt);
+                        for (Object obj : objList) {
+                            Object[] arr = (Object[]) obj;
+                            Integer id = (Integer) arr[0];
+                            Long cnt = (Long) arr[1];
+                            if (Objects.equals(id, dto.getProjectTaskID())) {
+                                dto.setStatusCount(cnt.intValue());
+                                project.setStatusCount(project.getStatusCount() + cnt.intValue());
+                            }
+                        }
+
+                        project.getProjectTaskList().add(dto);
+                    }
+                }
+                project.setProjectTaskCount(project.getProjectTaskList().size());
+                for (PhotoUpload pt : phList) {
+                    if (Objects.equals(pt.getProject().getProjectID(), project.getProjectID())) {
+                        project.getPhotoUploadList().add(new PhotoUploadDTO(pt));
+                    }
+                }
+                project.setPhotoCount(project.getPhotoUploadList().size());
+                for (Object ob : monCountList) {
+                    Object[] arr = (Object[]) ob;
+                    Integer id = (Integer) arr[0];
+                    Long cnt = (Long) arr[1];
+                    if (Objects.equals(id, project.getProjectID())) {
+                        project.setStaffCount(cnt.intValue());
+                    }
+                }
+                for (Object ob : monitorCountList) {
+                    Object[] arr = (Object[]) ob;
+                    Integer id = (Integer) arr[0];
+                    Long cnt = (Long) arr[1];
+                    if (Objects.equals(id, project.getProjectID())) {
+                        project.setMonitorCount(cnt.intValue());
+                    }
+                }
+//                log.log(Level.OFF, "project photos: {0} statusCount: {1} staffCount: {2} monitorCount {3} - {4}", 
+//                        new Object[]{project.getPhotoCount(), project.getStatusCount(), project.getStaffCount(), 
+//                            project.getMonitorCount(),project.getProjectName()});
+                resp.getProjectList().add(project);
             }
         }
         Collections.sort(resp.getProjectList());
-        log.log(Level.OFF, "## Projects found for monitor: {0} - {1} {2}",
-                new Object[]{resp.getProjectList().size(), mon.getFirstName(), mon.getLastName()});
+        log.log(Level.OFF, "Monitor Projects found: {0}",
+                new Object[]{resp.getProjectList().size()});
+
         return resp;
     }
 
     public static ResponseDTO getProjectsForStaff(EntityManager em, Integer staffID) throws DataException {
         ResponseDTO resp = new ResponseDTO();
-        Staff staff = em.find(Staff.class, staffID);
-        List<StaffProject> sList = staff.getStaffProjectList();
+        Query q = em.createNamedQuery("ProjectTask.findByStaff", ProjectTask.class);
+        q.setParameter("staffID", staffID);
+        q.setParameter("activeFlag", Boolean.TRUE);
+        List<ProjectTask> ptList = q.getResultList();
+
+        q = em.createNamedQuery("PhotoUpload.findByStaffProject", PhotoUpload.class);
+        q.setParameter("staffID", staffID);
+        List<PhotoUpload> phList = q.getResultList();
+
+        q = em.createNamedQuery("ProjectTaskStatus.countByStaffProjectTask");
+        q.setParameter("staffID", staffID);
+        List<Object> objList = q.getResultList();
+
+        q = em.createNamedQuery("StaffProject.findByStaff", StaffProject.class);
+        q.setParameter("staffID", staffID);
+        List<StaffProject> sList = q.getResultList();
+
+        List<Integer> ids = new ArrayList<>();
+        for (StaffProject sp : sList) {
+            ids.add(sp.getProject().getProjectID());
+        }
+        q = em.createNamedQuery("StaffProject.countStaffByProject");
+        q.setParameter("list", ids);
+        List<Object> staffCountList = q.getResultList();
+
+        q = em.createNamedQuery("MonitorProject.countMonitorsByProject");
+        q.setParameter("list", ids);
+        List<Object> monitorCountList = q.getResultList();
+
         for (StaffProject p : sList) {
             if (Objects.equals(p.getActiveFlag(), Boolean.TRUE)) {
-                ProjectDTO project = new ProjectDTO(em, p.getProject());
+                ProjectDTO project = new ProjectDTO(p.getProject());
+                for (ProjectTask pt : ptList) {
+                    if (Objects.equals(pt.getProject().getProjectID(), project.getProjectID())) {
+                        ProjectTaskDTO dto = new ProjectTaskDTO(pt);
+                        for (Object obj : objList) {
+                            Object[] arr = (Object[]) obj;
+                            Integer id = (Integer) arr[0];
+                            Long cnt = (Long) arr[1];
+                            if (Objects.equals(id, dto.getProjectTaskID())) {
+                                dto.setStatusCount(cnt.intValue());
+                                project.setStatusCount(project.getStatusCount() + cnt.intValue());
+                            }
+                        }
+
+                        project.getProjectTaskList().add(dto);
+                    }
+                }
+                project.setProjectTaskCount(project.getProjectTaskList().size());
+                for (PhotoUpload pt : phList) {
+                    if (Objects.equals(pt.getProject().getProjectID(), project.getProjectID())) {
+                        project.getPhotoUploadList().add(new PhotoUploadDTO(pt));
+                    }
+                }
+                project.setPhotoCount(project.getPhotoUploadList().size());
+                for (Object ob : staffCountList) {
+                    Object[] arr = (Object[]) ob;
+                    Integer id = (Integer) arr[0];
+                    Long cnt = (Long) arr[1];
+                    if (Objects.equals(id, project.getProjectID())) {
+                        project.setStaffCount(cnt.intValue());
+                    }
+                }
+                for (Object ob : monitorCountList) {
+                    Object[] arr = (Object[]) ob;
+                    Integer id = (Integer) arr[0];
+                    Long cnt = (Long) arr[1];
+                    if (Objects.equals(id, project.getProjectID())) {
+                        project.setMonitorCount(cnt.intValue());
+                    }
+                }
+//                log.log(Level.OFF, "project photos: {0} statusCount: {1} staffCount: {2} monitorCount {3} - {4}", 
+//                        new Object[]{project.getPhotoCount(), project.getStatusCount(), project.getStaffCount(), 
+//                            project.getMonitorCount(),project.getProjectName()});
                 resp.getProjectList().add(project);
             }
         }
         Collections.sort(resp.getProjectList());
-        log.log(Level.OFF, "Staff Projects found: {0} - {1} {2}",
-                new Object[]{resp.getProjectList().size(), staff.getFirstName(), staff.getLastName()});
+        log.log(Level.OFF, "Staff Projects found: {0}",
+                new Object[]{resp.getProjectList().size()});
 
         return resp;
+    }
+
+    public static ResponseDTO getLatestDeviceLocations(EntityManager em, Integer companyID) throws DataException {
+        log.log(Level.INFO, "########### getLatestDeviceLocations, companyID: {0}", companyID);
+        ResponseDTO r = new ResponseDTO();
+        try {
+            Query qq = em.createNamedQuery("Staff.findByCompany", Staff.class);
+            qq.setParameter("companyID", companyID);
+            List<Staff> staffList = qq.getResultList();
+            qq = em.createNamedQuery("LocationTracker.findByStaff", LocationTracker.class);
+            for (Staff staff : staffList) {
+                qq.setParameter("staffID", staff.getStaffID());
+                qq.setMaxResults(1);
+                List<LocationTracker> locList = qq.getResultList();
+                if (!locList.isEmpty()) {
+                    r.getLocationTrackerList().add(new LocationTrackerDTO(locList.get(0)));
+                }
+            }
+            qq = em.createNamedQuery("Monitor.findByCompany", Monitor.class);
+            qq.setParameter("companyID", companyID);
+            List<Monitor> monList = qq.getResultList();
+            qq = em.createNamedQuery("LocationTracker.findByMonitor", LocationTracker.class);
+            for (Monitor mon : monList) {
+                qq.setParameter("monitorID", mon.getMonitorID());
+                qq.setMaxResults(1);
+                List<LocationTracker> locList = qq.getResultList();
+                if (!locList.isEmpty()) {
+                    r.getLocationTrackerList().add(new LocationTrackerDTO(locList.get(0)));
+                }
+            }
+
+            log.log(Level.INFO, "Latest device locations: {0} CompanyID: {1}", new Object[]{r.getLocationTrackerList().size(), companyID});
+
+            StringBuilder sb = new StringBuilder();
+            sb.append("Latest locationTracks").append("\n");
+            for (LocationTrackerDTO t : r.getLocationTrackerList()) {
+                sb.append("id: ").append(t.getLocationTrackerID()).append(" ");
+                sb.append(new Date(t.getDateTracked()).toString()).append("\n");
+            }
+            log.log(Level.INFO, sb.toString());
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "Fail", e);
+            throw new DataException("");
+        }
+        return r;
     }
 
     public static ResponseDTO getCompanyTasks(EntityManager em, Integer companyID) throws DataException {
@@ -368,14 +585,12 @@ public class ListUtil {
         q.setParameter("programmeID", programmeID);
         List<Project> tList = q.getResultList();
         for (Project proj : tList) {
-            ProjectDTO dto = new ProjectDTO(em, proj);
+            ProjectDTO dto = new ProjectDTO(proj);
             list.add(dto);
         }
 
         return list;
     }
-
-    
 
     public static ResponseDTO getMonitorList(EntityManager em, Integer companyID) {
         ResponseDTO resp = new ResponseDTO();
@@ -825,9 +1040,9 @@ public class ListUtil {
             q.setParameter("projectID", projectID);
             List<ProjectTask> pstList = q.getResultList();
             log.log(Level.INFO, "tasks found: {0}", pstList.size());
-            resp.setProjectTaskList(new ArrayList<>()); 
-            
-            q = em.createNamedQuery("ProjectTaskStatus.findByProject",ProjectTaskStatus.class);
+            resp.setProjectTaskList(new ArrayList<>());
+
+            q = em.createNamedQuery("ProjectTaskStatus.findByProject", ProjectTaskStatus.class);
             q.setParameter("projectID", projectID);
             List<ProjectTaskStatus> ptsList = q.getResultList();
             for (ProjectTask projectTask : pstList) {

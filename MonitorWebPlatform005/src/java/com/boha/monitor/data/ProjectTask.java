@@ -38,6 +38,11 @@ import javax.validation.constraints.NotNull;
 @NamedQueries({
     @NamedQuery(name = "ProjectTask.findByProjectTask", 
             query = "SELECT p FROM ProjectTask p where p.project.projectID = :projectID and p.task.taskID = :taskID"),
+    @NamedQuery(name = "ProjectTask.findByMonitor", 
+            query = "SELECT p FROM ProjectTask p, MonitorProject s where s.monitor.monitorID = :monitorID and s.project.projectID = p.project.projectID and s.activeFlag = :activeFlag order by p.project.projectID"),
+    
+    @NamedQuery(name = "ProjectTask.findByStaff", 
+            query = "SELECT p FROM ProjectTask p, StaffProject s where s.staff.staffID = :staffID and s.project.projectID = p.project.projectID and s.activeFlag = :activeFlag order by p.project.projectID"),
     @NamedQuery(name = "ProjectTask.findByCompany", 
             query = "SELECT p FROM ProjectTask p where p.project.company.companyID = :companyID"),
     @NamedQuery(name = "ProjectTask.deleteByCompany", 

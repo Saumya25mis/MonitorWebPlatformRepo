@@ -5,14 +5,11 @@
  */
 package com.boha.monitor.dto;
 
-import com.boha.monitor.data.PhotoUpload;
 import com.boha.monitor.data.ProjectTask;
-import com.boha.monitor.data.ProjectTaskStatus;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
 
 /**
  *
@@ -39,24 +36,7 @@ public class ProjectTaskDTO implements Serializable, Comparable<ProjectTaskDTO> 
         setup(a);
 
     }
-    public ProjectTaskDTO(EntityManager em, ProjectTask a) {
-        setup(a);
-//        Query q = em.createNamedQuery("ProjectTaskStatus.findByTask", ProjectTaskStatus.class);
-//        q.setParameter("projectTaskID", a.getProjectTaskID());
-//        List<ProjectTaskStatus> list = q.getResultList();
-//        statusCount = list.size();
-//        if (!list.isEmpty()) {
-//            lastStatus = new ProjectTaskStatusDTO(list.get(0));           
-//        }
-//         q = em.createNamedQuery("PhotoUpload.findByTask", PhotoUpload.class);
-//        q.setParameter("projectTaskID", a.getProjectTaskID());
-//        List<PhotoUpload> plist = q.getResultList();
-//        photoCount = plist.size();
-//        if (!plist.isEmpty()) {
-//            lastPhoto = new PhotoUploadDTO(plist.get(0));           
-//        }
-
-    }
+    
     private void setup(ProjectTask a) {
         this.projectTaskID = a.getProjectTaskID();
         if (a.getDateRegistered() != null) {

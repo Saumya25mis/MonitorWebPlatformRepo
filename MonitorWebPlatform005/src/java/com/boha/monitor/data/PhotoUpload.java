@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.boha.monitor.data;
 
 import java.io.Serializable;
@@ -32,46 +31,62 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(name = "photoUpload")
 @NamedQueries({
-    @NamedQuery(name = "PhotoUpload.findByProject", 
+    @NamedQuery(name = "PhotoUpload.findByProject",
             query = "SELECT p FROM PhotoUpload p WHERE p.project.projectID = :projectID and p.projectTask IS NULL "
-                    + "ORDER BY p.dateTaken desc"),
-    @NamedQuery(name = "PhotoUpload.findByProjectList", 
+            + "ORDER BY p.dateTaken desc"),
+    @NamedQuery(name = "PhotoUpload.findByProjectList",
             query = "SELECT p FROM PhotoUpload p WHERE p.project.projectID IN :projectList and p.projectTask IS NULL "
-                    + "ORDER BY p.dateTaken desc"),
-    
-    @NamedQuery(name = "PhotoUpload.findByProjectInPeriod", 
+            + "ORDER BY p.dateTaken desc"),
+
+    @NamedQuery(name = "PhotoUpload.findByProjectInPeriod",
             query = "SELECT p FROM PhotoUpload p WHERE p.project.projectID = :projectID and p.projectTask IS NULL "
-                    + "AND p.dateTaken BETWEEN :start AND :end ORDER BY p.dateTaken desc"),
-    
-    @NamedQuery(name = "PhotoUpload.findByMonitor", 
+            + "AND p.dateTaken BETWEEN :start AND :end ORDER BY p.dateTaken desc"),
+
+    @NamedQuery(name = "PhotoUpload.findCompanyPhotosByPictureType",
+            query = "SELECT p FROM PhotoUpload p WHERE  p.monitor.company.companyID = :companyID and p.pictureType IN :pictureTypes "
+            + "ORDER BY p.dateTaken desc"),
+
+    @NamedQuery(name = "PhotoUpload.findByMonitor",
             query = "SELECT p FROM PhotoUpload p WHERE p.monitor.monitorID = :monitorID and p.project IS NULL "
-                    + "ORDER BY p.dateTaken desc"),
-    @NamedQuery(name = "PhotoUpload.findByMonitorList", 
+            + "ORDER BY p.dateTaken desc"),
+
+    @NamedQuery(name = "PhotoUpload.findByMonitorList",
             query = "SELECT p FROM PhotoUpload p WHERE p.monitor.monitorID IN :monitorList and p.project IS NULL "
-                    + "ORDER BY p.dateTaken desc"),
-    
-    @NamedQuery(name = "PhotoUpload.countProjectPhotosByMonitor", 
+            + "ORDER BY p.dateTaken desc"),
+
+    @NamedQuery(name = "PhotoUpload.countProjectPhotosByMonitor",
             query = "SELECT count(p) FROM PhotoUpload p WHERE p.monitor.monitorID = :monitorID and p.project IS NOT NULL"),
-    
-    
-    @NamedQuery(name = "PhotoUpload.countProjectPhotosByStaff", 
+
+    @NamedQuery(name = "PhotoUpload.countProjectPhotosByStaff",
             query = "SELECT count(p) FROM PhotoUpload p WHERE p.staff.staffID = :staffID and p.project IS NOT NULL"),
-    @NamedQuery(name = "PhotoUpload.findByStaff", 
+    @NamedQuery(name = "PhotoUpload.findByStaff",
             query = "SELECT p FROM PhotoUpload p WHERE p.staff.staffID = :staffID and p.project IS NULL "
-                    + "ORDER BY p.dateTaken desc"),
-    
-    
-    @NamedQuery(name = "PhotoUpload.findByTaskInPeriod", 
+            + "ORDER BY p.dateTaken desc"),
+
+    @NamedQuery(name = "PhotoUpload.findByMonitorProject",
+            query = "SELECT p FROM PhotoUpload p, MonitorProject s WHERE "
+            + "s.monitor.monitorID = :monitorID and "
+            + "p.project.projectID = s.project.projectID "
+            + "order by p.project.projectID "),
+
+    @NamedQuery(name = "PhotoUpload.findByStaffProject",
+            query = "SELECT p FROM PhotoUpload p, StaffProject s WHERE "
+            + "s.staff.staffID = :staffID and "
+            + "p.project.projectID = s.project.projectID "
+            + "order by p.project.projectID "),
+
+    @NamedQuery(name = "PhotoUpload.findByTaskInPeriod",
             query = "SELECT p FROM PhotoUpload p WHERE p.projectTask.projectTaskID = :projectTaskID "
-                    + "AND p.dateTaken BETWEEN :start AND :end ORDER BY p.dateTaken desc"),
-    @NamedQuery(name = "PhotoUpload.findByTask", 
+            + "AND p.dateTaken BETWEEN :start AND :end ORDER BY p.dateTaken desc"),
+    @NamedQuery(name = "PhotoUpload.findByTask",
             query = "SELECT p FROM PhotoUpload p WHERE p.projectTask.projectTaskID = :projectTaskID "
-                    + " ORDER BY p.dateTaken desc"),
-    @NamedQuery(name = "PhotoUpload.findByTaskMonitor", 
+            + " ORDER BY p.dateTaken desc"),
+    @NamedQuery(name = "PhotoUpload.findByTaskMonitor",
             query = "SELECT p FROM PhotoUpload p WHERE p.projectTask.projectTaskID = :projectTaskID and p.monitor.monitorID = :monitorID "
-                    + " ORDER BY p.dateTaken desc")
+            + " ORDER BY p.dateTaken desc")
 })
 public class PhotoUpload implements Serializable {
+
     @JoinColumn(name = "projectTaskStatusID", referencedColumnName = "projectTaskStatusID")
     @ManyToOne
     private ProjectTaskStatus projectTaskStatus;
@@ -80,7 +95,7 @@ public class PhotoUpload implements Serializable {
     @Size(max = 400)
     @Column(name = "secureUrl")
     private String secureUrl;
-    
+
     @Column(name = "width")
     private Integer width;
     @Column(name = "height")
@@ -102,7 +117,7 @@ public class PhotoUpload implements Serializable {
     @Basic(optional = false)
     @Column(name = "photoUploadID")
     private Integer photoUploadID;
-    
+
     @Basic(optional = false)
     @NotNull
     @Column(name = "pictureType")
@@ -135,7 +150,6 @@ public class PhotoUpload implements Serializable {
     @JoinColumn(name = "projectID", referencedColumnName = "projectID")
     @ManyToOne(fetch = FetchType.EAGER)
     private Project project;
-    
 
     public PhotoUpload() {
     }
@@ -157,8 +171,6 @@ public class PhotoUpload implements Serializable {
     public void setPhotoUploadID(Integer photoUploadID) {
         this.photoUploadID = photoUploadID;
     }
-
-   
 
     public int getPictureType() {
         return pictureType;
@@ -184,7 +196,6 @@ public class PhotoUpload implements Serializable {
         this.projectTaskStatus = projectTaskStatus;
     }
 
-    
     public Double getLatitude() {
         return latitude;
     }
@@ -265,7 +276,6 @@ public class PhotoUpload implements Serializable {
         this.staff = staff;
     }
 
-
     @Override
     public int hashCode() {
         int hash = 0;
@@ -315,8 +325,6 @@ public class PhotoUpload implements Serializable {
         this.secureUrl = secureUrl;
     }
 
-    
-
     public Integer getWidth() {
         return width;
     }
@@ -348,5 +356,5 @@ public class PhotoUpload implements Serializable {
     public void setStatusColor(Short statusColor) {
         this.statusColor = statusColor;
     }
-    
+
 }

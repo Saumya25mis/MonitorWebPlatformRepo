@@ -108,7 +108,7 @@ public class SignInUtil {
             List<StaffProject> sList = q.getResultList();
             resp.setProjectList(new ArrayList<>());
             for (StaffProject x : sList) {
-                resp.getProjectList().add(new ProjectDTO(em,x.getProject()));
+                resp.getProjectList().add(new ProjectDTO(x.getProject()));
             }
             resp.setMonitorList(getCompanyMonitors(company.getCompanyID()));
             resp.getStaffList().add(new StaffDTO(cs));

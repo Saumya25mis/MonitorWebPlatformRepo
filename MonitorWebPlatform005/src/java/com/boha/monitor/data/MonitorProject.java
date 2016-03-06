@@ -30,6 +30,9 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "monitorProject")
 @NamedQueries({
+    @NamedQuery(name = "MonitorProject.countMonitorsByProject", 
+            query = "SELECT s.project.projectID, count(s) as staffCount FROM MonitorProject s WHERE s.project.projectID in :list group by s.project.projectID"),
+    
     @NamedQuery(name = "MonitorProject.findProjectsByMonitor",
             query = "SELECT m.project FROM MonitorProject m WHERE m.monitor.monitorID = :monitorID "
             + "ORDER BY m.project.dateRegistered desc"),

@@ -12,7 +12,7 @@ import java.io.Serializable;
  *
  * @author aubreyM
  */
-public class PhotoUploadDTO implements Serializable {
+public class PhotoUploadDTO implements Serializable, Comparable<PhotoUploadDTO> {
 
     private static final long serialVersionUID = 1L;
     private Integer photoUploadID;
@@ -315,6 +315,17 @@ public class PhotoUploadDTO implements Serializable {
     @Override
     public String toString() {
         return "com.boha.monitor.data.PhotoUpload[ photoUploadID=" + photoUploadID + " ]";
+    }
+
+    @Override
+    public int compareTo(PhotoUploadDTO o) {
+        if (this.dateTaken < o.dateTaken) {
+            return -1;
+        }
+        if (this.dateTaken > o.dateTaken) {
+            return 1;
+        }
+        return 0;
     }
 
 

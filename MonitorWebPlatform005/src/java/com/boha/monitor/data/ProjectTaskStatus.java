@@ -33,6 +33,13 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "projectTaskStatus")
 @NamedQueries({
+    @NamedQuery(name = "ProjectTaskStatus.countByMonitorProjectTask",
+            query = "SELECT p.projectTask.projectTaskID, count(p) as statusCount FROM ProjectTaskStatus p, MonitorProject s WHERE p.projectTask.project.projectID = s.project.projectID and s.monitor.monitorID = :monitorID GROUP BY p.projectTask.projectTaskID"),
+    @NamedQuery(name = "ProjectTaskStatus.countByStaffProjectTask",
+            query = "SELECT p.projectTask.projectTaskID, count(p) as statusCount FROM ProjectTaskStatus p, StaffProject s WHERE p.projectTask.project.projectID = s.project.projectID and s.staff.staffID = :staffID GROUP BY p.projectTask.projectTaskID"),
+    
+    @NamedQuery(name = "ProjectTaskStatus.countByProject",
+            query = "SELECT count(p) as statusCount FROM ProjectTaskStatus p WHERE p.projectTask.project.projectID = :projectID ORDER BY p.dateUpdated desc"),
     @NamedQuery(name = "ProjectTaskStatus.findByProject",
             query = "SELECT p FROM ProjectTaskStatus p WHERE p.projectTask.project.projectID = :projectID ORDER BY p.dateUpdated desc"),
     @NamedQuery(name = "ProjectTaskStatus.findByMonitor",

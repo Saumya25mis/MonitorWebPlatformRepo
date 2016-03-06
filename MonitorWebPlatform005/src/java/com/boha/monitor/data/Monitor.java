@@ -6,6 +6,7 @@
 package com.boha.monitor.data;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -46,6 +47,8 @@ import javax.validation.constraints.Size;
             query = "SELECT m FROM Monitor m WHERE m.email = :email and m.pin = :pin and m.activeFlag = 1")
 })
 public class Monitor implements Serializable {
+
+    
     @OneToMany(mappedBy = "monitor")
     private List<SimpleMessageDestination> simpleMessageDestinationList;
     @OneToMany(mappedBy = "monitor")
@@ -57,6 +60,7 @@ public class Monitor implements Serializable {
     private List<VideoUpload> videoUploadList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "monitor", fetch = FetchType.EAGER)
     private List<MonitorTrade> monitorTradeList;
+    
     @OneToMany(mappedBy = "monitor", fetch = FetchType.EAGER)
     @OrderBy("dateTaken desc")
     private List<PhotoUpload> photoUploadList;
@@ -335,6 +339,9 @@ public class Monitor implements Serializable {
     }
 
     public List<PhotoUpload> getPhotoUploadList() {
+        if (photoUploadList == null) {
+            photoUploadList = new ArrayList<>();
+        }
         return photoUploadList;
     }
 

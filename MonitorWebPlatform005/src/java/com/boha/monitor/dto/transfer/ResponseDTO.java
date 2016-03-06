@@ -8,10 +8,15 @@ package com.boha.monitor.dto.transfer;
 import com.boha.monitor.dto.ChatDTO;
 import com.boha.monitor.dto.ChatMessageDTO;
 import com.boha.monitor.dto.CompanyDTO;
+import com.boha.monitor.dto.CompanyExperienceDTO;
+import com.boha.monitor.dto.CompanyTypeDTO;
 import com.boha.monitor.dto.StaffDTO;
 import com.boha.monitor.dto.ErrorStoreAndroidDTO;
 import com.boha.monitor.dto.ErrorStoreDTO;
+import com.boha.monitor.dto.ExperienceTypeDTO;
 import com.boha.monitor.dto.GcmDeviceDTO;
+import com.boha.monitor.dto.InvoiceDTO;
+import com.boha.monitor.dto.InvoiceRejectReasonDTO;
 import com.boha.monitor.dto.LocationTrackerDTO;
 import com.boha.monitor.dto.MonitorDTO;
 import com.boha.monitor.dto.MonitorProjectDTO;
@@ -23,10 +28,13 @@ import com.boha.monitor.dto.ProjectDTO;
 import com.boha.monitor.dto.ProjectStatusTypeDTO;
 import com.boha.monitor.dto.ProjectTaskDTO;
 import com.boha.monitor.dto.ProjectTaskStatusDTO;
+import com.boha.monitor.dto.RejectedInvoiceDTO;
 import com.boha.monitor.dto.StaffProjectDTO;
 import com.boha.monitor.dto.SubTaskDTO;
 import com.boha.monitor.dto.TaskDTO;
 import com.boha.monitor.dto.TaskStatusTypeDTO;
+import com.boha.monitor.dto.TenderCompanyDTO;
+import com.boha.monitor.dto.TenderCompanyProjectDTO;
 import com.boha.monitor.dto.VideoUploadDTO;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +57,16 @@ public class ResponseDTO {
     private ChatDTO chat;
     private StaffDTO staff;
     private MonitorDTO monitor;
+    
+    List<TenderCompanyDTO> tenderCompanyList;
+    List<TenderCompanyProjectDTO> tenderCompanyProjectList;
+    List<InvoiceDTO> invoiceList;
+    List<RejectedInvoiceDTO> rejectedInvoiceList;
+    List<InvoiceRejectReasonDTO> invoiceRejectReasonList;
+    List<ExperienceTypeDTO> experienceTypeList;
+    List<CompanyTypeDTO> companyTypeList;
+    List<CompanyExperienceDTO> companyExperienceList;
+
     private List<CompanyDTO> companyList;
     private List<ChatDTO> chatList;
     private List<LocationTrackerDTO> locationTrackerList;
@@ -77,6 +95,79 @@ public class ResponseDTO {
     private List<ProgrammeDTO> programmeList;
     private List<GcmDeviceDTO> gcmDeviceList;
     private List<VideoUploadDTO> videoUploadList;
+
+    public List<TenderCompanyDTO> getTenderCompanyList() {
+        if (tenderCompanyList == null) {
+            tenderCompanyList = new ArrayList<>();
+        }
+        return tenderCompanyList;
+    }
+
+    public void setTenderCompanyList(List<TenderCompanyDTO> tenderCompanyList) {
+        this.tenderCompanyList = tenderCompanyList;
+    }
+
+    public List<TenderCompanyProjectDTO> getTenderCompanyProjectList() {
+        if (tenderCompanyProjectList == null) {
+            tenderCompanyProjectList = new ArrayList<>();
+        }
+        return tenderCompanyProjectList;
+    }
+
+    public void setTenderCompanyProjectList(List<TenderCompanyProjectDTO> tenderCompanyProjectList) {
+        this.tenderCompanyProjectList = tenderCompanyProjectList;
+    }
+
+    public List<InvoiceDTO> getInvoiceList() {
+        if (invoiceList == null) {
+            invoiceList = new ArrayList<>();
+        }
+        return invoiceList;
+    }
+
+    public void setInvoiceList(List<InvoiceDTO> invoiceList) {
+        this.invoiceList = invoiceList;
+    }
+
+    public List<RejectedInvoiceDTO> getRejectedInvoiceList() {
+        return rejectedInvoiceList;
+    }
+
+    public void setRejectedInvoiceList(List<RejectedInvoiceDTO> rejectedInvoiceList) {
+        this.rejectedInvoiceList = rejectedInvoiceList;
+    }
+
+    public List<InvoiceRejectReasonDTO> getInvoiceRejectReasonList() {
+        return invoiceRejectReasonList;
+    }
+
+    public void setInvoiceRejectReasonList(List<InvoiceRejectReasonDTO> invoiceRejectReasonList) {
+        this.invoiceRejectReasonList = invoiceRejectReasonList;
+    }
+
+    public List<ExperienceTypeDTO> getExperienceTypeList() {
+        return experienceTypeList;
+    }
+
+    public void setExperienceTypeList(List<ExperienceTypeDTO> experienceTypeList) {
+        this.experienceTypeList = experienceTypeList;
+    }
+
+    public List<CompanyTypeDTO> getCompanyTypeList() {
+        return companyTypeList;
+    }
+
+    public void setCompanyTypeList(List<CompanyTypeDTO> companyTypeList) {
+        this.companyTypeList = companyTypeList;
+    }
+
+    public List<CompanyExperienceDTO> getCompanyExperienceList() {
+        return companyExperienceList;
+    }
+
+    public void setCompanyExperienceList(List<CompanyExperienceDTO> companyExperienceList) {
+        this.companyExperienceList = companyExperienceList;
+    }
 
     public List<VideoUploadDTO> getVideoUploadList() {
         if (videoUploadList == null) {
@@ -364,6 +455,9 @@ public class ResponseDTO {
     }
 
     public List<LocationTrackerDTO> getLocationTrackerList() {
+        if (locationTrackerList == null) {
+            locationTrackerList = new ArrayList<>();
+        }
         return locationTrackerList;
     }
 

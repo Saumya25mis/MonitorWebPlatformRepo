@@ -96,7 +96,6 @@ public class DataUtil {
      * taskType to this project
      *
      * @param projectID
-     * @param taskTypeID
      * @return
      * @throws DataException
      */
@@ -830,6 +829,8 @@ public class DataUtil {
                     t.setGcmDevice(em.find(GcmDevice.class, dto.getGcmDevice().getGcmDeviceID()));
 
                 }
+            } else {
+                throw new DataException("");
             }
             if (dto.getMonitorID() != null) {
                 Monitor m = em.find(Monitor.class, dto.getMonitorID());

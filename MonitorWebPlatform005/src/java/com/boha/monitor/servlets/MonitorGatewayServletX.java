@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
@@ -49,14 +50,7 @@ public class MonitorGatewayServletX extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        long start = System.currentTimeMillis();
-
-//        Enumeration<String> m = request.getHeaderNames();
-//        while (m.hasMoreElements()) {
-//            String nextElement = m.nextElement();
-//            System.out.println(nextElement + ": " + request.getHeader(nextElement));
-//        }
-        
+        long start = System.currentTimeMillis();        
         Gson gson = new Gson();
         RequestDTO dto = getRequest(gson, request);
         ResponseDTO resp = new ResponseDTO();
@@ -64,8 +58,8 @@ public class MonitorGatewayServletX extends HttpServlet {
 
         try {
             if (dto != null && dto.getRequestType() != null) {
-                log.log(Level.INFO, "{0} started .....requestType: {1}",
-                        new Object[]{MonitorGatewayServletX.class.getSimpleName(), dto.getRequestType()});
+                log.log(Level.INFO, "{0} started .....requestType: {1} - {2}",
+                        new Object[]{MonitorGatewayServletX.class.getSimpleName(), dto.getRequestType(), new Date().toString()});
                 resp = TrafficCop.processRequest(dto, dataUtil, signInUtil);
             } else {
                 resp.setStatusCode(ServerStatus.ERROR_JSON_SYNTAX);
@@ -76,23 +70,15 @@ public class MonitorGatewayServletX extends HttpServlet {
             resp.setStatusCode(ServerStatus.ERROR_SERVER);
             resp.setMessage(ServerStatus.getMessage(resp.getStatusCode()));
         } finally {
-            String json = gson.toJson(resp);
-            System.out.println("Length of JSON returned: " + json.length());
+            String json = gson.toJson(resp);           
             if (dto != null) {
                 if (dto.isZipResponse()) {
-//                    File file = GZipUtility.getZipped(json);
-//                    
-//                    
-//                    response.setContentType("application/octet-stream");
-//                    response.setHeader("Content-Disposition", "fileName=monitordata.zip");
-//                    response.setHeader("Accept-Encoding", "gzip");
-//                    FileUtils.copyFile(file, response.getOutputStream());
-//                    file.deleteOnExit();
                     try {
                         response.setContentType("application/zip;charset=UTF-8");
                         File zipped = GZipUtility.getZipped(json);
                         ServletUtils.returnFile(zipped.getAbsolutePath(), response.getOutputStream());
                         response.getOutputStream().close();
+                        log.log(Level.OFF, "JSON returned: {0} zipped: {1}", new Object[]{json.length(), zipped.length()});
                     } catch (IOException e) {
                         response.setContentType("application/json;charset=UTF-8");
                         try (PrintWriter out = response.getWriter()) {
@@ -102,6 +88,7 @@ public class MonitorGatewayServletX extends HttpServlet {
                     }
 
                 } else {
+                    log.log(Level.OFF, "JSON returned: {0}", json.length());
                     response.setContentType("application/json;charset=UTF-8");
                     try (PrintWriter out = response.getWriter()) {
                         out.println(json);
@@ -109,7 +96,6 @@ public class MonitorGatewayServletX extends HttpServlet {
                 }
             } else {
                 log.log(Level.SEVERE, "Illegal contact, request ignored");
-                return;
             }
 
             long end = System.currentTimeMillis();

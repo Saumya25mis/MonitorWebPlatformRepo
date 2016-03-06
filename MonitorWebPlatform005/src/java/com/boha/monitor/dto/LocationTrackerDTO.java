@@ -7,8 +7,9 @@ package com.boha.monitor.dto;
 
 import com.boha.monitor.data.*;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-
 /**
  *
  * @author aubreyM
@@ -26,6 +27,7 @@ public class LocationTrackerDTO implements Serializable {
     private Long dateAdded;
     private List<Integer> monitorList, staffList;
     private GcmDeviceDTO gcmDevice;
+    private PhotoUploadDTO photo;
 
     public LocationTrackerDTO() {
     }
@@ -41,11 +43,36 @@ public class LocationTrackerDTO implements Serializable {
         if (cs != null) {
             this.staffID = cs.getStaffID();
             this.staffName = cs.getFirstName() + " " + cs.getLastName();
+            if (!cs.getPhotoUploadList().isEmpty()) {
+                List<PhotoUploadDTO> list = new ArrayList<>();
+                for (PhotoUpload p : cs.getPhotoUploadList()) {
+                    if (p.getPictureType() == PhotoUploadDTO.STAFF_IMAGE) {
+                        list.add(new PhotoUploadDTO(p));
+                    }
+                }
+                if (!list.isEmpty()) {
+                    Collections.sort(list);
+                    photo = list.get(0);
+                }
+            }
         }
+        
         Monitor m = a.getMonitor();
         if (m != null) {
             this.monitorID = m.getMonitorID();
             this.monitorName = m.getFirstName() + " " + m.getLastName();
+            if (!m.getPhotoUploadList().isEmpty()) {
+                List<PhotoUploadDTO> list = new ArrayList<>();
+                for (PhotoUpload p : m.getPhotoUploadList()) {
+                    if (p.getPictureType() == PhotoUploadDTO.MONITOR_IMAGE) {
+                        list.add(new PhotoUploadDTO(p));
+                    }
+                }
+                if (!list.isEmpty()) {
+                    Collections.sort(list);
+                    photo = list.get(0);
+                }
+            }
         }
         if (a.getDateTracked() != null) {
             this.dateTracked = a.getDateTracked().getTime();
@@ -56,10 +83,21 @@ public class LocationTrackerDTO implements Serializable {
         }
         if (a.getGcmDevice() != null) {
             gcmDevice = new GcmDeviceDTO(a.getGcmDevice());
+        } else {
+            System.out.println("++++++++++++++++++ ******* GCMDevice is NULL - WTF?");
         }
         if (a.getCompany() != null) {
             this.companyID = a.getCompany().getCompanyID();
         }
+        
+    }
+
+    public PhotoUploadDTO getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(PhotoUploadDTO photo) {
+        this.photo = photo;
     }
 
     public Integer getCompanyID() {

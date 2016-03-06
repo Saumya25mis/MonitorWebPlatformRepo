@@ -9,7 +9,9 @@ import com.boha.monitor.dto.ChatDTO;
 import com.boha.monitor.dto.ChatMemberDTO;
 import com.boha.monitor.dto.ChatMessageDTO;
 import com.boha.monitor.dto.CompanyDTO;
+import com.boha.monitor.dto.CompanyExperienceDTO;
 import com.boha.monitor.dto.GcmDeviceDTO;
+import com.boha.monitor.dto.InvoiceDTO;
 import com.boha.monitor.dto.LocationTrackerDTO;
 import com.boha.monitor.dto.MonitorDTO;
 import com.boha.monitor.dto.MonitorProjectDTO;
@@ -20,12 +22,14 @@ import com.boha.monitor.dto.ProjectDTO;
 import com.boha.monitor.dto.ProjectStatusTypeDTO;
 import com.boha.monitor.dto.ProjectTaskDTO;
 import com.boha.monitor.dto.ProjectTaskStatusDTO;
+import com.boha.monitor.dto.RejectedInvoiceDTO;
 import com.boha.monitor.dto.SimpleMessageDTO;
 import com.boha.monitor.dto.StaffDTO;
 import com.boha.monitor.dto.StaffProjectDTO;
 import com.boha.monitor.dto.SubTaskDTO;
 import com.boha.monitor.dto.TaskDTO;
 import com.boha.monitor.dto.TaskStatusTypeDTO;
+import com.boha.monitor.dto.TenderCompanyDTO;
 import com.boha.monitor.dto.VideoUploadDTO;
 import java.io.Serializable;
 import java.util.List;
@@ -39,7 +43,8 @@ import java.util.List;
 public class RequestDTO implements Serializable {
 
     private Integer requestType, companyID, staffID,
-            projectID, projectTaskID, loginType, monitorID, taskTypeID;
+            projectID, projectTaskID, loginType, 
+            monitorID, taskTypeID, tenderCompanyID;
     private boolean zipResponse;
 
     public boolean isZipResponse() {
@@ -63,6 +68,10 @@ public class RequestDTO implements Serializable {
     private ChatMessageDTO chatMessage;
     private ProjectTaskDTO projectTask;
     private LocationTrackerDTO locationTracker;
+    TenderCompanyDTO tenderCompany;
+    InvoiceDTO invoice;
+    RejectedInvoiceDTO rejectedInvoice;
+    CompanyExperienceDTO companyExperience;
 
     private List<TaskDTO> taskList;
     private List<StaffProjectDTO> staffProjectList;
@@ -146,7 +155,8 @@ public class RequestDTO implements Serializable {
             GET_PROJECT_TASKS = 138,
             GET_PROJECTS_FOR_MONITOR_ASSIGNMENTS = 139,
             GET_PROJECTS_FOR_STAFF_ASSIGNMENTS = 140,
-            GET_LOOKUPS = 141;
+            GET_LOOKUPS = 141,
+            GET_COMPANY_DEVICE_LOCATIONS_LATEST = 142;
     //
     public static final int LOGIN_STAFF = 200,
             LOGIN_STAFF_DATA_SETUP = 201,
@@ -211,6 +221,14 @@ public class RequestDTO implements Serializable {
     public static final String STAFF_DIR = "staff";
     public static final String PROJECT_DIR = "project";
     public static final String TASK_DIR = "task";
+
+    public Integer getTenderCompanyID() {
+        return tenderCompanyID;
+    }
+
+    public void setTenderCompanyID(Integer tenderCompanyID) {
+        this.tenderCompanyID = tenderCompanyID;
+    }
 
    
     
@@ -470,6 +488,38 @@ public class RequestDTO implements Serializable {
 
     public void setLongitude(Double longitude) {
         this.longitude = longitude;
+    }
+
+    public TenderCompanyDTO getTenderCompany() {
+        return tenderCompany;
+    }
+
+    public void setTenderCompany(TenderCompanyDTO tenderCompany) {
+        this.tenderCompany = tenderCompany;
+    }
+
+    public InvoiceDTO getInvoice() {
+        return invoice;
+    }
+
+    public void setInvoice(InvoiceDTO invoice) {
+        this.invoice = invoice;
+    }
+
+    public RejectedInvoiceDTO getRejectedInvoice() {
+        return rejectedInvoice;
+    }
+
+    public void setRejectedInvoice(RejectedInvoiceDTO rejectedInvoice) {
+        this.rejectedInvoice = rejectedInvoice;
+    }
+
+    public CompanyExperienceDTO getCompanyExperience() {
+        return companyExperience;
+    }
+
+    public void setCompanyExperience(CompanyExperienceDTO companyExperience) {
+        this.companyExperience = companyExperience;
     }
 
     public Float getAccuracy() {

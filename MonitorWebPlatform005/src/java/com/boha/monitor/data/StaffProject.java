@@ -31,8 +31,13 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "staffProject")
 @NamedQueries({
+    
+    @NamedQuery(name = "StaffProject.countStaffByProject", 
+            query = "SELECT s.project.projectID, count(s) as staffCount FROM StaffProject s WHERE s.project.projectID in :list group by s.project.projectID"),
+    
     @NamedQuery(name = "StaffProject.findByStaff", 
             query = "SELECT s FROM StaffProject s WHERE s.staff.staffID = :staffID and s.activeFlag = TRUE order by s.project.projectName"),
+    
     @NamedQuery(name = "StaffProject.findStaffProjects", 
             query = "SELECT s FROM StaffProject s WHERE s.staff.staffID = :staffID and s.activeFlag = TRUE order by s.project.projectName"),
        

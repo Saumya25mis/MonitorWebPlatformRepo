@@ -12,6 +12,7 @@ import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -48,6 +49,16 @@ import javax.validation.constraints.Size;
             query = "SELECT m FROM LocationTracker m, StaffProject p where m.staff = p.staff AND p.project.projectID = :projectID "
                     + "and m.dateTracked BETWEEN :dateFrom and :dateTo "
                     + "order by m.dateTracked desc"),
+    @NamedQuery(name = "LocationTracker.findLocationsByIDs", 
+            query = "SELECT m FROM LocationTracker m where m.locationTrackerID IN :list order by m.dateTracked desc"),
+    @NamedQuery(name = "LocationTracker.findStaffLatestLocations", 
+            query = "SELECT m.staff.staffID, m.locationTrackerID, MAX(m.dateTrackedLong) FROM LocationTracker m where m.company.companyID = :companyID and m.staff.staffID is not null group by m.staff.staffID order by m.dateTracked desc"),
+    
+    
+    
+    @NamedQuery(name = "LocationTracker.findMonitorLatestLocations", 
+            query = "SELECT m.monitor.monitorID, m.locationTrackerID, MAX(m.dateTracked) FROM LocationTracker m where m.company.companyID = :companyID and m.monitor.monitorID is not null group by m.monitor.monitorID  order by m.dateTracked desc"),
+    
     
     @NamedQuery(name = "LocationTracker.findByCompanyInPeriod", 
             query = "SELECT m FROM LocationTracker m where m.company.companyID = :companyID "
@@ -67,18 +78,24 @@ import javax.validation.constraints.Size;
                     + "where m.staff.staffID = :staffID "
                     + "and m.dateTracked BETWEEN :dateFrom and :dateTo "
                     + "order by m.dateTracked desc"),
+    @NamedQuery(name = "LocationTracker.findByStaff", 
+            query = "SELECT m FROM LocationTracker m "
+                    + "where m.staff.staffID = :staffID "
+                    + "order by m.dateTracked desc"),
     
 })
 public class LocationTracker implements Serializable {
+
+  
 
     @JoinColumn(name = "companyID", referencedColumnName = "companyID")
     @ManyToOne
     private Company company;
     @JoinColumn(name = "gcmDeviceID", referencedColumnName = "gcmDeviceID")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private GcmDevice gcmDevice;
     @JoinColumn(name = "monitorID", referencedColumnName = "monitorID")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private Monitor monitor;
     private static final long serialVersionUID = 1L;
     @Id
@@ -113,7 +130,7 @@ public class LocationTracker implements Serializable {
     @Column(name = "dateTrackedLong")
     private BigInteger dateTrackedLong;
     @JoinColumn(name = "staffID", referencedColumnName = "staffID")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = true, fetch = FetchType.EAGER)
     private Staff staff;
 
     public LocationTracker() {
@@ -253,5 +270,6 @@ public class LocationTracker implements Serializable {
     public void setCompany(Company company) {
         this.company = company;
     }
+
     
 }

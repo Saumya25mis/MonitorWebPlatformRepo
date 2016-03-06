@@ -6,13 +6,11 @@
 package com.boha.monitor.utilx;
 
 import com.boha.monitor.dto.GcmDeviceDTO;
-import com.boha.monitor.dto.ProjectTaskDTO;
 import com.boha.monitor.dto.transfer.RequestDTO;
 import com.boha.monitor.dto.transfer.ResponseDTO;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -30,10 +28,11 @@ public class TrafficCop {
 
         switch (req.getRequestType()) {
             case RequestDTO.SEND_SIMPLE_MESSAGE:
-                resp = GoogleCloudMessageUtil.sendSimpleMessage(dataUtil.getEntityManager(), req.getSimpleMessage());
                 if (req.getSimpleMessage().getLocationTracker() != null) {
                     dataUtil.addLocationTrack(req.getSimpleMessage().getLocationTracker());
                 }
+                resp = GoogleCloudMessageUtil.sendSimpleMessage(dataUtil.getEntityManager(), req.getSimpleMessage());
+                
                 break;
             case RequestDTO.GET_PROJECTS_FOR_MONITOR_ASSIGNMENTS:
                 resp = ListUtil.getProjectsForMonitorAssignment(dataUtil.getEntityManager(), req.getCompanyID(), req.getMonitorID());
@@ -223,6 +222,9 @@ public class TrafficCop {
                 break;
 
             //lists
+            case RequestDTO.GET_COMPANY_DEVICE_LOCATIONS_LATEST:
+                resp = ListUtil.getLatestDeviceLocations(dataUtil.getEntityManager(), req.getCompanyID());
+                break;
             case RequestDTO.GET_LOCATION_TRACK_BY_COMPANY_IN_PERIOD:
                 resp = ListUtil.getLocationTracksByCompany(dataUtil.getEntityManager(),
                         req.getCompanyID(), req.getStartDate(), req.getEndDate());

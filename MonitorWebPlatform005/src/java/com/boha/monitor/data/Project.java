@@ -44,6 +44,9 @@ import javax.validation.constraints.Size;
             query = "SELECT p FROM Project p WHERE p.programme.programmeID = :programmeID ORDER BY p.projectName ")
 })
 public class Project implements Serializable {
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "project", fetch = FetchType.EAGER)
+    private List<TenderCompanyProject> tenderCompanyProjectList;
     @OneToMany(mappedBy = "project")
     private List<SimpleMessage> simpleMessageList;
     @JoinColumn(name = "companyID", referencedColumnName = "companyID")
@@ -321,6 +324,14 @@ public class Project implements Serializable {
 
     public void setSimpleMessageList(List<SimpleMessage> simpleMessageList) {
         this.simpleMessageList = simpleMessageList;
+    }
+
+    public List<TenderCompanyProject> getTenderCompanyProjectList() {
+        return tenderCompanyProjectList;
+    }
+
+    public void setTenderCompanyProjectList(List<TenderCompanyProject> tenderCompanyProjectList) {
+        this.tenderCompanyProjectList = tenderCompanyProjectList;
     }
 
 }
