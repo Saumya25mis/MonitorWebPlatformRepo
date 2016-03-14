@@ -199,7 +199,8 @@ public class RequestDTO implements Serializable {
             UPDATE_STAFF_PROJECTS = 409,
             UPDATE_MONITOR = 410,
             UPDATE_STAFF_DEVICE = 411,
-            UPDATE_MONITOR_DEVICE = 412;
+            UPDATE_MONITOR_DEVICE = 412,
+            UPDATE_PHOTO = 413;
 
     //reports
     public static final int REPORT_PROJECT = 601,

@@ -43,9 +43,12 @@ public class MonitorDTO implements Serializable {
         this.lastName = a.getLastName();
         this.email = a.getEmail();
         this.cellphone = a.getCellphone();
+
         Company c = a.getCompany();
-        this.companyID = c.getCompanyID();
-        this.companyName = c.getCompanyName();
+        if (c != null) {
+            this.companyID = c.getCompanyID();
+            this.companyName = c.getCompanyName();
+        }
         this.activeFlag = a.getActiveFlag();
         this.address = a.getAddress();
         this.IDNumber = a.getIDNumber();
@@ -82,6 +85,22 @@ public class MonitorDTO implements Serializable {
             statusCount = a.getProjectTaskStatusList().size();
         }
 
+    }
+
+    public List<GcmDeviceDTO> getGcmDeviceList() {
+        return gcmDeviceList;
+    }
+
+    public void setGcmDeviceList(List<GcmDeviceDTO> gcmDeviceList) {
+        this.gcmDeviceList = gcmDeviceList;
+    }
+
+    public Integer getProfilePhotoCount() {
+        return profilePhotoCount;
+    }
+
+    public void setProfilePhotoCount(Integer profilePhotoCount) {
+        this.profilePhotoCount = profilePhotoCount;
     }
 
     public ProjectTaskStatusDTO getLastStatus() {

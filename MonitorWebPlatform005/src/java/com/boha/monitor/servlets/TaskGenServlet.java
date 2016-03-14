@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author aubreyM
  */
 @WebServlet(name = "CCSTestServlet", urlPatterns = {"/task"})
-public class CCSTestServlet extends HttpServlet {
+public class TaskGenServlet extends HttpServlet {
 
     @EJB
     ProjectTaskGen task;
@@ -56,7 +56,7 @@ public class CCSTestServlet extends HttpServlet {
 //                client.connect();
 //                client.send("");
 //            } catch (XMPPException ex) {
-//                Logger.getLogger(CCSTestServlet.class.getName()).log(Level.SEVERE, null, ex);
+//                Logger.getLogger(TaskGenServlet.class.getName()).log(Level.SEVERE, null, ex);
 //            }
             out.println("<!DOCTYPE html>");
             out.println("<html>");

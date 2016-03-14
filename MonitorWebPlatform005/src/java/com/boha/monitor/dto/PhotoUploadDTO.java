@@ -31,6 +31,8 @@ public class PhotoUploadDTO implements Serializable, Comparable<PhotoUploadDTO> 
     private Integer staffID, monitorID;
     private Short statusColor;
     private String secureUrl;
+    private Boolean marked = Boolean.FALSE;
+    private Integer sharedCount = 0;
     
     private Integer width;
     private Integer height;
@@ -56,6 +58,8 @@ public class PhotoUploadDTO implements Serializable, Comparable<PhotoUploadDTO> 
         secureUrl = a.getSecureUrl();
         statusColor = a.getStatusColor();
         dateUploaded = a.getDateUploaded().getTime();
+        marked = a.getMarked();
+        sharedCount = a.getSharedCount();
         
         if (a.getProjectTaskStatus() != null) {
             projectTaskStatus = new ProjectTaskStatusDTO(a.getProjectTaskStatus());
@@ -85,6 +89,22 @@ public class PhotoUploadDTO implements Serializable, Comparable<PhotoUploadDTO> 
             monitorName = a.getMonitor().getFirstName() + " " + a.getMonitor().getLastName();
         }
         
+    }
+
+    public Boolean getMarked() {
+        return marked;
+    }
+
+    public void setMarked(Boolean marked) {
+        this.marked = marked;
+    }
+
+    public Integer getSharedCount() {
+        return sharedCount;
+    }
+
+    public void setSharedCount(Integer sharedCount) {
+        this.sharedCount = sharedCount;
     }
   
     public Short getStatusColor() {

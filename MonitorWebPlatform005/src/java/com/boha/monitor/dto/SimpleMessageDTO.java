@@ -24,7 +24,7 @@ public class SimpleMessageDTO implements Serializable {
     private Integer staffID;
     private Integer projectID;
     private LocationTrackerDTO locationTracker;
-    
+    private PhotoUploadDTO photo;
     private List<SimpleMessageDestinationDTO> simpleMessageDestinationList;
     private List<SimpleMessageImageDTO> simpleMessageImageList;
 
@@ -50,6 +50,14 @@ public class SimpleMessageDTO implements Serializable {
         if (a.getProject() != null) {
             projectID = a.getProject().getProjectID();
         }
+    }
+
+    public PhotoUploadDTO getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(PhotoUploadDTO photo) {
+        this.photo = photo;
     }
 
     public LocationTrackerDTO getLocationTracker() {

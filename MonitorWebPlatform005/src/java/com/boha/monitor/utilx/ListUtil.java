@@ -272,6 +272,10 @@ public class ListUtil {
         q = em.createNamedQuery("ProjectTaskStatus.countByMonitorProjectTask");
         q.setParameter("monitorID", monitorID);
         List<Object> objList = q.getResultList();
+        
+        q = em.createNamedQuery("VideoUpload.findByMonitorProject", VideoUpload.class);
+        q.setParameter("monitorID", monitorID);
+        List<VideoUpload> vList = q.getResultList();
 
         q = em.createNamedQuery("MonitorProject.findMonitorProjects", MonitorProject.class);
         q.setParameter("monitorID", monitorID);
@@ -315,6 +319,14 @@ public class ListUtil {
                     }
                 }
                 project.setPhotoCount(project.getPhotoUploadList().size());
+                
+                for (VideoUpload pt : vList) {
+                    if (Objects.equals(pt.getProject().getProjectID(), project.getProjectID())) {
+                        project.getVideoUploadList().add(new VideoUploadDTO(pt));
+                    }
+                }
+                project.setVideoCount(project.getVideoUploadList().size());
+                
                 for (Object ob : monCountList) {
                     Object[] arr = (Object[]) ob;
                     Integer id = (Integer) arr[0];
@@ -354,6 +366,11 @@ public class ListUtil {
         q = em.createNamedQuery("PhotoUpload.findByStaffProject", PhotoUpload.class);
         q.setParameter("staffID", staffID);
         List<PhotoUpload> phList = q.getResultList();
+        
+        q = em.createNamedQuery("VideoUpload.findByStaffProject", VideoUpload.class);
+        q.setParameter("staffID", staffID);
+        List<VideoUpload> vList = q.getResultList();
+        log.log(Level.INFO, "Project Videos found: {0}", vList.size());
 
         q = em.createNamedQuery("ProjectTaskStatus.countByStaffProjectTask");
         q.setParameter("staffID", staffID);
@@ -401,6 +418,14 @@ public class ListUtil {
                     }
                 }
                 project.setPhotoCount(project.getPhotoUploadList().size());
+                
+                for (VideoUpload pt : vList) {
+                    if (Objects.equals(pt.getProject().getProjectID(), project.getProjectID())) {
+                        project.getVideoUploadList().add(new VideoUploadDTO(pt));
+                    }
+                }
+                project.setVideoCount(project.getVideoUploadList().size());
+                
                 for (Object ob : staffCountList) {
                     Object[] arr = (Object[]) ob;
                     Integer id = (Integer) arr[0];
@@ -434,6 +459,7 @@ public class ListUtil {
         log.log(Level.INFO, "########### getLatestDeviceLocations, companyID: {0}", companyID);
         ResponseDTO r = new ResponseDTO();
         try {
+
             Query qq = em.createNamedQuery("Staff.findByCompany", Staff.class);
             qq.setParameter("companyID", companyID);
             List<Staff> staffList = qq.getResultList();
@@ -443,7 +469,8 @@ public class ListUtil {
                 qq.setMaxResults(1);
                 List<LocationTracker> locList = qq.getResultList();
                 if (!locList.isEmpty()) {
-                    r.getLocationTrackerList().add(new LocationTrackerDTO(locList.get(0)));
+                    LocationTrackerDTO ltd = new LocationTrackerDTO(locList.get(0));
+                    r.getLocationTrackerList().add(ltd);
                 }
             }
             qq = em.createNamedQuery("Monitor.findByCompany", Monitor.class);
@@ -455,7 +482,8 @@ public class ListUtil {
                 qq.setMaxResults(1);
                 List<LocationTracker> locList = qq.getResultList();
                 if (!locList.isEmpty()) {
-                    r.getLocationTrackerList().add(new LocationTrackerDTO(locList.get(0)));
+                    LocationTrackerDTO ltd = new LocationTrackerDTO(locList.get(0));
+                    r.getLocationTrackerList().add(ltd);
                 }
             }
 
@@ -463,10 +491,12 @@ public class ListUtil {
 
             StringBuilder sb = new StringBuilder();
             sb.append("Latest locationTracks").append("\n");
-            for (LocationTrackerDTO t : r.getLocationTrackerList()) {
+            r.getLocationTrackerList().stream().map((t) -> {
                 sb.append("id: ").append(t.getLocationTrackerID()).append(" ");
+                return t;
+            }).forEach((t) -> {
                 sb.append(new Date(t.getDateTracked()).toString()).append("\n");
-            }
+            });
             log.log(Level.INFO, sb.toString());
         } catch (Exception e) {
             log.log(Level.SEVERE, "Fail", e);
@@ -480,9 +510,9 @@ public class ListUtil {
         Query q = em.createNamedQuery("Task.findByCompany", Task.class);
         q.setParameter("companyID", companyID);
         List<Task> list = q.getResultList();
-        for (Task task : list) {
+        list.stream().forEach((task) -> {
             r.getTaskList().add(new TaskDTO(task));
-        }
+        });
         return r;
     }
 

@@ -10,7 +10,6 @@ import com.boha.monitor.data.Project;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.EntityManager;
 
 /**
  *
@@ -19,10 +18,11 @@ import javax.persistence.EntityManager;
 public class ProjectDTO implements Serializable, Comparable<ProjectDTO> {
 
     private List<PhotoUploadDTO> photoUploadList;
+    private List<VideoUploadDTO> videoUploadList;
     private static final long serialVersionUID = 1L;
     private Integer projectID, cityID, companyID;
     private Integer programmeID, portfolioID,
-            statusCount, photoCount, projectTaskCount, monitorCount, staffCount;
+            statusCount, photoCount, projectTaskCount, monitorCount, staffCount, videoCount;
     private String projectName;
     private Double latitude;
     private Double longitude;
@@ -79,6 +79,29 @@ public class ProjectDTO implements Serializable, Comparable<ProjectDTO> {
         }
     }
 
+    public List<VideoUploadDTO> getVideoUploadList() {
+        if (videoUploadList == null) {
+            videoUploadList = new ArrayList<>();
+        }
+        return videoUploadList;
+    }
+
+    public void setVideoUploadList(List<VideoUploadDTO> videoUploadList) {
+        this.videoUploadList = videoUploadList;
+    }
+
+    public Integer getVideoCount() {
+        if (videoCount == null) {
+            videoCount = 0;
+        }
+        return videoCount;
+    }
+
+    public void setVideoCount(Integer videoCount) {
+        this.videoCount = videoCount;
+    }
+
+    
     public Integer getMonitorCount() {
         return monitorCount;
     }

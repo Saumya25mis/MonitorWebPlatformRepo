@@ -70,6 +70,7 @@ public class GoogleCloudMessageUtil {
         Sender sender = new Sender(GoogleCloudMessagingRegistrar.API_KEY);
         Message message = new Message.Builder()
                 .addData("simpleMessage", gcmMessage)
+                .collapseKey("" + System.currentTimeMillis())
                 .build();
 
         LOG.log(Level.INFO, "sendSimpleMessage: About to send message via GCM: {0}", registrationIDs.size());
@@ -129,6 +130,7 @@ public class GoogleCloudMessageUtil {
         Sender sender = new Sender(GoogleCloudMessagingRegistrar.API_KEY);       
         Message message = new Message.Builder()
                 .addData("track", mTrack)
+                .collapseKey("" + System.currentTimeMillis())
                 .build();
 
         List<String> registrationIDs = new ArrayList<>();

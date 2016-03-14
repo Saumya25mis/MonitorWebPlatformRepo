@@ -23,6 +23,7 @@ public class VideoUploadDTO implements Serializable {
     private String url;
     private Long dateUploaded;
     private String secureUrl;
+    private String youTubeID, projectName;
     private String eTag;
     private String signature;
     private Integer width;
@@ -61,6 +62,10 @@ public class VideoUploadDTO implements Serializable {
         videoCodec = a.getVideoCodec();
         frameRate = a.getFrameRate();
         duration = a.getDuration();
+        youTubeID = a.getYouTubeID();
+        if (a.getProject() != null) {
+            projectName = a.getProject().getProjectName();
+        }
         if (a.getMonitor() != null) {
             monitorID = a.getMonitor().getMonitorID();
         }
@@ -73,6 +78,14 @@ public class VideoUploadDTO implements Serializable {
         if (a.getProjectTask() != null) {
             projectTaskID = a.getProjectTask().getProjectTaskID();
         }
+    }
+
+    public String getYouTubeID() {
+        return youTubeID;
+    }
+
+    public void setYouTubeID(String youTubeID) {
+        this.youTubeID = youTubeID;
     }
 
     public Integer getVideoUploadID() {

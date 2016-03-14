@@ -34,7 +34,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author aubreyM
  */
 @WebServlet(name = "MonitorGatewayServletX", urlPatterns = {"/gatex"})
-public class MonitorGatewayServletX extends HttpServlet {
+public class MonitorGatewayServlet extends HttpServlet {
 
     /**
      *
@@ -59,7 +59,7 @@ public class MonitorGatewayServletX extends HttpServlet {
         try {
             if (dto != null && dto.getRequestType() != null) {
                 log.log(Level.INFO, "{0} started .....requestType: {1} - {2}",
-                        new Object[]{MonitorGatewayServletX.class.getSimpleName(), dto.getRequestType(), new Date().toString()});
+                        new Object[]{MonitorGatewayServlet.class.getSimpleName(), dto.getRequestType(), new Date().toString()});
                 resp = TrafficCop.processRequest(dto, dataUtil, signInUtil);
             } else {
                 resp.setStatusCode(ServerStatus.ERROR_JSON_SYNTAX);
@@ -122,7 +122,7 @@ public class MonitorGatewayServletX extends HttpServlet {
         }
         return cr;
     }
-    private static final Logger log = Logger.getLogger(MonitorGatewayServletX.class
+    private static final Logger log = Logger.getLogger(MonitorGatewayServlet.class
             .getSimpleName());
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

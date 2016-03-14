@@ -87,6 +87,14 @@ import javax.validation.constraints.Size;
 })
 public class PhotoUpload implements Serializable {
 
+    @Column(name = "marked")
+    private Boolean marked;
+    @Column(name = "sharedCount")
+    private Integer sharedCount;
+    @JoinColumn(name = "tenderCompanyID", referencedColumnName = "tenderCompanyID")
+    @ManyToOne(fetch = FetchType.EAGER)
+    private TenderCompany tenderCompanyID;
+
     @JoinColumn(name = "projectTaskStatusID", referencedColumnName = "projectTaskStatusID")
     @ManyToOne
     private ProjectTaskStatus projectTaskStatus;
@@ -355,6 +363,30 @@ public class PhotoUpload implements Serializable {
 
     public void setStatusColor(Short statusColor) {
         this.statusColor = statusColor;
+    }
+
+    public Boolean getMarked() {
+        return marked;
+    }
+
+    public void setMarked(Boolean marked) {
+        this.marked = marked;
+    }
+
+    public Integer getSharedCount() {
+        return sharedCount;
+    }
+
+    public void setSharedCount(Integer sharedCount) {
+        this.sharedCount = sharedCount;
+    }
+
+    public TenderCompany getTenderCompanyID() {
+        return tenderCompanyID;
+    }
+
+    public void setTenderCompanyID(TenderCompany tenderCompanyID) {
+        this.tenderCompanyID = tenderCompanyID;
     }
 
 }

@@ -102,6 +102,6 @@ public class GoogleCloudMessagingRegistrar {
     public static final String API_KEY = "AIzaSyC_UYg-pQqmEcRURzp0HlmXnZg-nbhver4";
     public static final String PROJECT_NUMBER = "235297950926";
             
-            //"AIzaSyC773Vu6nwyqVSt3HWcDetwbgW23Vj2OT0" - old key
-       //AIzaSyA3z6lmVtB7JKtaxVCBG4v5HgWOJxTNsmM
+            //Got the following API server key for GCM
+    //AIzaSyCD_pEOKlk40LhsKN0RkyaDQjwjSpASwb8
 }

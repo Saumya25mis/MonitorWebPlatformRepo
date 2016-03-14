@@ -31,7 +31,17 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(name = "videoUpload")
 @NamedQueries({
-    @NamedQuery(name = "VideoUpload.findAll", query = "SELECT v FROM VideoUpload v"),
+    @NamedQuery(name = "VideoUpload.findByStaffProject", 
+            query = "SELECT v FROM VideoUpload v, StaffProject s where v.staff.staffID = :staffID "
+                    + "and v.staff.staffID = s.staff.staffID "
+                    + "and v.project.projectID = s.project.projectID "
+                    + "order by v.dateTaken desc"),
+    
+    @NamedQuery(name = "VideoUpload.findByMonitorProject", 
+            query = "SELECT v FROM VideoUpload v, MonitorProject s where v.monitor.monitorID = :monitorID "
+                    + "and v.monitor.monitorID = s.monitor.monitorID "
+                    + "and v.project.projectID = s.project.projectID "
+                    + "order by v.dateTaken desc"),
     
 })
 public class VideoUpload implements Serializable {
@@ -61,6 +71,8 @@ public class VideoUpload implements Serializable {
     @Size(max = 400)
     @Column(name = "secureUrl")
     private String secureUrl;
+    @Column(name = "youTubeID")
+    private String youTubeID;
     @Size(max = 400)
     @Column(name = "eTag")
     private String eTag;
@@ -108,6 +120,14 @@ public class VideoUpload implements Serializable {
     public VideoUpload(Integer videoUploadID, Date dateTaken) {
         this.videoUploadID = videoUploadID;
         this.dateTaken = dateTaken;
+    }
+
+    public String getYouTubeID() {
+        return youTubeID;
+    }
+
+    public void setYouTubeID(String youTubeID) {
+        this.youTubeID = youTubeID;
     }
 
     public Integer getVideoUploadID() {

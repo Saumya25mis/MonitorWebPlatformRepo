@@ -154,23 +154,21 @@ public class DataUtil {
                                 new Object[]{dto.getTask().getTaskName(), p.getProjectName()});
                     }
 
-                } else {
-                    if (dto.getTask().isSelected()) {
-                        Query q = em.createNamedQuery("ProjectTask.findByProjectTask", ProjectTask.class);
-                        q.setParameter("projectID", p.getProjectID());
-                        q.setParameter("taskID", dto.getTask().getTaskID());
-                        List<ProjectTask> ptList = q.getResultList();
-                        if (ptList.isEmpty()) {
+                } else if (dto.getTask().isSelected()) {
+                    Query q = em.createNamedQuery("ProjectTask.findByProjectTask", ProjectTask.class);
+                    q.setParameter("projectID", p.getProjectID());
+                    q.setParameter("taskID", dto.getTask().getTaskID());
+                    List<ProjectTask> ptList = q.getResultList();
+                    if (ptList.isEmpty()) {
 
-                            Task t = em.find(Task.class, dto.getTask().getTaskID());
-                            ProjectTask pt = new ProjectTask();
-                            pt.setDateRegistered(new Date());
-                            pt.setProject(p);
-                            pt.setTask(t);
-                            em.persist(pt);
-                            log.log(Level.INFO, "ProjectTask added: {0} - {1}",
-                                    new Object[]{p.getProjectName(), t.getTaskName()});
-                        }
+                        Task t = em.find(Task.class, dto.getTask().getTaskID());
+                        ProjectTask pt = new ProjectTask();
+                        pt.setDateRegistered(new Date());
+                        pt.setProject(p);
+                        pt.setTask(t);
+                        em.persist(pt);
+                        log.log(Level.INFO, "ProjectTask added: {0} - {1}",
+                                new Object[]{p.getProjectName(), t.getTaskName()});
                     }
                 }
 
@@ -579,6 +577,26 @@ public class DataUtil {
         return em.find(Staff.class, id);
     }
 
+    public ResponseDTO updatePhotoUpload(PhotoUploadDTO pu) {
+        ResponseDTO resp = new ResponseDTO();
+        try {
+            PhotoUpload photo = em.find(PhotoUpload.class, pu.getPhotoUploadID());
+            photo.setMarked(pu.getMarked());
+            if (photo.getSharedCount() == null) {
+                photo.setSharedCount(pu.getSharedCount());
+            } else {
+                photo.setSharedCount(photo.getSharedCount() + pu.getSharedCount());
+            }
+            em.merge(photo);
+            log.log(Level.INFO, "Photo has been updated");
+            resp.setMessage("Photo update, marked: " + pu.getMarked() + " shared: " + photo.getSharedCount());
+
+        } catch (Exception e) {
+            log.log(Level.SEVERE, e.getMessage(), e);
+        }
+        return resp;
+    }
+
     public ResponseDTO addPhotoUpload(PhotoUploadDTO pu) {
         ResponseDTO w = new ResponseDTO();
         w.setPhotoUploadList(new ArrayList<>());
@@ -751,7 +769,7 @@ public class DataUtil {
                     != null) {
                 u.setMonitor(em.find(Monitor.class, pu.getMonitorID()));
             }
-
+            u.setYouTubeID(pu.getYouTubeID());
             u.setLatitude(pu.getLatitude());
             u.setLongitude(pu.getLongitude());
             u.setUrl(pu.getUrl());
@@ -914,7 +932,7 @@ public class DataUtil {
         ResponseDTO resp = new ResponseDTO();
 
         try {
-            Query q = em.createNamedQuery("ProjectTaskStatus.findByTaskStatusDate", 
+            Query q = em.createNamedQuery("ProjectTaskStatus.findByTaskStatusDate",
                     ProjectTaskStatus.class);
             q.setParameter("projectTaskID", status.getProjectTaskID());
             q.setParameter("statusDate", new Date(status.getStatusDate()));
@@ -938,7 +956,7 @@ public class DataUtil {
 
             t.setProjectTask(c);
             t.setTaskStatusType(em.find(TaskStatusType.class,
-                            status.getTaskStatusType().getTaskStatusTypeID()));
+                    status.getTaskStatusType().getTaskStatusTypeID()));
 
             if (status.getStaffID() != null) {
                 t.setStaff(em.find(Staff.class, status.getStaffID()));

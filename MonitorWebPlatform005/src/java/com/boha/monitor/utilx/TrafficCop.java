@@ -32,7 +32,7 @@ public class TrafficCop {
                     dataUtil.addLocationTrack(req.getSimpleMessage().getLocationTracker());
                 }
                 resp = GoogleCloudMessageUtil.sendSimpleMessage(dataUtil.getEntityManager(), req.getSimpleMessage());
-                
+
                 break;
             case RequestDTO.GET_PROJECTS_FOR_MONITOR_ASSIGNMENTS:
                 resp = ListUtil.getProjectsForMonitorAssignment(dataUtil.getEntityManager(), req.getCompanyID(), req.getMonitorID());
@@ -117,6 +117,9 @@ public class TrafficCop {
                 break;
 
             //updates
+            case RequestDTO.UPDATE_PHOTO:
+                dataUtil.updatePhotoUpload(req.getPhotoUpload());
+                break;
             case RequestDTO.UPDATE_PROJECT:
                 dataUtil.updateProject(req.getProject());
                 break;

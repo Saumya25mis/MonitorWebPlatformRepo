@@ -4,6 +4,7 @@ import com.boha.monitor.data.Project;
 import com.boha.monitor.data.ProjectTask;
 import com.boha.monitor.data.Task;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
@@ -42,15 +43,17 @@ public class ProjectTaskGen {
         List<Task> taskList = q.getResultList();
 
         for (Task task : taskList) {
-            for (Project p : pList) {
+            pList.stream().map((p) -> {
                 ProjectTask pt = new ProjectTask();
                 pt.setProject(p);
                 pt.setTask(task);
                 pt.setDateRegistered(new Date());
                 em.persist(pt);
                 sb.append("###### task : ").append(task.getTaskName()).append(" - ").append(p.getProjectName());
+                return p;
+            }).forEach((_item) -> {
                 sb.append("\n");
-            }
+            });
         }
         sb.append("\n\nDone with project tasks");
         return sb.toString();

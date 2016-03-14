@@ -40,6 +40,9 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "TenderCompany.findByDateRegistered", query = "SELECT t FROM TenderCompany t WHERE t.dateRegistered = :dateRegistered")})
 public class TenderCompany implements Serializable {
 
+    @OneToMany(mappedBy = "tenderCompanyID", fetch = FetchType.EAGER)
+    private List<PhotoUpload> photoUploadList;
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -188,6 +191,14 @@ public class TenderCompany implements Serializable {
     @Override
     public String toString() {
         return "com.boha.monitor.data.TenderCompany[ tenderCompanyID=" + tenderCompanyID + " ]";
+    }
+
+    public List<PhotoUpload> getPhotoUploadList() {
+        return photoUploadList;
+    }
+
+    public void setPhotoUploadList(List<PhotoUpload> photoUploadList) {
+        this.photoUploadList = photoUploadList;
     }
     
 }
