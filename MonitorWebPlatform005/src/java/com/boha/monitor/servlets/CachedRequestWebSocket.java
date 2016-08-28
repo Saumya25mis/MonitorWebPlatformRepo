@@ -81,7 +81,6 @@ public class CachedRequestWebSocket {
             response.setStatusCode(StatusCode.ERROR_SERVER);
             response.setMessage(ServerStatus.getMessage(response.getStatusCode()));
             log.log(Level.SEVERE, response.getMessage(), ex);
-            dataUtil.addErrorStore(StatusCode.ERROR_SERVER, response.getMessage(), SOURCE);
 
         }
         bb = ByteBuffer.wrap(gson.toJson(response).getBytes());

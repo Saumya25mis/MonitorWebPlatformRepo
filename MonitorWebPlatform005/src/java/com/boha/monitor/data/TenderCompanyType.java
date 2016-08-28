@@ -37,10 +37,10 @@ public class TenderCompanyType implements Serializable {
     @Column(name = "tenderCompanyTypeID")
     private Integer tenderCompanyTypeID;
     @JoinColumn(name = "companyTypeID", referencedColumnName = "companyTypeID")
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private CompanyType companyType;
     @JoinColumn(name = "tenderCompanyID", referencedColumnName = "tenderCompanyID")
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private TenderCompany tenderCompany;
 
     public TenderCompanyType() {

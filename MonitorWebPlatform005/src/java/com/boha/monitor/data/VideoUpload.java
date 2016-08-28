@@ -32,14 +32,12 @@ import javax.validation.constraints.Size;
 @Table(name = "videoUpload")
 @NamedQueries({
     @NamedQuery(name = "VideoUpload.findByStaffProject", 
-            query = "SELECT v FROM VideoUpload v, StaffProject s where v.staff.staffID = :staffID "
-                    + "and v.staff.staffID = s.staff.staffID "
+            query = "SELECT v FROM VideoUpload v, StaffProject s where s.staff.staffID = :staffID "
                     + "and v.project.projectID = s.project.projectID "
                     + "order by v.dateTaken desc"),
     
     @NamedQuery(name = "VideoUpload.findByMonitorProject", 
-            query = "SELECT v FROM VideoUpload v, MonitorProject s where v.monitor.monitorID = :monitorID "
-                    + "and v.monitor.monitorID = s.monitor.monitorID "
+            query = "SELECT v FROM VideoUpload v, MonitorProject s where s.monitor.monitorID = :monitorID "
                     + "and v.project.projectID = s.project.projectID "
                     + "order by v.dateTaken desc"),
     

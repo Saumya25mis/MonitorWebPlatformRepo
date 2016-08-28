@@ -52,12 +52,12 @@ import javax.validation.constraints.NotNull;
     
 })
 public class ProjectTask implements Serializable {
-    @OneToMany(mappedBy = "projectTask", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "projectTask", fetch = FetchType.LAZY)
     @OrderBy("dateTaken desc")
     private List<VideoUpload> videoUploadList;
     
     @JoinColumn(name = "taskID", referencedColumnName = "taskID")
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Task task;
    
     private static final long serialVersionUID = 1L;
@@ -73,14 +73,14 @@ public class ProjectTask implements Serializable {
     private Date dateRegistered;
     
     @JoinColumn(name = "projectID", referencedColumnName = "projectID")
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Project project;
     
-    @OneToMany(mappedBy = "projectTask", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "projectTask", fetch = FetchType.LAZY)
     @OrderBy("dateTaken desc")
     private List<PhotoUpload> photoUploadList;
     
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "projectTask", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "projectTask", fetch = FetchType.LAZY)
     @OrderBy("dateUpdated desc")
     private List<ProjectTaskStatus> projectTaskStatusList;
 

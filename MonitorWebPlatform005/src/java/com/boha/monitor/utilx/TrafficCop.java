@@ -31,7 +31,7 @@ public class TrafficCop {
                 if (req.getSimpleMessage().getLocationTracker() != null) {
                     dataUtil.addLocationTrack(req.getSimpleMessage().getLocationTracker());
                 }
-                resp = GoogleCloudMessageUtil.sendSimpleMessage(dataUtil.getEntityManager(), req.getSimpleMessage());
+                resp = GoogleCloudMessageUtil.sendSimpleMessage(dataUtil, req.getSimpleMessage());
 
                 break;
             case RequestDTO.GET_PROJECTS_FOR_MONITOR_ASSIGNMENTS:
@@ -58,7 +58,7 @@ public class TrafficCop {
                 break;
             case RequestDTO.SEND_LOCATION:
                 dataUtil.addLocationTrack(req.getLocationTracker());
-                resp = GoogleCloudMessageUtil.sendLocationMessage(dataUtil.getEntityManager(), req.getLocationTracker());
+                resp = GoogleCloudMessageUtil.sendLocationMessage(dataUtil, req.getLocationTracker());
                 break;
             case RequestDTO.GET_COMPANY_LIST:
                 resp = ListUtil.getCompanyList(dataUtil.getEntityManager());
@@ -85,25 +85,7 @@ public class TrafficCop {
             case RequestDTO.IMPORT_PROJECT_INFO:
                 resp = dataUtil.importProject(req.getProject());
                 break;
-            case RequestDTO.GET_MESSAGES_BY_PROJECT:
-                resp = ListUtil.getMessagesByProject(dataUtil.getEntityManager(), req.getProjectID());
-                break;
-            case RequestDTO.GET_CHATS_BY_PROJECT_AND_STAFF:
-                resp = ListUtil.getMessagesByProjectAndStaff(dataUtil.getEntityManager(), req.getProjectID(), req.getStaffID());
-                break;
-            case RequestDTO.ADD_CHAT:
-                resp = dataUtil.addChat(req.getChat());
-                resp.setChatList(ListUtil.getChatsByProject(dataUtil.getEntityManager(), req.getProjectID()).getChatList());
-                break;
-            case RequestDTO.ADD_CHAT_MEMBERS:
-                resp = dataUtil.addChatMembers(req.getChatMemberList());
-                break;
-            case RequestDTO.SEND_CHAT_MESSAGE:
-//                    resp = cloudMsgUtil.sendChatMessage(req.getChatMessage());
-                break;
-            case RequestDTO.GET_CHATS_BY_PROJECT:
-                resp = ListUtil.getChatsByProject(dataUtil.getEntityManager(), req.getProjectID());
-                break;
+            
             case RequestDTO.GET_MONITOR_SUMMARY:
                 resp = ListUtil.getMonitorSummary(dataUtil.getEntityManager(), req.getMonitorID());
                 break;
@@ -113,7 +95,7 @@ public class TrafficCop {
 
             case RequestDTO.NOTIFY_SUPERVISOR_NO_PROJECTS:
                 //TODO - send GCM message to project operations ...
-                resp = GoogleCloudMessageUtil.sendNoProjectsAssignedMessage(dataUtil.getEntityManager(), req.getCompanyID(), req.getMonitorID());
+                resp = GoogleCloudMessageUtil.sendNoProjectsAssignedMessage(dataUtil, req.getCompanyID(), req.getMonitorID());
                 break;
 
             //updates
@@ -242,9 +224,7 @@ public class TrafficCop {
             case RequestDTO.GET_MONITOR_PROJECTS:
                 resp = ListUtil.getProjectsForMonitor(dataUtil.getEntityManager(), req.getMonitorID());
                 break;
-            case RequestDTO.GET_ERROR_REPORTS:
-                resp = ListUtil.getServerEvents(dataUtil.getEntityManager(), req.getStartDate(), req.getEndDate());
-                break;
+           
             case RequestDTO.GET_EXEC_COMPANY_DATA:
 //                    resp = ListUtil.getCompanyExecData(req.getCompanyID(), req.getCountryID());
                 break;

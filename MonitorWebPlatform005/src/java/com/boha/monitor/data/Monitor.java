@@ -29,6 +29,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -50,28 +51,29 @@ public class Monitor implements Serializable {
 
     
     @OneToMany(mappedBy = "monitor")
+    private List<PhotoTag> photoTagList;
+
+    
+    @OneToMany(mappedBy = "monitor")
     private List<SimpleMessageDestination> simpleMessageDestinationList;
     @OneToMany(mappedBy = "monitor")
     private List<SimpleMessage> simpleMessageList;
 
     @Column(name = "gender")
     private Short gender;
-    @OneToMany(mappedBy = "monitor", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "monitor", fetch = FetchType.LAZY)
     private List<VideoUpload> videoUploadList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "monitor", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "monitor", fetch = FetchType.LAZY)
     private List<MonitorTrade> monitorTradeList;
     
-    @OneToMany(mappedBy = "monitor", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "monitor", fetch = FetchType.LAZY)
     @OrderBy("dateTaken desc")
     private List<PhotoUpload> photoUploadList;
     
-    @OneToMany(mappedBy = "monitor", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "monitor", fetch = FetchType.LAZY)
     @OrderBy("dateTracked desc")
     private List<LocationTracker> locationTrackerList;
-    @OneToMany(mappedBy = "monitor", fetch = FetchType.EAGER)
-    private List<ErrorStoreAndroid> errorStoreAndroidList;
-    @OneToMany(mappedBy = "monitor")
-    private Collection<ChatMessage> chatMessageCollection;
+    
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -121,13 +123,11 @@ public class Monitor implements Serializable {
     private Company company;
     @OneToMany(mappedBy = "monitor")
     private List<ProjectTaskStatus> projectTaskStatusList;
-    @OneToMany(mappedBy = "monitor")
-    private List<ChatMember> chatMemberList;
-    @OneToMany(mappedBy = "monitor", fetch = FetchType.EAGER)
+   
+    @OneToMany(mappedBy = "monitor", fetch = FetchType.LAZY)
     private List<GcmDevice> gcmDeviceList;
-    @OneToMany(mappedBy = "monitor")
-    private List<Chat> chatList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "monitor", fetch = FetchType.EAGER)
+    
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "monitor", fetch = FetchType.LAZY)
     private List<MonitorProject> monitorProjectList;
 
     public Monitor() {
@@ -257,14 +257,7 @@ public class Monitor implements Serializable {
         this.projectTaskStatusList = projectTaskStatusList;
     }
 
-    public List<ChatMember> getChatMemberList() {
-        return chatMemberList;
-    }
-
-    public void setChatMemberList(List<ChatMember> chatMemberList) {
-        this.chatMemberList = chatMemberList;
-    }
-
+   
     public List<GcmDevice> getGcmDeviceList() {
         return gcmDeviceList;
     }
@@ -273,13 +266,7 @@ public class Monitor implements Serializable {
         this.gcmDeviceList = gcmDeviceList;
     }
 
-    public List<Chat> getChatList() {
-        return chatList;
-    }
-
-    public void setChatList(List<Chat> chatList) {
-        this.chatList = chatList;
-    }
+ 
 
     public List<MonitorProject> getMonitorProjectList() {
         return monitorProjectList;
@@ -312,22 +299,6 @@ public class Monitor implements Serializable {
     @Override
     public String toString() {
         return "com.boha.monitor.data.Monitor[ monitorID=" + monitorID + " ]";
-    }
-
-    public Collection<ChatMessage> getChatMessageCollection() {
-        return chatMessageCollection;
-    }
-
-    public void setChatMessageCollection(Collection<ChatMessage> chatMessageCollection) {
-        this.chatMessageCollection = chatMessageCollection;
-    }
-
-    public List<ErrorStoreAndroid> getErrorStoreAndroidList() {
-        return errorStoreAndroidList;
-    }
-
-    public void setErrorStoreAndroidList(List<ErrorStoreAndroid> errorStoreAndroidList) {
-        this.errorStoreAndroidList = errorStoreAndroidList;
     }
 
     public List<LocationTracker> getLocationTrackerList() {
@@ -387,6 +358,16 @@ public class Monitor implements Serializable {
 
     public void setSimpleMessageDestinationList(List<SimpleMessageDestination> simpleMessageDestinationList) {
         this.simpleMessageDestinationList = simpleMessageDestinationList;
+    }
+
+
+    @XmlTransient
+    public List<PhotoTag> getPhotoTagList() {
+        return photoTagList;
+    }
+
+    public void setPhotoTagList(List<PhotoTag> photoTagList) {
+        this.photoTagList = photoTagList;
     }
 
 }

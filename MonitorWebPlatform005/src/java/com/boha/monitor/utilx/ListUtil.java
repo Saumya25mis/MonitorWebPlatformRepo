@@ -634,32 +634,7 @@ public class ListUtil {
         return resp;
     }
 
-    public static ResponseDTO getMessagesByProjectAndStaff(EntityManager em, Integer projectID,
-            Integer companyStaffID) {
-        ResponseDTO resp = new ResponseDTO();
-        Query q = em.createNamedQuery("ChatMessage.findByProjectAndStaff", ChatMessage.class);
-        q.setParameter("projectID", projectID);
-        q.setParameter("companyStaffID", companyStaffID);
-        List<ChatMessage> list = q.getResultList();
-        resp.setChatMessageList(new ArrayList<>());
-        for (ChatMessage cm : list) {
-            resp.getChatMessageList().add(new ChatMessageDTO(cm));
-        }
-        return resp;
-    }
-
-    public static ResponseDTO getMessagesByProject(EntityManager em, Integer projectID) {
-        ResponseDTO resp = new ResponseDTO();
-        Query q = em.createNamedQuery("ChatMessage.findByProject", ChatMessage.class);
-        q.setParameter("projectID", projectID);
-        List<ChatMessage> list = q.getResultList();
-        resp.setChatMessageList(new ArrayList<>());
-        for (ChatMessage cm : list) {
-            resp.getChatMessageList().add(new ChatMessageDTO(cm));
-        }
-
-        return resp;
-    }
+    
 
     public static ResponseDTO getProjectStatusPhotos(EntityManager em, Integer projectID) {
         ResponseDTO resp = new ResponseDTO();
@@ -694,37 +669,6 @@ public class ListUtil {
         return resp;
     }
 
-    public static ResponseDTO getChatsByProject(EntityManager em, Integer projectID) {
-        ResponseDTO resp = new ResponseDTO();
-        Query q = em.createNamedQuery("Chat.findByProject", Chat.class);
-        q.setParameter("projectID", projectID);
-        List<Chat> list = q.getResultList();
-        q = em.createNamedQuery("ChatMessage.findByProject", ChatMessage.class);
-        q.setParameter("projectID", projectID);
-        List<ChatMessage> cmList = q.getResultList();
-        q = em.createNamedQuery("ChatMember.findByProject", ChatMember.class);
-        q.setParameter("projectID", projectID);
-        List<ChatMember> mmList = q.getResultList();
-        resp.setChatList(new ArrayList<>());
-        for (Chat t : list) {
-            ChatDTO xx = new ChatDTO(t);
-            xx.setChatMessageList(new ArrayList<>());
-            xx.setChatMemberList(new ArrayList<>());
-            for (ChatMessage cm : cmList) {
-                if (Objects.equals(cm.getChat().getChatID(), t.getChatID())) {
-                    xx.getChatMessageList().add(new ChatMessageDTO(cm));
-                }
-            }
-            for (ChatMember mm : mmList) {
-                if (Objects.equals(mm.getChat().getChatID(), t.getChatID())) {
-                    xx.getChatMemberList().add(new ChatMemberDTO(mm));
-                }
-            }
-            resp.getChatList().add(xx);
-        }
-
-        return resp;
-    }
 
     public static ResponseDTO getLocationTracksByStaff(EntityManager em, Integer companyStaffID) {
         ResponseDTO resp = new ResponseDTO();
@@ -825,7 +769,8 @@ public class ListUtil {
         return resp;
     }
 
-    public static ResponseDTO getPhotosByProject(EntityManager em, Integer projectID, Date start, Date end) {
+    public static ResponseDTO getPhotosByProject(EntityManager em, Integer projectID, 
+            Date start, Date end) {
         ResponseDTO resp = new ResponseDTO();
         Query q = em.createNamedQuery("PhotoUpload.findByProjectInPeriod", PhotoUpload.class);
         q.setParameter("projectID", projectID);
@@ -842,7 +787,7 @@ public class ListUtil {
 
     public static ResponseDTO getAllPhotosByProject(EntityManager em, Integer projectID) {
         ResponseDTO resp = new ResponseDTO();
-        Query q = em.createNamedQuery("PhotoUpload.findAllProjectPhotos", PhotoUpload.class);
+        Query q = em.createNamedQuery("PhotoUpload.findByProject", PhotoUpload.class);
         q.setParameter("projectID", projectID);
         List<PhotoUpload> list = q.getResultList();
         resp.setPhotoUploadList(new ArrayList<>());
@@ -1149,81 +1094,6 @@ public class ListUtil {
         return sb.toString();
     }
 
-    public static void addErrorStore(EntityManager em, int statusCode, String message, String origin) {
-        log.log(Level.OFF, "------ adding errorStore, message: {0} origin: {1}", new Object[]{message, origin});
-        try {
-            ErrorStore t = new ErrorStore();
-            t.setDateOccured(new Date());
-            t.setMessage(message);
-            t.setStatusCode(statusCode);
-            t.setOrigin(origin);
-            em.persist(t);
-            log.log(Level.INFO, "####### ErrorStore row added, origin {0} \nmessage: {1}",
-                    new Object[]{origin, message});
-        } catch (Exception e) {
-            log.log(Level.SEVERE, "####### Failed to add errorStore from " + origin + "\n" + message, e);
-        }
-    }
-
-    public static ResponseDTO getServerEvents(EntityManager em, Long dt, Long dx) throws DataException {
-        ResponseDTO r = new ResponseDTO();
-        Date startDate, endDate;
-        if (dt == null) {
-            DateTime ed = new DateTime();
-            DateTime sd = ed.minusMonths(3);
-            startDate = sd.toDate();
-            endDate = ed.toDate();
-        } else {
-            startDate = new Date(dt);
-            endDate = new Date(dx);
-        }
-        try {
-            Query q = em.createNamedQuery("ErrorStoreAndroid.findByPeriod", ErrorStoreAndroid.class);
-            q.setParameter("from", startDate);
-            q.setParameter("to", endDate);
-            List<ErrorStoreAndroid> list = q.getResultList();
-            List<ErrorStoreAndroidDTO> dList = new ArrayList();
-            for (ErrorStoreAndroid e : list) {
-                dList.add(new ErrorStoreAndroidDTO(e));
-            }
-            r.setErrorStoreAndroidList(dList);
-            r.setErrorStoreList(getServerErrors(em, startDate.getTime(), endDate.getTime()).getErrorStoreList());
-
-            String logx = LogfileUtil.getFileString();
-            r.setLog(logx);
-            log.log(Level.OFF, "Android Errors found {0}", r.getErrorStoreAndroidList().size());
-        } catch (DataException | IOException e) {
-            log.log(Level.SEVERE, "Failed ");
-            throw new DataException("Failed\n" + getErrorString(e));
-        }
-        return r;
-    }
-
-    public static ResponseDTO getServerErrors(EntityManager em, long startDate, long endDate) throws DataException {
-        ResponseDTO r = new ResponseDTO();
-        if (startDate == 0) {
-            DateTime ed = new DateTime();
-            DateTime sd = ed.minusMonths(3);
-            startDate = sd.getMillis();
-            endDate = ed.getMillis();
-        }
-        try {
-            Query q = em.createNamedQuery("ErrorStore.findByPeriod", ErrorStore.class);
-            q.setParameter("startDate", new Date(startDate));
-            q.setParameter("endDate", new Date(endDate));
-            List<ErrorStore> list = q.getResultList();
-            List<ErrorStoreDTO> dList = new ArrayList();
-            for (ErrorStore e : list) {
-                dList.add(new ErrorStoreDTO(e));
-            }
-            r.setErrorStoreList(dList);
-            log.log(Level.OFF, "Errors found {0}", r.getErrorStoreList().size());
-        } catch (Exception e) {
-            log.log(Level.SEVERE, "Failed to getServerErrors");
-            throw new DataException("Failed to getServerErrors\n" + getErrorString(e));
-        }
-        return r;
-    }
-
+   
     static final Logger log = Logger.getLogger(ListUtil.class.getSimpleName());
 }

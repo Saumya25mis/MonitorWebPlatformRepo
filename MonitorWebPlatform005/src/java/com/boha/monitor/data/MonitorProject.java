@@ -63,10 +63,10 @@ public class MonitorProject implements Serializable {
     @Column(name = "activeFlag")
     private Boolean activeFlag;
     @JoinColumn(name = "monitorID", referencedColumnName = "monitorID")
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Monitor monitor;
     @JoinColumn(name = "projectID", referencedColumnName = "projectID")
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Project project;
 
     public MonitorProject() {

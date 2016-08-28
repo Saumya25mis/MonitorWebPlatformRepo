@@ -99,9 +99,9 @@ public class GoogleCloudMessagingRegistrar {
     private static final Logger logger = Logger.getLogger(GoogleCloudMessagingRegistrar.class
             .getCanonicalName());
 
-    public static final String API_KEY = "AIzaSyC_UYg-pQqmEcRURzp0HlmXnZg-nbhver4";
-    public static final String PROJECT_NUMBER = "235297950926";
+    public static final String API_KEY = "AIzaSyDmWgsI4W6u-NGYLBg8T9V_sc1c4tlV7TQ";
+    public static final String PROJECT_NUMBER = "670239682335";
             
-            //Got the following API server key for GCM
-    //AIzaSyCD_pEOKlk40LhsKN0RkyaDQjwjSpASwb8
+    //Got the following API server key for GCM
+    //AIzaSyDmWgsI4W6u-NGYLBg8T9V_sc1c4tlV7TQ
 }

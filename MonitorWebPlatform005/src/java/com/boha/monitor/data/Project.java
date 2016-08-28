@@ -45,21 +45,20 @@ import javax.validation.constraints.Size;
 })
 public class Project implements Serializable {
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "project", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "project", fetch = FetchType.LAZY)
     private List<TenderCompanyProject> tenderCompanyProjectList;
-    @OneToMany(mappedBy = "project")
-    private List<SimpleMessage> simpleMessageList;
+    
     @JoinColumn(name = "companyID", referencedColumnName = "companyID")
     @ManyToOne
     private Company company;
-    @OneToMany(mappedBy = "project", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
     private List<VideoUpload> videoUploadList;
     private static final long serialVersionUID = 1L;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "project", fetch = FetchType.EAGER)
     private List<ProjectTask> projectTaskList;
 
-    @OneToMany(mappedBy = "project", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
     @OrderBy("dateTaken desc")
     private List<PhotoUpload> photoUploadList;
     @Id
@@ -96,21 +95,20 @@ public class Project implements Serializable {
     private String description;
 
     @JoinColumn(name = "programmeID", referencedColumnName = "programmeID")
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Programme programme;
     @JoinColumn(name = "cityID", referencedColumnName = "cityID")
     @ManyToOne(optional = false)
     private City city;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "project", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "project", fetch = FetchType.LAZY)
     private List<ProjectStatus> projectStatusList;
-    @OneToMany(mappedBy = "project", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
     private List<GcmDevice> gcmDeviceList;
-    @OneToMany(mappedBy = "project")
-    private List<Chat> chatList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "project", fetch = FetchType.EAGER)
+    
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "project", fetch = FetchType.LAZY)
     private List<MonitorProject> monitorProjectList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "project", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "project", fetch = FetchType.LAZY)
     private List<StaffProject> staffProjectList;
 
     public Project() {
@@ -221,13 +219,6 @@ public class Project implements Serializable {
         this.gcmDeviceList = gcmDeviceList;
     }
 
-    public List<Chat> getChatList() {
-        return chatList;
-    }
-
-    public void setChatList(List<Chat> chatList) {
-        this.chatList = chatList;
-    }
 
     public List<MonitorProject> getMonitorProjectList() {
         return monitorProjectList;
@@ -316,14 +307,6 @@ public class Project implements Serializable {
 
     public void setCompany(Company company) {
         this.company = company;
-    }
-
-    public List<SimpleMessage> getSimpleMessageList() {
-        return simpleMessageList;
-    }
-
-    public void setSimpleMessageList(List<SimpleMessage> simpleMessageList) {
-        this.simpleMessageList = simpleMessageList;
     }
 
     public List<TenderCompanyProject> getTenderCompanyProjectList() {

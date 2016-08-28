@@ -26,7 +26,6 @@ public class TenderCompanyDTO implements Serializable {
     private List<CompanyExperienceDTO> companyExperienceList;
     private List<TenderCompanyTypeDTO> tenderCompanyTypeList;
     
-    private List<InvoiceDTO> invoiceList;
 
     public TenderCompanyDTO() {
     }
@@ -108,13 +107,6 @@ public class TenderCompanyDTO implements Serializable {
         this.tenderCompanyTypeList = tenderCompanyTypeList;
     }
 
-    public List<InvoiceDTO> getInvoiceList() {
-        return invoiceList;
-    }
-
-    public void setInvoiceList(List<InvoiceDTO> invoiceList) {
-        this.invoiceList = invoiceList;
-    }
 
    
 

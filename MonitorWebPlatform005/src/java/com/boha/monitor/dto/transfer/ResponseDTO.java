@@ -5,18 +5,12 @@
  */
 package com.boha.monitor.dto.transfer;
 
-import com.boha.monitor.dto.ChatDTO;
-import com.boha.monitor.dto.ChatMessageDTO;
 import com.boha.monitor.dto.CompanyDTO;
 import com.boha.monitor.dto.CompanyExperienceDTO;
 import com.boha.monitor.dto.CompanyTypeDTO;
 import com.boha.monitor.dto.StaffDTO;
-import com.boha.monitor.dto.ErrorStoreAndroidDTO;
-import com.boha.monitor.dto.ErrorStoreDTO;
 import com.boha.monitor.dto.ExperienceTypeDTO;
 import com.boha.monitor.dto.GcmDeviceDTO;
-import com.boha.monitor.dto.InvoiceDTO;
-import com.boha.monitor.dto.InvoiceRejectReasonDTO;
 import com.boha.monitor.dto.LocationTrackerDTO;
 import com.boha.monitor.dto.MonitorDTO;
 import com.boha.monitor.dto.MonitorProjectDTO;
@@ -28,7 +22,6 @@ import com.boha.monitor.dto.ProjectDTO;
 import com.boha.monitor.dto.ProjectStatusTypeDTO;
 import com.boha.monitor.dto.ProjectTaskDTO;
 import com.boha.monitor.dto.ProjectTaskStatusDTO;
-import com.boha.monitor.dto.RejectedInvoiceDTO;
 import com.boha.monitor.dto.StaffProjectDTO;
 import com.boha.monitor.dto.SubTaskDTO;
 import com.boha.monitor.dto.TaskDTO;
@@ -54,31 +47,23 @@ public class ResponseDTO {
             sessionID, GCMRegistrationID, fileString;
     private Double elapsedRequestTimeInSeconds;
     private String log;
-    private ChatDTO chat;
     private StaffDTO staff;
     private MonitorDTO monitor;
     
     List<TenderCompanyDTO> tenderCompanyList;
     List<TenderCompanyProjectDTO> tenderCompanyProjectList;
-    List<InvoiceDTO> invoiceList;
-    List<RejectedInvoiceDTO> rejectedInvoiceList;
-    List<InvoiceRejectReasonDTO> invoiceRejectReasonList;
     List<ExperienceTypeDTO> experienceTypeList;
     List<CompanyTypeDTO> companyTypeList;
     List<CompanyExperienceDTO> companyExperienceList;
 
     private List<CompanyDTO> companyList;
-    private List<ChatDTO> chatList;
     private List<LocationTrackerDTO> locationTrackerList;
     private List<String> taskImageFileNameList;
-    private List<ChatMessageDTO> chatMessageList;
     private List<StaffProjectDTO> staffProjectList;
     private List<MonitorProjectDTO> monitorProjectList;
     private List<String> siteImageFileNameList;
     private List<ProjectStatusTypeDTO> projectStatusTypeList;
     private List<ProjectDTO> projectList;
-    private List<ErrorStoreDTO> errorStoreList;
-    private List<ErrorStoreAndroidDTO> errorStoreAndroidList;
     private List<TaskDTO> taskList;
     private List<ProjectTaskStatusDTO> projectTaskStatusList;
     private List<TaskStatusTypeDTO> taskStatusTypeList;
@@ -118,32 +103,6 @@ public class ResponseDTO {
         this.tenderCompanyProjectList = tenderCompanyProjectList;
     }
 
-    public List<InvoiceDTO> getInvoiceList() {
-        if (invoiceList == null) {
-            invoiceList = new ArrayList<>();
-        }
-        return invoiceList;
-    }
-
-    public void setInvoiceList(List<InvoiceDTO> invoiceList) {
-        this.invoiceList = invoiceList;
-    }
-
-    public List<RejectedInvoiceDTO> getRejectedInvoiceList() {
-        return rejectedInvoiceList;
-    }
-
-    public void setRejectedInvoiceList(List<RejectedInvoiceDTO> rejectedInvoiceList) {
-        this.rejectedInvoiceList = rejectedInvoiceList;
-    }
-
-    public List<InvoiceRejectReasonDTO> getInvoiceRejectReasonList() {
-        return invoiceRejectReasonList;
-    }
-
-    public void setInvoiceRejectReasonList(List<InvoiceRejectReasonDTO> invoiceRejectReasonList) {
-        this.invoiceRejectReasonList = invoiceRejectReasonList;
-    }
 
     public List<ExperienceTypeDTO> getExperienceTypeList() {
         return experienceTypeList;
@@ -438,22 +397,6 @@ public class ResponseDTO {
         this.log = log;
     }
 
-    public ChatDTO getChat() {
-        return chat;
-    }
-
-    public void setChat(ChatDTO chat) {
-        this.chat = chat;
-    }
-
-    public List<ChatDTO> getChatList() {
-        return chatList;
-    }
-
-    public void setChatList(List<ChatDTO> chatList) {
-        this.chatList = chatList;
-    }
-
     public List<LocationTrackerDTO> getLocationTrackerList() {
         if (locationTrackerList == null) {
             locationTrackerList = new ArrayList<>();
@@ -471,14 +414,6 @@ public class ResponseDTO {
 
     public void setTaskImageFileNameList(List<String> taskImageFileNameList) {
         this.taskImageFileNameList = taskImageFileNameList;
-    }
-
-    public List<ChatMessageDTO> getChatMessageList() {
-        return chatMessageList;
-    }
-
-    public void setChatMessageList(List<ChatMessageDTO> chatMessageList) {
-        this.chatMessageList = chatMessageList;
     }
 
     public List<StaffProjectDTO> getStaffProjectList() {
@@ -513,22 +448,6 @@ public class ResponseDTO {
 
     public void setProjectList(List<ProjectDTO> projectList) {
         this.projectList = projectList;
-    }
-
-    public List<ErrorStoreDTO> getErrorStoreList() {
-        return errorStoreList;
-    }
-
-    public void setErrorStoreList(List<ErrorStoreDTO> errorStoreList) {
-        this.errorStoreList = errorStoreList;
-    }
-
-    public List<ErrorStoreAndroidDTO> getErrorStoreAndroidList() {
-        return errorStoreAndroidList;
-    }
-
-    public void setErrorStoreAndroidList(List<ErrorStoreAndroidDTO> errorStoreAndroidList) {
-        this.errorStoreAndroidList = errorStoreAndroidList;
     }
 
     public List<TaskDTO> getTaskList() {

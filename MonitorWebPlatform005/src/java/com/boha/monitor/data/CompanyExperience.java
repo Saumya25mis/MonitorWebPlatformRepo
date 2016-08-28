@@ -47,10 +47,10 @@ public class CompanyExperience implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date experienceDate;
     @JoinColumn(name = "experienceTypeID", referencedColumnName = "experienceTypeID")
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private ExperienceType experienceType;
     @JoinColumn(name = "tenderCompanyID", referencedColumnName = "tenderCompanyID")
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private TenderCompany tenderCompany;
 
     public CompanyExperience() {

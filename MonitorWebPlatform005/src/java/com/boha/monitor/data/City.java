@@ -34,7 +34,7 @@ import javax.validation.constraints.Size;
 })
 public class City implements Serializable {
     @JoinColumn(name = "municipalityID", referencedColumnName = "municipalityID")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Municipality municipality;
     @OneToMany(mappedBy = "city", fetch = FetchType.LAZY)
     private List<Project> projectList;

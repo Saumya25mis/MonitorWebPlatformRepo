@@ -40,7 +40,7 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "TenderCompany.findByDateRegistered", query = "SELECT t FROM TenderCompany t WHERE t.dateRegistered = :dateRegistered")})
 public class TenderCompany implements Serializable {
 
-    @OneToMany(mappedBy = "tenderCompanyID", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "tenderCompanyID", fetch = FetchType.LAZY)
     private List<PhotoUpload> photoUploadList;
 
     private static final long serialVersionUID = 1L;
@@ -69,16 +69,13 @@ public class TenderCompany implements Serializable {
     @Column(name = "dateRegistered")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateRegistered;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tenderCompany", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tenderCompany", fetch = FetchType.LAZY)
     private List<TenderCompanyProject> tenderCompanyProjectList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tenderCompany", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tenderCompany", fetch = FetchType.LAZY)
     private List<CompanyExperience> companyExperienceList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tenderCompany", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tenderCompany", fetch = FetchType.LAZY)
     private List<TenderCompanyType> tenderCompanyTypeList;
     
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tenderCompany", fetch = FetchType.EAGER)
-    private List<Invoice> invoiceList;
-
     public TenderCompany() {
     }
 
@@ -156,14 +153,6 @@ public class TenderCompany implements Serializable {
 
     public void setTenderCompanyTypeList(List<TenderCompanyType> tenderCompanyTypeList) {
         this.tenderCompanyTypeList = tenderCompanyTypeList;
-    }
-
-    public List<Invoice> getInvoiceList() {
-        return invoiceList;
-    }
-
-    public void setInvoiceList(List<Invoice> invoiceList) {
-        this.invoiceList = invoiceList;
     }
 
    

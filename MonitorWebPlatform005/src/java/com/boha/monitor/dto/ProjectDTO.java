@@ -34,7 +34,6 @@ public class ProjectDTO implements Serializable, Comparable<ProjectDTO> {
     private List<ProjectTaskDTO> projectTaskList = new ArrayList<>();
     private List<ProjectStatusDTO> projectStatusList = new ArrayList<>();
     private List<GcmDeviceDTO> gcmDeviceList;
-    private List<ChatDTO> chatList;
     private List<MonitorDTO> monitorList;
     private List<StaffDTO> staffList;
     private ProjectTaskStatusDTO lastStatus;
@@ -333,14 +332,6 @@ public class ProjectDTO implements Serializable, Comparable<ProjectDTO> {
 
     public void setGcmDeviceList(List<GcmDeviceDTO> gcmDeviceList) {
         this.gcmDeviceList = gcmDeviceList;
-    }
-
-    public List<ChatDTO> getChatList() {
-        return chatList;
-    }
-
-    public void setChatList(List<ChatDTO> chatList) {
-        this.chatList = chatList;
     }
 
     public List<MonitorDTO> getMonitorList() {

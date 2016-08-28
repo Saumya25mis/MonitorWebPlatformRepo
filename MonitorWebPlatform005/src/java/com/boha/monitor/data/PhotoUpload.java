@@ -7,6 +7,7 @@ package com.boha.monitor.data;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,11 +19,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -87,12 +90,15 @@ import javax.validation.constraints.Size;
 })
 public class PhotoUpload implements Serializable {
 
+    @OneToMany(mappedBy = "photoUpload")
+    private List<PhotoTag> photoTagList;
+
     @Column(name = "marked")
     private Boolean marked;
     @Column(name = "sharedCount")
     private Integer sharedCount;
     @JoinColumn(name = "tenderCompanyID", referencedColumnName = "tenderCompanyID")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private TenderCompany tenderCompanyID;
 
     @JoinColumn(name = "projectTaskStatusID", referencedColumnName = "projectTaskStatusID")
@@ -111,13 +117,13 @@ public class PhotoUpload implements Serializable {
     @Column(name = "bytes")
     private Integer bytes;
     @JoinColumn(name = "projectTaskID", referencedColumnName = "projectTaskID")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private ProjectTask projectTask;
     @JoinColumn(name = "staffID", referencedColumnName = "staffID")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Staff staff;
     @JoinColumn(name = "monitorID", referencedColumnName = "monitorID")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Monitor monitor;
     private static final long serialVersionUID = 1L;
     @Id
@@ -156,7 +162,7 @@ public class PhotoUpload implements Serializable {
     private Integer staffPicture;
 
     @JoinColumn(name = "projectID", referencedColumnName = "projectID")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Project project;
 
     public PhotoUpload() {
@@ -387,6 +393,15 @@ public class PhotoUpload implements Serializable {
 
     public void setTenderCompanyID(TenderCompany tenderCompanyID) {
         this.tenderCompanyID = tenderCompanyID;
+    }
+
+    @XmlTransient
+    public List<PhotoTag> getPhotoTagList() {
+        return photoTagList;
+    }
+
+    public void setPhotoTagList(List<PhotoTag> photoTagList) {
+        this.photoTagList = photoTagList;
     }
 
 }

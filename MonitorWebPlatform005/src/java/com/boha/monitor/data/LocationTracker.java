@@ -92,10 +92,10 @@ public class LocationTracker implements Serializable {
     @ManyToOne
     private Company company;
     @JoinColumn(name = "gcmDeviceID", referencedColumnName = "gcmDeviceID")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private GcmDevice gcmDevice;
     @JoinColumn(name = "monitorID", referencedColumnName = "monitorID")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Monitor monitor;
     private static final long serialVersionUID = 1L;
     @Id
@@ -130,7 +130,7 @@ public class LocationTracker implements Serializable {
     @Column(name = "dateTrackedLong")
     private BigInteger dateTrackedLong;
     @JoinColumn(name = "staffID", referencedColumnName = "staffID")
-    @ManyToOne(optional = true, fetch = FetchType.EAGER)
+    @ManyToOne(optional = true, fetch = FetchType.LAZY)
     private Staff staff;
 
     public LocationTracker() {

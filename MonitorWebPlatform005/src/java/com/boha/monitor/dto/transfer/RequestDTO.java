@@ -5,13 +5,9 @@
  */
 package com.boha.monitor.dto.transfer;
 
-import com.boha.monitor.dto.ChatDTO;
-import com.boha.monitor.dto.ChatMemberDTO;
-import com.boha.monitor.dto.ChatMessageDTO;
 import com.boha.monitor.dto.CompanyDTO;
 import com.boha.monitor.dto.CompanyExperienceDTO;
 import com.boha.monitor.dto.GcmDeviceDTO;
-import com.boha.monitor.dto.InvoiceDTO;
 import com.boha.monitor.dto.LocationTrackerDTO;
 import com.boha.monitor.dto.MonitorDTO;
 import com.boha.monitor.dto.MonitorProjectDTO;
@@ -22,7 +18,6 @@ import com.boha.monitor.dto.ProjectDTO;
 import com.boha.monitor.dto.ProjectStatusTypeDTO;
 import com.boha.monitor.dto.ProjectTaskDTO;
 import com.boha.monitor.dto.ProjectTaskStatusDTO;
-import com.boha.monitor.dto.RejectedInvoiceDTO;
 import com.boha.monitor.dto.SimpleMessageDTO;
 import com.boha.monitor.dto.StaffDTO;
 import com.boha.monitor.dto.StaffProjectDTO;
@@ -65,12 +60,9 @@ public class RequestDTO implements Serializable {
     private StaffDTO staff;
     private ProjectDTO project;
     private GcmDeviceDTO gcmDevice;
-    private ChatMessageDTO chatMessage;
     private ProjectTaskDTO projectTask;
     private LocationTrackerDTO locationTracker;
     TenderCompanyDTO tenderCompany;
-    InvoiceDTO invoice;
-    RejectedInvoiceDTO rejectedInvoice;
     CompanyExperienceDTO companyExperience;
 
     private List<TaskDTO> taskList;
@@ -87,14 +79,12 @@ public class RequestDTO implements Serializable {
 
     private TaskDTO task;
     private TaskStatusTypeDTO taskStatus;
-    private ChatDTO chat;
 
     private ProjectTaskStatusDTO projectTaskStatus;
     private ProjectStatusTypeDTO projectStatusType;
     private PhotoUploadDTO photoUpload;
     private VideoUploadDTO videoUpload;
     private List<LocationTrackerDTO> locationTrackerList;
-    private List<ChatMemberDTO> chatMemberList;
     private List<SubTaskDTO> subTaskList;
 
 //register actors
@@ -498,23 +488,6 @@ public class RequestDTO implements Serializable {
     public void setTenderCompany(TenderCompanyDTO tenderCompany) {
         this.tenderCompany = tenderCompany;
     }
-
-    public InvoiceDTO getInvoice() {
-        return invoice;
-    }
-
-    public void setInvoice(InvoiceDTO invoice) {
-        this.invoice = invoice;
-    }
-
-    public RejectedInvoiceDTO getRejectedInvoice() {
-        return rejectedInvoice;
-    }
-
-    public void setRejectedInvoice(RejectedInvoiceDTO rejectedInvoice) {
-        this.rejectedInvoice = rejectedInvoice;
-    }
-
     public CompanyExperienceDTO getCompanyExperience() {
         return companyExperience;
     }
@@ -563,14 +536,6 @@ public class RequestDTO implements Serializable {
         this.gcmDevice = gcmDevice;
     }
 
-    public ChatMessageDTO getChatMessage() {
-        return chatMessage;
-    }
-
-    public void setChatMessage(ChatMessageDTO chatMessage) {
-        this.chatMessage = chatMessage;
-    }
-
     public TaskDTO getTask() {
         return task;
     }
@@ -585,14 +550,6 @@ public class RequestDTO implements Serializable {
 
     public void setTaskStatus(TaskStatusTypeDTO taskStatus) {
         this.taskStatus = taskStatus;
-    }
-
-    public ChatDTO getChat() {
-        return chat;
-    }
-
-    public void setChat(ChatDTO chat) {
-        this.chat = chat;
     }
 
     public ProjectTaskStatusDTO getProjectTaskStatus() {
@@ -625,14 +582,6 @@ public class RequestDTO implements Serializable {
 
     public void setLocationTrackerList(List<LocationTrackerDTO> locationTrackerList) {
         this.locationTrackerList = locationTrackerList;
-    }
-
-    public List<ChatMemberDTO> getChatMemberList() {
-        return chatMemberList;
-    }
-
-    public void setChatMemberList(List<ChatMemberDTO> chatMemberList) {
-        this.chatMemberList = chatMemberList;
     }
 
 }

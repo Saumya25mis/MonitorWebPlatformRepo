@@ -59,10 +59,10 @@ public class StaffProject implements Serializable {
     @Column(name = "activeFlag")
     private Boolean activeFlag;
     @JoinColumn(name = "staffID", referencedColumnName = "staffID")
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Staff staff;
     @JoinColumn(name = "projectID", referencedColumnName = "projectID")
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Project project;
 
     public StaffProject() {

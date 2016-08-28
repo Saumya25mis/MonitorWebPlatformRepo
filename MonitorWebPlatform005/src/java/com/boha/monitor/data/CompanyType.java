@@ -42,7 +42,7 @@ public class CompanyType implements Serializable {
     @Size(max = 100)
     @Column(name = "name")
     private String name;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "companyType", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "companyType", fetch = FetchType.LAZY)
     private List<TenderCompanyType> tenderCompanyTypeList;
 
     public CompanyType() {

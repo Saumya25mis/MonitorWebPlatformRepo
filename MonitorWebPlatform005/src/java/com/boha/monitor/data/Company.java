@@ -24,6 +24,7 @@ import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -36,20 +37,23 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "Company.findByCompanyName", query = "SELECT c FROM Company c WHERE c.companyName = :companyName")
 })
 public class Company implements Serializable {
+
+    @OneToMany(mappedBy = "company")
+    private List<TagType> tagTypeList;
     @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
     private List<LocationTracker> locationTrackerList;
     @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
     private List<SimpleMessage> simpleMessageList;
     
-    @OneToMany(mappedBy = "company", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
     @OrderBy("projectName")
     private List<Project> projectList;
     
-    @OneToMany(mappedBy = "company", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
     @OrderBy("taskName")
     private List<Task> taskList;
     
-    @OneToMany(mappedBy = "company", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
     @OrderBy("dateRegistered desc")
     private List<GcmDevice> gcmDeviceList;
     @Size(max = 255)
@@ -74,27 +78,23 @@ public class Company implements Serializable {
     @Column(name = "address")
     private String address;
     
-    @OneToMany(mappedBy = "company", fetch = FetchType.EAGER)
-    @OrderBy("errorDate desc")
-    private List<ErrorStoreAndroid> errorStoreAndroidList;
-    
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "company", fetch = FetchType.EAGER)   
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "company", fetch = FetchType.LAZY)   
     @OrderBy("lastName, firstName")
     private List<Monitor> monitorList;
     
     
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "company", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "company", fetch = FetchType.LAZY)
     @OrderBy("lastName, firstName")
     private List<Staff> staffList;
     
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "company", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "company", fetch = FetchType.LAZY)
     @OrderBy("taskStatusTypeName")
     private List<TaskStatusType> taskStatusTypeList;
     
     
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "company", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "company", fetch = FetchType.LAZY)
     private List<Portfolio> portfolioList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "company", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "company", fetch = FetchType.LAZY)
     private List<ProjectStatusType> projectStatusTypeList;
 
     public Company() {
@@ -134,16 +134,6 @@ public class Company implements Serializable {
     public void setAddress(String address) {
         this.address = address;
     }
-
-    
-    public List<ErrorStoreAndroid> getErrorStoreAndroidList() {
-        return errorStoreAndroidList;
-    }
-
-    public void setErrorStoreAndroidList(List<ErrorStoreAndroid> errorStoreAndroidList) {
-        this.errorStoreAndroidList = errorStoreAndroidList;
-    }
-
 
     public List<Monitor> getMonitorList() {
         return monitorList;
@@ -265,6 +255,15 @@ public class Company implements Serializable {
 
     public void setLocationTrackerList(List<LocationTracker> locationTrackerList) {
         this.locationTrackerList = locationTrackerList;
+    }
+
+    @XmlTransient
+    public List<TagType> getTagTypeList() {
+        return tagTypeList;
+    }
+
+    public void setTagTypeList(List<TagType> tagTypeList) {
+        this.tagTypeList = tagTypeList;
     }
 
 }

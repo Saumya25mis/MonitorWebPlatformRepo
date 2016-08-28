@@ -28,6 +28,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -49,32 +50,31 @@ import javax.validation.constraints.Size;
 public class Staff implements Serializable {
 
     @OneToMany(mappedBy = "staff")
-    private List<ErrorStoreAndroid> errorStoreAndroidList;
+    private List<PhotoTag> photoTagList;
+
+    
     @OneToMany(mappedBy = "staff")
     private List<VideoUpload> videoUploadList;
     
-    @OneToMany(mappedBy = "staff", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "staff", fetch = FetchType.LAZY)
     @OrderBy("dateTaken desc")
     private List<PhotoUpload> photoUploadList;
     
-    @OneToMany(mappedBy = "staff", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "staff", fetch = FetchType.LAZY)
     private List<ProjectTaskStatus> projectTaskStatusList;
-    @OneToMany(mappedBy = "staff")
-    private List<ChatMember> chatMemberList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "staff", fetch = FetchType.EAGER)
+   
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "staff", fetch = FetchType.LAZY)
     private List<StaffProject> staffProjectList;
     @OneToMany(mappedBy = "staff")
     private List<SimpleMessage> simpleMessageList;
-    @OneToMany(mappedBy = "staff")
-    private List<ChatMessage> chatMessageList;
+   
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "staff")
     private List<ProjectStatus> projectStatusList;
     @OneToMany(mappedBy = "staff")
     private List<GcmDevice> gcmDeviceList;
-    @OneToMany(mappedBy = "staff", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "staff", fetch = FetchType.LAZY)
     private List<SimpleMessageDestination> simpleMessageDestinationList;
-    @OneToMany(mappedBy = "staff")
-    private List<Chat> chatList;
+    
     @OneToMany(mappedBy = "staff")
     private List<LocationTracker> locationTrackerList;
 
@@ -114,7 +114,7 @@ public class Staff implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateRegistered;
     @JoinColumn(name = "companyID", referencedColumnName = "companyID")
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Company company;
 
     public Staff() {
@@ -237,13 +237,7 @@ public class Staff implements Serializable {
         return "com.boha.monitor.data.Staff[ staffID=" + staffID + " ]";
     }
 
-    public List<ErrorStoreAndroid> getErrorStoreAndroidList() {
-        return errorStoreAndroidList;
-    }
-
-    public void setErrorStoreAndroidList(List<ErrorStoreAndroid> errorStoreAndroidList) {
-        this.errorStoreAndroidList = errorStoreAndroidList;
-    }
+  
 
     public List<VideoUpload> getVideoUploadList() {
         return videoUploadList;
@@ -272,13 +266,6 @@ public class Staff implements Serializable {
         this.projectTaskStatusList = projectTaskStatusList;
     }
 
-    public List<ChatMember> getChatMemberList() {
-        return chatMemberList;
-    }
-
-    public void setChatMemberList(List<ChatMember> chatMemberList) {
-        this.chatMemberList = chatMemberList;
-    }
 
     public List<StaffProject> getStaffProjectList() {
         return staffProjectList;
@@ -296,13 +283,6 @@ public class Staff implements Serializable {
         this.simpleMessageList = simpleMessageList;
     }
 
-    public List<ChatMessage> getChatMessageList() {
-        return chatMessageList;
-    }
-
-    public void setChatMessageList(List<ChatMessage> chatMessageList) {
-        this.chatMessageList = chatMessageList;
-    }
 
     public List<ProjectStatus> getProjectStatusList() {
         return projectStatusList;
@@ -328,20 +308,21 @@ public class Staff implements Serializable {
         this.simpleMessageDestinationList = simpleMessageDestinationList;
     }
 
-    public List<Chat> getChatList() {
-        return chatList;
-    }
-
-    public void setChatList(List<Chat> chatList) {
-        this.chatList = chatList;
-    }
-
     public List<LocationTracker> getLocationTrackerList() {
         return locationTrackerList;
     }
 
     public void setLocationTrackerList(List<LocationTracker> locationTrackerList) {
         this.locationTrackerList = locationTrackerList;
+    }
+
+    @XmlTransient
+    public List<PhotoTag> getPhotoTagList() {
+        return photoTagList;
+    }
+
+    public void setPhotoTagList(List<PhotoTag> photoTagList) {
+        this.photoTagList = photoTagList;
     }
     
 }

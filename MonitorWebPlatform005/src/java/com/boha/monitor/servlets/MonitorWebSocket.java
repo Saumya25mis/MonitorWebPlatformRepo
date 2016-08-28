@@ -65,14 +65,12 @@ public class MonitorWebSocket {
             resp.setStatusCode(ServerStatus.ERROR_DATABASE);
             resp.setMessage(ServerStatus.getMessage(resp.getStatusCode()));
             log.log(Level.SEVERE, resp.getMessage(), e);
-            dataUtil.addErrorStore(StatusCode.ERROR_DATABASE, e.getDescription(), SOURCE);
 
         } catch (Exception e) {
             resp.setStatusCode(StatusCode.ERROR_SERVER);
             resp.setMessage(ServerStatus.getMessage(resp.getStatusCode()));
             log.log(Level.SEVERE, resp.getMessage(), e);
             
-            dataUtil.addErrorStore(StatusCode.ERROR_SERVER, resp.getMessage(), SOURCE);
 
         }
         bb = ByteBuffer.wrap(gson.toJson(resp).getBytes());

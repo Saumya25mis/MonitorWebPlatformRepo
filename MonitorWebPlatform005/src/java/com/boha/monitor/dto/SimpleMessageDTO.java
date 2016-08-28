@@ -23,6 +23,7 @@ public class SimpleMessageDTO implements Serializable {
     private Integer companyID;
     private Integer staffID;
     private Integer projectID;
+    private boolean sendToAllinCompany;
     private LocationTrackerDTO locationTracker;
     private PhotoUploadDTO photo;
     private List<SimpleMessageDestinationDTO> simpleMessageDestinationList;
@@ -52,6 +53,15 @@ public class SimpleMessageDTO implements Serializable {
         }
     }
 
+    public boolean isSendToAllinCompany() {
+        return sendToAllinCompany;
+    }
+
+    public void setSendToAllinCompany(boolean sendToAllinCompany) {
+        this.sendToAllinCompany = sendToAllinCompany;
+    }
+
+    
     public PhotoUploadDTO getPhoto() {
         return photo;
     }

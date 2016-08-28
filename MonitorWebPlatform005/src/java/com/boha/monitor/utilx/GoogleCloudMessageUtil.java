@@ -43,21 +43,25 @@ public class GoogleCloudMessageUtil {
     /**
      * Send a SimpleMessage to list of devices via Google Cloud Message servers
      *
-     * @param em
+     * @param dataUtil
      * @param simple
      * @return
      * @throws Exception
      * @throws DataException
      */
-    public static ResponseDTO sendSimpleMessage(EntityManager em, SimpleMessageDTO simple) throws
+    public static ResponseDTO sendSimpleMessage(DataUtil dataUtil, SimpleMessageDTO simple) throws
             Exception, DataException {
         ResponseDTO resp = new ResponseDTO();
-
+        List<String> registrationIDs;
         simple.setMessageDate(new Date().getTime());
-        List<String> registrationIDs = buildList(em, simple);
 
+        if (simple.isSendToAllinCompany()) {
+            registrationIDs = buildListAllinCompany(dataUtil.getEntityManager(), simple);
+        } else {
+            registrationIDs = buildList(dataUtil.getEntityManager(), simple);
+        }
         if (registrationIDs.isEmpty()) {
-            LOG.log(Level.SEVERE, "#### No gcm registrationIDs found ");
+            LOG.log(Level.SEVERE, "#### sendSimpleMessage: No gcm registrationIDs found ");
             resp.setMessage("No staff or monitors found or their devices are not registered");
             resp.setStatusCode(StatusCode.ERROR_GCM);
             return resp;
@@ -78,7 +82,7 @@ public class GoogleCloudMessageUtil {
         String rMsg;
         if (registrationIDs.size() == 1) {
             Result result = sender.send(message, registrationIDs.get(0), RETRIES);
-            gcmr = handleResult(em, result);
+            gcmr = handleResult(dataUtil, result, registrationIDs.get(0));
             if (gcmr.isOK) {
                 rMsg = "Google GCM - message has been sent to Google servers";
             } else {
@@ -89,7 +93,7 @@ public class GoogleCloudMessageUtil {
             resp.setMessage(rMsg);
             return resp;
         } else {
-            gCMResults = sendBatches(em, sender, message, registrationIDs);
+            gCMResults = sendBatches(dataUtil, sender, message, registrationIDs);
         }
         int errors = 0, kool = 0;
         for (GCMResult res : gCMResults) {
@@ -108,26 +112,26 @@ public class GoogleCloudMessageUtil {
     /**
      * Send LocationTracker message to list of devices via Google Cloud Message
      *
-     * @param em
+     * @param dataUtil
      * @param track
      * @return
      * @throws Exception
      * @throws DataException
      */
-    public static ResponseDTO sendLocationMessage(EntityManager em, LocationTrackerDTO track) throws
+    public static ResponseDTO sendLocationMessage(DataUtil dataUtil, LocationTrackerDTO track) throws
             Exception, DataException {
         try {
             System.out.println("Monitor ID's " + track.getMonitorList()
-            + " staff ids : " + track.getStaffList());
+                    + " staff ids : " + track.getStaffList());
         } catch (Exception e) {
-            
+
         }
         ResponseDTO resp = new ResponseDTO();
         String mTrack = gson.toJson(track);
 
         List<GCMResult> gCMResults;
         //send message to Google servers
-        Sender sender = new Sender(GoogleCloudMessagingRegistrar.API_KEY);       
+        Sender sender = new Sender(GoogleCloudMessagingRegistrar.API_KEY);
         Message message = new Message.Builder()
                 .addData("track", mTrack)
                 .collapseKey("" + System.currentTimeMillis())
@@ -136,7 +140,7 @@ public class GoogleCloudMessageUtil {
         List<String> registrationIDs = new ArrayList<>();
 //        registrationIDs.add("ThisisadummyregistrationtotestErrors");
         if (track.getMonitorList() != null && !track.getMonitorList().isEmpty()) {
-            Query q = em.createNamedQuery("GcmDevice.findByMonitorIDs", GcmDevice.class);
+            Query q = dataUtil.getEntityManager().createNamedQuery("GcmDevice.findByMonitorIDs", GcmDevice.class);
             q.setParameter("list", track.getMonitorList());
             List<GcmDevice> gList = q.getResultList();
             gList.stream().forEach((m) -> {
@@ -144,7 +148,8 @@ public class GoogleCloudMessageUtil {
             });
         }
         if (track.getStaffList() != null && !track.getStaffList().isEmpty()) {
-            Query q = em.createNamedQuery("GcmDevice.findByStaffIDs", GcmDevice.class);
+            Query q = dataUtil.getEntityManager().createNamedQuery("GcmDevice.findByStaffIDs", 
+                    GcmDevice.class);
             q.setParameter("list", track.getStaffList());
             List<GcmDevice> gList = q.getResultList();
             gList.stream().forEach((m) -> {
@@ -153,7 +158,7 @@ public class GoogleCloudMessageUtil {
         }
 
         if (registrationIDs.isEmpty()) {
-            LOG.log(Level.SEVERE, "#### No gcm registrationIDs found ");
+            LOG.log(Level.SEVERE, "#### sendLocationMessage: No gcm location registrationIDs found ");
             resp.setMessage("No staff found or their devices are not registered for Monitor messaging");
             resp.setStatusCode(StatusCode.ERROR_GCM);
             return resp;
@@ -164,7 +169,7 @@ public class GoogleCloudMessageUtil {
         String rMsg;
         if (registrationIDs.size() == 1) {
             Result result = sender.send(message, registrationIDs.get(0), RETRIES);
-            gcmr = handleResult(em, result);
+            gcmr = handleResult(dataUtil, result, registrationIDs.get(0));
             if (gcmr.isOK) {
                 rMsg = "Google GCM - message has been sent to Google servers";
             } else {
@@ -175,7 +180,7 @@ public class GoogleCloudMessageUtil {
             resp.setMessage(rMsg);
             return resp;
         } else {
-            gCMResults = sendBatches(em, sender, message, registrationIDs);
+            gCMResults = sendBatches(dataUtil, sender, message, registrationIDs);
 
         }
         int errors = 0, kool = 0;
@@ -203,7 +208,7 @@ public class GoogleCloudMessageUtil {
      * @throws Exception
      * @throws DataException
      */
-    public static ResponseDTO sendNoProjectsAssignedMessage(EntityManager em, Integer companyID, Integer monitorID) throws
+    public static ResponseDTO sendNoProjectsAssignedMessage(DataUtil dataUtil, Integer companyID, Integer monitorID) throws
             Exception, DataException {
         ResponseDTO resp = new ResponseDTO();
 
@@ -216,7 +221,7 @@ public class GoogleCloudMessageUtil {
                 .addData("monitorID", monitorID.toString())
                 .addData("dateStamp", "" + new Date().getTime()).build();
 
-        Query q = em.createNamedQuery("GcmDevice.findCompanyStaffDevices", GcmDevice.class);
+        Query q = dataUtil.getEntityManager().createNamedQuery("GcmDevice.findCompanyStaffDevices", GcmDevice.class);
         q.setParameter("companyID", companyID);
         List<GcmDevice> gList = q.getResultList();
         List<String> registrationIDs = new ArrayList<>();
@@ -224,7 +229,7 @@ public class GoogleCloudMessageUtil {
             registrationIDs.add(m.getRegistrationID());
         });
         if (registrationIDs.isEmpty()) {
-            LOG.log(Level.SEVERE, "#### No gcm registrationIDs found ");
+            LOG.log(Level.SEVERE, "#### sendNoProjectsAssignedMessage: No gcm registrationIDs found ");
             resp.setMessage("No staff found or their devices are not registered");
             resp.setStatusCode(RETRIES);
 //            addErrorStore(em,StatusCode.ERROR_GCM, "#### No devices found to send messages to.");
@@ -235,7 +240,7 @@ public class GoogleCloudMessageUtil {
         String rMsg;
         if (registrationIDs.size() == 1) {
             Result result = sender.send(message, registrationIDs.get(0), RETRIES);
-            gcmr = handleResult(em, result);
+            gcmr = handleResult(dataUtil, result, registrationIDs.get(0));
             if (gcmr.isOK) {
                 rMsg = "Google GCM - message has been sent to Google servers";
             } else {
@@ -247,7 +252,7 @@ public class GoogleCloudMessageUtil {
             resp.setMessage(rMsg);
             return resp;
         } else {
-            gCMResults = sendBatches(em, sender, message, registrationIDs);
+            gCMResults = sendBatches(dataUtil, sender, message, registrationIDs);
 
         }
         int errors = 0, kool = 0;
@@ -264,7 +269,7 @@ public class GoogleCloudMessageUtil {
         return resp;
     }
 
-    private static GCMResult handleResult(EntityManager em, Result result)
+    private static GCMResult handleResult(DataUtil dataUtil, Result result, String registrationID)
             throws Exception {
         GCMResult gcmr = new GCMResult();
         gcmr.batchNumber = 1;
@@ -296,17 +301,18 @@ public class GoogleCloudMessageUtil {
             if (result.getCanonicalRegistrationId() != null) {
                 LOG.log(Level.INFO,
                         "### Google GCM - canonical registration id found, have to update gcmdevice db ...");
-                //TODO update device registration id with canonical
-                //EntityManager em = EMUtil.getEntityManager();
+     
+               dataUtil.updateDevice(registrationID, result.getCanonicalRegistrationId());
+                
 
             }
         }
         return gcmr;
     }
 
-    private static GCMResult handleMultiCastResult(EntityManager em, MulticastResult multiCastResult, int batchNumber)
+    private static GCMResult handleMultiCastResult(DataUtil dataUtil, MulticastResult multiCastResult, int batchNumber)
             throws Exception {
-        LOG.log(Level.INFO, "Handle result from Google GCM servers: {0}", multiCastResult.toString());
+        LOG.log(Level.INFO, "handleMultiCastResult result from Google GCM servers: {0}", multiCastResult.toString());
 
         GCMResult gcmr = new GCMResult();
         if (multiCastResult.getFailure() == 0
@@ -354,6 +360,7 @@ public class GoogleCloudMessageUtil {
                             "### Google GCM - canonical registration id found, should update db ...");
                     //update device registration id - query by gcmdevice by reg id ???????????, 
                     //yeah, do this!!!!!!
+                    //TODO ................................
 
                 }
             }
@@ -361,13 +368,13 @@ public class GoogleCloudMessageUtil {
         return gcmr;
     }
 
-    private static List<GCMResult> sendBatches(EntityManager em, Sender sender, Message message, List<String> registrationIDs) throws IOException, Exception {
+    private static List<GCMResult> sendBatches(DataUtil dataUtil,Sender sender, Message message, List<String> registrationIDs) throws IOException, Exception {
         GCMResult gcmr = null;
         List<GCMResult> gCMResults = new ArrayList<>();
         if (registrationIDs.size() < MAX_MESSAGES_IN_BATCH) {
             MulticastResult multiCastResult = sender.send(
                     message, registrationIDs, RETRIES);
-            gcmr = handleMultiCastResult(em, multiCastResult, 1);
+            gcmr = handleMultiCastResult(dataUtil, multiCastResult, 1);
             gCMResults.add(gcmr);
         } else {
             int batches = registrationIDs.size() / MAX_MESSAGES_IN_BATCH;
@@ -390,7 +397,7 @@ public class GoogleCloudMessageUtil {
                 if (!batch.isEmpty()) {
                     MulticastResult multiCastResult = sender.send(
                             message, batch, RETRIES);
-                    GCMResult xx = handleMultiCastResult(em, multiCastResult, (i + 1));
+                    GCMResult xx = handleMultiCastResult(dataUtil, multiCastResult, (i + 1));
                     gCMResults.add(xx);
                     if (!xx.isOK) {
                         LOG.log(Level.OFF, "multiCast failed at batch: {0}", i);
@@ -401,6 +408,19 @@ public class GoogleCloudMessageUtil {
             }
         }
         return gCMResults;
+    }
+
+    private static List<String> buildListAllinCompany(EntityManager em, SimpleMessageDTO simple) {
+        List<String> registrationIDs = new ArrayList<>();
+        Query q = em.createNamedQuery("GcmDevice.findCompanyDevices", GcmDevice.class);
+        q.setParameter("companyID", simple.getCompanyID());
+        List<GcmDevice> devices = q.getResultList();
+
+        for (GcmDevice device : devices) {
+            registrationIDs.add(device.getRegistrationID());
+        }
+
+        return registrationIDs;
     }
 
     /**
@@ -417,14 +437,14 @@ public class GoogleCloudMessageUtil {
         if (simple.getSimpleMessageDestinationList() != null
                 && !simple.getSimpleMessageDestinationList().isEmpty()) {
             Query q = em.createNamedQuery("GcmDevice.findByMonitorIDs", GcmDevice.class);
-            List<Integer> mList = new ArrayList<>();
+            List<Integer> monitorIDList = new ArrayList<>();
             for (SimpleMessageDestinationDTO dest : simple.getSimpleMessageDestinationList()) {
                 if (dest.getMonitorID() != null) {
-                    mList.add(dest.getMonitorID());
+                    monitorIDList.add(dest.getMonitorID());
                 }
             }
-            if (!mList.isEmpty()) {
-                q.setParameter("list", mList);
+            if (!monitorIDList.isEmpty()) {
+                q.setParameter("list", monitorIDList);
                 List<GcmDevice> gList = q.getResultList();
                 gList.stream().forEach((m) -> {
                     registrationIDs.add(m.getRegistrationID());
@@ -434,21 +454,21 @@ public class GoogleCloudMessageUtil {
         if (simple.getSimpleMessageDestinationList() != null
                 && !simple.getSimpleMessageDestinationList().isEmpty()) {
             Query q = em.createNamedQuery("GcmDevice.findByStaffIDs", GcmDevice.class);
-            List<Integer> mList = new ArrayList<>();
+            List<Integer> staffIDList = new ArrayList<>();
             for (SimpleMessageDestinationDTO dest : simple.getSimpleMessageDestinationList()) {
                 if (dest.getStaffID() != null) {
-                    mList.add(dest.getStaffID());
+                    staffIDList.add(dest.getStaffID());
                 }
             }
-            if (!mList.isEmpty()) {
-                q.setParameter("list", mList);
+            if (!staffIDList.isEmpty()) {
+                q.setParameter("list", staffIDList);
                 List<GcmDevice> gList = q.getResultList();
                 gList.stream().forEach((m) -> {
                     registrationIDs.add(m.getRegistrationID());
                 });
             }
         }
-
+        LOG.log(Level.SEVERE, "registrationIDS found: {0}", registrationIDs.size());
         return registrationIDs;
     }
     static final Logger LOG = Logger.getLogger("CloudMsgUtil");

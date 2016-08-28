@@ -45,7 +45,7 @@ public class ExperienceType implements Serializable {
     @Size(min = 1, max = 100)
     @Column(name = "name")
     private String name;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "experienceType", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "experienceType", fetch = FetchType.LAZY)
     private List<CompanyExperience> companyExperienceList;
 
     public ExperienceType() {

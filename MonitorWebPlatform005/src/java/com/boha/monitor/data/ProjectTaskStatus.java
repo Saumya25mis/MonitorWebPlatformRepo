@@ -59,12 +59,12 @@ import javax.validation.constraints.NotNull;
             query = "SELECT p FROM ProjectTaskStatus p WHERE p.projectTask.projectTaskID = :projectTaskID and p.monitor.monitorID = :monitorID ORDER BY p.dateUpdated desc")
 })
 public class ProjectTaskStatus implements Serializable {
-    @OneToMany(mappedBy = "projectTaskStatus", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "projectTaskStatus", fetch = FetchType.LAZY)
     @OrderBy("dateTaken desc")
     private List<PhotoUpload> photoUploadList;
 
     @JoinColumn(name = "projectTaskID", referencedColumnName = "projectTaskID")
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private ProjectTask projectTask;
     private static final long serialVersionUID = 1L;
     @Id
@@ -82,13 +82,13 @@ public class ProjectTaskStatus implements Serializable {
     private Date dateUpdated;
 
     @JoinColumn(name = "taskStatusTypeID", referencedColumnName = "taskStatusTypeID")
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private TaskStatusType taskStatusType;
     @JoinColumn(name = "staffID", referencedColumnName = "staffID")
-    @ManyToOne(optional = true, fetch = FetchType.EAGER)
+    @ManyToOne(optional = true, fetch = FetchType.LAZY)
     private Staff staff;
     @JoinColumn(name = "monitorID", referencedColumnName = "monitorID")
-    @ManyToOne(optional = true, fetch = FetchType.EAGER)
+    @ManyToOne(optional = true, fetch = FetchType.LAZY)
     private Monitor monitor;
 
     public ProjectTaskStatus() {

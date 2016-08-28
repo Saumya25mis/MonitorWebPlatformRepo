@@ -5,12 +5,8 @@
  */
 package com.boha.monitor.utilx;
 
-import com.boha.monitor.data.Chat;
-import com.boha.monitor.data.ChatMember;
 import com.boha.monitor.data.City;
 import com.boha.monitor.data.Company;
-import com.boha.monitor.data.ErrorStore;
-import com.boha.monitor.data.ErrorStoreAndroid;
 import com.boha.monitor.data.GcmDevice;
 import com.boha.monitor.data.LocationTracker;
 import com.boha.monitor.data.Monitor;
@@ -30,10 +26,8 @@ import com.boha.monitor.data.Task;
 import com.boha.monitor.data.TaskStatusType;
 import com.boha.monitor.data.TaskType;
 import com.boha.monitor.data.VideoUpload;
-import com.boha.monitor.dto.ChatDTO;
-import com.boha.monitor.dto.ChatMemberDTO;
 import com.boha.monitor.dto.CompanyDTO;
-import com.boha.monitor.dto.ErrorStoreDTO;
+
 import com.boha.monitor.dto.GcmDeviceDTO;
 import com.boha.monitor.dto.LocationTrackerDTO;
 import com.boha.monitor.dto.MonitorDTO;
@@ -91,6 +85,25 @@ public class DataUtil {
         return em;
     }
 
+    public ResponseDTO updateDevice(String oldReg, String canonicalReg) throws DataException {
+        ResponseDTO resp = new ResponseDTO();
+        try {
+            Query q = em.createNamedQuery("GcmDevice.findByRegistrationID", GcmDevice.class);
+            q.setParameter("registrationID", oldReg);
+            List<GcmDevice> list = q.getResultList();
+            if (!list.isEmpty()) {
+                GcmDevice dev = list.get(0);
+                em.merge(dev);
+                log.log(Level.SEVERE, "gcmDevice registrationID updated with canonical");
+            }
+            
+            
+        } catch (Exception e) {
+            throw new DataException("Failed");
+        }
+        
+        return resp;
+    }
     /**
      * Assign tasks to project using taskType. ie, assign all tasks in this
      * taskType to this project
@@ -442,131 +455,6 @@ public class DataUtil {
         return resp;
     }
 
-    public ResponseDTO addChatMembers(List<ChatMemberDTO> cmList) throws DataException {
-        ResponseDTO resp = new ResponseDTO();
-        try {
-            for (ChatMemberDTO cm : cmList) {
-                ChatMember chatMember = new ChatMember();
-                chatMember
-                        .setChat(em.find(Chat.class, cm.getChatID()));
-
-                if (cm.getStaff()
-                        != null) {
-                    chatMember.setStaff(em.find(Staff.class, cm.getStaff().getStaffID()));
-
-                }
-
-                if (cm.getMonitor()
-                        != null) {
-                    chatMember.setMonitor(em.find(Monitor.class, cm.getMonitor().getMonitorID()));
-                }
-
-                chatMember.setDateJoined(
-                        new Date());
-                em.persist(chatMember);
-            }
-
-            resp.setStatusCode(0);
-            resp.setMessage("ChatMembers added to chat: " + cmList.size());
-        } catch (Exception e) {
-            log.log(Level.SEVERE, "Failed to add ChatMember", e);
-            throw new DataException("Failed to add ChatMember\n"
-                    + getErrorString(e));
-        }
-        return resp;
-    }
-
-    public ResponseDTO addChat(ChatDTO chat) throws DataException {
-        ResponseDTO resp = new ResponseDTO();
-        Staff cs = null;
-        Monitor mon = null;
-
-        try {
-            if (chat.getStaff() != null) {
-                cs = em.find(Staff.class, chat.getStaff().getStaffID());
-
-            }
-
-            if (chat.getMonitor() != null) {
-                mon = em.find(Monitor.class, chat.getMonitor().getMonitorID());
-            }
-
-            Chat c = new Chat();
-            c.setStaff(cs);
-            c.setMonitor(mon);
-            c.setDateStarted(new Date());
-            c.setChatName(chat.getChatName());
-            c.setAvatarNumber(chat.getAvatarNumber());
-
-            if (chat.getProjectID() != null) {
-                c.setProject(em.find(Project.class, chat.getProjectID()));
-
-            }
-
-            if (chat.getProjectID() != null) {
-                c.setProject(em.find(Project.class, chat.getProjectID()));
-            }
-
-            em.persist(c);
-            em.flush();
-            resp.setChat(new ChatDTO(c));
-
-            log.log(Level.INFO, "Chat added, chatID: {0}", c.getChatID());
-        } catch (Exception e) {
-            log.log(Level.SEVERE, "Failed to add Chat", e);
-            throw new DataException("Failed to add Chat\n"
-                    + getErrorString(e));
-        }
-        resp.setStatusCode(ServerStatus.OK);
-        return resp;
-    }
-
-    public void addAndroidError(ErrorStoreAndroid err) throws DataException {
-        try {
-            em.persist(err);
-            log.log(Level.INFO, "Android error added");
-        } catch (Exception e) {
-            log.log(Level.SEVERE, "Failed to add Android Error", e);
-            throw new DataException("Failed to add Android Error\n"
-                    + getErrorString(e));
-        }
-    }
-
-    public ResponseDTO getServerErrors(
-            long startDate, long endDate) throws DataException {
-        ResponseDTO r = new ResponseDTO();
-        if (startDate == 0) {
-            DateTime ed = new DateTime();
-            DateTime sd = ed.minusMonths(3);
-            startDate = sd.getMillis();
-            endDate = ed.getMillis();
-
-        }
-        try {
-            Query q = em.createNamedQuery("ErrorStore.findByPeriod", ErrorStore.class
-            );
-            q.setParameter(
-                    "startDate", new Date(startDate));
-            q.setParameter(
-                    "endDate", new Date(endDate));
-            List<ErrorStore> list = q.getResultList();
-            List<ErrorStoreDTO> dList = new ArrayList();
-            for (ErrorStore e : list) {
-                dList.add(new ErrorStoreDTO(e));
-            }
-
-            r.setErrorStoreList(dList);
-
-            log.log(Level.OFF,
-                    "Errors found {0}", r.getErrorStoreList().size());
-        } catch (Exception e) {
-            log.log(Level.SEVERE, "Failed to getServerErrors");
-            throw new DataException("Failed to getServerErrors\n"
-                    + getErrorString(e));
-        }
-        return r;
-    }
-
     public Company
             getCompanyByID(Integer id) {
         return em.find(Company.class, id);
@@ -655,10 +543,7 @@ public class DataUtil {
                     "PhotoUpload added to table, date taken: {0}", u.getDateTaken().toString());
         } catch (Exception e) {
             log.log(Level.SEVERE, "PhotoUpload failed", e);
-            addErrorStore(StatusCode.ERROR_DATABASE,
-                    "PhotoUpload database add failed\n"
-                    + getErrorString(e), "DataUtil");
-
+            
         }
         return w;
     }
@@ -794,10 +679,7 @@ public class DataUtil {
                     "VideoUpload added to table, date taken: {0}", u.getDateTaken().toString());
         } catch (Exception e) {
             log.log(Level.SEVERE, "VideoUpload failed", e);
-            addErrorStore(StatusCode.ERROR_DATABASE,
-                    "VideoUpload database add failed\n"
-                    + getErrorString(e), "DataUtil");
-
+           
         }
         return w;
     }
@@ -1262,35 +1144,6 @@ public class DataUtil {
 
     }
 
-    private void addInitialProjectChats(Project p) throws DataException {
-        try {
-            Chat c1 = new Chat();
-            c1.setAvatarNumber(1);
-            c1.setChatName("#General");
-            c1.setDateStarted(new Date());
-            c1.setProject(p);
-            em.persist(c1);
-            Chat c2 = new Chat();
-            c2.setAvatarNumber(2);
-            c2.setChatName("#Emergency");
-            c2.setDateStarted(new Date());
-            c2.setProject(p);
-            em.persist(c2);
-            Chat c3 = new Chat();
-            c3.setAvatarNumber(3);
-            c3.setChatName("#Work&Business");
-            c3.setDateStarted(new Date());
-            c3.setProject(p);
-            em.persist(c3);
-
-            log.log(Level.OFF, "Project chats registered for: {0} ",
-                    new Object[]{p.getProjectName()});
-
-        } catch (Exception e) {
-            log.log(Level.SEVERE, "Failed", e);
-            throw new DataException("Failed\n" + getErrorString(e));
-        }
-    }
 
     /**
      * Add staff members to company
@@ -1861,21 +1714,6 @@ public class DataUtil {
         }
     }
 
-    public void addErrorStore(int statusCode, String message, String origin) {
-        log.log(Level.OFF, "------ adding errorStore, message: {0} origin: {1}", new Object[]{message, origin});
-        try {
-            ErrorStore t = new ErrorStore();
-            t.setDateOccured(new Date());
-            t.setMessage(message);
-            t.setStatusCode(statusCode);
-            t.setOrigin(origin);
-            em.persist(t);
-            log.log(Level.INFO, "####### ErrorStore row added, origin {0} \nmessage: {1}",
-                    new Object[]{origin, message});
-        } catch (Exception e) {
-            log.log(Level.SEVERE, "####### Failed to add errorStore from " + origin + "\n" + message, e);
-        }
-    }
 
     public void fixData() {
 

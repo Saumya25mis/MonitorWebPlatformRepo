@@ -38,15 +38,20 @@ import javax.validation.constraints.Size;
             query = "SELECT g FROM GcmDevice g WHERE g.company.companyID = :companyID"),
     
     @NamedQuery(name = "GcmDevice.findByMonitorIDs", 
-            query = "SELECT g FROM GcmDevice g WHERE g.monitor.monitorID IN :list"),
+            query = "SELECT g FROM GcmDevice g "
+                    + "WHERE g.monitor.monitorID IN :list"),
     
     @NamedQuery(name = "GcmDevice.findByStaffIDs", 
-            query = "SELECT g FROM GcmDevice g WHERE g.staff.staffID IN :list"),
+            query = "SELECT g FROM GcmDevice g "
+                    + "WHERE g.staff.staffID IN :list"),
     
     @NamedQuery(name = "GcmDevice.findByModel", 
             query = "SELECT g FROM GcmDevice g WHERE g.model = :model"),
     @NamedQuery(name = "GcmDevice.findBySerialNumberApp", 
             query = "SELECT g FROM GcmDevice g WHERE g.serialNumber = :serialNumber AND g.app = :app"),
+    @NamedQuery(name = "GcmDevice.findByRegistrationID", 
+            query = "SELECT g FROM GcmDevice g "
+                    + "WHERE g.registrationID = :registrationID"),
     @NamedQuery(name = "GcmDevice.findByAndroidVersion", 
             query = "SELECT g FROM GcmDevice g WHERE g.androidVersion = :androidVersion")})
 public class GcmDevice implements Serializable {
