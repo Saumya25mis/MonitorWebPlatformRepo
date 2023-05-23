@@ -24,49 +24,7 @@ public class GcmDeviceDTO {
     private String serialNumber, androidVersion;
     private Integer companyID;
     private Integer staffID;
-    private Integer monitorID;
-
-    public GcmDeviceDTO(GcmDevice a) {
-        gcmDeviceID = a.getGcmDeviceID();
-        registrationID = a.getRegistrationID();
-        manufacturer = a.getManufacturer();
-        model = a.getModel();
-        product = a.getProduct();
-        app = a.getApp();
-        messageCount = a.getMessageCount();
-        if (a.getDateRegistered() != null) {
-            dateRegistered = a.getDateRegistered().getTime();
-        }
-        serialNumber = a.getSerialNumber();
-        Staff s = a.getStaff();
-        if (s != null) {
-            staffID = s.getStaffID();
-            name = s.getFirstName() + " " + s.getLastName();
-        }
-        Monitor m = a.getMonitor();
-        if (m != null) {
-            monitorID = m.getMonitorID();
-            name = m.getFirstName() + " " + m.getLastName();
-        }
-        if (a.getCompany() != null) {
-            companyID = a.getCompany().getCompanyID();
-        }
-        
-        androidVersion = a.getAndroidVersion();
-
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Integer getStaffID() {
-        return staffID;
-    }
+    private Integer monitorI
 
     public void setStaffID(Integer staffID) {
         this.staffID = staffID;
