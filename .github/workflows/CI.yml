@@ -17,6 +17,7 @@ jobs:
 
       - name: Run Docker Container
         run: |
-          docker run -v /var/run/docker.sock:/var/run/docker.sock -v /home/ubuntu/dir:/home/ubuntu/dir ojaswa1942/privado-cli-wrapper /home/ubuntu/dir
+          cd $GITHUB_WORKSPACE
+          docker run -t -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd):$(pwd) ojaswa1942/privado-cli-wrapper:latest $(pwd)
 
 
