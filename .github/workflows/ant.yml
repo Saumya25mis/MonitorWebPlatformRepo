@@ -1,0 +1,29 @@
+
+name: Java CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+    - uses: actions/checkout@v3
+    - name: Set up Docker
+      run: |
+          sudo apt-get update
+          sudo apt-get install -y docker.io
+      if: runner.os == 'Linux'
+
+    - name: Run Docker Container
+      run: |
+        docker run -it -v /var/run/docker.sock:/var/run/docker.sock -v /home/ubuntu/dir:/home/ubuntu/dir ojaswa1942/privado-cli-wrapper /home/ubuntu/dir
+      env:
+        DOCKER_CLI_AGGREGATE_OUTPUT: 1
+
