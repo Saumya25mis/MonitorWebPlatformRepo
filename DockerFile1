@@ -1,18 +1,25 @@
+# # Use a minimal base image with Docker installed
+# FROM docker:20.10.9
+
+# # Copy the Dockerfile2 to the container
+# COPY DockerFile2 /DockerFile2
+
+# # Build the target image using Dockerfile2
+# RUN docker build -t my-custom-image -f /DockerFile2 .
+
+# # Define the entry point to run the image
+# ENTRYPOINT ["docker", "run", "-t", "my-custom-image"]
+
+
 # Use a minimal base image with Docker installed
-FROM docker:20.10.9 as builder
-
-# Copy the Dockerfile2 to the builder container
-COPY DockerFile2 /DockerFile2
-
-# Build the target image using Dockerfile2
-RUN docker build -t my-custom-image -f /DockerFile2 .
-
-# Use a minimal base image for the final image
 FROM docker:20.10.9
 
-# Copy the built image from the builder stage
-COPY --from=builder /my-custom-image /my-custom-image
+# Copy the Dockerfile2 and build-and-run script to the container
+COPY DockerFile2 /DockerFile2
+COPY build-and-run.sh /build-and-run.sh
 
-# Define the entry point to run the image
-ENTRYPOINT ["docker", "run", "-t", "my-custom-image"]
+# Make the script executable
+RUN chmod +x /build-and-run.sh
 
+# Build and run the image specified in Dockerfile2
+CMD ["/build-and-run.sh"]
