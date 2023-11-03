@@ -1,4 +1,11 @@
-# Use a minimal base image
-FROM alpine:3.14
+# Use a minimal base image with Docker installed
+FROM docker:20.10.9
 
-CMD ["echo", "This is a dummy custom image."]
+# Copy the Dockerfile2 to the container
+COPY DockerFile2 /DockerFile2
+
+# Build the target image using Dockerfile2
+RUN docker build -t my-custom-image -f /DockerFile2 .
+
+# Define the entry point to run the image
+ENTRYPOINT ["docker", "run", "-t", "my-custom-image"]
