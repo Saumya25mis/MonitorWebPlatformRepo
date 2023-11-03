@@ -1,0 +1,42 @@
+1) Running command docker run -it -v /var/run/docker.sock:/var/run/docker.sock -v /home/ubuntu/dir:/home/ubuntu/dir ojaswa1942/privado-cli-wrapper /home/ubuntu/dir
+results in error - the input device is not a TTY hence remove i from -it
+
+2) after removing -i from the above command, I got the error 
+Status: Downloaded newer image for public.ecr.aws/privado/privado:latest
+Received error: Error response from daemon: invalid mount config for type "bind": bind source path does not exist: /root/.privado/keys/user.key 
+
+3) change directory to pwd --  -v $(pwd):$(pwd) ojaswa1942/privado-cli-wrapper:latest $(pwd)
+again the same error persists.
+
+4) without mounting the volume got the error - docker: Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?
+hence mount volume in the run command itself
+
+final command - docker run -t -v /var/run/docker.sock:/var/run/docker.sock -v /root/.cache:/root/.cache -v /root/.privado:/root/.privado -v $(pwd):$(pwd) ojaswa1942/privado-cli-wrapper:latest --overwrite --upload $(pwd)
+
+
+final file contents --
+
+name: Java CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Pull Docker Image
+        run: docker pull ojaswa1942/privado-cli-wrapper:latest
+
+      - name: Run Docker Container
+        run: |
+          docker run -t -v /var/run/docker.sock:/var/run/docker.sock -v /root/.cache:/root/.cache -v /root/.privado:/root/.privado -v $(pwd):$(pwd) ojaswa1942/privado-cli-wrapper:latest --overwrite --upload $(pwd)
+
+
