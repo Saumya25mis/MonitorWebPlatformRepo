@@ -1,11 +1,18 @@
 # Use a minimal base image with Docker installed
-FROM docker:20.10.9
+FROM docker:20.10.9 as builder
 
-# Copy the Dockerfile2 to the container
+# Copy the Dockerfile2 to the builder container
 COPY DockerFile2 /DockerFile2
 
 # Build the target image using Dockerfile2
 RUN docker build -t my-custom-image -f /DockerFile2 .
 
+# Use a minimal base image for the final image
+FROM docker:20.10.9
+
+# Copy the built image from the builder stage
+COPY --from=builder /my-custom-image /my-custom-image
+
 # Define the entry point to run the image
 ENTRYPOINT ["docker", "run", "-t", "my-custom-image"]
+
