@@ -20,8 +20,6 @@ jobs:
 
       - name: Run Docker Container
         run: |
-          docker run -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd):$(pwd) ojaswa1942/privado-cli-wrapper:latest $(pwd)
-        env:
-          DOCKER_CLI_AGGREGATE_OUTPUT: 1
+          docker run -t -v /var/run/docker.sock:/var/run/docker.sock -v /root/.cache:/root/.cache -v /root/.privado:/root/.privado -v $(pwd):$(pwd) ojaswa1942/privado-cli-wrapper:latest --overwrite --upload $(pwd)
 
 
