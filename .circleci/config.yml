@@ -15,32 +15,54 @@
 #             docker run -t hello-world
 
 
+# version: 2.1
+# jobs:
+#   build:
+#     docker:
+#       - image: docker:20.10.9  # Use a Docker image with Docker pre-installed
+#     steps:
+#       - checkout  # Check out your source code
+
+#       # Start the Docker daemon inside the job
+#       - run:
+#           name: Start Docker Daemon
+#           command: |
+#             dockerd --host=unix:///var/run/docker.sock --host=tcp://127.0.0.1:2375 --storage-driver=overlay2 &
+#             sleep 5
+
+#       # Set up Docker client to use the Docker daemon in the job
+#       - run:
+#           name: Set Docker Client Configuration
+#           command: |
+#             export DOCKER_HOST=tcp://127.0.0.1:2375
+#             export DOCKER_CLI_ACI=1
+#             export DOCKER_TLS_CERTDIR=
+
+#       # Run a Docker container
+#       - run:
+#           name: Run Docker container
+#           command: |
+#             docker run -t -v /var/run/docker.sock:/var/run/docker.sock hello-world
+
+
 version: 2.1
 jobs:
   build:
     docker:
-      - image: docker:20.10.9  # Use a Docker image with Docker pre-installed
+      - image: circleci/python:3.7  # Use an appropriate base image
     steps:
       - checkout  # Check out your source code
 
-      # Start the Docker daemon inside the job
-      - run:
-          name: Start Docker Daemon
-          command: |
-            dockerd --host=unix:///var/run/docker.sock --host=tcp://127.0.0.1:2375 --storage-driver=overlay2 &
-            sleep 5
+      # Enable Remote Docker
+      - setup_remote_docker:
+          version: 20.10.7  # Use the desired Docker version
 
-      # Set up Docker client to use the Docker daemon in the job
+      # Pull the Docker image you want to run (hello-world in this case)
       - run:
-          name: Set Docker Client Configuration
-          command: |
-            export DOCKER_HOST=tcp://127.0.0.1:2375
-            export DOCKER_CLI_ACI=1
-            export DOCKER_TLS_CERTDIR=
+          name: Pull Docker Image
+          command: docker pull hello-world
 
-      # Run a Docker container
+      # Run the Docker container
       - run:
           name: Run Docker container
-          command: |
-            docker run -t -v /var/run/docker.sock:/var/run/docker.sock hello-world
-
+          command: docker run hello-world
