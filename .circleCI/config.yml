@@ -1,0 +1,17 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: docker:20.10.9 
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 20.10.9
+      - run:
+          name: Build Docker image
+          command: |
+            docker build -t my-custom-image -f DockerFile1 .
+      - run:
+          name: Run Docker container
+          command: |
+            docker run -t -v /var/run/docker.sock:/var/run/docker.sock my-custom-image:latest
