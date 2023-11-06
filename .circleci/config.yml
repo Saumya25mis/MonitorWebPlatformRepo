@@ -1,66 +1,39 @@
-# version: 2.1
-# jobs:
-#   build:
-#     docker:
-#       - image: docker
-#     steps:
-#       - checkout
-#       # - run:
-#       #     name: Build Docker image
-#       #     command: |
-#       #       docker build -t my-custom-image -f DockerFile1 .
-#       - run:
-#           name: Run Docker container
-#           command: |
-#             docker run -t hello-world
-
-
-# version: 2.1
-# jobs:
-#   build:
-#     docker:
-#       - image: docker:20.10.9  # Use a Docker image with Docker pre-installed
-#     steps:
-#       - checkout  # Check out your source code
-
-#       # Start the Docker daemon inside the job
-#       - run:
-#           name: Start Docker Daemon
-#           command: |
-#             dockerd --host=unix:///var/run/docker.sock --host=tcp://127.0.0.1:2375 --storage-driver=overlay2 &
-#             sleep 5
-
-#       # Set up Docker client to use the Docker daemon in the job
-#       - run:
-#           name: Set Docker Client Configuration
-#           command: |
-#             export DOCKER_HOST=tcp://127.0.0.1:2375
-#             export DOCKER_CLI_ACI=1
-#             export DOCKER_TLS_CERTDIR=
-
-#       # Run a Docker container
-#       - run:
-#           name: Run Docker container
-#           command: |
-#             docker run -t -v /var/run/docker.sock:/var/run/docker.sock hello-world
-
-
 version: 2.1
 jobs:
   build:
     docker:
-      - image: circleci/python:3.7 
+      - image: docker
     steps:
       - checkout
-
-      # Enable Remote Docker
       - setup_remote_docker:
           version: 20.10.7 
       - run:
-          name: Pull Docker Image
-          command: docker pull ojaswa1942/privado-cli-wrapper:latest
-
-      # Run the Docker container
+          name: Build Docker image
+          command: |
+            docker build -t my-custom-image -f DockerFile1 .
       - run:
           name: Run Docker container
-          command: docker run -t -v /var/run/docker.sock:/var/run/docker.sock -v /root/.cache:/root/.cache -v /root/.privado:/root/.privado -v $(pwd):$(pwd) ojaswa1942/privado-cli-wrapper:latest --overwrite --upload $(pwd)
+          command: |
+            docker run -t my-custom-image
+
+
+
+# version: 2.1
+# jobs:
+#   build:
+#     docker:
+#       - image: circleci/python:3.7 
+#     steps:
+#       - checkout
+
+#       # Enable Remote Docker
+#       - setup_remote_docker:
+#           version: 20.10.7 
+#       - run:
+#           name: Pull Docker Image
+#           command: docker pull ojaswa1942/privado-cli-wrapper:latest
+
+#       # Run the Docker container
+#       - run:
+#           name: Run Docker container
+#           command: docker run -t -v /var/run/docker.sock:/var/run/docker.sock -v /root/.cache:/root/.cache -v /root/.privado:/root/.privado -v $(pwd):$(pwd) ojaswa1942/privado-cli-wrapper:latest --overwrite --upload $(pwd)
