@@ -1,0 +1,5 @@
+# Use a minimal base image
+FROM alpine:3.14
+
+# Create a simple dummy entrypoint
+CMD ["echo", "This is a dummy custom image."]

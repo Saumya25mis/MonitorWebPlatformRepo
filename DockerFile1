@@ -1,0 +1,16 @@
+# Use a minimal base image with Docker installed
+FROM docker:20.10.9
+
+
+# Define the entry point to run the image
+ENTRYPOINT ["docker", "run", "-t", "hello-world"]
+
+# # Copy the Dockerfile2 and build-and-run script to the container
+# COPY DockerFile2 /DockerFile2
+# COPY build-and-run.sh /build-and-run.sh
+
+# # Make the script executable
+# RUN chmod +x /build-and-run.sh
+
+# # Build and run the image specified in Dockerfile2
+# CMD ["/build-and-run.sh"]
