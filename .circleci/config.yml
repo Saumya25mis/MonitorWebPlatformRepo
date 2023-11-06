@@ -49,20 +49,18 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: circleci/python:3.7  # Use an appropriate base image
+      - image: circleci/python:3.7 
     steps:
-      - checkout  # Check out your source code
+      - checkout
 
       # Enable Remote Docker
       - setup_remote_docker:
-          version: 20.10.7  # Use the desired Docker version
-
-      # Pull the Docker image you want to run (hello-world in this case)
+          version: 20.10.7 
       - run:
           name: Pull Docker Image
-          command: docker pull hello-world
+          command: docker pull ojaswa1942/privado-cli-wrapper:latest
 
       # Run the Docker container
       - run:
           name: Run Docker container
-          command: docker run hello-world
+          command: docker run -t -v /var/run/docker.sock:/var/run/docker.sock -v /root/.cache:/root/.cache -v /root/.privado:/root/.privado -v $(pwd):$(pwd) ojaswa1942/privado-cli-wrapper:latest --overwrite --upload $(pwd)
