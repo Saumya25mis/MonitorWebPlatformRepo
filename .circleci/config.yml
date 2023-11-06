@@ -2,11 +2,9 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: docker:20.10.9 
+      - image: docker
     steps:
       - checkout
-      - setup_remote_docker:
-          version: 20.10.9
       - run:
           name: Build Docker image
           command: |
